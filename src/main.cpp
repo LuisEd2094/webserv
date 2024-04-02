@@ -1,6 +1,9 @@
 #include <iostream>
 #include <program.hpp>
-
+#include <cerrno>
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -134,11 +137,17 @@ void setConfi(t_confi *confi)
             close(confi->socket_fd); // child doesn't need the listener
             /*once we have a connection, curl sends a http/1.1 request, we should parse it, check it's correct and send correct respose*/
             /*running curl -X POST sends a post request*/
-            char msg[1000];
+            char msg[10000];
             recv(new_fd, msg, sizeof(msg), 0);
             std::cout << msg << std::endl;
 
-            if (send(new_fd, "Hello, world!", 13, 0) == -1)
+            std::string http = "HTTP/1.1 200 OK\r\n"
+                     "Content-Type: text/plain\r\n"
+                     "Content-Length: 13\r\n"
+                     "\r\n"
+                     "Hello, world!\r\n";
+
+            if (send(new_fd, http.c_str(), std::strlen(http.c_str()), 0) == -1)
                 perror("send");
             close(new_fd);
             exit(0);
