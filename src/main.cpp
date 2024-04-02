@@ -78,8 +78,9 @@ void setConfi(t_confi *confi)
         };
         if (setsockopt(confi->socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes,
                 sizeof(int)) == -1) {
-            freeaddrinfo(confi->servinfo);
-            exitError("socket error: " + static_cast<std::string>(strerror(errno)));
+            close(confi->socket_fd);
+            std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
+            continue ;
         } 
                 
         // bind it to the port we passed in to getaddrinfo():
@@ -131,14 +132,20 @@ void setConfi(t_confi *confi)
         if (!fork()) 
         { // this is the child process
             close(confi->socket_fd); // child doesn't need the listener
+            /*once we have a connection, curl sends a http/1.1 request, we should parse it, check it's correct and send correct respose*/
+            /*running curl -X POST sends a post request*/
+            char msg[1000];
+            recv(new_fd, msg, sizeof(msg), 0);
+            std::cout << msg << std::endl;
+
             if (send(new_fd, "Hello, world!", 13, 0) == -1)
                 perror("send");
             close(new_fd);
             exit(0);
         }
         close(new_fd);  // parent doesn't need this
-
     }
+    close(confi->socket_fd);
 }
 int main()
 {
