@@ -1,3 +1,10 @@
 obj/*
 deps/*
 webserv
+*.o
+.vscode
+*.d
+obj
+*.swp
+.DS_*
+._.*
