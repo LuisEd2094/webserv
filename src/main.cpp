@@ -8,6 +8,10 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <sys/poll.h>
+
+
+#include <vector>
 
 
 #include <netinet/in.h>
@@ -43,7 +47,7 @@ void exitError(const std::string& error)
 
 }
 
-void setConfi(t_confi *confi)
+void getListenerSocket(t_confi *confi)
 {
     std::memset(&(confi->hints), 0, sizeof(confi->hints));
     confi->hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
@@ -106,11 +110,27 @@ void setConfi(t_confi *confi)
     if (listen(confi->socket_fd, confi->backlog) == -1)
         exitError("listen error: " + static_cast<std::string>(strerror(errno)));
 
+}
+
+void setConfi(t_confi *confi)
+{
+    //sets litening socket, available at socket_fd
+    getListenerSocket(confi); 
+
     socklen_t               addr_size;
     int                     new_fd;
     struct sockaddr_storage their_addr;
     char hostname[100];
     size_t size = sizeof(hostname); 
+
+
+
+    int fd_count = 0;
+    int fd_size = 5;
+
+    //Get a stfuct for my polls, they are init to fd_size (arbitrary)
+    std::vector<struct pollfd *>  pfds(fd_size);
+
 
     gethostname(hostname, size);
 
