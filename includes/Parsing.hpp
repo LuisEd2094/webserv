@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/06 12:07:07 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/07 09:25:22 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@
 class Parsing
 {
 	private:
+		Parsing(void);
 	public:
 	/*
 	 * Orthodox Canonical Form
 	*/
-	Parsing(void);
-	Parsing(const Parsing &obj);
-	Parsing &operator=(const Parsing &obj);
-	~Parsing(void);
+		Parsing( const Parsing& obj );
+		Parsing &operator=( const Parsing& obj );
+		~Parsing( void );
 	/*
 	 * Get Methods
 	*/
