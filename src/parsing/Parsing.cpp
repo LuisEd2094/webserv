@@ -1,32 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Parsing.hpp                                        :+:      :+:    :+:   */
+/*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/07 10:51:27 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/07 18:24:47 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Parsing.hpp"
 
-/*
- * Orthodox Canonical Form
-*/
-//private:
-Parsing::Parsing( void ){}
-
-Parsing::Parsing( const Parsing& obj)
+Parsing::Parsing( void )
 {
-	//igualar variables
+	_methods[0] = "GET";
+	_methods[1] = "POST";
+	_methods[2] = "PUT";
+	_methods[3] = "DELETE";
+	_methods[4] = "PATCH";
+	_methods[5] = "HEAD";
 }
 
-Parsing &Parsing::operator=( const Parsing& obj)
+Parsing::Parsing( int fd )
 {
-	//igualar variables
-	return (*this);
+	if (fd == -1)
+		std::cout << "Error: open" << std::endl;
+	int	bytes = 1;
+	while (bytes > 0)
+	{
+		bytes = read(fd, _read, BUFFER_READ);
+		if (bytes < 0)
+			break ;
+	}
+	std::cout << _read << std::endl;
 }
 
 Parsing::~Parsing( void )
@@ -48,9 +55,9 @@ bool Parsing::isEmptyLine( const std::string& line ) const
 
 bool Parsing::isMethods( const std::string& keyword) const
 {
-	for (size_t i = 0; i < LEN_METHODS; i++)
+	for (size_t i = 0; i < (LEN_METHODS - 1); i++)
 	{
-		if (METHODS[i] == keyword)
+		if (keyword == (const std::string)_methods[i])
 			return (EXIT_SUCCESS);
 	}
 	return (EXIT_FAILURE);
