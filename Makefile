@@ -15,9 +15,10 @@ CFLAGS      = -std=c++98 -pedantic -g  #-Wall -Wextra  -Werror
 CC			= c++
 RM          = rm -f
 SRCS_PATH	= src/
-PROGRAM_PATH	= program/
+AUX_PATH	= Aux/
+SERVER_PATH	=	Server/
 OBJS_PATH	= obj/
-MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(PROGRAM_PATH)) 
+MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH)) 
 DEPS_PATH	= deps/
 INCS        = -I./includes
 
@@ -40,13 +41,17 @@ LIGHT_GREEN = \033[1;92m
 
 SRC        		=	main.cpp 
 
-PROGRAM			=	program.cpp
+AUX			=	aux.cpp
 
-PROGRAM_FILES		=	$(addprefix $(PROGRAM_PATH), $(PROGRAM))
+AUX_FILES		=	$(addprefix $(AUX_PATH), $(AUX))
 
-DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d) $(WEBSERV:.cpp=.d))
+SERVER			=	Server.cpp
 
-SRC				+=	$(PROGRAM_FILES)
+SERVER_FILES		=	$(addprefix $(SERVER_PATH), $(SERVER))
+
+DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d) $(SERVER:.cpp=.d) $(AUX:.cpp=.d))
+
+SRC				+=	$(AUX_FILES) $(SERVER_FILES)
 
 OBJS 			=	$(addprefix $(OBJS_PATH), $(SRC:.cpp=.o))
 				

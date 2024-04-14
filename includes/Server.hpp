@@ -1,15 +1,24 @@
-#ifndef SERVERS_HPP
-# define SERVERS_HPP
+#ifndef SERVER_HPP
+# define SERVER_HPP
 # include <iostream>
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netdb.h>
+# include <cstring>
+# include <Aux.hpp>
+# include <cerrno>
+# include <unistd.h>
 
+
+/*
+    https://man7.org/linux/man-pages/man3/getaddrinfo.3.html
+    Hints struct and func info
+*/
 
 typedef struct s_confi
 {
     std::string     port;
-    int             socket_fd;
+    int             socket;
     int             backlog;
     struct addrinfo hints;
     struct addrinfo *servinfo;
@@ -20,16 +29,18 @@ class Server
 {
     public:
         Server(t_confi* confi);
+        ~Server();
 
-
+        //Getters
+        int getSocket();
 
 
     private:
         int                 _socket;
         int                 _backlog;
+        std::string         _port;
         struct addrinfo     _hints;
         struct addrinfo*    _servinfo;
-        std::string         _port;
         
         Server();      
         Server(const Server& rhs );
