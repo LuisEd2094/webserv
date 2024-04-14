@@ -45,6 +45,11 @@ class Server
         Server();      
         Server(const Server& rhs );
         Server& operator=(const Server& rhs);
+
+        void    initSocket();
+
+
+        class   socketException;
 };
 
 

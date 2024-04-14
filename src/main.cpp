@@ -9,8 +9,10 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <sys/poll.h>
-#include <Server.hpp>
 
+
+#include <Server.hpp>
+#include <Overseer.hpp>
 
 #include <vector>
 
@@ -87,20 +89,44 @@ void initConnection(Server& server)
     }
     close(server.getSocket());
 }
+
 int main()
 {
     t_confi confi;
 
+    // all this info should come from the confi file
     std::memset(&(confi.hints), 0, sizeof(confi.hints));
     confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
     confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
     confi.hints.ai_flags = AI_PASSIVE;
     confi.port = "80";
     confi.backlog = 10;
+    Overseer overseer;
+    // Read from file, create server, save server to overseer;
+    try
+    {
+        //Server server(&confi);
+        overseer.saveServer(&confi);
 
-    Server server(&confi);
 
-    initConnection(server);
+        std::memset(&(confi.hints), 0, sizeof(confi.hints));
+        confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
+        confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
+        confi.hints.ai_flags = AI_PASSIVE;
+        confi.port = "81";
+        confi.backlog = 10;
+
+        //Server server1(&confi);
+        overseer.saveServer(&confi);
+        
+        //initConnection(server);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
+    overseer.test();
     //freeaddrinfo(confi.servinfo);
     std::cout << "hello \n";
     return 0;

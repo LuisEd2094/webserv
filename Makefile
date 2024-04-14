@@ -17,8 +17,9 @@ RM          = rm -f
 SRCS_PATH	= src/
 AUX_PATH	= Aux/
 SERVER_PATH	=	Server/
+OVERSEER_PATH = Overseer/
 OBJS_PATH	= obj/
-MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH)) 
+MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH) $(OVERSEER_PATH)) 
 DEPS_PATH	= deps/
 INCS        = -I./includes
 
@@ -49,9 +50,13 @@ SERVER			=	Server.cpp
 
 SERVER_FILES		=	$(addprefix $(SERVER_PATH), $(SERVER))
 
-DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d) $(SERVER:.cpp=.d) $(AUX:.cpp=.d))
+OVERSEER			=	Overseer.cpp
 
-SRC				+=	$(AUX_FILES) $(SERVER_FILES)
+OVERSEER_FILES		=	$(addprefix $(OVERSEER_PATH), $(OVERSEER))
+
+DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d) $(SERVER:.cpp=.d) $(AUX:.cpp=.d)) $(OVERSEER:.cpp=.d)
+
+SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES)
 
 OBJS 			=	$(addprefix $(OBJS_PATH), $(SRC:.cpp=.o))
 				
