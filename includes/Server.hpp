@@ -3,26 +3,13 @@
 # include <iostream>
 # include <sys/types.h>
 # include <sys/socket.h>
-# include <netdb.h>
 # include <cstring>
 # include <Aux.hpp>
 # include <cerrno>
 # include <unistd.h>
+# include <Confi.hpp>
 
 
-/*
-    https://man7.org/linux/man-pages/man3/getaddrinfo.3.html
-    Hints struct and func info
-*/
-
-typedef struct s_confi
-{
-    std::string     port;
-    int             socket;
-    int             backlog;
-    struct addrinfo hints;
-    struct addrinfo *servinfo;
-} t_confi;
 
 
 class Server
@@ -33,8 +20,6 @@ class Server
 
         //Getters
         int getSocket();
-
-
     private:
         int                 _socket;
         int                 _backlog;
