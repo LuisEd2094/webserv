@@ -5,6 +5,8 @@
 # include <cerrno>
 # include <string.h>
 
+# define SEND_SIZE 5
+
 class Server;
 
 class Client
@@ -14,7 +16,9 @@ class Client
         ~Client();
 
         int     recvData();
-        void    sendData(std::string http);
+        void    firstSendData(const std::string & http);
+        void    sendBatch();
+        bool    hasPending();
 
         //getters
         int getSocket();
@@ -23,6 +27,9 @@ class Client
 
     private:
         int                     _fd;
+        bool                    _has_msg_pending;
+        std::string             _msg_pending;
+        std::size_t             _bytes_sent;
         char                    _msg[10000];
         std::string             _out_msg;
         struct sockaddr_storage _remoteaddr; 

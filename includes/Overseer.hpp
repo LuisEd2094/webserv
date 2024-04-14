@@ -16,23 +16,26 @@ class Overseer
     public:
         Overseer();
         ~Overseer();
-        void saveServer(t_confi* confi);
-        void createClient(Server * server);
-        void clientSend(Client *client, const std::string & http);
-        void clientRecv(Client *client);
-        void mainLoop();
+        void    saveServer(t_confi* confi);
+        Client* createClient(Server * server);
+
+        void    clientSend(Client *client);
+        void    clientSend(Client *client, const std::string & http);
+        void    clientRecv(Client *client);
+        void    mainLoop();
 
     private:
         std::map<int, Server *> _servers;
         std::map<int, Client *> _clients;
 
         //clients map
+        int                     _i;
         int                     _fd_count;
         struct pollfd           *_pfds;
         Overseer(const Overseer& rhs);
         Overseer& operator= (const Overseer& rhs);
 
-        void addToPfds(int new_fd);
+        void addToPfds(int new_fd, int flags);
         void removeFromPFDS();
 
 

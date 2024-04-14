@@ -42,17 +42,17 @@ Overseer::~Overseer()
 
 void Overseer::removeFromPFDS()
 {
-    //should do something more
+    _pfds[_i] = _pfds[_fd_count - 1];
     _fd_count--;
 }
 
 
-void Overseer::addToPfds(int new_fd)
+void Overseer::addToPfds(int new_fd, int flags)
 {
     if (_fd_count != MAX_FDS )
     {
         _pfds[_fd_count].fd = new_fd;
-        _pfds[_fd_count].events = POLLIN;
+        _pfds[_fd_count].events = flags;
         _pfds[_fd_count].revents = 0;
         _fd_count++;
     }
@@ -64,13 +64,18 @@ void Overseer::saveServer(t_confi* confi)
 
     Server *server = new Server(confi);
     _servers[server->getSocket()] = server;
-    addToPfds(server->getSocket());
+    addToPfds(server->getSocket(), POLLIN);
+}
+void Overseer::clientSend(Client *client)
+{
+    client->sendBatch();
 }
 
 
 void Overseer::clientSend(Client *client, const std::string & http)
 {
-    client->sendData(http);
+
+    client->firstSendData(http);
 
 }
 
@@ -83,40 +88,23 @@ void Overseer::clientRecv(Client *client)
         if (status == 0)
             std::cout << client->getSocket() << " closed connection" << std::endl;
         else
-            std::cerr << "client :" << static_cast<std::string>(strerror(errno)) << std::endl;
-        delete client;
+            std::cerr << "client: " << static_cast<std::string>(strerror(errno)) << std::endl;
         removeFromPFDS();
+        delete client;
     }
 }
 
 
-void Overseer::createClient(Server * server)
+Client* Overseer::createClient(Server* server)
 {
     Client* client = new Client(server);
     _clients[client->getSocket()] = client;
-    addToPfds(client->getSocket());
-    clientRecv(client);
-
-    std::string http = "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/plain\r\n"
-                "Content-Length: 13\r\n"
-                "\r\n"
-                "Hello, world!\r\n\0";
-    clientSend(client, http);
-
+    addToPfds(client->getSocket(), POLLIN | POLLOUT);
+    return (client);
 }
 
-
-void Overseer::mainLoop()
+void printHostName()
 {
-    int poll_count;
-    int new_fd;        // Newly accept()ed socket descriptor
-    struct sockaddr_storage remoteaddr; // Client address
-    socklen_t addrlen;
-
-    char buf[256];    // Buffer for client data
-
-    char remoteIP[INET6_ADDRSTRLEN];
     char hostname[100];
     size_t size = sizeof(hostname); 
 
@@ -124,42 +112,56 @@ void Overseer::mainLoop()
     gethostname(hostname, size);
 
     std::cout <<  "my domain: "<< hostname << std::endl;
+}
 
-    std::cout << "server: waiting for connections..." << std::endl;
+
+void Overseer::mainLoop()
+{
+    int poll_connection;
+
+
+    printHostName(); //REMOVE , IT USES INVALID FUNTIONS
+
     while(1) 
     {
-        std::cout << "Poll count " << _fd_count << std::endl;
-        poll_count = poll(_pfds, _fd_count, -1);
-
-        if (poll_count == -1) 
+        //std::cout << "Poll count " << _fd_count << std::endl;
+        poll_connection = poll(_pfds, _fd_count, -1);
+        if (poll_connection == -1) 
         {
             throw Overseer::pollException("poll: " + static_cast<std::string>(strerror(errno)));
         }
-
         // Run through the existing connections looking for data to read
-        for(int i = 0; i < _fd_count; i++) 
+        for(_i = 0; _i < _fd_count; _i++) 
         {
-
+            
             // Check if someone's ready to read
-            if (_pfds[i].revents & POLLIN) 
+            if (_pfds[_i].revents & POLLIN) 
             { // We got one!!
 
-                if (_servers.find(_pfds[i].fd) != _servers.end()) //one server got a connection
+                if (_servers.find(_pfds[_i].fd) != _servers.end()) //one server got a connection
                 {
                     // If listener is ready to read, handle new connection
+                    Client *newClient; 
                     try
                     {
-                        createClient(_servers[_pfds[i].fd]);
+                        newClient = createClient(_servers[_pfds[_i].fd]);
                     }
                     catch(const std::exception& e)
                     {
                         std::cerr << e.what() << '\n';
                     }
+                    clientRecv(newClient);
+                    std::string http = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: text/plain\r\n"
+                        "Content-Length: 13\r\n"
+                        "\r\n"
+                        "Hello, world!\r\n\0";
+
+                    clientSend(newClient, http);
                 } 
                 else 
                 {
-                    std::cout << "regular " << std::endl;
-                    std::map<int, Client *>::iterator it = _clients.find(_pfds[i].fd);
+                    std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
                     if (it != _clients.end())
                     {
                         clientRecv(it->second);
@@ -168,6 +170,15 @@ void Overseer::mainLoop()
                     //regular client
 
                 } // END handle data from client
+            }
+            else if (_pfds[_i].revents & POLLOUT)
+            {
+                std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
+                if (it != _clients.end())
+                {
+                    clientSend(it->second);
+                }
+
             } // END got ready-to-read from poll()
         } // END looping through file descriptors
     } // END for(;;)--and you thought it would never end!

@@ -29,6 +29,8 @@ Client::Client(Server *server)
     {
         throw Client::clientException("accept" + static_cast<std::string>(strerror(errno)));
     }
+    _has_msg_pending = true;
+    _bytes_sent = 0;
 }
 int Client::getSocket()
 {
@@ -54,10 +56,48 @@ int Client::recvData()
     return (bytes_rec);
 }
 
-void Client::sendData(std::string http)
+bool    Client::hasPending()
 {
-    if (send(_fd, http.c_str(), std::strlen(http.c_str()), 0) == -1)
+    return _has_msg_pending;
+}
+
+
+//MSG_NOSIGNAL NO PIPE
+void Client::sendBatch()
+{
+    const char *msg_to_send = _msg_pending.c_str();
+
+
+    std::size_t result;
+    if ((result = send(_fd, msg_to_send + _bytes_sent, 5, MSG_NOSIGNAL)) == -1)
         std::cerr << "send: " + static_cast<std::string>(strerror(errno)) << std::endl;
+    if (result + _bytes_sent != std::strlen(msg_to_send))
+    {
+        _bytes_sent += result;
+    }
+    else
+    {
+        _has_msg_pending = false;
+        //close connection?
+    }   
+}
+
+//std::strlen(http.c_str())
+void Client::firstSendData(const std::string& http)
+{
+    const char *msg_to_send = http.c_str();
+    std::size_t result;
+    if ((result = send(_fd, msg_to_send, SEND_SIZE, MSG_NOSIGNAL) )== -1)
+        std::cerr << "send: " + static_cast<std::string>(strerror(errno)) << std::endl;
+    if (result != std::strlen(msg_to_send))
+    {
+        _msg_pending = http;
+        _bytes_sent = result;
+    }
+    else
+    {
+        //close connection?
+    }
 }
 
 

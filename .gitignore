@@ -8,3 +8,5 @@ obj
 *.swp
 .DS_*
 ._.*
+responses/*
+responses
