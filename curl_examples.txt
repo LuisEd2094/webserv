@@ -1,0 +1,6 @@
+curl -X POST http://localhost      --data-binary @./images/image.jpeg -v #sends images just as post, not other http info on the body
+
+curl -F "./images/image.jpg" localhost -v #sends image as webbrowser displayable, so it has some http on the file itself.
+
+
+curl -X POST --data-binary @./images/image.jpeg  localhost -v
