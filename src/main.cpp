@@ -109,13 +109,13 @@ int main()
         // Should read from file or default info, internally call saveServer for each server
         // throws exception when server fails
         overseer.saveServer(&confi);
-/*         std::memset(&(confi.hints), 0, sizeof(confi.hints));
+        std::memset(&(confi.hints), 0, sizeof(confi.hints));
         confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
         confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
         confi.hints.ai_flags = AI_PASSIVE;
         confi.port = "81";
         confi.backlog = 10;
-        overseer.saveServer(&confi); */
+        overseer.saveServer(&confi);
 
         overseer.mainLoop();
         //initConnection(server);

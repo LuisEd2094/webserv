@@ -6,6 +6,7 @@
 # include <Confi.hpp>
 # include <cerrno>
 # include <Server.hpp>
+# include <Client.hpp>
 # include <poll.h>
 
 # define  MAX_FDS 1000
@@ -16,10 +17,15 @@ class Overseer
         Overseer();
         ~Overseer();
         void saveServer(t_confi* confi);
+        void createClient(Server * server);
+        void clientSend(Client *client, const std::string & http);
+        void clientRecv(Client *client);
         void mainLoop();
 
     private:
         std::map<int, Server *> _servers;
+        std::map<int, Client *> _clients;
+
         //clients map
         int                     _fd_count;
         struct pollfd           *_pfds;
@@ -27,6 +33,7 @@ class Overseer
         Overseer& operator= (const Overseer& rhs);
 
         void addToPfds(int new_fd);
+        void removeFromPFDS();
 
 
         class pollException;
