@@ -30,8 +30,6 @@ typedef struct s_confi
     int             backlog;
     struct addrinfo hints;
     struct addrinfo *servinfo;
-    
-
 } t_confi;
 
 
