@@ -1,0 +1,3 @@
+curl -X POST http://localhost      --data-binary "@/home/luis/proyects/webserv/images/image.jpeg" sends images just as post, not other http info on the body
+
+curl -F "image=@/home/luis/proyects/webserv/images/image.jpg" localhost -v sends image as webbrowser displayable, so it has some http on the file itself.

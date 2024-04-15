@@ -3,7 +3,11 @@
 # include <iostream>
 # include <sys/socket.h>
 # include <cerrno>
-# include <string.h>
+# include <string>
+# include <vector>
+# include <fstream>
+
+
 
 # define SEND_SIZE 5
 
@@ -30,7 +34,11 @@ class Client
         bool                    _has_msg_pending;
         std::string             _msg_pending;
         std::size_t             _bytes_sent;
-        char                    _msg[10000];
+
+        char                    _in_message[1024];
+        std::size_t             _in_size;
+        std::string             _in_http;
+        std::vector<void *>     _in_body;
         std::string             _out_msg;
         struct sockaddr_storage _remoteaddr; 
         socklen_t               _addrlen;
