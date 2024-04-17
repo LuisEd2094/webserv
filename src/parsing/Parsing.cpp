@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/07 18:24:47 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:58:35 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,25 @@
 
 Parsing::Parsing( void )
 {
-	_methods[0] = "GET";
-	_methods[1] = "POST";
-	_methods[2] = "PUT";
-	_methods[3] = "DELETE";
-	_methods[4] = "PATCH";
-	_methods[5] = "HEAD";
+	_methods.push_back(std::string("GET"));
+	_methods.push_back(std::string("POST"));
+	_methods.push_back(std::string("DELETE"));
+
 }
 
 Parsing::Parsing( int fd )
 {
+	char buffRead[BUFFER_READ + 1];
 	if (fd == -1)
 		std::cout << "Error: open" << std::endl;
 	int	bytes = 1;
 	while (bytes > 0)
 	{
-		bytes = read(fd, _read, BUFFER_READ);
+		bytes = read(fd, buffRead, BUFFER_READ);
 		if (bytes < 0)
 			break ;
+		buffRead[bytes] = '\0';
+		_read += buffRead;
 	}
 	std::cout << _read << std::endl;
 }
@@ -55,10 +56,8 @@ bool Parsing::isEmptyLine( const std::string& line ) const
 
 bool Parsing::isMethods( const std::string& keyword) const
 {
-	for (size_t i = 0; i < (LEN_METHODS - 1); i++)
-	{
-		if (keyword == (const std::string)_methods[i])
-			return (EXIT_SUCCESS);
-	}
-	return (EXIT_FAILURE);
+	if (std::find(_methods.begin(), _methods.end(), keyword) == _methods.end())
+		return (EXIT_FAILURE);
+	else
+		return (EXIT_SUCCESS);
 }
