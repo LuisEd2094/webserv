@@ -38,7 +38,9 @@ LIGHT_GREEN = \033[1;92m
 
 ###
 
-SRC        		=	main.cpp 
+MAIN			=	main.cpp
+
+SRC        		=  $(MAIN)	dirList.cpp
 
 PROGRAM			=	program.cpp
 
@@ -52,6 +54,9 @@ OBJS 			=	$(addprefix $(OBJS_PATH), $(SRC:.cpp=.o))
 				
 all: $(NAME)
 
+prnt:
+	@echo MAIN: $(MAIN) SRC: $(SRC) FOO: $(FOO)
+	@echo OBJS_PATH: $(OBJS_PATH)
 
 $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
@@ -59,7 +64,13 @@ $(NAME): $(OBJS)
 	
 $(OBJS_PATH)%.o: $(SRCS_PATH)%.cpp | $(MAKE_OBJ_DIR) $(DEPS_PATH)
 			@echo "$(CYAN)Compiling $< $(DEF_COLOR)"
-			@$(CC) $(CFLAGS) $(INCS) -MMD -MP -c $< -o $@
+			$(CC) $(CFLAGS) $(INCS) -MMD -MP -c $< -o $@
+			@mv $(basename $@).d $(DEPS_PATH)
+
+$(OBJS_PATH)tests/test_%.o: tests/test_%.cpp #| $(MAKE_OBJ_DIR) $(DEPS_PATH)
+			@echo "$(CYAN)Compiling $< $(DEF_COLOR)"
+			mkdir -p $(OBJS_PATH)/tests
+			$(CC) $(CFLAGS) $(INCS) -MMD -MP -c $< -o $@
 			@mv $(basename $@).d $(DEPS_PATH)
 
 $(MAKE_OBJ_DIR):
@@ -83,6 +94,7 @@ fclean:  clean_objects
 clean_objects:
 	@echo "$(GREEN)$(NAME) Objects and Dependencies cleaned!$(DEF_COLOR)"
 	@$(RM) -r $(OBJS_PATH) $(DEPS_PATH)
+	@$(RM) -r $(OBJS_PATH)/tests $(DEPS_PATH)
 
 
 re: fclean all 
