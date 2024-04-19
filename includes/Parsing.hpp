@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/17 16:58:29 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/19 09:50:15 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # include <fcntl.h>
 # include <list>
 # include <algorithm>
+# include <dirent.h> //readdir
+# include <map> //map
 
 /******************************************************************************/
 /*                            MACROS                                          */
@@ -38,26 +40,42 @@
 /*                            CLASS                                           */
 /******************************************************************************/
 
+//agregar atributo que indique si es de tipo RN o solo ON(only line)
+typedef struct s_request
+{
+	std::string	method;
+	std::string requested;
+	std::string version;
+	short		typeMethod;
+	short		typeRequested;
+	short		typeNewLine;
+	bool		checkVrs;
+	std::map<std::string, std::string> content;
+} t_request;
+
 class Parsing
 {
 	private:
-		//std::string	_methods[LEN_METHODS];
 		std::list<std::string> _methods;
 		std::string	_read;
+		t_request	_method;
 	public:
-		Parsing( void );
-		Parsing( int fd );
-		~Parsing( void );
+		Parsing(void);
+		~Parsing(void);
 	/*
 	 * Get Methods
 	*/
 	/*
 	 * Membert Funtions
 	*/
-	bool isEspace( const char c) const;
-	bool isEmptyLine( const std::string& line ) const;
-	bool isMethods( const std::string& keyword ) const;
-	bool parsingHeader( char *strRead ) const;
+	//utils
+	std::string readSocket(int fd);
+	bool isSpace(const char c) const;
+	bool isEmptyLine(const std::string& line) const;
+	bool isMethods(const std::string& keyword) const;
+	bool checkMethod(const std::string& strRead);
+	bool parsingHeader(char *strRead) const;
+	size_t	countSpace(const std::string& line);
 	/*
 	 * Exception Classes
 	*/
