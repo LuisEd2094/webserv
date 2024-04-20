@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/19 09:50:15 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/20 11:39:46 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ class Parsing
 	bool isSpace(const char c) const;
 	bool isEmptyLine(const std::string& line) const;
 	bool isMethods(const std::string& keyword) const;
+	bool isVersion(const std::string& version) const;
 	bool checkMethod(const std::string& strRead);
 	bool parsingHeader(char *strRead) const;
 	size_t	countSpace(const std::string& line);
