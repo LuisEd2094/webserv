@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/20 11:39:46 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/20 16:59:18 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@
 /*                            MACROS                                          */
 /******************************************************************************/
 
-# define LEN_METHODS 4
-# define BUFFER_READ 20
+# define BUFFER_READ 3000
+# define IS_IN_ROOT(c) ((c) == '/')
 
 /******************************************************************************/
 /*                            CLASS                                           */
@@ -47,9 +47,8 @@ typedef struct s_request
 	std::string requested;
 	std::string version;
 	short		typeMethod;
-	short		typeRequested;
 	short		typeNewLine;
-	bool		checkVrs;
+	bool		requestedIsInRoot;
 	std::map<std::string, std::string> content;
 } t_request;
 
