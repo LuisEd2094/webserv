@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/20 16:43:51 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/20 17:17:20 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,12 @@ bool Parsing::isVersion(const std::string& version) const
 
 bool Parsing::checkMethod(const std::string& strRead)
 {
-	//suponemos que ya sabemos si tiene saltos de linea o retorno de carra y
-	//salto de  lineas tambien verificamos los espacios si son mas de dos
-	// isMethods(strRead);
 	size_t	finNewline = 0;
 	size_t	word = 0;
 	size_t	space = 0;
 	size_t	tmp = 0;
 
 	finNewline = strRead.find('\n');
-	std::cout << finNewline << std::endl;
 	for (size_t i = 0; i < finNewline; i++)
 	{
 		tmp = word;
@@ -94,7 +90,6 @@ bool Parsing::checkMethod(const std::string& strRead)
 			word += (isSpace(strRead[i]) and (strRead[i + 1]
 				and !isSpace(strRead[i + 1])) ? 1 : 0);
 			space += (isSpace(strRead[i]) ? 1 : 0);
-			std::cout << space << std::endl;
 			if (space > 2)
 			{
 				std::cout << "Error: format space" << std::endl;
@@ -103,7 +98,6 @@ bool Parsing::checkMethod(const std::string& strRead)
 			space = (tmp != word ? 0 : space);
 		}
 	}
-	std::cout << "word: " << word << std::endl;
 	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))
 	{
 		std::cout << "Error: invalid " <<
@@ -111,6 +105,6 @@ bool Parsing::checkMethod(const std::string& strRead)
 		? "Method" : "Version")) << std::endl;
 		return (EXIT_FAILURE);
 	}
-	// std::cout << "pos: " << &strRead[pos]  << "*" << std::endl;
+	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
 	return (EXIT_SUCCESS);
 }
