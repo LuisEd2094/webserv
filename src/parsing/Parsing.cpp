@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/23 15:56:18 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/23 17:04:32 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,11 +113,24 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 {
 	if (checkMethod(strRead))
 		return (EXIT_FAILURE);
-	_method.content.insert(std::pair<std::string,std::string>("QUESO", "quesito"));
-	_method.content.insert(std::pair<std::string,std::string>("FOO", "lol"));
-	_method.content.insert(std::pair<std::string,std::string>("FIU", "yyyy"));
-
-	std::cout << _method.content.at("QUESO") << std::endl;
-	::printmap(_method.content);
+	// _method.content.insert(std::pair<std::string,std::string>("QUESO", "quesito"));
+	// _method.content.insert(std::pair<std::string,std::string>("FOO", "lol"));
+	// _method.content.insert(std::pair<std::string,std::string>("FIU", "yyyy"));
+	// ::printMap(_method.content);
+	size_t i = 0;
+	size_t start = _findNewline;
+	size_t end = 0;
+	while (true)
+	{
+		start += (_read[start] == '\n' ? 1 : 0);
+		std::string tmpEnd = &_read[start]; 
+		end = start + tmpEnd.find('\n');
+		if (start == std::string::npos)
+			break;
+		std::string tmp(_read.begin() + start , _read.begin() + end);
+		std::cout << tmp << std::endl;
+		start = end;
+		i++;
+	}
 	return (EXIT_SUCCESS);
 }

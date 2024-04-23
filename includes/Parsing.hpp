@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/23 15:58:12 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/23 16:00:04 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,12 @@
 /******************************************************************************/
 
 template<typename M>
-void	printmap(const M& map)
+void	printMap(const M& map)
 {
 	typename M::const_iterator i;
 	for (i = map.begin(); i != map.end(); ++i)
-		std::cout << "Key: " << i->first << "Value: " << i->second << std::endl;
+		std::cout << "Key: " << i->first << "\tValue: "
+			<< i->second << std::endl;
 }
 
 //agregar atributo que indique si es de tipo RN o solo ON(only line)
