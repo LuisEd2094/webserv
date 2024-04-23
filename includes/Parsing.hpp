@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/23 16:00:04 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/23 18:29:16 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,50 @@ void	printMap(const M& map)
 	for (i = map.begin(); i != map.end(); ++i)
 		std::cout << "Key: " << i->first << "\tValue: "
 			<< i->second << std::endl;
+}
+
+template<typename K>
+std::string	getKey(const K& str)
+{
+	bool flag = false;
+	size_t i;
+	for (i = 0; str[i] and str[i] != ':'; i++)
+	{
+		if (str[i] == ' ')
+			flag = true;
+	}
+	if (flag)
+		return ("ERROR");
+	std::string res(str.begin(), (str.begin() + i));
+	return (res);
+}
+
+template<typename V>
+std::string getValue(const V& str)
+{
+	size_t space_i = 0;
+	size_t i = str.find(':') + 1;
+	std::string line(str.begin() + i, str.end());
+	std::cout << "line: " << line << std::endl;
+	while ((line[i] and line[i] == ' '))
+	{
+		space_i++; 
+		i++;
+	}
+	size_t j = i;
+	size_t space_j = 0;
+	while (line[j])
+		j++;
+	while(line[j] and line[j] == ' ')
+	{
+		space_j++; 
+		j--;
+	}
+	if ((space_i > 2) or (space_j > 2))
+		return ("ERROR");
+	std::string res(line.begin() + i, line.begin() + j);
+	std::cout << "res: " << res << std::endl;
+	return (res);
 }
 
 //agregar atributo que indique si es de tipo RN o solo ON(only line)
