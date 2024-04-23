@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/23 18:27:40 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/23 18:38:58 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,6 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		// std::cout << tmp << std::endl;
 		start = end;
 	}
-	// ::printMap(_method.content);
+	::printMap(_method.content);
 	return (EXIT_SUCCESS);
 }

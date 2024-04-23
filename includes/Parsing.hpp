@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/23 18:29:16 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/23 18:42:33 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,36 +61,34 @@ std::string	getKey(const K& str)
 	}
 	if (flag)
 		return ("ERROR");
-	std::string res(str.begin(), (str.begin() + i));
-	return (res);
+	return (std::string(str.begin(), (str.begin() + i)));
 }
 
 template<typename V>
 std::string getValue(const V& str)
 {
-	size_t space_i = 0;
-	size_t i = str.find(':') + 1;
-	std::string line(str.begin() + i, str.end());
-	std::cout << "line: " << line << std::endl;
-	while ((line[i] and line[i] == ' '))
+    size_t i = 0, j = str.size();
+
+    while (i < j && str[i] == ' ')
+        i++;
+    while (j > i && str[j - 1] == ' ')
+        j--;
+    size_t space_i = 0, space_j = 0;
+    for (size_t k = 0; k < i; k++)
 	{
-		space_i++; 
-		i++;
-	}
-	size_t j = i;
-	size_t space_j = 0;
-	while (line[j])
-		j++;
-	while(line[j] and line[j] == ' ')
+        if (str[k] == ' ') {
+            space_i++;
+        }
+    }
+    for (size_t k = str.size() - 1; k >= j; k--)
 	{
-		space_j++; 
-		j--;
-	}
-	if ((space_i > 2) or (space_j > 2))
-		return ("ERROR");
-	std::string res(line.begin() + i, line.begin() + j);
-	std::cout << "res: " << res << std::endl;
-	return (res);
+        if (str[k] == ' ') {
+            space_j++;
+        }
+    }
+    if (space_i > 2 or space_j > 2)
+        return ("ERROR");
+    return (std::string(str.begin() + i, str.begin() + j));
 }
 
 //agregar atributo que indique si es de tipo RN o solo ON(only line)
