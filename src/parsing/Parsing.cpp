@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/20 17:17:20 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/23 15:56:18 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Parsing::Parsing( void )
 	_methods.push_back(std::string("GET"));
 	_methods.push_back(std::string("POST"));
 	_methods.push_back(std::string("DELETE"));
+	_findNewline = 0;
 }
 
 Parsing::~Parsing( void )
@@ -70,13 +71,12 @@ bool Parsing::isVersion(const std::string& version) const
 
 bool Parsing::checkMethod(const std::string& strRead)
 {
-	size_t	finNewline = 0;
 	size_t	word = 0;
 	size_t	space = 0;
 	size_t	tmp = 0;
 
-	finNewline = strRead.find('\n');
-	for (size_t i = 0; i < finNewline; i++)
+	_findNewline = strRead.find('\n');
+	for (size_t i = 0; i < _findNewline; i++)
 	{
 		tmp = word;
 		if (!isSpace(strRead[i]) and word != 3)
@@ -106,5 +106,18 @@ bool Parsing::checkMethod(const std::string& strRead)
 		return (EXIT_FAILURE);
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
+	return (EXIT_SUCCESS);
+}
+
+bool	Parsing::parsingHeader(const std::string& strRead)
+{
+	if (checkMethod(strRead))
+		return (EXIT_FAILURE);
+	_method.content.insert(std::pair<std::string,std::string>("QUESO", "quesito"));
+	_method.content.insert(std::pair<std::string,std::string>("FOO", "lol"));
+	_method.content.insert(std::pair<std::string,std::string>("FIU", "yyyy"));
+
+	std::cout << _method.content.at("QUESO") << std::endl;
+	::printmap(_method.content);
 	return (EXIT_SUCCESS);
 }

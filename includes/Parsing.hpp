@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/20 16:59:18 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/23 15:58:12 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,14 @@
 /*                            CLASS                                           */
 /******************************************************************************/
 
+template<typename M>
+void	printmap(const M& map)
+{
+	typename M::const_iterator i;
+	for (i = map.begin(); i != map.end(); ++i)
+		std::cout << "Key: " << i->first << "Value: " << i->second << std::endl;
+}
+
 //agregar atributo que indique si es de tipo RN o solo ON(only line)
 typedef struct s_request
 {
@@ -58,6 +66,7 @@ class Parsing
 		std::list<std::string> _methods;
 		std::string	_read;
 		t_request	_method;
+		size_t		_findNewline;
 	public:
 		Parsing(void);
 		~Parsing(void);
@@ -74,8 +83,7 @@ class Parsing
 	bool isMethods(const std::string& keyword) const;
 	bool isVersion(const std::string& version) const;
 	bool checkMethod(const std::string& strRead);
-	bool parsingHeader(char *strRead) const;
-	size_t	countSpace(const std::string& line);
+	bool parsingHeader(const std::string& strRead);
 	/*
 	 * Exception Classes
 	*/
