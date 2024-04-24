@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/24 10:54:47 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/24 10:55:47 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ std::string getValue(const V& str)
 }
 
 template<typename S, typename N, typename C>
-bool checkSapce(const S& str, const N num, const C valid)
+bool checkSpace(const S& str, const N num, const C valid)
 {
 	int space = 0;
 	for(size_t i = 0; i < str.size(); i++)
