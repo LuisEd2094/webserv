@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/23 18:38:58 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/24 09:12:29 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ std::string Parsing::readSocket(int fd)
 		buffRead[bytes] = '\0';
 		_read += buffRead;
 	}
-	// std::cout << _read << std::endl;
 	return (_read);
 }
 
@@ -113,12 +112,7 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 {
 	if (checkMethod(strRead))
 		return (EXIT_FAILURE);
-	// _method.content.insert(std::pair<std::string,std::string>("QUESO", "quesito"));
-	// _method.content.insert(std::pair<std::string,std::string>("FOO", "lol"));
-	// _method.content.insert(std::pair<std::string,std::string>("FIU", "yyyy"));
-	// ::printMap(_method.content);
-	size_t start = _findNewline;
-	size_t end = 0;
+	size_t start = _findNewline, end = 0;
 	while (true)
 	{
 		start += (_read[start] == '\n' ? 1 : 0);
@@ -127,10 +121,16 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		if ((_read[start]) == '\0' or start == std::string::npos)
 			break;
 		std::string tmp(_read.begin() + start , _read.begin() + end);
-		/*el template getKey si encuentra algo fuera del formato retorna un str ERROR*/
 		if (tmp[0] != '\0')
-			_method.content.insert(std::pair<std::string,std::string>(::getKey(tmp), ::getValue(tmp)));
-		// std::cout << tmp << std::endl;
+		{
+			std::string key = ::getKey(tmp), value = ::getValue(tmp);
+			if (key == "ERROR" or value == "ERROR")
+			{
+				std::cout << "Error: format key or value" << std::endl;
+				return (EXIT_FAILURE);
+			}
+			_method.content.insert(std::pair<std::string,std::string>(key, value));
+		}
 		start = end;
 	}
 	::printMap(_method.content);

@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/23 18:42:33 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/24 09:09:13 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ void	printMap(const M& map)
 template<typename K>
 std::string	getKey(const K& str)
 {
+	if (!str[0] or str[0] == ':')
+		return ("ERROR");
 	bool flag = false;
 	size_t i;
 	for (i = 0; str[i] and str[i] != ':'; i++)
@@ -67,28 +69,24 @@ std::string	getKey(const K& str)
 template<typename V>
 std::string getValue(const V& str)
 {
-    size_t i = 0, j = str.size();
-
+    size_t i = str.find(':') + 1, j = str.size();
+	size_t space_i = 0, space_j = 0;
     while (i < j && str[i] == ' ')
-        i++;
+	{
+		space_i++;
+		i++;
+	}
     while (j > i && str[j - 1] == ' ')
-        j--;
-    size_t space_i = 0, space_j = 0;
-    for (size_t k = 0; k < i; k++)
 	{
-        if (str[k] == ' ') {
-            space_i++;
-        }
-    }
-    for (size_t k = str.size() - 1; k >= j; k--)
-	{
-        if (str[k] == ' ') {
-            space_j++;
-        }
-    }
+		space_j++;
+		j--;
+	}
     if (space_i > 2 or space_j > 2)
         return ("ERROR");
-    return (std::string(str.begin() + i, str.begin() + j));
+	std::string res(str.begin() + i, str.begin() + j);
+	if (!res[0])
+		return ("ERROR");
+    return (res);
 }
 
 //agregar atributo que indique si es de tipo RN o solo ON(only line)
