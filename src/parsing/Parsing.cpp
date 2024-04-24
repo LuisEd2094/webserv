@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/24 11:18:13 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/24 11:59:28 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,13 +116,13 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		start += (_read[start] == '\n' ? 1 : 0);
 		std::string tmpEnd = &_read[start]; 
 		end = start + tmpEnd.find('\n');
-		if ((_read[start]) == '\0' or start == std::string::npos)
+		if ((_read[start]) == '\0' or tmpEnd.find('\n') == std::string::npos)
 			break;
 		std::string tmp(_read.begin() + start , _read.begin() + end);
 		if (tmp[0] != '\0')
 		{
 			std::string key = ::getKey(tmp), value = ::getValue(tmp);
-			std::cout << "key: " << key << std::endl;
+			// std::cout << "key: " << key << std::endl;
 			if (key == "ERROR" or value == "ERROR" or ::checkSpace(value, 2, ' '))
 			{
 				std::cout << "Error: format key or value" << std::endl;
