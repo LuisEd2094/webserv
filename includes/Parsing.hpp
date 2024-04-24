@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/24 09:09:13 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/24 10:54:47 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,20 @@ std::string getValue(const V& str)
 	if (!res[0])
 		return ("ERROR");
     return (res);
+}
+
+template<typename S, typename N, typename C>
+bool checkSapce(const S& str, const N num, const C valid)
+{
+	int space = 0;
+	for(size_t i = 0; i < str.size(); i++)
+	{
+		space += (str[i] == valid ? 1 : 0);
+		if (space > num)
+			return (EXIT_FAILURE);
+		(str[i] != valid ? space = 0 : space);
+	}
+	return (EXIT_SUCCESS);
 }
 
 //agregar atributo que indique si es de tipo RN o solo ON(only line)

@@ -6,14 +6,11 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/24 09:12:29 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/24 10:38:16 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Parsing.hpp"
-
-/* hacer  primero la clase no instanciable despues inicializar los constructores
-en privado y rellenar la clase */
 
 Parsing::Parsing( void )
 {
@@ -124,7 +121,7 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		if (tmp[0] != '\0')
 		{
 			std::string key = ::getKey(tmp), value = ::getValue(tmp);
-			if (key == "ERROR" or value == "ERROR")
+			if (key == "ERROR" or value == "ERROR" or ::checkSapce(value, 2, ' '))
 			{
 				std::cout << "Error: format key or value" << std::endl;
 				return (EXIT_FAILURE);

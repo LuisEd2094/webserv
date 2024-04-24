@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/21 16:25:38 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/24 09:17:33 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 	
 int  main(void)
 {
-	int fd = open("test.txt", O_RDONLY);
+	int fd = open("testHttp/defaultOK.txt", O_RDONLY);
 	Parsing http;
 	http.parsingHeader(http.readSocket(fd));
 	close(fd);
