@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/25 12:49:08 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/25 14:48:09 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,12 @@ void	printMap(const M& map)
 }
 
 template<typename K>
-std::string	getKey(const K& str)
+std::string	getKey(const K& str, char separator)
 {
-	if (!str[0] or str[0] == ':')
+	if (!str[0] or str[0] == separator)
 		return ("ERROR");
 	size_t i;
-	for (i = 0; str[i] and str[i] != ':'; i++)
+	for (i = 0; str[i] and str[i] != separator; i++)
 	{
 		if (str[i] == ' ')
 			return ("ERROR");

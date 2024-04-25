@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/25 13:00:09 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/25 14:48:17 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ bool Parsing::checkMethod(const std::string& strRead)
 		if (!::isblank(strRead[i]) and word != 3)
 		{
 			(word == 0 ? _method.method += strRead[i] : _method.method);
-			(word == 1 ? _method.requested += strRead[i] : _method.method);
-			(word == 2 ? _method.version += strRead[i] : _method.method);
+			(word == 1 ? _method.requested += strRead[i] : _method.requested);
+			(word == 2 ? _method.version += strRead[i] : _method.version);
 		}
 		else
 		{
@@ -116,7 +116,7 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		std::string tmp(_read.begin() + start , _read.begin() + end);
 		if (tmp[0] != '\0')
 		{
-			std::string key = ::getKey(tmp), value = ::getValue(tmp, ':');
+			std::string key = ::getKey(tmp, ':'), value = ::getValue(tmp, ':');
 			if (key == "ERROR" or value == "ERROR" or ::checkSpace(value, 2))
 			{
 				std::cout << "Error: format key or value" << std::endl;
