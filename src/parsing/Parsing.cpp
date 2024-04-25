@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/24 11:59:28 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/25 13:00:09 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,6 @@ std::string Parsing::readSocket(int fd)
 	return (_read);
 }
 
-bool Parsing::isSpace(const char c) const
-{
-	return (c == 32 or (c >= 9 and c <= 13));
-}
-
 bool Parsing::isEmptyLine(const std::string& line) const
 {
 	return (!line[0] or (line[0] == '\r' and line[1] == '\n')
@@ -71,11 +66,12 @@ bool Parsing::checkMethod(const std::string& strRead)
 	size_t	space = 0;
 	size_t	tmp = 0;
 
+	//\r \n --- \r\n --- \n
 	_findNewline = strRead.find('\n');
 	for (size_t i = 0; i < _findNewline; i++)
 	{
 		tmp = word;
-		if (!isSpace(strRead[i]) and word != 3)
+		if (!::isblank(strRead[i]) and word != 3)
 		{
 			(word == 0 ? _method.method += strRead[i] : _method.method);
 			(word == 1 ? _method.requested += strRead[i] : _method.method);
@@ -83,9 +79,9 @@ bool Parsing::checkMethod(const std::string& strRead)
 		}
 		else
 		{
-			word += (isSpace(strRead[i]) and (strRead[i + 1]
-				and !isSpace(strRead[i + 1])) ? 1 : 0);
-			space += (isSpace(strRead[i]) ? 1 : 0);
+			word += (::isblank(strRead[i]) and (strRead[i + 1]
+				and !::isblank(strRead[i + 1])) ? 1 : 0);
+			space += (::isblank(strRead[i]) ? 1 : 0);
 			if (space > 2)
 			{
 				std::cout << "Error: format space" << std::endl;
@@ -112,7 +108,6 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 	size_t start = _findNewline, end = 0;
 	while (true)
 	{
-		// std::cout << "holi" << std::endl;
 		start += (_read[start] == '\n' ? 1 : 0);
 		std::string tmpEnd = &_read[start]; 
 		end = start + tmpEnd.find('\n');
@@ -121,9 +116,8 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		std::string tmp(_read.begin() + start , _read.begin() + end);
 		if (tmp[0] != '\0')
 		{
-			std::string key = ::getKey(tmp), value = ::getValue(tmp);
-			// std::cout << "key: " << key << std::endl;
-			if (key == "ERROR" or value == "ERROR" or ::checkSpace(value, 2, ' '))
+			std::string key = ::getKey(tmp), value = ::getValue(tmp, ':');
+			if (key == "ERROR" or value == "ERROR" or ::checkSpace(value, 2))
 			{
 				std::cout << "Error: format key or value" << std::endl;
 				return (EXIT_FAILURE);

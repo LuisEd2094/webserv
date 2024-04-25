@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/24 10:55:47 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:49:08 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,51 +54,50 @@ std::string	getKey(const K& str)
 {
 	if (!str[0] or str[0] == ':')
 		return ("ERROR");
-	bool flag = false;
 	size_t i;
 	for (i = 0; str[i] and str[i] != ':'; i++)
 	{
 		if (str[i] == ' ')
-			flag = true;
+			return ("ERROR");
 	}
-	if (flag)
-		return ("ERROR");
 	return (std::string(str.begin(), (str.begin() + i)));
 }
 
 template<typename V>
-std::string getValue(const V& str)
+std::string getValue(const V& str, char separator)
 {
-    size_t i = str.find(':') + 1, j = str.size();
+    size_t i = str.find(separator) + 1, j = str.size();
 	size_t space_i = 0, space_j = 0;
-    while (i < j && str[i] == ' ')
+    while (i < j and str[i] and ::isblank(str[i]))
 	{
 		space_i++;
+		if (space_i > 2)
+			return ("ERROR");
 		i++;
 	}
-    while (j > i && str[j - 1] == ' ')
+    while (j > i and str[j - 1] and ::isblank(str[j - 1]))
 	{
 		space_j++;
+		if (space_j > 2)
+			return ("ERROR");
 		j--;
 	}
-    if (space_i > 2 or space_j > 2)
-        return ("ERROR");
 	std::string res(str.begin() + i, str.begin() + j);
 	if (!res[0])
 		return ("ERROR");
     return (res);
 }
 
-template<typename S, typename N, typename C>
-bool checkSpace(const S& str, const N num, const C valid)
+template<typename S, typename N>
+bool checkSpace(const S& str, const N num)
 {
 	int space = 0;
 	for(size_t i = 0; i < str.size(); i++)
 	{
-		space += (str[i] == valid ? 1 : 0);
+		space += (::isblank(str[i]) ? 1 : 0);
 		if (space > num)
 			return (EXIT_FAILURE);
-		(str[i] != valid ? space = 0 : space);
+		space = (!::isblank(str[i])) ? 0 : space;
 	}
 	return (EXIT_SUCCESS);
 }
@@ -133,7 +132,6 @@ class Parsing
 	*/
 	//utils
 	std::string readSocket(int fd);
-	bool isSpace(const char c) const;
 	bool isEmptyLine(const std::string& line) const;
 	bool isMethods(const std::string& keyword) const;
 	bool isVersion(const std::string& version) const;
