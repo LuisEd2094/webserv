@@ -13,6 +13,8 @@
 #include <Overseer.hpp>
 #include <vector>
 #include <netinet/in.h>
+#include <signal.h>
+
 
 /*
     Classes for when we need to validate data before setting or getting. 
@@ -31,6 +33,7 @@ int main()
     confi.hints.ai_flags = AI_PASSIVE;
     confi.port = "80";
     confi.backlog = 200;
+    signal(SIGPIPE, SIG_IGN);
     Overseer overseer;
     // Read from file, create server, save server to overseer;
     try
