@@ -19,9 +19,7 @@ class Overseer
         void    saveServer(t_confi* confi);
         Client* createClient(Server * server);
 
-        void    clientSend(Client *client);
-        void    clientSend(Client *client, const std::string & http);
-        void    clientRecv(Client *client);
+        void    handleClientAction(Client * client, int action);
         void    mainLoop();
 
     private:

@@ -66,22 +66,11 @@ void Overseer::saveServer(t_confi* confi)
     _servers[server->getSocket()] = server;
     addToPfds(server->getSocket(), POLLIN);
 }
-void Overseer::clientSend(Client *client)
+
+
+void Overseer::handleClientAction(Client *client, int action)
 {
-    client->sendBatch();
-}
-
-
-void Overseer::clientSend(Client *client, const std::string & http)
-{
-
-    client->firstSendData(http);
-
-}
-
-void Overseer::clientRecv(Client *client)
-{
-    int status = client->recvData();
+    int status = client->clientAction(action);
         
     if (status == 0 || status == -1)
     {
@@ -89,7 +78,8 @@ void Overseer::clientRecv(Client *client)
             std::cout << client->getSocket() << " closed connection" << std::endl;
         else
             std::cerr << "client: " << static_cast<std::string>(strerror(errno)) << std::endl;
-        removeFromPFDS();
+        removeFromPFDS(); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
+        _clients.erase(client->getSocket());
         delete client;
     }
 }
@@ -118,10 +108,7 @@ void printHostName()
 void Overseer::mainLoop()
 {
     int poll_connection;
-
-
     printHostName(); //REMOVE , IT USES INVALID FUNTIONS
-
     while(1) 
     {
         //std::cout << "Poll count " << _fd_count << std::endl;
@@ -133,7 +120,6 @@ void Overseer::mainLoop()
         // Run through the existing connections looking for data to read
         for(_i = 0; _i < _fd_count; _i++) 
         {
-            
             // Check if someone's ready to read
             if (_pfds[_i].revents & POLLIN) 
             { // We got one!!
@@ -149,39 +135,31 @@ void Overseer::mainLoop()
                     catch(const std::exception& e)
                     {
                         std::cerr << e.what() << '\n';
+                        continue;
                     }
-                    clientRecv(newClient);
-                    std::string http = "HTTP/1.1 200 OK\r\n"
-                        "Content-Type: text/plain\r\n"
-                        "Content-Length: 13\r\n"
-                        "\r\n"
-                        "Hello, world!\r\n\0";
-
-                    clientSend(newClient, http);
+                    handleClientAction(newClient, POLLIN); 
                 } 
                 else 
                 {
                     std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
                     if (it != _clients.end())
                     {
-                        clientRecv(it->second);
+                        handleClientAction(it->second, POLLIN);
                     }
 
-                    //regular client
-
-                } // END handle data from client
+                }
             }
             else if (_pfds[_i].revents & POLLOUT)
             {
                 std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
                 if (it != _clients.end())
                 {
-                    clientSend(it->second);
+                    handleClientAction(it->second, POLLOUT);
                 }
 
-            } // END got ready-to-read from poll()
-        } // END looping through file descriptors
-    } // END for(;;)--and you thought it would never end!
+            } 
+        } 
+    }
     
     return ;
 }
