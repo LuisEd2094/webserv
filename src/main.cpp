@@ -9,14 +9,9 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <sys/poll.h>
-
-
 #include <Server.hpp>
 #include <Overseer.hpp>
-
 #include <vector>
-
-
 #include <netinet/in.h>
 
 /*
@@ -35,7 +30,7 @@ int main()
     confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
     confi.hints.ai_flags = AI_PASSIVE;
     confi.port = "80";
-    confi.backlog = 10;
+    confi.backlog = 200;
     Overseer overseer;
     // Read from file, create server, save server to overseer;
     try
@@ -59,7 +54,5 @@ int main()
         std::cerr << e.what() << '\n';
     }
     
-    //freeaddrinfo(confi.servinfo);
-    std::cout << "hello \n";
     return 0;
 }

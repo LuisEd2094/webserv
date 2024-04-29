@@ -33,7 +33,7 @@ Server::Server(t_confi* confi) :
 Server::~Server()
 {
     close(_socket);
-    std::memset((this), 0, sizeof(this));
+    std::memset((this), 0, sizeof(*this));
 }
 
 void Server::initSocket()

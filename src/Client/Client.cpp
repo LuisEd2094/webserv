@@ -122,14 +122,18 @@ bool    Client::hasPending()
 }
 
 
-//MSG_NOSIGNAL NO PIPE
+#include <sys/types.h>
+#include <sys/socket.h>
+
+//MSG_NOSIGNAL NO PIPE  FOR LINUX 
+/// SO_NOSIGPIPE FOR MAC
 void Client::sendBatch()
 {
     const char *msg_to_send = _msg_pending.c_str();
 
 
     std::size_t result;
-    if ((result = send(_fd, msg_to_send + _bytes_sent, SEND_SIZE, MSG_NOSIGNAL)) == -1)
+    if ((result = send(_fd, msg_to_send + _bytes_sent, SEND_SIZE, SO_NOSIGPIPE)) == -1)
         std::cerr << "send: " + static_cast<std::string>(strerror(errno)) << std::endl;
     else if (result + _bytes_sent != std::strlen(msg_to_send))
     {
@@ -147,7 +151,7 @@ void Client::firstSendData(const std::string& http)
 {
     const char *msg_to_send = http.c_str();
     std::size_t result;
-    if ((result = send(_fd, msg_to_send, SEND_SIZE, MSG_NOSIGNAL) )== -1)
+    if ((result = send(_fd, msg_to_send, SEND_SIZE, SO_NOSIGPIPE) )== -1)
         std::cerr << "send: " + static_cast<std::string>(strerror(errno)) << std::endl;
     if (result != std::strlen(msg_to_send))
     {
