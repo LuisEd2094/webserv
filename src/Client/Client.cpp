@@ -59,6 +59,8 @@ void Client::readFromFD()
     _result = recv(_fd, _in_message, sizeof(_in_message), 0);
     if (_result >= 0)
         _in_http.append(_in_message, std::strlen(_in_message));
+
+    std::cout << _in_http << std::endl;
 }
 
 int Client::clientAction( int action )
@@ -201,29 +203,20 @@ int Client::executeGetAction()
     }
     if (_has_msg_pending)
     {
-        std::size_t _result;
-        if ((_result = send(_fd, _msg_to_send + _bytes_sent, SEND_SIZE, 0) )== -1)
+        if ((_result = send(_fd, _msg_to_send + _bytes_sent, SEND_SIZE, 0) ) == -1)
             return (-1);
-        if (_result + _bytes_sent != std::strlen(_msg_to_send))
+        if (_result == 0)
+            return (0);
+        if (_result + _bytes_sent >= std::strlen(_msg_to_send))
         {
-            _bytes_sent += _result;
+            return (0);
         }
         else
         {
-            _has_msg_pending = false;
-            return (0);
-
+            _bytes_sent += _result;
         }
     }
-
-
-
-
-
-
-
-
-    return (1);
+    return (_result);
 }
 
 //private:

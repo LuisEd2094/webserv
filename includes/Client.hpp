@@ -11,8 +11,8 @@
 
 
 
-# define SEND_SIZE 5
-# define RECV_SIZE 20
+# define SEND_SIZE 1024
+# define RECV_SIZE 1024
 
 enum Actions {
     WAIT,

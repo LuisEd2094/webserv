@@ -33,7 +33,7 @@ class Overseer
         Overseer(const Overseer& rhs);
         Overseer& operator= (const Overseer& rhs);
 
-        void addToPfds(int new_fd, int flags);
+        void addToPfds(int new_fd, int events, int revents);
         void removeFromPFDS();
 
 

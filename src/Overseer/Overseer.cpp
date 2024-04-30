@@ -47,13 +47,13 @@ void Overseer::removeFromPFDS()
 }
 
 
-void Overseer::addToPfds(int new_fd, int flags)
+void Overseer::addToPfds(int new_fd, int events, int revents)
 {
     if (_fd_count != MAX_FDS )
     {
         _pfds[_fd_count].fd = new_fd;
-        _pfds[_fd_count].events = flags;
-        _pfds[_fd_count].revents = 0;
+        _pfds[_fd_count].events = events;
+        _pfds[_fd_count].revents = revents;
         _fd_count++;
     }
 }
@@ -64,7 +64,7 @@ void Overseer::saveServer(t_confi* confi)
 
     Server *server = new Server(confi);
     _servers[server->getSocket()] = server;
-    addToPfds(server->getSocket(), POLLIN);
+    addToPfds(server->getSocket(), POLLIN, 0);
 }
 
 
@@ -89,7 +89,7 @@ Client* Overseer::createClient(Server* server)
 {
     Client* client = new Client(server);
     _clients[client->getSocket()] = client;
-    addToPfds(client->getSocket(), POLLIN | POLLOUT);
+    addToPfds(client->getSocket(), POLLIN | POLLOUT, POLLIN); //Creates Client with POLLIN active for revents, so that it can check the client on the same POLL loop
     return (client);
 }
 
@@ -137,7 +137,7 @@ void Overseer::mainLoop()
                         std::cerr << e.what() << '\n';
                         continue;
                     }
-                    handleClientAction(newClient, POLLIN); 
+                    //handleClientAction(newClient, POLLIN); 
                 } 
                 else 
                 {
