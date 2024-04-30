@@ -199,11 +199,17 @@ int Client::executeGetAction()
             "\r\n"
             "Hello, world!\r\n\0";
         _msg_to_send = _msg_pending.c_str();
+        _msg_pending_len = std::strlen(_msg_to_send);
         _has_msg_pending = true;
     }
     if (_has_msg_pending)
     {
-        if ((_result = send(_fd, _msg_to_send + _bytes_sent, SEND_SIZE, 0) ) == -1)
+        int chunck_size;
+        if ((_msg_pending_len - _bytes_sent) > SEND_SIZE)
+            chunck_size = SEND_SIZE;
+        else
+            chunck_size = _msg_pending_len - _bytes_sent;
+        if ((_result = send(_fd, _msg_to_send + _bytes_sent, chunck_size, 0) ) == -1)
             return (-1);
         if (_result == 0)
             return (0);

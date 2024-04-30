@@ -11,8 +11,8 @@
 
 
 
-# define SEND_SIZE 1024
-# define RECV_SIZE 1024
+# define SEND_SIZE 5
+# define RECV_SIZE 5
 
 enum Actions {
     WAIT,
@@ -53,6 +53,7 @@ class Client
         int                     _fd;
         bool                    _has_msg_pending;
         std::string             _msg_pending;
+        std::size_t             _msg_pending_len;
         std::size_t             _bytes_sent;
 
         Actions                 _action;
