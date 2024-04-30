@@ -57,13 +57,18 @@ void Client::testingParse()
 void Client::readFromFD()
 {
     _result = recv(_fd, _in_message, sizeof(_in_message), 0);
-    _in_http.append(_in_message, std::strlen(_in_message));
+    if (_result >= 0)
+        _in_http.append(_in_message, std::strlen(_in_message));
 }
 
 int Client::clientAction( int action )
 {
     if (action & POLLIN)
+    {
         readFromFD();
+        if (_result < 0)
+            return (-1);
+    }
     switch (_action)
     {
         case WAIT:
@@ -197,8 +202,8 @@ int Client::executeGetAction()
     if (_has_msg_pending)
     {
         std::size_t _result;
-        if ((_result = send(_fd, _msg_to_send + _bytes_sent, SEND_SIZE, SO_NOSIGPIPE) )== -1)
-            std::cerr << "send: " + static_cast<std::string>(strerror(errno)) << std::endl;
+        if ((_result = send(_fd, _msg_to_send + _bytes_sent, SEND_SIZE, 0) )== -1)
+            return (-1);
         if (_result + _bytes_sent != std::strlen(_msg_to_send))
         {
             _bytes_sent += _result;
