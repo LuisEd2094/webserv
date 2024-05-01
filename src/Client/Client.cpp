@@ -29,38 +29,69 @@ Client::Client(Server *server)
     }
     _action = WAIT;
     _has_msg_pending = false;
+    _found_http = false;
     _bytes_sent = 0;
 }
 
-
-void Client::testingParse()
+void Client::parseForHttp()
 {
-    std::size_t i = 0;
-    for (; i < _result ; ++i)
+    std::size_t found = _in_http.find("\r\n\r\n");
+
+    if (found != std::string::npos)
     {
-        if (_in_message[i] == '\n') // found end of first line
+        if(_action == POST)
         {
-            if (_in_http.find("GET") != std::string::npos)
-                _action = GET;
-            else if (_in_http.find("POST") != std::string::npos)
-                _action = POST;
-            else if (_in_http.find("DELETE") != std::string::npos)
-                _action = DELETE;
-            else
-                return; //RETURN ERROR?
-            break;
+            std::size_t content_length_start = _in_http.find("Content-Length: ");
+            std::size_t content_length_end = _in_http.find("\r\n", content_length_start);
+            std::string content_length_str = _in_http.substr(content_length_start + std::strlen("Content-Length: "), content_length_end  - (content_length_start + std::strlen("Content-Length: ")));
+            _content_length = std::atoi(content_length_str.c_str());
         }
+        _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
+
+        _found_http = true;
+        std::cout;
     }
 }
 
+void Client::getMethodAction()
+{
+    std::string actions[] = { "GET", "POST", "DELETE" };
+
+    for (size_t i = 0; i < sizeof(actions) / sizeof(actions[0]); ++i) 
+    {
+        std::size_t found = _in_http.find(actions[i]);
+        
+        if (found != std::string::npos && found == 0)
+        {
+            if (actions[i] == "GET")
+                _action = GET;
+            else if (actions[i] == "POST")
+                _action = POST;
+            else if (actions[i] == "DELETE")
+                _action = DELETE;
+        }
+
+    }
+}
 
 void Client::readFromFD()
 {
     _result = recv(_fd, _in_message, sizeof(_in_message), 0);
-    if (_result >= 0)
-        _in_http.append(_in_message, std::strlen(_in_message));
 
-    std::cout << _in_http << std::endl;
+    if (_result > 0)
+    {
+        if (!_found_http)
+        {
+            _in_http.append((const char *)_in_message);
+            getMethodAction();
+            parseForHttp();
+        }
+        else if (_action == POST)
+        {
+            _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
+        }
+
+    }
 }
 
 int Client::clientAction( int action )
@@ -73,20 +104,14 @@ int Client::clientAction( int action )
     }
     switch (_action)
     {
-        case WAIT:
-            //EXAMPLE FOR GET
-            //SHOULD DO CLIENT RECV AND THEN CHECK WHAT ACTION IT HAS TO TAKE
-
-            // this->executeGetAction -> should parse Header.
-            // this->parseData() --> parseData should set _actions to get post delete
-            // this->clientAction() so that it executes the correct order
-
-            testingParse();
+        case WAIT: //This is in case we dont get the full verb in the first read
+            return (1);
         case GET:
             return executeGetAction();
             break;
 
         case POST:
+            return executePostAction();
             break;
 
         case DELETE:
@@ -111,72 +136,25 @@ Client::~Client()
 
 int Client::executePostAction()
 {
-        // std::size_t result = recv(_fd, _in_message, sizeof(_in_message), 0);
-    // if (result == -1)
-    //     std::cerr << "recv: " + static_cast<std::string>(strerror(errno)) << std::endl;
-    // else
-    // {
-    //     _in_http.append((char *)_in_message, result);
+    if (_found_http && _in_body.size() >= _content_length) // check _found_http just in case we got the first line but not the full http.
+    {
+        std::ofstream outfile("output_file.jpeg", std::ios::binary);
+        if (outfile.is_open())
+        {
+            outfile.write(_in_body.data(), _in_body.size());
+            outfile.close();
+            std::cout << "Binary data written to file.\n";
+            _action = GET;
+            return executeGetAction();
+        }
+        else
+        {
+            std::cerr << "Error opening file for writing.\n";
+            return (-1);
+        }
 
-    //     std::size_t end_http = _in_http.find("\r\n\r\n"); // Ubuntu Curl sends this at the end of http
-    //     if (end_http != std::string::npos)
-    //     {
-    //         std::cout << "HTTP HEADER:\n" << _in_http.substr(0, end_http + 4) << std::endl;
-    //         std::size_t content_length_start = _in_http.find("Content-Length: ");
-    //         if (content_length_start != std::string::npos)
-    //         {
-    //             content_length_start += std::strlen("Content-Length: ");
-    //             std::size_t content_length_end = _in_http.find("\r\n", content_length_start);
-    //             if (content_length_end != std::string::npos)
-    //             {
-    //                 std::string content_length_str = _in_http.substr(content_length_start, content_length_end - content_length_start);
-    //                 int content_length = std::atoi(content_length_str.c_str()); // check values
-    //                 if (_in_http.size() >= end_http + 4 + content_length) // 4 for "\r\n\r\n"
-    //                 {
-    //                    commenting to keep track. If no boundary found, no http extra, direct transfer
-    //                      std::size_t boundary_start = _in_http.find("boundary=");
-    //                     boundary_start += std::strlen("boundary=");
-    //                     std::size_t boundary_end = _in_http.find("\r\n", boundary_start);
-
-    //                     std::string boundary_str = _in_http.substr(boundary_start, boundary_end - boundary_start + 2);
-
-    //                     std::cout << "FOUND BOUNDARY:" << boundary_str;
-
-    //                     std::size_t other = std::strlen("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpeg\"");
-    //                     other += std::strlen("Content-Type: image/jpeg");
-    //                     other = 0;
-
-    //                     std::string binary_data = _in_http.substr( other + end_http + 4 , content_length);
-    //                     std::cout << binary_data << std::endl;
-    //                     std::ofstream outfile("output_file.jpeg", std::ios::binary);
-    //                     if (outfile.is_open())
-    //                     {
-    //                         outfile.write(binary_data.c_str(), binary_data.size());
-    //                         outfile.close();
-    //                         std::cout << "Binary data written to file.\n";
-    //                     }
-    //                     else
-    //                     {
-    //                         std::cerr << "Error opening file for writing.\n";
-    //                     }
-    //                                     Clear the _in_http buffer and append any remaining data
-    //                     _in_http.clear();
-    //                     if (_in_http.size() > end_http + 4 + content_length)
-    //                     {
-    //                         _in_http.append(_in_message + end_http + 4 + content_length, _in_http.size() - (end_http + 4 + content_length));
-    //                     }
-    //                 }
-
-
-    //             }
-
-
-    //         }
-
-    //     }
-
-    // }
-    return (0);
+    }
+    return (1);
 }
 
 int Client::executeGetAction()
@@ -204,11 +182,7 @@ int Client::executeGetAction()
     }
     if (_has_msg_pending)
     {
-        int chunck_size;
-        if ((_msg_pending_len - _bytes_sent) > SEND_SIZE)
-            chunck_size = SEND_SIZE;
-        else
-            chunck_size = _msg_pending_len - _bytes_sent;
+        int chunck_size = (_msg_pending_len - _bytes_sent) > SEND_SIZE ? SEND_SIZE : _msg_pending_len - _bytes_sent;
         if ((_result = send(_fd, _msg_to_send + _bytes_sent, chunck_size, 0) ) == -1)
             return (-1);
         if (_result == 0)

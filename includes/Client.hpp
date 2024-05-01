@@ -7,12 +7,11 @@
 # include <vector>
 # include <fstream>
 # include <poll.h>
+# include <algorithm>
 
 
-
-
-# define SEND_SIZE 5
-# define RECV_SIZE 5
+# define SEND_SIZE 8000
+# define RECV_SIZE 8000
 
 enum Actions {
     WAIT,
@@ -35,33 +34,41 @@ class Client
 
 
     private:
+        int                     _fd;
+        Actions                 _action;
 
-        //PLACER HOLDER UNTIL WE ADD THE PARSER
-        void                    testingParse();
-
-
-        void                    readFromFD();
         std::size_t             _result;
 
-        const char *            _msg_to_send;
 
-
-
-
-        int                     executeGetAction();
-        int                     executePostAction();
-        int                     _fd;
         bool                    _has_msg_pending;
         std::string             _msg_pending;
         std::size_t             _msg_pending_len;
         std::size_t             _bytes_sent;
 
-        Actions                 _action;
         char                    _in_message[RECV_SIZE];
-        std::size_t             _in_size;
+        const char *            _msg_to_send;
+
+        bool                    _found_http;
         std::string             _in_http;
-        std::vector<void *>     _in_body;
-        std::string             _out_msg;
+        std::vector<char>       _in_body;
+        std::size_t             _content_length;
+
+        //PLACER HOLDER UNTIL WE ADD THE PARSER
+        void                    getMethodAction();
+        void                    parseForHttp();
+
+
+
+
+
+
+        void                    readFromFD();
+        int                     executeGetAction();
+        int                     executePostAction();
+
+
+
+
         struct sockaddr_storage _remoteaddr; 
         socklen_t               _addrlen;
         Server *                _server;
