@@ -108,11 +108,13 @@ void printHostName()
 void Overseer::mainLoop()
 {
     int poll_connection;
+    int found;
     printHostName(); //REMOVE , IT USES INVALID FUNTIONS
     while(1) 
     {
         //std::cout << "Poll count " << _fd_count << std::endl;
         poll_connection = poll(_pfds, _fd_count, -1);
+        found = 0;
         if (poll_connection == -1) 
         {
             throw Overseer::pollException("poll: " + static_cast<std::string>(strerror(errno)));
@@ -148,6 +150,7 @@ void Overseer::mainLoop()
                     }
 
                 }
+                found++;
             }
             else if (_pfds[_i].revents & POLLOUT)
             {
@@ -156,8 +159,10 @@ void Overseer::mainLoop()
                 {
                     handleClientAction(it->second, POLLOUT);
                 }
-
-            } 
+                found++;
+            }
+            if (found == poll_connection)
+                break;
         } 
     }
     
