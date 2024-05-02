@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/Parsing.hpp"
+#include <Parsing.hpp>
 
 Parsing::Parsing( void )
 {
@@ -67,8 +67,8 @@ bool Parsing::checkMethod(const std::string& strRead)
 	size_t	tmp = 0;
 
 	//\r \n --- \r\n --- \n
-	_findNewline = strRead.find('\n');
-	for (size_t i = 0; i < _findNewline; i++)
+	_findNewline = strRead.find("\r\n");
+	for (size_t i = 0; i < _findNewline && _findNewline != std::string::npos; i++)
 	{
 		tmp = word;
 		if (!::isblank(strRead[i]) and word != 3)
@@ -100,6 +100,13 @@ bool Parsing::checkMethod(const std::string& strRead)
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
 	return (EXIT_SUCCESS);
 }
+
+
+const std::string& Parsing::getMethod(void)
+{
+	return _method.method;
+}
+
 
 bool	Parsing::parsingHeader(const std::string& strRead)
 {

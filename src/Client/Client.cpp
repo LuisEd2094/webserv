@@ -49,29 +49,19 @@ void Client::parseForHttp()
         _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
 
         _found_http = true;
-        std::cout;
     }
 }
 
 void Client::getMethodAction()
 {
-    std::string actions[] = { "GET", "POST", "DELETE" };
-
-    for (size_t i = 0; i < sizeof(actions) / sizeof(actions[0]); ++i) 
-    {
-        std::size_t found = _in_http.find(actions[i]);
-        
-        if (found != std::string::npos && found == 0)
-        {
-            if (actions[i] == "GET")
-                _action = GET;
-            else if (actions[i] == "POST")
-                _action = POST;
-            else if (actions[i] == "DELETE")
-                _action = DELETE;
-        }
-
-    }
+    const std::string & method = _parser_http.getMethod();
+      
+    if (method == "GET")
+        _action = GET;
+    else if (method == "POST")
+        _action = POST;
+    else if (method == "DELETE")
+        _action = DELETE;
 }
 
 void Client::readFromFD()
@@ -83,6 +73,7 @@ void Client::readFromFD()
         if (!_found_http)
         {
             _in_http.append((const char *)_in_message);
+            _parser_http.checkMethod(_in_http);
             getMethodAction();
             parseForHttp();
         }

@@ -8,6 +8,7 @@
 # include <fstream>
 # include <poll.h>
 # include <algorithm>
+# include <Parsing.hpp>
 
 
 # define SEND_SIZE 8000
@@ -34,6 +35,7 @@ class Client
 
 
     private:
+        Parsing                 _parser_http;
         int                     _fd;
         Actions                 _action;
 

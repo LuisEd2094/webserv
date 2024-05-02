@@ -62,7 +62,7 @@ void Overseer::addToPfds(int new_fd, int events, int revents)
 void Overseer::saveServer(t_confi* confi)
 {
 
-    Server *server = new Server(confi);
+    Server * server = new Server(confi);
     _servers[server->getSocket()] = server;
     addToPfds(server->getSocket(), POLLIN, 0);
 }
