@@ -73,8 +73,12 @@ void Client::readFromFD()
         if (!_found_http)
         {
             _in_http.append((const char *)_in_message);
-            _parser_http.checkMethod(_in_http);
-            getMethodAction();
+            if (_action == WAIT)
+            {
+                _parser_http.checkMethod(_in_http);
+                getMethodAction();
+            }
+            _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
             parseForHttp();
         }
         else if (_action == POST)

@@ -110,17 +110,17 @@ const std::string& Parsing::getMethod(void)
 
 bool	Parsing::parsingHeader(const std::string& strRead)
 {
-	if (checkMethod(strRead))
-		return (EXIT_FAILURE);
 	size_t start = _findNewline, end = 0;
 	while (true)
 	{
-		start += (_read[start] == '\n' ? 1 : 0);
-		std::string tmpEnd = &_read[start]; 
-		end = start + tmpEnd.find('\n');
-		if ((_read[start]) == '\0' or tmpEnd.find('\n') == std::string::npos)
+		start += 2;
+		std::string tmpEnd = &strRead[start]; 
+		std::size_t endPos = tmpEnd.find("\r\n");
+		if ( endPos  == std::string::npos)
 			break;
-		std::string tmp(_read.begin() + start , _read.begin() + end);
+		end = start + endPos;
+
+		std::string tmp(strRead.begin() + start , strRead.begin() + end);
 		if (tmp[0] != '\0')
 		{
 			std::string key = ::getKey(tmp, ':'), value = ::getValue(tmp, ':');
@@ -132,6 +132,7 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 			_method.content.insert(std::pair<std::string,std::string>(key, value));
 		}
 		start = end;
+		_findNewline = start;
 	}
 	::printMap(_method.content);
 	return (EXIT_SUCCESS);
