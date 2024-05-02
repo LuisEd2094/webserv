@@ -10,27 +10,36 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/Parsing.hpp"
+#include <fstream>
+#include "../../includes/ConfigParse.hpp"
+#include <iostream>
 
-	// DIR *directory = opendir("./");
-	// struct dirent *foo = readdir(directory);
-	// while(foo != NULL)
-	// {
-	// 	std::cout << foo->d_name << std::endl;
-	// 	foo = readdir(directory);
-	// }
+int fileConfig(void)
+{
+	std::fstream	file("config_file.conf"); //TODO
+	std::string		fileStr;										  
+	std::string		tmp;
+
+	if (!file.is_open())
+	{
+		std::cout << "no toy" << std::endl;
+		return (1);
+	}
+	while (!file.eof())
+	{
+		 file >> tmp;
+		 fileStr += tmp;
+	}
+	std::cout << "**" << fileStr << "**" <<std::endl;
+	ConfigParse 	parser(fileStr);
+	parser.parse();
+
+	return 0;
+	
+}
 	
 int  main(void)
 {
-	// int fd = open("testHttp/hola.txt", O_RDONLY);
-	int fd = open("testHttp/defaultOK.txt", O_RDONLY);
-	if (fd == -1)
-	{
-		std::cout << "Error: open file" << std::endl;
-		return (EXIT_FAILURE);
-	}
-	Parsing http;
-	http.parsingHeader(http.readSocket(fd));
-	close(fd);
-	return ( EXIT_SUCCESS );
+	fileConfig();
+	return (0);
 }
