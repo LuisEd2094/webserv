@@ -25,13 +25,15 @@ int fileConfig(void)
 		std::cout << "no toy" << std::endl;
 		return (1);
 	}
-	while (!file.eof())
+	while (true)
 	{
-		 file >> tmp;
-		 fileStr += tmp + " ";
+		file >> tmp;
+		if (file.eof())
+			break;
+		fileStr += tmp + " ";
 	}
 	std::cout << "**" << fileStr << "**" <<std::endl;
-	ConfigParse 	parser(fileStr);
+	ConfigParse 	parser("server{ location / {} cgi holii {} } }");
 	parser.parse();
 
 	return 0;
