@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/25 14:48:09 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/03 16:05:08 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,11 @@ class Parsing
 	bool isVersion(const std::string& version) const;
 	bool checkMethod(const std::string& strRead);
 	bool parsingHeader(const std::string& strRead);
+	std::string getMapValue(const std::string& key);
+
+
+	//getMapValue
+
 	/*
 	 * Exception Classes
 	*/

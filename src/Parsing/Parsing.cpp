@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/25 14:48:17 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/03 16:07:59 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,10 +116,12 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		start += 2;
 		std::string tmpEnd = &strRead[start]; 
 		std::size_t endPos = tmpEnd.find("\r\n");
-		if ( endPos  == std::string::npos)
+		short emptyLine = 0;
+		if (this->isEmptyLine(tmpEnd))
+			emptyLine++;
+		if ( endPos  == std::string::npos or emptyLine == 2)
 			break;
 		end = start + endPos;
-
 		std::string tmp(strRead.begin() + start , strRead.begin() + end);
 		if (tmp[0] != '\0')
 		{
@@ -136,4 +138,12 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 	}
 	::printMap(_method.content);
 	return (EXIT_SUCCESS);
+}
+
+std::string Parsing::getMapValue(const std::string& key)
+{
+	std::map<std::string, std::string>::iterator it = this->_method.content.find(key);
+	if (it == this->_method.content.end())
+		return ("not found");
+	return (it->second);
 }
