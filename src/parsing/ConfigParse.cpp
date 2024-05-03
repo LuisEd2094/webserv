@@ -4,17 +4,24 @@
 
 # include <iostream>
 
-std::list<char> ConfigParse::endStatementChars = std::list<char>(';', '{');
+std::list<char> ConfigParse::endStatementChars = std::list<char>({';', '{', '}'});
 
-std::string::iterator ConfigParse::endOfStatement()
+bool ConfigParse::isEndOfStatement(char target)
+{
+	std::list<char>::iterator firstEndStatement = ConfigParse::endStatementChars.begin();
+	std::list<char>::iterator lastEndStatement = ConfigParse::endStatementChars.end();
+	return std::find(firstEndStatement,lastEndStatement, target) != lastEndStatement;
+
+}
+std::string::iterator ConfigParse::findEndOfStatement()
 {
 	std::string::iterator end;
 	end = this->statementBegin;
-	std::list<char>::iterator firstEndStatement = ConfigParse::endStatementChars.begin();
-	std::list<char>::iterator lastEndStatement = ConfigParse::endStatementChars.end();
-	while (end != this->eof && std::find(firstEndStatement,lastEndStatement, *end) == lastEndStatement)
+	end++;
+	//std::cout << !ConfigParse::isEndOfStatement(*end) << std::endl;
+	while (end != this->eof && !ConfigParse::isEndOfStatement(*end))
 	{
-		std::cout << *end << " " << std::endl;
+		std::cout << *end << " end" << std::endl;
 		end++;
 	}
 	return (end); 
@@ -26,28 +33,28 @@ void ConfigParse::newNestedElement(void)
 	std::string::iterator endParam;
 	std::string param1;
 	std::string param2;
-	std::cout << "sdaf" << std::endl;
 	
-	std::cout << "value eof: " << (*this->eof == 0) << "*" << std::endl;
-	while (*endParam != *this->eof && std::isspace(*beginParam))
-		beginParam++;
-	endParam = beginParam;
-	std::cout << "fasad " << *endParam << std::endl;
-	while (*endParam != '\0' && !std::isspace(*endParam))
+	while (beginParam != this->eof && std::isspace(*beginParam) && !ConfigParse::isEndOfStatement(*beginParam))
 	{
-		std::cout << "toto " << *endParam << std::endl;
-		//exit(1);
+		std::cout << "beginParam " << *beginParam << std::endl;
+		beginParam++;
+	}
+	std::cout << "beginParam " << *beginParam << std::endl;
+	endParam = beginParam;
+	while (endParam != this->eof && !std::isspace(*endParam) && !ConfigParse::isEndOfStatement(*endParam))
+	{
+		std::cout << "endParam " << *endParam << std::endl;
 		endParam++;
 	}
+	std::cout << "endParam " << *endParam << std::endl;
+//	std::cout << "endParam " << *endParam << std::endl;
 	param1 = std::string(beginParam, endParam);
 	
-	std::cout << "kokou" << std::endl;
 	beginParam = endParam;
-	while (*endParam != *this->eof && std::isspace(*beginParam))
+	while (*beginParam != *this->eof && std::isspace(*beginParam) && !ConfigParse::isEndOfStatement(*beginParam))
 		beginParam++;
 	endParam = beginParam;
-	std::cout << "yok" << std::endl;
-	while (*endParam != *this->eof && !std::isspace(*endParam))
+	while (endParam != this->eof && !std::isspace(*endParam) && !ConfigParse::isEndOfStatement(*endParam))
 		endParam++;
 	param2 = std::string(beginParam, endParam);
 
@@ -68,7 +75,7 @@ void ConfigParse::newNestedElement(void)
 	}
 	else
 	{
-		std::cout << "user is stupid" << std::endl;
+		std::cout << "user is stupid: " << param1 << std::endl;
 	}
 }
 
@@ -76,20 +83,44 @@ void ConfigParse::parse()
 {
 	std::string				statementStr;
 	this->statementBegin = this->fileContent.begin();
+	std::cout << "content: " << this->fileContent << std::endl;
 	while(this->statementBegin != this->eof)
 	{
-		this->statementEnd = this->endOfStatement();
-		std::cout << *this->statementEnd  << std::endl;
+		if (statementBegin == this->eof)
+			return ;
+		this->statementEnd = this->findEndOfStatement();
+		if (statementEnd == this->eof)
+			return ;
+		std::cout << "   begin: " <<*this->statementBegin << std::endl;
+		std::cout << "   end: " <<*this->statementEnd << std::endl;
+		std::cout << std::endl;
+		if (*statementBegin == '}')
+		{
+			this->statementBegin++;
+			std::cout << "--- --- --- --- --- " << std::endl;
+			continue; //TODO this will be a return ;
+		}
+		if (*statementEnd == '}')
+		{
+			this->statementBegin = statementEnd;
+			this->statementBegin++;
+			std::cout << "--- --- --- --- --- " << std::endl;
+			continue; //TODO this will be a return ;
+		}
+		std::cout << "statement end" << *this->statementEnd  << std::endl;
 		if (this->statementEnd == this->eof || *this->statementEnd == ';')
 		{
+			std::cout << "not nested: " << *this->statementEnd  << std::endl;
 			statementStr = std::string(this->statementBegin, this->statementEnd);
 		}
 		else if (*this->statementEnd == '{')
 		{
-			std::cout << *this->statementEnd  << std::endl;
+			std::cout << "nested: " << *this->statementEnd  << std::endl;
 			this->newNestedElement();
 		}
 		this->statementBegin = this->statementEnd;
+		std::cout << "- - - - - - - - - - " << std::endl;
+		if (statementEnd != this->eof)
+			this->statementBegin++;
 	}
-	
 }

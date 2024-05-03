@@ -13,16 +13,18 @@ class ConfigParse : std::map<std::string, std::string>
 				this->eof = fileContent.end();
 
 		};
-	//	virtual ~ConfigParse();
 
-	//	virtual ConfigParse &operator=(ConfigParse &orig) = 0;
 		std::string _getFileContent() const { return fileContent; };
 
 		void parse();
-		std::string::iterator findEndOfStatement();
-		std::string::iterator endOfStatement();
-		void	newNestedElement(void);
+		std::string::iterator		findEndOfStatement();
+		std::string::iterator		endOfStatement();
+		void						newNestedElement(void);
+		static bool					isEndOfStatement(char target);
 
+		//virtual ~ConfigParse();
+		//virtual ConfigParse &operator=(ConfigParse &orig) = 0;
+		
 	protected:
 		std::string fileContent;
 		std::string::iterator	statementBegin;

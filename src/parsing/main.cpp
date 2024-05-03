@@ -28,7 +28,7 @@ int fileConfig(void)
 	while (!file.eof())
 	{
 		 file >> tmp;
-		 fileStr += tmp;
+		 fileStr += tmp + " ";
 	}
 	std::cout << "**" << fileStr << "**" <<std::endl;
 	ConfigParse 	parser(fileStr);
