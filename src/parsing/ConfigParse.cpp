@@ -4,8 +4,6 @@
 
 # include <iostream>
 
-// std::list<char> ConfigParse::endStatementChars = std::list<char>((';', '{'), '}');
-// const std::list<char> ConfigParse::endStatementChars = {';', '{', '}'};
 std::list<char> ConfigParse::endStatementChars = std::list<char>();
 
 std::string dumbGenString(std::string::iterator begin)
@@ -20,7 +18,17 @@ std::string dumbGenString(std::string::iterator begin)
 	return result;
 }
 
+std::string dumbGenString(std::string::iterator begin, std::string::iterator end)
+{
+	std::string result("");
 
+	while(begin != end)
+	{
+		result += *begin;
+		begin++;
+	}
+	return result;
+}
 
 bool ConfigParse::isEndOfStatement(char target)
 {
@@ -34,16 +42,9 @@ std::string::iterator ConfigParse::findEndOfStatement()
 {
 	std::string::iterator end;
 	end = this->statementBegin;
-	//std::cout  << "fkkkkk " << (*this->eof == *end) << std::endl;
-	//std::cout << "find end remainder: " <<  dumbGenString(end) << std::endl;
-	//std::cout << (*end  == '\0') << " " << (end  == this->eof) << "end is end" << std::endl;
 	end++;
-	//std::cout << !ConfigParse::isEndOfStatement(*end) << std::endl;
 	while (end != this->eof && !ConfigParse::isEndOfStatement(*end))
 	{
-		//std::cout << *end << " endd "  << *this->eof << std::endl;
-		//std::cout << (*end  == '\0') << " " << (end  == this->eof) << "end is end" << std::endl;
-		//std::cout << "find end remainder: " <<  dumbGenString(end) << std::endl;
 		end++;
 	}
 	return (end); 
@@ -55,41 +56,37 @@ void ConfigParse::newNestedElement(void)
 	std::string::iterator endParam;
 	std::string param1;
 	std::string param2;
+
+	std::cout << " ::: NEW nested element :::" << std::endl;
 	
-	// while (beginParam != this->eof && std::isspace(*beginParam) && !ConfigParse::isEndOfStatement(*beginParam))
 	while (beginParam != this->eof && std::isspace(*beginParam) && beginParam != this->statementEnd)
 	{
-		//std::cout << "beginParam " << *beginParam << std::endl;
 		beginParam++;
 	}
-	//std::cout << "beginParam " << *beginParam << std::endl;
 	endParam = beginParam;
-	// while (endParam != this->eof && !std::isspace(*endParam) && !ConfigParse::isEndOfStatement(*endParam))
 	while (endParam != this->eof && !std::isspace(*endParam) && endParam != this->statementEnd)
 	{
-		//std::cout << "endParam " << *endParam << std::endl;
 		endParam++;
 	}
-	//std::cout << "endParam " << *endParam << std::endl;
 	param1 = std::string(beginParam, endParam);
-	// std::cout << "*this->>statementEnd" << *this->statementEnd << std::endl;
-	// std::cout << "*endParam" << *endParam << std::endl;
 
 	beginParam = endParam;
-	// while (beginParam != this->eof && std::isspace(*beginParam) && !ConfigParse::isEndOfStatement(*beginParam))
 	while (beginParam != this->eof && std::isspace(*beginParam) && beginParam != this->statementEnd)
 		beginParam++;
 	endParam = beginParam;
-	// while (endParam != this->eof && !std::isspace(*endParam) && !ConfigParse::isEndOfStatement(*endParam))
 	while (endParam != this->eof && !std::isspace(*endParam) && endParam != this->statementEnd)
+	{
+	std::cout << "*endParam" << *endParam << "****" << std::endl;
 		endParam++;
+	}
 	param2 = std::string(beginParam, endParam);
 
 	std::cout << "para1: >>"<< param1 << "<<" << std::endl;
 	std::cout << "para2: >>"<< param2 << "<<" << std::endl;
 
 	std::cout << (this->statementEnd == endParam) << std::endl;
-
+	std::cout << "*this->statementEnd" << *this->statementEnd << std::endl;
+	std::cout << "*endParam" << *endParam << "****" << std::endl;
 	if (param1 == "server")
 	{
 		std::cout << "new server" << std::endl;
@@ -108,51 +105,47 @@ void ConfigParse::newNestedElement(void)
 	}
 }
 
-// si tiene saltos de linea no lo estamos gestionando bien, y el server debe tener un espacio esta mal
 void ConfigParse::parse()
 {
 	std::string				statementStr;
 	this->statementBegin = this->fileContent.begin();
-	//std::cout << "content: " << this->fileContent << std::endl;
 	while(this->statementBegin != this->eof)
 	{
-		//if (statementBegin == this->eof)
-		//	return ;
-		//std::cout << "   REMAINDER: " << dumbGenString(this->statementBegin) << std::endl;
 		this->statementEnd = this->findEndOfStatement();
 		if (statementEnd == this->eof)
 			return ;
-		//std::cout << "   this->statementBegin: " << *this->statementBegin << std::endl;
-		//std::cout << "   this->statementEnd: " << *this->statementEnd << std::endl;
-		//std::cout << "   remainder: " << dumbGenString(this->statementBegin) << std::endl;
-		//std::cout << std::endl;
+
+		std::cout << "STATEMENT: >>" << dumbGenString(this->statementBegin, this->statementEnd) << "<< " << std::endl;
+		
+		if (*statementBegin == '{')
+		{
+			std::cout << "user is stupid" << std::endl;
+			return ;
+		}
 		if (*statementBegin == '}')
 		{
 			this->statementBegin++;
-			//std::cout << "--- --- --- --- --- " << std::endl;
+			std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
 			continue; //TODO this will be a return ;
 		}
-		if (*statementEnd == '}')
+		else if (*statementEnd == '}')
 		{
 			this->statementBegin = statementEnd;
 			this->statementBegin++;
-			//std::cout << "--- --- --- --- --- " << std::endl;
+			std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
 			continue; //TODO this will be a return ;
 		}
-		//std::cout << "statement end" << *this->statementEnd  << std::endl;
-		if (this->statementEnd == this->eof || *this->statementEnd == ';')
+		 else if (this->statementEnd == this->eof || *this->statementEnd == ';')
 		{
-			//std::cout << "not nested: " << *this->statementEnd  << std::endl;
 			statementStr = std::string(this->statementBegin, this->statementEnd);
 		}
 		else if (*this->statementEnd == '{')
 		{
-			//std::cout << "nested: " << *this->statementEnd  << std::endl;
 			this->newNestedElement();
 		}
 		this->statementBegin = this->statementEnd;
-		//std::cout << "- - - - - - - - - - " << std::endl;
 		if (statementBegin != this->eof)
 			this->statementBegin++;
+		std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
 	}
 }
