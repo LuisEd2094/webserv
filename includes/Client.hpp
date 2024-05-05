@@ -50,7 +50,6 @@ class Client
         std::vector<char>       _in_body;
         std::size_t             _content_length;
 
-        //PLACER HOLDER UNTIL WE ADD THE PARSER
         void                    getMethodAction();
         void                    parseForHttp();
 

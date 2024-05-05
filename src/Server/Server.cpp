@@ -51,6 +51,18 @@ bool Server::validateAction(const std::string& method, const std::string& url, s
     }
 }
 
+void Server::getResponse(const std::string& method, const std::string& url, std::string& message)
+{
+    //CGI?
+    // We assume we called validateAction before reaching this point.
+
+    
+
+    message.append("HTTP/1.1 200 OK\r\n"
+                    "\r\n");
+}
+
+
 
 void Server::initSocket()
 {
@@ -106,10 +118,6 @@ int Server::getSocket()
 }
 
 
-
-
-
-        
 //Private Methods
 
 Server::Server(){}      

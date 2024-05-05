@@ -11,7 +11,7 @@ print("""
 </head>
 <body>
     <h1>CGI Test Page</h1>
-    <p>This is a simple CGI test.</p>
+    <p>This is a simple CGI test.✊</p>
 </body>
 </html>
 """)

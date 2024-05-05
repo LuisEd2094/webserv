@@ -41,10 +41,11 @@ void Client::parseForHttp()
     {
         if(_action == POST)
         {
-            std::size_t content_length_start = _in_http.find("Content-Length: ");
-            std::size_t content_length_end = _in_http.find("\r\n", content_length_start);
-            std::string content_length_str = _in_http.substr(content_length_start + std::strlen("Content-Length: "), content_length_end  - (content_length_start + std::strlen("Content-Length: ")));
-            _content_length = std::atoi(content_length_str.c_str());
+            std::string content_len = _parser_http.getMapValue("Content-Length");
+            if (content_len != "not found")
+            {
+                _content_length = std::atoi(content_len.c_str());
+            }
         }
         _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
 
@@ -179,13 +180,9 @@ int Client::executeGetAction()
     //     "\r\n"
     //     "Hello, world!\r\n\0";
 
-    if (_has_msg_pending == false  && _in_http.find("\r\n\r\n") != std::string::npos)
+    if (_has_msg_pending == false )//&& _in_http.find("\r\n\r\n") != std::string::npos)
     {
-        _msg_pending = "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/plain\r\n"
-            "Content-Length: 13\r\n"
-            "\r\n"
-            "Hello, world!\r\n\0";
+        _server->getResponse(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending);
         _msg_to_send = _msg_pending.c_str();
         _msg_pending_len = std::strlen(_msg_to_send);
         _has_msg_pending = true;
