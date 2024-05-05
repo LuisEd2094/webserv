@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/03 16:07:59 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/04 15:41:30 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,8 @@ bool Parsing::checkMethod(const std::string& strRead)
 	size_t	tmp = 0;
 
 	//\r \n --- \r\n --- \n
-	_findNewline = strRead.find("\r\n");
+	// _findNewline = strRead.find("\r\n");
+	_findNewline = strRead.find('\n');
 	for (size_t i = 0; i < _findNewline && _findNewline != std::string::npos; i++)
 	{
 		tmp = word;

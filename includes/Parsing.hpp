@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/03 16:05:08 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/04 15:53:21 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,10 +132,11 @@ class Parsing
 	*/
 	//utils
 	std::string readSocket(int fd);
-	const std::string& getMethod(void);
+	short typeLine(const std::string& line);
 	bool isEmptyLine(const std::string& line) const;
 	bool isMethods(const std::string& keyword) const;
 	bool isVersion(const std::string& version) const;
+	const std::string& getMethod(void);
 	bool checkMethod(const std::string& strRead);
 	bool parsingHeader(const std::string& strRead);
 	std::string getMapValue(const std::string& key);
