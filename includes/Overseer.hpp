@@ -11,6 +11,8 @@
 
 # define  MAX_FDS 1000
 
+class CGI;
+
 class Overseer
 {
     public:
@@ -18,11 +20,15 @@ class Overseer
         ~Overseer();
         void    saveServer(t_confi* confi);
         Client* createClient(Server * server);
+        void    saveCGI(CGI * cgi);
+
 
         void    handleClientAction(Client * client, int action);
         void    mainLoop();
+        
 
     private:
+        std::map<int, CGI *> _CGIs;
         std::map<int, Server *> _servers;
         std::map<int, Client *> _clients;
 

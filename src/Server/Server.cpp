@@ -17,7 +17,8 @@ class Server::socketException: public std::exception
 
 //Public Methods
 
-Server::Server(t_confi* confi) : 
+Server::Server(t_confi* confi, Overseer * overseer) :
+    _overseer(overseer),
     _socket(confi->socket),
     _backlog(confi->backlog),
     _port(confi->port)
@@ -40,7 +41,7 @@ Server::~Server()
 bool Server::validateAction(const std::string& method, const std::string& url, std::string& message)
 {
     // check method and url against config.
-    if (url == "/")
+    if (url == "/" or url == "/nolen.py")
         return true;
     else
     {
@@ -51,15 +52,32 @@ bool Server::validateAction(const std::string& method, const std::string& url, s
     }
 }
 
-void Server::getResponse(const std::string& method, const std::string& url, std::string& message)
+bool Server::getResponse(const std::string& method, const std::string& url, std::string& message, const Client& client)
 {
     //CGI?
     // We assume we called validateAction before reaching this point.
-
-    
-
-    message.append("HTTP/1.1 200 OK\r\n"
+    if (url == "/")
+    {
+        message.append("HTTP/1.1 200 OK\r\n"
                     "\r\n");
+        return true;
+    }
+    else if (url == "/nolen.py")
+    {
+        try
+        {
+            CGI::createNewCGI(client, message, url, _overseer);
+            return false; // we return false since we create the CGI, which will then pass to the OVERSEER to handle. createNewCGI will not write into message at this point.
+        }
+        catch(const std::exception& e)
+        {
+            message.append("HTTP/1.1 500 Internal Server Error\r\n");
+            return true;
+        }
+        
+    }
+    return false;
+
 }
 
 

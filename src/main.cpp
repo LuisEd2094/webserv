@@ -41,6 +41,7 @@ int main()
         //overseer.file(argv[1]);
         // Should read from file or default info, internally call saveServer for each server
         // throws exception when server fails
+        std::cout << &overseer << "  overseer on creation add" << std::endl;
         overseer.saveServer(&confi);
 /*         std::memset(&(confi.hints), 0, sizeof(confi.hints));
         confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6

@@ -180,15 +180,18 @@ int Client::executeGetAction()
     //     "\r\n"
     //     "Hello, world!\r\n\0";
 
-    if (_has_msg_pending == false )//&& _in_http.find("\r\n\r\n") != std::string::npos)
+    if (_found_http && _msg_pending.empty()) //call server once we get everything from the parser.
     {
-        _server->getResponse(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending);
+        if (_server->getResponse(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending, *this));
+        {
+            _msg_to_send = _msg_pending.c_str();
+            _msg_pending_len = std::strlen(_msg_to_send);
+        }
+    }
+    if (!_msg_pending.empty()) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
+    {
         _msg_to_send = _msg_pending.c_str();
         _msg_pending_len = std::strlen(_msg_to_send);
-        _has_msg_pending = true;
-    }
-    if (_has_msg_pending)
-    {
         int chunck_size = (_msg_pending_len - _bytes_sent) > SEND_SIZE ? SEND_SIZE : _msg_pending_len - _bytes_sent;
         if ((_result = send(_fd, _msg_to_send + _bytes_sent, chunck_size, 0) ) == -1)
             return (-1);

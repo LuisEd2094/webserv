@@ -1,4 +1,6 @@
 #include <Overseer.hpp>
+# include <CGI.hpp>
+
 
 //Exceptions
 class Overseer::pollException: public std::exception
@@ -40,6 +42,13 @@ Overseer::~Overseer()
 }
 
 
+void    Overseer::saveCGI(CGI * cgi)
+{
+    _CGIs[cgi->getSocket()] = cgi;
+    addToPfds(cgi->getSocket(), POLLIN, 0);
+}
+
+
 void Overseer::removeFromPFDS()
 {
     _pfds[_i] = _pfds[_fd_count - 1];
@@ -62,7 +71,7 @@ void Overseer::addToPfds(int new_fd, int events, int revents)
 void Overseer::saveServer(t_confi* confi)
 {
 
-    Server * server = new Server(confi);
+    Server * server = new Server(confi, &*this);
     _servers[server->getSocket()] = server;
     addToPfds(server->getSocket(), POLLIN, 0);
 }
@@ -148,6 +157,12 @@ void Overseer::mainLoop()
                     {
                         handleClientAction(it->second, POLLIN);
                     }
+                    std::map<int, CGI *>::iterator it2 = _CGIs.find(_pfds[_i].fd);
+                    if (it2 != _CGIs.end())
+                    {
+                        it2->second->readPipe();
+                    }
+
 
                 }
                 found++;
@@ -155,7 +170,7 @@ void Overseer::mainLoop()
             else if (_pfds[_i].revents & POLLOUT)
             {
                 std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
-                if (it != _clients.end())
+                if (it != _clients.end() && _pfds[_i].fd == it->second->getSocket() )
                 {
                     handleClientAction(it->second, POLLOUT);
                 }
