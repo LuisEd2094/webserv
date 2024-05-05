@@ -9,17 +9,12 @@
 # include <poll.h>
 # include <algorithm>
 # include <Parsing.hpp>
+# include <Aux.hpp>
 
 
 # define SEND_SIZE 8000
 # define RECV_SIZE 8000
 
-enum Actions {
-    WAIT,
-    GET,
-    POST, 
-    DELETE
-};
 
 class Server;
 

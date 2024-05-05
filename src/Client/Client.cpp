@@ -80,6 +80,7 @@ void Client::readFromFD()
             }
             _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
             parseForHttp();
+            //std::cout << _parser_http.getMapValue("patata") << std::endl;
         }
         else if (_action == POST)
         {
