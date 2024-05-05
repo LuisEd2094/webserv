@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/25 09:56:17 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/05 17:03:36 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int fileConfig(void)
 		fileStr += tmp + " ";
 	}
 	std::cout << "**" << fileStr << "**" <<std::endl;
-	ConfigParse 	parser("server{ location / {} cgi holii {} } }");
+	ConfigParse 	parser(fileStr);
 	parser.parse();
 
 	return 0;

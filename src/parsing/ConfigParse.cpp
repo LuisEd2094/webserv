@@ -4,7 +4,9 @@
 
 # include <iostream>
 
-std::list<char> ConfigParse::endStatementChars = std::list<char>({';', '{', '}'});
+// std::list<char> ConfigParse::endStatementChars = std::list<char>((';', '{'), '}');
+// const std::list<char> ConfigParse::endStatementChars = {';', '{', '}'};
+std::list<char> ConfigParse::endStatementChars = std::list<char>();
 
 std::string dumbGenString(std::string::iterator begin)
 {
@@ -54,35 +56,39 @@ void ConfigParse::newNestedElement(void)
 	std::string param1;
 	std::string param2;
 	
-	//while (beginParam != this->eof && std::isspace(*beginParam) && !ConfigParse::isEndOfStatement(*beginParam))
-	while (beginParam != this->eof && std::isspace(*beginParam) && beginParam != this->endParam)
+	// while (beginParam != this->eof && std::isspace(*beginParam) && !ConfigParse::isEndOfStatement(*beginParam))
+	while (beginParam != this->eof && std::isspace(*beginParam) && beginParam != this->statementEnd)
 	{
 		//std::cout << "beginParam " << *beginParam << std::endl;
 		beginParam++;
 	}
 	//std::cout << "beginParam " << *beginParam << std::endl;
 	endParam = beginParam;
-	//while (endParam != this->eof && !std::isspace(*endParam) && !ConfigParse::isEndOfStatement(*endParam))
-	while (endParam != this->eof && !std::isspace(*endParam) && beginParam != this->endParam)
+	// while (endParam != this->eof && !std::isspace(*endParam) && !ConfigParse::isEndOfStatement(*endParam))
+	while (endParam != this->eof && !std::isspace(*endParam) && endParam != this->statementEnd)
 	{
 		//std::cout << "endParam " << *endParam << std::endl;
 		endParam++;
 	}
 	//std::cout << "endParam " << *endParam << std::endl;
 	param1 = std::string(beginParam, endParam);
-	
+	// std::cout << "*this->>statementEnd" << *this->statementEnd << std::endl;
+	// std::cout << "*endParam" << *endParam << std::endl;
+
 	beginParam = endParam;
-	//while (beginParam != this->eof && std::isspace(*beginParam) && !ConfigParse::isEndOfStatement(*beginParam))
-	while (beginParam != this->eof && std::isspace(*beginParam) && beginParam != this->endParabeginParam != this->endParam
+	// while (beginParam != this->eof && std::isspace(*beginParam) && !ConfigParse::isEndOfStatement(*beginParam))
+	while (beginParam != this->eof && std::isspace(*beginParam) && beginParam != this->statementEnd)
 		beginParam++;
 	endParam = beginParam;
-	//while (endParam != this->eof && !std::isspace(*endParam) && !ConfigParse::isEndOfStatement(*endParam))
-	while (endParam != this->eof && !std::isspace(*endParam) && beginParam != this->statementEnd)
+	// while (endParam != this->eof && !std::isspace(*endParam) && !ConfigParse::isEndOfStatement(*endParam))
+	while (endParam != this->eof && !std::isspace(*endParam) && endParam != this->statementEnd)
 		endParam++;
 	param2 = std::string(beginParam, endParam);
 
-	//std::cout << "para1: >>"<< param1 << "<<" << std::endl;
-	//std::cout << "para2: >>"<< param2 << "<<" << std::endl;
+	std::cout << "para1: >>"<< param1 << "<<" << std::endl;
+	std::cout << "para2: >>"<< param2 << "<<" << std::endl;
+
+	std::cout << (this->statementEnd == endParam) << std::endl;
 
 	if (param1 == "server")
 	{
@@ -102,6 +108,7 @@ void ConfigParse::newNestedElement(void)
 	}
 }
 
+// si tiene saltos de linea no lo estamos gestionando bien, y el server debe tener un espacio esta mal
 void ConfigParse::parse()
 {
 	std::string				statementStr;

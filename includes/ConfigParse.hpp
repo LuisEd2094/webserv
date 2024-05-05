@@ -12,6 +12,9 @@ class ConfigParse : std::map<std::string, std::string>
 				this->fileContent = std::string(fileContent);	
 				this->statementBegin = this->fileContent.begin();
 				this->eof = this->fileContent.end();
+				this->endStatementChars.push_back(';');
+				this->endStatementChars.push_back('{');
+				this->endStatementChars.push_back('}');
 		};
 
 		std::string _getFileContent() const { return fileContent; };
@@ -45,8 +48,9 @@ class ConfigParse : std::map<std::string, std::string>
 	private:
 		//ConfigParse(ConfigParse &orig){};
 		ConfigParse(){};
-//		static const char endStatementChars[];
+		// static const char endStatementChars[];
 		static std::list<char> endStatementChars;
+		
 };
 
 #endif
