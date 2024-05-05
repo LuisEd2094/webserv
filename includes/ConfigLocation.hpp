@@ -1,0 +1,3 @@
+# ifndef  CONFIG_LOCATION_HPP
+# define CONFIG_LOCATION_HPP
+#endif

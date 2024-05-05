@@ -3,8 +3,8 @@
 # include <map>
 # include <list>
 # include <string>
-# include <exception>
 
+class ConfigServer;
 class ConfigParse : std::map<std::string, std::string>
 {
 	public: 
@@ -46,11 +46,11 @@ class ConfigParse : std::map<std::string, std::string>
 		std::string::iterator	statementEnd;
 
 	private:
-		//ConfigParse(ConfigParse &orig){};
 		ConfigParse(){};
-		// static const char endStatementChars[];
+		std::list<ConfigServer> nestedChildren;
 		static std::list<char> endStatementChars;
 		
 };
 
+# include "ConfigServer.hpp"
 #endif
