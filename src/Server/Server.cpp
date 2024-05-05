@@ -36,6 +36,22 @@ Server::~Server()
     std::memset((this), 0, sizeof(*this));
 }
 
+
+bool Server::validateAction(const std::string& method, const std::string& url, std::string& message)
+{
+    // check method and url against config.
+    if (url == "/")
+        return true;
+    else
+    {
+        message.append("HTTP/1.1 404 Not Found\r\n"
+                        "Content-Length: 0\r\n"
+                        "\r\n\r\n");
+        return (false);
+    }
+}
+
+
 void Server::initSocket()
 {
     int status;

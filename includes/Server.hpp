@@ -20,6 +20,8 @@ class Server
 
         //Getters
         int getSocket();
+
+        bool validateAction(const std::string&, const std::string&, std::string&);
     private:
         int                 _socket;
         int                 _backlog;

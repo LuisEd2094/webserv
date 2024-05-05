@@ -107,6 +107,11 @@ const std::string& Parsing::getMethod(void)
 	return _method.method;
 }
 
+const std::string& Parsing::getRequested(void)
+{
+	return _method.requested;
+}
+
 
 bool	Parsing::parsingHeader(const std::string& strRead)
 {

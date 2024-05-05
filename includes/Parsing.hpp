@@ -133,6 +133,8 @@ class Parsing
 	//utils
 	std::string readSocket(int fd);
 	const std::string& getMethod(void);
+	const std::string& getRequested(void);
+
 	bool isEmptyLine(const std::string& line) const;
 	bool isMethods(const std::string& keyword) const;
 	bool isVersion(const std::string& version) const;

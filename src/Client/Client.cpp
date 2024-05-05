@@ -75,11 +75,25 @@ void Client::readFromFD()
             _in_http.append((const char *)_in_message);
             if (_action == WAIT)
             {
-                _parser_http.checkMethod(_in_http);
-                getMethodAction();
+                if (_parser_http.checkMethod(_in_http));
+                {
+                    if (!_server->validateAction(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending))
+                    {
+                        _action = GET;
+                        _has_msg_pending = true;
+                        _msg_to_send = _msg_pending.c_str();
+                        _msg_pending_len = std::strlen(_msg_to_send);
+                        return;
+                    }
+                    getMethodAction();
+                }
             }
-            _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
-            parseForHttp();
+            if (_action != WAIT) 
+            {
+                _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
+                parseForHttp();
+            }
+
             //std::cout << _parser_http.getMapValue("patata") << std::endl;
         }
         else if (_action == POST)
