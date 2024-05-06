@@ -24,8 +24,13 @@ class Client
         Client(Server *server);
         ~Client();
         int     clientAction(int action);
+
+        // setters
+        void    setMessage(const std::string &message);
         //getters
         int getSocket();
+        const std::string& getURL();
+
         class clientException;
 
 
@@ -50,7 +55,7 @@ class Client
         std::vector<char>       _in_body;
         std::size_t             _content_length;
 
-        void                    getMethodAction();
+        void                    updateMethodAction();
         void                    parseForHttp();
 
 

@@ -21,8 +21,8 @@ class Server
         //Getters
         int getSocket();
 
-        bool validateAction(const std::string& method, const std::string& url, std::string& message);
-        bool getResponse(const std::string& method, const std::string& url, std::string& message, const Client& client);
+        bool validateAction(Client& client);
+        bool getResponse(Client& client);
     private:
         int                 _socket;
         int                 _backlog;

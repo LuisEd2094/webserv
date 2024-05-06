@@ -17,7 +17,7 @@ class CGI::CGIException : public std::exception
 };
 
 
-void CGI::createNewCGI(const Client& client, std::string& message, const std::string& url)
+void CGI::createNewCGI(Client& client, std::string& message, const std::string& url)
 {
     CGI *new_cgi = new CGI(client, message, url);
     Overseer::saveCGI(new_cgi);
@@ -45,14 +45,15 @@ int CGI::readPipe()
 
     std::cout << buffer ;
     std::cout << std::endl;
-    _client_message.append(buff);
+    _client.setMessage(buffer);
+    //_client_message.append(buff);
     std::cout << std::endl;
 
 
 }
 
 
-CGI::CGI(const Client& client, std::string& message, const std::string& url) : _client(client), _client_message(message)
+CGI::CGI(Client& client, std::string& message, const std::string& url) : _client(client), _client_message(message)
 {
     if (pipe(_pipe))
     {

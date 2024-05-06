@@ -1,4 +1,5 @@
 #include <Server.hpp>
+#include <Client.hpp>
 
 //Exceptions
 
@@ -37,44 +38,46 @@ Server::~Server()
 }
 
 
-bool Server::validateAction(const std::string& method, const std::string& url, std::string& message)
+bool Server::validateAction(Client& client)
 {
     // check method and url against config.
+    const std::string url = client.getURL();
     if (url == "/" or url == "/nolen.py")
         return true;
     else
     {
-        message.append("HTTP/1.1 404 Not Found\r\n"
+        client.setMessage("HTTP/1.1 404 Not Found\r\n"
                         "Content-Length: 0\r\n"
                         "\r\n\r\n");
         return (false);
     }
 }
 
-bool Server::getResponse(const std::string& method, const std::string& url, std::string& message, const Client& client)
+bool Server::getResponse(Client& client)
 {
     //CGI?
     // We assume we called validateAction before reaching this point.
+    const std::string & url = client.getURL();
     if (url == "/")
     {
-        message.append("HTTP/1.1 200 OK\r\n"
+        client.setMessage("HTTP/1.1 200 OK\r\n"
                     "\r\n");
         return true;
     }
-    else if (url == "/nolen.py")
-    {
-        try
-        {
-            CGI::createNewCGI(client, message, url);
-            return false; // we return false since we create the CGI, which will then pass to the OVERSEER to handle. createNewCGI will not write into message at this point.
-        }
-        catch(const std::exception& e)
-        {
-            message.append("HTTP/1.1 500 Internal Server Error\r\n");
-            return true;
-        }
+    // else if (url == "/nolen.py")
+    // {
+    //     try
+    //     {
+    //         CGI::createNewCGI(client, message, url);
+    //         return false; // we return false since we create the CGI, which will then pass to the OVERSEER to handle. createNewCGI will not write into message at this point.
+    //     }
+    //     catch(const std::exception& e)
+    //     {
+    //         message.append("HTTP/1.1 500 Internal Server Error\r\n");
+    //         return true;
+    //     }
         
-    }
+    // }
     return false;
 
 }

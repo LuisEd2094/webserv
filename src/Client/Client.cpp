@@ -33,6 +33,10 @@ Client::Client(Server *server)
     _bytes_sent = 0;
 }
 
+
+
+
+
 void Client::parseForHttp()
 {
     std::size_t found = _in_http.find("\r\n\r\n");
@@ -53,7 +57,7 @@ void Client::parseForHttp()
     }
 }
 
-void Client::getMethodAction()
+void Client::updateMethodAction()
 {
     const std::string & method = _parser_http.getMethod();
       
@@ -78,15 +82,12 @@ void Client::readFromFD()
             {
                 if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
                 {
-                    if (!_server->validateAction(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending))
+                    if (!_server->validateAction(*this))
                     {
                         _action = GET;
-                        _has_msg_pending = true;
-                        _msg_to_send = _msg_pending.c_str();
-                        _msg_pending_len = std::strlen(_msg_to_send);
                         return;
                     }
-                    getMethodAction();
+                    updateMethodAction();
                 }
             }
             if (_action != WAIT) 
@@ -133,10 +134,7 @@ int Client::clientAction( int action )
 }
 
 
-int Client::getSocket()
-{
-    return _fd;
-}
+//getters
 
 
 Client::~Client() 
@@ -182,16 +180,10 @@ int Client::executeGetAction()
 
     if (_found_http && _msg_pending.empty()) //call server once we get everything from the parser.
     {
-        if (_server->getResponse(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending, *this))
-        {
-            _msg_to_send = _msg_pending.c_str();
-            _msg_pending_len = std::strlen(_msg_to_send);
-        }
+        _server->getResponse(*this);
     }
     if (!_msg_pending.empty()) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
     {
-        _msg_to_send = _msg_pending.c_str();
-        _msg_pending_len = std::strlen(_msg_to_send);
         int chunck_size = (_msg_pending_len - _bytes_sent) > SEND_SIZE ? SEND_SIZE : _msg_pending_len - _bytes_sent;
         if ((_result = send(_fd, _msg_to_send + _bytes_sent, chunck_size, 0) ) == -1)
             return (-1);

@@ -65,7 +65,7 @@ OVERSEER			=	Overseer.cpp
 
 OVERSEER_FILES		=	$(addprefix $(OVERSEER_PATH), $(OVERSEER))
 
-CLIENT			=	Client.cpp
+CLIENT			=	Client.cpp getters.cpp setters.cpp
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
