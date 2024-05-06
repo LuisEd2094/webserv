@@ -1,7 +1,12 @@
 #include <Overseer.hpp>
 # include <CGI.hpp>
 
-
+std::size_t Overseer::_i = 0;
+std::size_t Overseer::_fd_count = 0;
+std::map<int, CGI *> Overseer::_CGIs;
+std::map<int, Server *> Overseer::_servers;
+std::map<int, Client *> Overseer::_clients;
+struct pollfd  Overseer::_pfds[MAX_FDS];
 //Exceptions
 class Overseer::pollException: public std::exception
 {
@@ -17,15 +22,9 @@ class Overseer::pollException: public std::exception
 };
 
 //Public
-Overseer::Overseer() : _fd_count(0) 
+
+void Overseer::cleanOverseer()
 {
-    _pfds = new struct pollfd[MAX_FDS];
-}
-
-
-Overseer::~Overseer()
-{
-
     std::map<int, Server *>::iterator it = _servers.begin();
     for (; it != _servers.end(); it++)
     {
@@ -40,6 +39,16 @@ Overseer::~Overseer()
     }
     _clients.clear();
 }
+Overseer::Overseer()
+{
+}
+
+
+Overseer::~Overseer()
+{
+
+
+}
 
 
 void    Overseer::saveCGI(CGI * cgi)
@@ -51,8 +60,8 @@ void    Overseer::saveCGI(CGI * cgi)
 
 void Overseer::removeFromPFDS()
 {
-    _pfds[_i] = _pfds[_fd_count - 1];
-    _fd_count--;
+    Overseer::_pfds[Overseer::_i] = Overseer::_pfds[Overseer::_fd_count - 1];
+    Overseer::_fd_count--;
 }
 
 
@@ -71,7 +80,7 @@ void Overseer::addToPfds(int new_fd, int events, int revents)
 void Overseer::saveServer(t_confi* confi)
 {
 
-    Server * server = new Server(confi, &*this);
+    Server * server = new Server(confi);
     _servers[server->getSocket()] = server;
     addToPfds(server->getSocket(), POLLIN, 0);
 }
@@ -87,7 +96,7 @@ void Overseer::handleClientAction(Client *client, int action)
             std::cout << client->getSocket() << " closed connection" << std::endl;
         else
             std::cerr << "client: " << static_cast<std::string>(strerror(errno)) << std::endl;
-        removeFromPFDS(); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
+        Overseer::removeFromPFDS(); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
         _clients.erase(client->getSocket());
         delete client;
     }
@@ -141,7 +150,7 @@ void Overseer::mainLoop()
                     Client *newClient; 
                     try
                     {
-                        newClient = createClient(_servers[_pfds[_i].fd]);
+                        newClient = Overseer::createClient(_servers[_pfds[_i].fd]);
                     }
                     catch(const std::exception& e)
                     {
@@ -155,7 +164,7 @@ void Overseer::mainLoop()
                     std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
                     if (it != _clients.end())
                     {
-                        handleClientAction(it->second, POLLIN);
+                        Overseer::handleClientAction(it->second, POLLIN);
                     }
                     std::map<int, CGI *>::iterator it2 = _CGIs.find(_pfds[_i].fd);
                     if (it2 != _CGIs.end())
@@ -172,7 +181,7 @@ void Overseer::mainLoop()
                 std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
                 if (it != _clients.end() && _pfds[_i].fd == it->second->getSocket() )
                 {
-                    handleClientAction(it->second, POLLOUT);
+                    Overseer::handleClientAction(it->second, POLLOUT);
                 }
                 found++;
             }
@@ -185,9 +194,3 @@ void Overseer::mainLoop()
 }
 
 
-
-
-
-//Private
-Overseer::Overseer(const Overseer& rhs){*this = rhs;}
-Overseer& Overseer::operator= (const Overseer& rhs) {(void)rhs; return *this;}

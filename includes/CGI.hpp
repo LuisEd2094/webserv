@@ -7,13 +7,12 @@
 
 
 class Client;
-class Overseer;
 class CGI
 {
     public:
         CGI(const Client& client, std::string& message, const std::string& url);
         ~CGI();
-        static void createNewCGI(const Client& client, std::string& message, const std::string& url, Overseer * overseer);
+        static void createNewCGI(const Client& client, std::string& message, const std::string& url);
         static void destroyCGI(CGI *cgi);
         int getSocket();
         int readPipe();

@@ -17,8 +17,7 @@ class Server::socketException: public std::exception
 
 //Public Methods
 
-Server::Server(t_confi* confi, Overseer * overseer) :
-    _overseer(overseer),
+Server::Server(t_confi* confi) :
     _socket(confi->socket),
     _backlog(confi->backlog),
     _port(confi->port)
@@ -66,7 +65,7 @@ bool Server::getResponse(const std::string& method, const std::string& url, std:
     {
         try
         {
-            CGI::createNewCGI(client, message, url, _overseer);
+            CGI::createNewCGI(client, message, url);
             return false; // we return false since we create the CGI, which will then pass to the OVERSEER to handle. createNewCGI will not write into message at this point.
         }
         catch(const std::exception& e)

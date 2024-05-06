@@ -17,10 +17,10 @@ class CGI::CGIException : public std::exception
 };
 
 
-void CGI::createNewCGI(const Client& client, std::string& message, const std::string& url, Overseer * overseer)
+void CGI::createNewCGI(const Client& client, std::string& message, const std::string& url)
 {
     CGI *new_cgi = new CGI(client, message, url);
-    overseer->saveCGI(new_cgi);
+    Overseer::saveCGI(new_cgi);
     //exit(0);
 }
 

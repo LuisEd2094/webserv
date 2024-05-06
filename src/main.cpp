@@ -34,15 +34,13 @@ int main()
     confi.port = "80";
     confi.backlog = 200;
     signal(SIGPIPE, SIG_IGN);
-    Overseer overseer;
     // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;
     try
     {
         //overseer.file(argv[1]);
         // Should read from file or default info, internally call saveServer for each server
         // throws exception when server fails
-        std::cout << &overseer << "  overseer on creation add" << std::endl;
-        overseer.saveServer(&confi);
+        Overseer::saveServer(&confi);
 /*         std::memset(&(confi.hints), 0, sizeof(confi.hints));
         confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
         confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
@@ -51,7 +49,7 @@ int main()
         confi.backlog = 10;
         overseer.saveServer(&confi); */
 
-        overseer.mainLoop();
+        Overseer::mainLoop();
     }
     catch(const std::exception& e)
     {

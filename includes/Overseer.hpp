@@ -16,31 +16,31 @@ class CGI;
 class Overseer
 {
     public:
-        Overseer();
-        ~Overseer();
-        void    saveServer(t_confi* confi);
-        Client* createClient(Server * server);
-        void    saveCGI(CGI * cgi);
+        static void     cleanOverseer();
+
+        static  void    saveServer(t_confi* confi);
+        static  Client* createClient(Server * server);
+        static  void    saveCGI(CGI * cgi);
 
 
-        void    handleClientAction(Client * client, int action);
-        void    mainLoop();
+        static  void    handleClientAction(Client * client, int action);
+        static  void    mainLoop();
         
 
     private:
-        std::map<int, CGI *> _CGIs;
-        std::map<int, Server *> _servers;
-        std::map<int, Client *> _clients;
+        Overseer();
+        ~Overseer();
+        static  std::map<int, CGI *> _CGIs;
+        static  std::map<int, Server *> _servers;
+        static  std::map<int, Client *> _clients;
 
         //clients map
-        int                     _i;
-        int                     _fd_count;
-        struct pollfd           *_pfds;
-        Overseer(const Overseer& rhs);
-        Overseer& operator= (const Overseer& rhs);
+        static  std::size_t             _i;
+        static  std::size_t             _fd_count;
+        static  struct pollfd           _pfds[MAX_FDS];
 
-        void addToPfds(int new_fd, int events, int revents);
-        void removeFromPFDS();
+        static  void addToPfds(int new_fd, int events, int revents);
+        static  void removeFromPFDS();
 
 
         class pollException;
@@ -49,4 +49,9 @@ class Overseer
 
 };
 
+
+
+
 #endif
+
+

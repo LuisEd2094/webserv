@@ -11,12 +11,11 @@
 # include <CGI.hpp>
 
 class Client; 
-class Overseer;
 
 class Server
 {
     public:
-        Server(t_confi* confi, Overseer * overseer);
+        Server(t_confi* confi);
         ~Server();
 
         //Getters
@@ -25,7 +24,6 @@ class Server
         bool validateAction(const std::string& method, const std::string& url, std::string& message);
         bool getResponse(const std::string& method, const std::string& url, std::string& message, const Client& client);
     private:
-        Overseer*     _overseer;
         int                 _socket;
         int                 _backlog;
         std::string         _port;
