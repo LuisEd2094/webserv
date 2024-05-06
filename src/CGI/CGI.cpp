@@ -29,8 +29,8 @@ CGI::CGI(Client& client) : _client(client)
     }
     if (pid == 0)
     {
-/*         signal(SIGINT, SIG_DFL);
-        signal(SIGQUIT, SIG_DFL); */
+        signal(SIGINT, SIG_DFL);
+        signal(SIGQUIT, SIG_DFL);
         std::string cgi_path = "/Users/lsoto-do/core05/server/CGI" + client.getURL();
         char* argv[3];
         argv[0] = const_cast<char*>("/usr/bin/python3");
@@ -39,21 +39,22 @@ CGI::CGI(Client& client) : _client(client)
         //close(_pipe[0]);
         //dup2(_pipe[1], STDOUT_FILENO);
 
+
 		close(_pipe[0]);
 		dup2(_pipe[1], STDOUT_FILENO);
         close(_pipe[1]);
+
         if (execve("/usr/bin/python3", argv, NULL) == -1)
         {
             throw CGIException(strerror(errno));
         }
-        exit(-1);
+        std::exit(-1);
     }
     close(_pipe[1]);
     //exit(0);
   
 
 }
-
 
 
 CGI::~CGI()
@@ -76,17 +77,27 @@ void CGI::destroyCGI(CGI *cgi)
 int CGI::readPipe()
 {
     char buff[RECV_SIZE];
-
-    read(_pipe[0], buff, sizeof(buff));
-
     std::string buffer;
-    buffer.append(buff);
 
-    std::cout << buffer ;
-    std::cout << std::endl;
-    _client.setMessage(buffer);
+
+    while (read(_pipe[0], buff, sizeof(buff)) > 0)
+    {
+        buffer.append(buff);
+        if (buffer.find("\n\n") != std::string::npos)
+        {
+            std::cout << "found http";
+            _client.setHTTPResponse(buffer.substr(0, buffer.find("\n\n") + 2));
+            _client.setBodyResponse(buffer.substr(buffer.find("\n\n") + 2));
+
+
+        }
+
+        std::cout << buffer ;
+        std::cout << std::endl;
+    }
     //_client_message.append(buff);
     std::cout << std::endl;
+    //close(_pipe[0]);
     Overseer::removeFromPFDS();
 }
 

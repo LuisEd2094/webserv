@@ -23,13 +23,15 @@ class Client
     public:
         Client(Server *server);
         ~Client();
-        int     clientAction(int action);
+        int                 clientAction(int event);
 
         // setters
-        void    setMessage(const std::string &message);
+        void                setHTTPResponse(const std::string &message);
+        void                setBodyResponse(const std::string &message);
+
         //getters
-        int getSocket();
-        const std::string& getURL();
+        int                 getSocket();
+        const std::string&  getURL();
 
         class clientException;
 
@@ -42,13 +44,17 @@ class Client
         std::size_t             _result;
 
 
-        bool                    _has_msg_pending;
-        std::string             _msg_pending;
-        std::size_t             _msg_pending_len;
-        std::size_t             _bytes_sent;
+        std::string             _HTTP_response;
+        std::size_t             _HTTP_response_len;
+        std::size_t             _HTTP_bytes_sent;
+        const char *            _C_type_HTTP;
+
+        std::string             _out_body;
+        std::size_t             _body_response_len;
+        std::size_t             _body_bytes_sent;
+        const char *            _C_type_body;
 
         char                    _in_message[RECV_SIZE];
-        const char *            _msg_to_send;
 
         bool                    _found_http;
         std::string             _in_http;

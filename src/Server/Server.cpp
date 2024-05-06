@@ -46,7 +46,7 @@ bool Server::validateAction(Client& client)
         return true;
     else
     {
-        client.setMessage("HTTP/1.1 404 Not Found\r\n"
+        client.setHTTPResponse("HTTP/1.1 404 Not Found\r\n"
                         "Content-Length: 0\r\n"
                         "\r\n\r\n");
         return (false);
@@ -60,7 +60,7 @@ bool Server::getResponse(Client& client)
     const std::string & url = client.getURL();
     if (url == "/")
     {
-        client.setMessage("HTTP/1.1 200 OK\r\n"
+        client.setHTTPResponse("HTTP/1.1 200 OK\r\n"
                     "\r\n");
         return true;
     }
@@ -73,7 +73,7 @@ bool Server::getResponse(Client& client)
         }
         catch(const std::exception& e)
         {
-            client.setMessage("HTTP/1.1 500 Internal Server Error\r\n");
+            client.setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n");
             return true;
         }
         

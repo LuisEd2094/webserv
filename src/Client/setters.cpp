@@ -1,9 +1,16 @@
 #include <Client.hpp>
 
-void   Client::setMessage(const std::string &message)
+void   Client::setHTTPResponse(const std::string &message)
 {
-    _msg_pending.append(message);
-    _has_msg_pending = true;
-    _msg_to_send = _msg_pending.c_str();
-    _msg_pending_len = std::strlen(_msg_to_send);
+    _HTTP_response.append(message);
+    _C_type_HTTP = _HTTP_response.c_str();
+    _HTTP_response_len = std::strlen(_C_type_HTTP);
+}
+
+void Client::setBodyResponse(const std::string &message)
+{
+    _out_body.append(message);
+    _C_type_body = _out_body.c_str();
+    _body_response_len = std::strlen(_C_type_body);
+    _body_bytes_sent = 0;
 }

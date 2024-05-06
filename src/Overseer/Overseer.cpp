@@ -54,7 +54,7 @@ Overseer::~Overseer()
 void    Overseer::saveCGI(CGI * cgi)
 {
     _CGIs[cgi->getSocket()] = cgi;
-    addToPfds(cgi->getSocket(), POLLIN, 0);
+    addToPfds(cgi->getSocket(), POLLHUP, 0);
 }
 
 
@@ -86,9 +86,9 @@ void Overseer::saveServer(t_confi* confi)
 }
 
 
-void Overseer::handleClientAction(Client *client, int action)
+void Overseer::handleClientAction(Client *client, int event)
 {
-    int status = client->clientAction(action);
+    int status = client->clientAction(event);
         
     if (status == 0 || status == -1)
     {
@@ -166,16 +166,17 @@ void Overseer::mainLoop()
                     {
                         handleClientAction(it->second, POLLIN);
                     }
-                    std::map<int, CGI *>::iterator it2 = _CGIs.find(_pfds[_i].fd);
-                    if (it2 != _CGIs.end())
-                    {
-                        it2->second->readPipe();
-                    }
-
-
                 }
                 found++;
             }
+            else if (_pfds[_i].revents & POLLHUP)
+            {
+                std::map<int, CGI *>::iterator it2 = _CGIs.find(_pfds[_i].fd);
+                if (it2 != _CGIs.end())
+                {
+                    it2->second->readPipe();
+                }
+        }
             else if (_pfds[_i].revents & POLLOUT)
             {
                 std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);

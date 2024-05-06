@@ -1,6 +1,5 @@
 print("HTTP/1.1 200 OK")
-print("Content-Type: text/html")
-print("")
+print("Content-Type: text/html; charset=utf-8")
 
 # HTML content to be displayed in the browser
 print("""
@@ -15,3 +14,6 @@ print("""
 </body>
 </html>
 """)
+
+exit()
+print("fkkkkkkkkkkk")

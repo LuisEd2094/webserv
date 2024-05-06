@@ -28,9 +28,8 @@ Client::Client(Server *server)
         throw Client::clientException("accept" + static_cast<std::string>(strerror(errno)));
     }
     _action = WAIT;
-    _has_msg_pending = false;
     _found_http = false;
-    _bytes_sent = 0;
+    _HTTP_bytes_sent = 0;
 }
 
 
@@ -106,15 +105,15 @@ void Client::readFromFD()
     }
 }
 
-int Client::clientAction( int action )
+int Client::clientAction( int event )
 {
-    if (action & POLLIN)
+    if (event & POLLIN)
     {
         readFromFD();
         if (_result < 0)
             return (-1);
     }
-    if (action & POLLOUT && _msg_pending.empty())
+    if (event & POLLOUT && _HTTP_response.empty())
         return (1);
     switch (_action)
     {
@@ -157,7 +156,7 @@ int Client::executePostAction()
             std::cout << "Binary data written to file.\n";
             _action = GET;
             return executeGetAction();
-        }
+        } 
         else
         {
             std::cerr << "Error opening file for writing.\n";
@@ -180,24 +179,41 @@ int Client::executeGetAction()
     //     "\r\n"
     //     "Hello, world!\r\n\0";
 
-    if (_found_http && _msg_pending.empty()) //call server once we get everything from the parser.
+    if (_found_http && _HTTP_response.empty()) //call server once we get everything from the parser.
     {
         _server->getResponse(*this);
     }
-    if (!_msg_pending.empty()) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
+    if (!_HTTP_response.empty()) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
     {
-        int chunck_size = (_msg_pending_len - _bytes_sent) > SEND_SIZE ? SEND_SIZE : _msg_pending_len - _bytes_sent;
-        if ((_result = send(_fd, _msg_to_send + _bytes_sent, chunck_size, 0) ) == -1)
+        int chunck_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;
+        if ((_result = send(_fd, _C_type_HTTP + _HTTP_bytes_sent, chunck_size, 0) ) == -1)
             return (-1);
         if (_result == 0)
             return (0);
-        if (_result + _bytes_sent >= std::strlen(_msg_to_send))
+        if (_result + _HTTP_bytes_sent >= _HTTP_response_len && _out_body.empty())
         {
             return (0);
         }
         else
         {
-            _bytes_sent += _result;
+            _HTTP_bytes_sent += _result;
+        }
+        if (!_out_body.empty() && _HTTP_bytes_sent >= _HTTP_response_len)
+        {
+            chunck_size = (_body_response_len - _body_bytes_sent) > SEND_SIZE ? SEND_SIZE : _body_response_len - _body_bytes_sent;
+            if ((_result = send(_fd, _C_type_body + _body_bytes_sent, chunck_size, 0)) == -1)
+                return (-1);
+            if (_result == 0)
+                return (0);
+            if (_result + _body_bytes_sent >= _body_response_len)
+            {
+                return (0);
+            }
+            else
+            {
+                _body_bytes_sent += _result;
+            }
+
         }
     }
     return (_result);

@@ -24,7 +24,7 @@ class Overseer
         static  void    saveCGI(CGI * cgi);
 
 
-        static  void    handleClientAction(Client * client, int action);
+        static  void    handleClientAction(Client * client, int event);
         static  void    mainLoop();
         
 
