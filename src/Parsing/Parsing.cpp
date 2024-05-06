@@ -141,7 +141,6 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		start = end;
 		_findNewline = start;
 	}
-	::printMap(_method.content);
 	return (EXIT_SUCCESS);
 }
 

@@ -96,7 +96,7 @@ void Overseer::handleClientAction(Client *client, int action)
             std::cout << client->getSocket() << " closed connection" << std::endl;
         else
             std::cerr << "client: " << static_cast<std::string>(strerror(errno)) << std::endl;
-        Overseer::removeFromPFDS(); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
+        removeFromPFDS(); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
         _clients.erase(client->getSocket());
         delete client;
     }
@@ -150,7 +150,7 @@ void Overseer::mainLoop()
                     Client *newClient; 
                     try
                     {
-                        newClient = Overseer::createClient(_servers[_pfds[_i].fd]);
+                        newClient = createClient(_servers[_pfds[_i].fd]);
                     }
                     catch(const std::exception& e)
                     {
@@ -164,7 +164,7 @@ void Overseer::mainLoop()
                     std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
                     if (it != _clients.end())
                     {
-                        Overseer::handleClientAction(it->second, POLLIN);
+                        handleClientAction(it->second, POLLIN);
                     }
                     std::map<int, CGI *>::iterator it2 = _CGIs.find(_pfds[_i].fd);
                     if (it2 != _CGIs.end())
@@ -181,7 +181,7 @@ void Overseer::mainLoop()
                 std::map<int, Client *>::iterator it = _clients.find(_pfds[_i].fd);
                 if (it != _clients.end() && _pfds[_i].fd == it->second->getSocket() )
                 {
-                    Overseer::handleClientAction(it->second, POLLOUT);
+                    handleClientAction(it->second, POLLOUT);
                 }
                 found++;
             }
@@ -189,7 +189,6 @@ void Overseer::mainLoop()
                 break;
         } 
     }
-    
     return ;
 }
 

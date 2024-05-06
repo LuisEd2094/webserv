@@ -10,9 +10,9 @@ class Client;
 class CGI
 {
     public:
-        CGI(Client& client, std::string& message, const std::string& url);
+        CGI(Client& client);
         ~CGI();
-        static void createNewCGI(Client& client, std::string& message, const std::string& url);
+        static void createNewCGI(Client& client);
         static void destroyCGI(CGI *cgi);
         int getSocket();
         int readPipe();
@@ -22,8 +22,6 @@ class CGI
     private:
         int             _pipe[2];
         Client&         _client;
-        std::string&    _client_message;
-
 
 };
 

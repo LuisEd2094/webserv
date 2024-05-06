@@ -16,10 +16,54 @@ class CGI::CGIException : public std::exception
         }
 };
 
-
-void CGI::createNewCGI(Client& client, std::string& message, const std::string& url)
+CGI::CGI(Client& client) : _client(client)
 {
-    CGI *new_cgi = new CGI(client, message, url);
+    if (pipe(_pipe))
+    {
+        throw CGIException(strerror(errno));
+    }
+    pid_t	pid = fork();
+    if (pid == -1)
+    {
+        throw CGIException(strerror(errno));
+    }
+    if (pid == 0)
+    {
+/*         signal(SIGINT, SIG_DFL);
+        signal(SIGQUIT, SIG_DFL); */
+        std::string cgi_path = "/Users/lsoto-do/core05/server/CGI" + client.getURL();
+        char* argv[3];
+        argv[0] = const_cast<char*>("/usr/bin/python3");
+        argv[1] = const_cast<char*>(cgi_path.c_str()); // Convert const char* to char*
+        argv[2] = NULL; // Null-terminate the array
+        //close(_pipe[0]);
+        //dup2(_pipe[1], STDOUT_FILENO);
+
+		close(_pipe[0]);
+		dup2(_pipe[1], STDOUT_FILENO);
+        close(_pipe[1]);
+        if (execve("/usr/bin/python3", argv, NULL) == -1)
+        {
+            throw CGIException(strerror(errno));
+        }
+        exit(-1);
+    }
+    close(_pipe[1]);
+    //exit(0);
+  
+
+}
+
+
+
+CGI::~CGI()
+{
+
+}
+
+void CGI::createNewCGI(Client& client)
+{
+    CGI *new_cgi = new CGI(client);
     Overseer::saveCGI(new_cgi);
     //exit(0);
 }
@@ -27,11 +71,6 @@ void CGI::createNewCGI(Client& client, std::string& message, const std::string& 
 void CGI::destroyCGI(CGI *cgi)
 {
     delete cgi;
-}
-
-int CGI::getSocket()
-{
-    return _pipe[0];
 }
 
 int CGI::readPipe()
@@ -48,48 +87,6 @@ int CGI::readPipe()
     _client.setMessage(buffer);
     //_client_message.append(buff);
     std::cout << std::endl;
-
-
+    Overseer::removeFromPFDS();
 }
 
-
-CGI::CGI(Client& client, std::string& message, const std::string& url) : _client(client), _client_message(message)
-{
-    if (pipe(_pipe))
-    {
-        throw CGIException(strerror(errno));
-    }
-    pid_t	pid = fork();
-    if (pid == -1)
-    {
-        throw CGIException(strerror(errno));
-    }
-    if (pid == 0)
-    {
-/*         signal(SIGINT, SIG_DFL);
-        signal(SIGQUIT, SIG_DFL); */
-        std::string cgi_path = "/home/luis/proyects/webserv/CGI" + url;
-        char* argv[3];
-        argv[0] = const_cast<char*>("/usr/bin/python3");
-        argv[1] = const_cast<char*>(cgi_path.c_str()); // Convert const char* to char*
-        argv[2] = NULL; // Null-terminate the array
-        //close(_pipe[0]);
-        //dup2(_pipe[1], STDOUT_FILENO);
-
-		close(_pipe[0]);
-		dup2(_pipe[1], STDOUT_FILENO);
-		close(_pipe[1]);
-        if (execve("/usr/bin/python3", argv, NULL) == -1)
-        {
-            throw CGIException(strerror(errno));
-        }
-        exit(-1);
-    }
-    //exit(0);
-  
-
-}
-CGI::~CGI()
-{
-
-}

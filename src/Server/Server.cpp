@@ -64,20 +64,20 @@ bool Server::getResponse(Client& client)
                     "\r\n");
         return true;
     }
-    // else if (url == "/nolen.py")
-    // {
-    //     try
-    //     {
-    //         CGI::createNewCGI(client, message, url);
-    //         return false; // we return false since we create the CGI, which will then pass to the OVERSEER to handle. createNewCGI will not write into message at this point.
-    //     }
-    //     catch(const std::exception& e)
-    //     {
-    //         message.append("HTTP/1.1 500 Internal Server Error\r\n");
-    //         return true;
-    //     }
+    else if (url == "/nolen.py")
+    {
+        try
+        {
+            CGI::createNewCGI(client);
+            return false; // we return false since we create the CGI, which will then pass to the OVERSEER to handle. createNewCGI will not write into message at this point.
+        }
+        catch(const std::exception& e)
+        {
+            client.setMessage("HTTP/1.1 500 Internal Server Error\r\n");
+            return true;
+        }
         
-    // }
+    }
     return false;
 
 }

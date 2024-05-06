@@ -114,6 +114,8 @@ int Client::clientAction( int action )
         if (_result < 0)
             return (-1);
     }
+    if (action & POLLOUT && _msg_pending.empty())
+        return (1);
     switch (_action)
     {
         case WAIT: //This is in case we dont get the full verb in the first read

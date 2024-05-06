@@ -20,6 +20,7 @@ class Overseer
 
         static  void    saveServer(t_confi* confi);
         static  Client* createClient(Server * server);
+        static  void    removeFromPFDS();
         static  void    saveCGI(CGI * cgi);
 
 
@@ -40,7 +41,6 @@ class Overseer
         static  struct pollfd           _pfds[MAX_FDS];
 
         static  void addToPfds(int new_fd, int events, int revents);
-        static  void removeFromPFDS();
 
 
         class pollException;

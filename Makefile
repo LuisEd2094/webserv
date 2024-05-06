@@ -49,7 +49,7 @@ AUX			=	aux.cpp
 
 AUX_FILES		=	$(addprefix $(AUX_PATH), $(AUX))
 
-CGI			=	CGI.cpp
+CGI			=	CGI.cpp getters.cpp
 
 CGI_FILES		=	$(addprefix $(CGI_PATH), $(CGI))
 
