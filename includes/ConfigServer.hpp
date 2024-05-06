@@ -1,17 +1,19 @@
-# ifndef  CONFIG_SERVER_HPP
+#ifndef CONFIG_SERVER_HPP
 # define CONFIG_SERVER_HPP
-// class ConfigServer;
-#include "ConfigParse.hpp"
+# include "ConfigParse.hpp"
+# include "ConfigLocation.hpp"
 
 class ConfigServer: public ConfigParse
 {
 	public:
-		void holi();
+		void	createNestedElement(std::string param0, std::string param1);
+		ConfigServer(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
+		//void holi();
 		//parsing
 		//check key value
 		//check valid nested
 		//initObj
-	//private:
-
+	private:
+		std::list<ConfigLocation>	locatinos;
 };
 #endif

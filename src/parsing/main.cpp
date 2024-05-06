@@ -12,7 +12,11 @@
 
 #include <fstream>
 
-#include "../../includes/ConfigParse.hpp"
+//#include "../../includes/ConfigParse.hpp"
+//#include "../../includes/ConfigServer.hpp"
+//#include "../../includes/ConfigLocation.hpp"
+#include "../../includes/ConfigGlobal.hpp"
+//#include "../../includes/ConfigCgi.hpp"
 #include <iostream>
 
 int fileConfig(void)
@@ -20,6 +24,9 @@ int fileConfig(void)
 	std::fstream	file("config_file.conf"); //TODO
 	std::string		fileStr;										  
 	std::string		tmp;
+	std::string::iterator begin;
+	std::string::iterator end;
+	std::string::iterator aux;
 
 	if (!file.is_open())
 	{
@@ -34,7 +41,14 @@ int fileConfig(void)
 		fileStr += tmp + " ";
 	}
 	std::cout << "**" << fileStr << "**" <<std::endl;
-	ConfigParse 	parser(fileStr);
+	begin = fileStr.begin();
+	end = fileStr.end();
+	aux = fileStr.begin();
+	std::cout << "Should be equal : " << (begin == aux) << std::endl;
+	std::cout << "fkkk" << std::string(begin, end) << std::endl;
+	std::cout << "Should be equal : " << (begin == aux) << std::endl;
+
+	ConfigGlobal 	parser(begin, end, aux);
 	parser.parse();
 
 	return 0;
