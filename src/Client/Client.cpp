@@ -76,7 +76,7 @@ void Client::readFromFD()
             _in_http.append((const char *)_in_message);
             if (_action == WAIT)
             {
-                if (_parser_http.checkMethod(_in_http));
+                if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
                 {
                     if (!_server->validateAction(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending))
                     {
@@ -182,7 +182,7 @@ int Client::executeGetAction()
 
     if (_found_http && _msg_pending.empty()) //call server once we get everything from the parser.
     {
-        if (_server->getResponse(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending, *this));
+        if (_server->getResponse(_parser_http.getMethod(), _parser_http.getRequested(), _msg_pending, *this))
         {
             _msg_to_send = _msg_pending.c_str();
             _msg_pending_len = std::strlen(_msg_to_send);
