@@ -22,12 +22,12 @@ CGI::CGI(Client& client) : _client(client)
     {
         throw CGIException(strerror(errno));
     }
-    pid_t	pid = fork();
-    if (pid == -1)
+    _pid = fork();
+    if (_pid == -1)
     {
         throw CGIException(strerror(errno));
     }
-    if (pid == 0)
+    if (_pid == 0)
     {
         signal(SIGINT, SIG_DFL);
         signal(SIGQUIT, SIG_DFL);
@@ -51,7 +51,6 @@ CGI::CGI(Client& client) : _client(client)
         std::exit(-1);
     }
     close(_pipe[1]);
-    //exit(0);
   
 
 }
@@ -78,6 +77,7 @@ int CGI::readPipe()
 {
     char buff[RECV_SIZE];
     std::string buffer;
+    int status = 0;
 
 
     while (read(_pipe[0], buff, sizeof(buff)) > 0)
@@ -97,7 +97,8 @@ int CGI::readPipe()
     }
     //_client_message.append(buff);
     std::cout << std::endl;
-    //close(_pipe[0]);
+    waitpid(_pid, &status, 0);
+    close(_pipe[0]);
     Overseer::removeFromPFDS();
 }
 

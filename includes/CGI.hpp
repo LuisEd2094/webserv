@@ -22,6 +22,7 @@ class CGI
     private:
         int             _pipe[2];
         Client&         _client;
+        pid_t           _pid;
 
 };
 
