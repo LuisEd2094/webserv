@@ -11,7 +11,7 @@ class ConfigParse : std::map<std::string, std::string>
 	public: 
 		ConfigParse(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd) :
 			std::map<std::string, std::string>::map(),
-			statementBegin(begin), eof(eof), statementEnd(statementEnd)
+			statementBegin(begin), statementEnd(statementEnd), eof(eof)
 		{
 //				this->fileContent = std::string(fileContent);	
 //				this->statementBegin = begin;
@@ -20,6 +20,7 @@ class ConfigParse : std::map<std::string, std::string>
 				this->endStatementChars.push_back('{');
 				this->endStatementChars.push_back('}');
 		};
+		virtual ~ConfigParse(){};
 
 //		std::string _getFileContent() const { return fileContent; };
 
@@ -53,7 +54,7 @@ class ConfigParse : std::map<std::string, std::string>
 		const static std::string			empty;
 		static std::string::iterator		ebgn;
 		static std::string::iterator		eend;
-		ConfigParse() : statementBegin(ebgn), eof(eend), statementEnd(ebgn){};
+		ConfigParse() : statementBegin(ebgn), statementEnd(ebgn), eof(eend){};
 };
 	const std::string	empty = "";
 #endif

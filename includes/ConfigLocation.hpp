@@ -6,9 +6,9 @@
 class ConfigLocation: public ConfigParse
 {
 	public:
-		void holi();
 		void	createNestedElement(std::string param0, std::string param1);
 		ConfigLocation(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
+		~ConfigLocation(){};
 		//parsing
 		//check key value
 		//check valid nested

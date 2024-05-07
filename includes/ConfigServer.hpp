@@ -8,12 +8,12 @@ class ConfigServer: public ConfigParse
 	public:
 		void	createNestedElement(std::string param0, std::string param1);
 		ConfigServer(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
-		//void holi();
+		~ConfigServer(){};
 		//parsing
 		//check key value
 		//check valid nested
 		//initObj
 	private:
-		std::list<ConfigLocation>	locatinos;
+		std::list<ConfigLocation>	locatins;
 };
 #endif

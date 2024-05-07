@@ -8,6 +8,7 @@ class ConfigGlobal: public ConfigParse
 	public:
 		void	createNestedElement(std::string param0, std::string param1);
 		ConfigGlobal(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
+		~ConfigGlobal(){};
 		//parsing
 		//check key value
 		//check valid nested
