@@ -1,6 +1,7 @@
 #ifndef BASEHANDLER_HPP
 # define BASEHANDLER_HPP
 
+# include <iostream>
 class BaseHandler
 {
     public:

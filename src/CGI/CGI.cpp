@@ -16,7 +16,7 @@ class CGI::CGIException : public std::exception
         }
 };
 
-CGI::CGI(Client& client) : _client(client)
+CGI::CGI(Client& client) : _client_fd(client.getFD())
 {
     if (pipe(_pipe))
     {
@@ -68,10 +68,6 @@ void CGI::createNewCGI(Client& client)
     //exit(0);
 }
 
-void CGI::destroyCGI(CGI *cgi)
-{
-    delete cgi;
-}
 
 int CGI::Action(int event)
 {
@@ -86,9 +82,14 @@ int CGI::Action(int event)
         buffer.append(buff);
         if (buffer.find("\n\n") != std::string::npos)
         {
-            std::cout << "found http";
-            _client.setHTTPResponse(buffer.substr(0, buffer.find("\n\n") + 2));
-            _client.setBodyResponse(buffer.substr(buffer.find("\n\n") + 2));
+            Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
+            if (client)
+            {
+                client->setHTTPResponse(buffer.substr(0, buffer.find("\n\n") + 2));
+                client->setBodyResponse(buffer.substr(buffer.find("\n\n") + 2));
+            }
+
+
         }
     }
     //_client_message.append(buff);

@@ -68,6 +68,7 @@ bool Server::getResponse(Client& client)
     //CGI?
     // We assume we called validateAction before reaching this point.
     const std::string & url = client.getURL();
+
     if (url == "/")
     {
         client.setHTTPResponse("HTTP/1.1 200 OK\r\n"

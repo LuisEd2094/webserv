@@ -30,6 +30,8 @@ class Overseer
         static  void    saveServer(t_confi* confi);
         static  void    removeFromPFDS();
 
+        static  BaseHandler* getObj(int);
+
 
         static  void    handleAction(BaseHandler * , int );
         static  void    mainLoop();

@@ -14,16 +14,15 @@ class CGI : public BaseHandler
         ~CGI();
         int                 Action(int event);
 
-        static void createNewCGI(Client& client);
-        static void destroyCGI(CGI *cgi);
-        const int getFD() const;
-        int readPipe();
+        static void         createNewCGI(Client& client);
+        const int           getFD() const;
+        int                 readPipe();
 
         class CGIException;
 
     private:
         int             _pipe[2];
-        Client&         _client;
+        int             _client_fd;
         pid_t           _pid;
 
 };

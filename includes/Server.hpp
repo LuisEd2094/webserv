@@ -24,6 +24,7 @@ class Server : public BaseHandler
 
         int                 Action(int event);
 
+
         //Getters
         const int getFD() const;
 

@@ -15,20 +15,14 @@ struct pollfd  Overseer::_pfds[MAX_FDS];
 
 void Overseer::cleanOverseer()
 {
-    std::map<int, Server *>::iterator it = _servers.begin();
-    for (; it != _servers.end(); it++)
+    std::map<int, BaseHandler *>::iterator it = _pending_fds.begin();
+    for (; it != _pending_fds.end(); it++)
     {
         delete it->second;
     }
-    _servers.clear();
-
-    std::map<int, Client *>::iterator it2 = _clients.begin();
-    for (; it2 != _clients.end(); it2++)
-    {
-        delete it2->second;
-    }
-    _clients.clear();
+    _pending_fds.clear();
 }
+
 Overseer::Overseer()
 {
 }
@@ -36,7 +30,7 @@ Overseer::Overseer()
 
 Overseer::~Overseer()
 {
-
+    cleanOverseer();
 
 }
 
@@ -64,6 +58,18 @@ void    Overseer::addToPfds(CGI * cgi)
     _pending_fds[cgi->getFD()] = cgi;
     addToPfds(cgi->getFD(), POLLHUP , 0); 
 }
+
+BaseHandler* Overseer::getObj(int fd)
+{
+    std::map<int, BaseHandler *>::iterator it = _pending_fds.find(fd);
+    if (it != _pending_fds.end())
+    {
+        return it->second;
+    }
+    return NULL;
+}
+
+
 
 void Overseer::addToPfds(int new_fd, int events, int revents)
 {
@@ -93,6 +99,7 @@ void Overseer::handleAction(BaseHandler *obj, int event)
             std::cout << obj->getFD() << " closed connection" << std::endl;
         else
             std::cerr << "error: " << static_cast<std::string>(strerror(errno)) << std::endl;
+
         removeFromPFDS(); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
         _pending_fds.erase(obj->getFD());
         delete obj;
