@@ -10,6 +10,7 @@
 # include <algorithm>
 # include <Parsing.hpp>
 # include <Aux.hpp>
+# include <BaseHandler.hpp>
 
 
 # define SEND_SIZE 8000
@@ -18,11 +19,12 @@
 
 class Server;
 
-class Client
+class Client : public BaseHandler
 {
     public:
         Client(Server *server);
         ~Client();
+        int                 Action(int event);
         int                 clientAction(int event);
 
         // setters
@@ -30,7 +32,7 @@ class Client
         void                setBodyResponse(const std::string &message);
 
         //getters
-        int                 getSocket();
+        const int           getFD() const;
         const std::string&  getURL();
 
         class clientException;
@@ -38,9 +40,7 @@ class Client
 
     private:
         Parsing                 _parser_http;
-        int                     _fd;
         Actions                 _action;
-
         std::size_t             _result;
 
 

@@ -9,22 +9,27 @@
 # include <unistd.h>
 # include <Confi.hpp>
 # include <CGI.hpp>
+# include <BaseHandler.hpp>
+
+
+# include <Overseer.hpp>
 
 class Client; 
 
-class Server
+class Server : public BaseHandler
 {
     public:
         Server(t_confi* confi);
         ~Server();
 
+        int                 Action(int event);
+
         //Getters
-        int getSocket();
+        const int getFD() const;
 
         bool validateAction(Client& client);
         bool getResponse(Client& client);
     private:
-        int                 _socket;
         int                 _backlog;
         std::string         _port;
         struct addrinfo     _hints;

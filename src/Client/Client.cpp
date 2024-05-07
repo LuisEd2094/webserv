@@ -16,13 +16,13 @@ class Client::clientException : public std::exception
 };
 
 //public:
-Client::Client(Server *server)
+Client::Client(Server *server) : BaseHandler()
 {
     if (!server)
         return;
     _server = server;
     _addrlen = sizeof(_remoteaddr);
-    _fd = accept(server->getSocket(), (struct sockaddr *)&_remoteaddr,&_addrlen);
+    _fd = accept(server->getFD(), (struct sockaddr *)&_remoteaddr,&_addrlen);
     if (_fd == -1) 
     {
         throw Client::clientException("accept" + static_cast<std::string>(strerror(errno)));
@@ -103,6 +103,36 @@ void Client::readFromFD()
         }
 
     }
+}
+
+
+int Client::Action (int event)
+{
+    if (event & POLLIN)
+    {
+        readFromFD();
+        if (_result < 0)
+            return (-1);
+    }
+    if (event & POLLOUT && _HTTP_response.empty())
+        return (1);
+    switch (_action)
+    {
+        case WAIT: //This is in case we dont get the full verb in the first read
+            return (1);
+        case GET:
+            return executeGetAction();
+            break;
+
+        case POST:
+            return executePostAction();
+            break;
+
+        case DELETE:
+            break;
+
+    }
+    return _result;
 }
 
 int Client::clientAction( int event )

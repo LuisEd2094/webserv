@@ -4,17 +4,19 @@
 # include <iostream>
 # include <unistd.h>
 # include <signal.h>
-
+# include <BaseHandler.hpp>
 
 class Client;
-class CGI
+class CGI : public BaseHandler
 {
     public:
         CGI(Client& client);
         ~CGI();
+        int                 Action(int event);
+
         static void createNewCGI(Client& client);
         static void destroyCGI(CGI *cgi);
-        int getSocket();
+        const int getFD() const;
         int readPipe();
 
         class CGIException;

@@ -18,11 +18,12 @@ class Server::socketException: public std::exception
 
 //Public Methods
 
-Server::Server(t_confi* confi) :
-    _socket(confi->socket),
+Server::Server(t_confi* confi) : 
+    BaseHandler(),
     _backlog(confi->backlog),
     _port(confi->port)
 {
+    _fd = confi->socket;
     std::memset(&(_hints), 0, sizeof(_hints));
     _hints.ai_family = confi->hints.ai_family; //takes ipv4 and ipv6
     _hints.ai_socktype = confi->hints.ai_socktype; // TCP stream sockets
@@ -33,8 +34,17 @@ Server::Server(t_confi* confi) :
 
 Server::~Server()
 {
-    close(_socket);
-    std::memset((this), 0, sizeof(*this));
+    close(_fd);
+}
+
+
+int                Server::Action(int event)
+{
+    (void)event;
+    Client *newClient = new Client(this);
+    Overseer::addToPfds(newClient);
+    return (1);
+
 }
 
 
@@ -96,25 +106,25 @@ void Server::initSocket()
     // need to check what serverinfo list has
     for (p = _servinfo; p != NULL; p = p->ai_next)
     {
-        if ((_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
+        if ((_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
         {
             std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue ; 
             // freeaddrinfo(_servinfo);
             // throw Server::socketException("socket error: " + static_cast<std::string>(strerror(errno)));
         };
-        if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &yes,
+        if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &yes,
                 sizeof(int)) == -1) {
-            close(_socket);
+            close(_fd);
             std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue ;
         } 
                 
         // bind it to the port we passed in to getaddrinfo():
         
-        if (bind(_socket, p->ai_addr, p->ai_addrlen) != 0)
+        if (bind(_fd, p->ai_addr, p->ai_addrlen) != 0)
         {
-            close(_socket);
+            close(_fd);
             std::cerr << "bind error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue;
             // freeaddrinfo(_servinfo);
@@ -127,14 +137,8 @@ void Server::initSocket()
     if (p == NULL)
         throw Server::socketException("server: failed to bind");
 
-    if (listen(_socket, _backlog) == -1)
+    if (listen(_fd, _backlog) == -1)
         throw Server::socketException("listen error: " + static_cast<std::string>(strerror(errno)));
-}
-
-
-int Server::getSocket()
-{
-    return _socket;    
 }
 
 

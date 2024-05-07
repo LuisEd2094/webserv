@@ -20,9 +20,10 @@ SERVER_PATH	=	Server/
 OVERSEER_PATH = Overseer/
 CLIENT_PATH =	Client/
 PARSING_PATH =	Parsing/
+BASE_PATH	= BaseHandler/
 CGI_PATH 	= CGI/
 OBJS_PATH	= obj/
-MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH) $(OVERSEER_PATH) $(CLIENT_PATH) $(PARSING_PATH) $(CGI_PATH)) 
+MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH) $(OVERSEER_PATH) $(CLIENT_PATH) $(PARSING_PATH) $(CGI_PATH) $(BASE_PATH)) 
 DEPS_PATH	= deps/
 INCS        = -I./includes
 
@@ -53,15 +54,19 @@ CGI			=	CGI.cpp getters.cpp
 
 CGI_FILES		=	$(addprefix $(CGI_PATH), $(CGI))
 
+BASE			=	BaseHandler.cpp
+
+BASE_FILES		=	$(addprefix $(BASE_PATH), $(BASE))
+
 PARSING			=	Parsing.cpp
 
 PARSING_FILES		=	$(addprefix $(PARSING_PATH), $(PARSING))
 
-SERVER			=	Server.cpp
+SERVER			=	Server.cpp getters.cpp
 
 SERVER_FILES		=	$(addprefix $(SERVER_PATH), $(SERVER))
 
-OVERSEER			=	Overseer.cpp
+OVERSEER			=	Overseer.cpp mainLoop.cpp
 
 OVERSEER_FILES		=	$(addprefix $(OVERSEER_PATH), $(OVERSEER))
 
@@ -69,9 +74,9 @@ CLIENT			=	Client.cpp getters.cpp setters.cpp
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
-DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d) $(SERVER:.cpp=.d) $(AUX:.cpp=.d) $(OVERSEER:.cpp=.d) $(CLIENT:.cpp=.d) $(PARSING:.cpp=.d) $(CGI:.cpp=.d))
+DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d) $(SERVER:.cpp=.d) $(AUX:.cpp=.d) $(OVERSEER:.cpp=.d) $(CLIENT:.cpp=.d) $(PARSING:.cpp=.d) $(CGI:.cpp=.d) $(BASE:.cpp=.d))
 
-SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) $(PARSING_FILES) $(CGI_FILES)
+SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) $(PARSING_FILES) $(CGI_FILES) $(BASE_FILES)
 
 OBJS 			=	$(addprefix $(OBJS_PATH), $(SRC:.cpp=.o))
 				

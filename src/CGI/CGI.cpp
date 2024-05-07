@@ -50,7 +50,7 @@ CGI::CGI(Client& client) : _client(client)
         }
         std::exit(-1);
     }
-    close(_pipe[1]);
+	close(_pipe[1]);
   
 
 }
@@ -64,7 +64,7 @@ CGI::~CGI()
 void CGI::createNewCGI(Client& client)
 {
     CGI *new_cgi = new CGI(client);
-    Overseer::saveCGI(new_cgi);
+    Overseer::addToPfds(new_cgi);
     //exit(0);
 }
 
@@ -73,11 +73,12 @@ void CGI::destroyCGI(CGI *cgi)
     delete cgi;
 }
 
-int CGI::readPipe()
+int CGI::Action(int event)
 {
     char buff[RECV_SIZE];
     std::string buffer;
     int status = 0;
+    (void)event;
 
 
     while (read(_pipe[0], buff, sizeof(buff)) > 0)
@@ -88,17 +89,11 @@ int CGI::readPipe()
             std::cout << "found http";
             _client.setHTTPResponse(buffer.substr(0, buffer.find("\n\n") + 2));
             _client.setBodyResponse(buffer.substr(buffer.find("\n\n") + 2));
-
-
         }
-
-        std::cout << buffer ;
-        std::cout << std::endl;
     }
     //_client_message.append(buff);
-    std::cout << std::endl;
-    waitpid(_pid, &status, 0);
     close(_pipe[0]);
-    Overseer::removeFromPFDS();
+    waitpid(_pid, &status, 0);
+    return 0;
 }
 

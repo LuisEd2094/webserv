@@ -1,7 +1,7 @@
 #include <Client.hpp>
 
 
-int Client::getSocket()
+const int Client::getFD() const
 {
     return _fd;
 }
