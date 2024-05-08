@@ -6,7 +6,7 @@
 # include <exception>
 # include <iostream>
 
-class ConfigParse : std::map<std::string, std::string>
+class ConfigParse : public std::map<std::string, std::string>
 {
 	public: 
 		ConfigParse(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd) :

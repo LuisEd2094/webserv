@@ -15,7 +15,6 @@ void	ConfigServer::createNestedElement(std::string param0, std::string param1)
 	{
 		ConfigLocation element(this->statementBegin, this->eof, this->statementEnd);	
 		element.parse();
-	 	
 		std::cout << "user is not  stupid" << std::endl;
 	}
 	else

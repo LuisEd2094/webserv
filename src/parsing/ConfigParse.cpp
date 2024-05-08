@@ -1,4 +1,5 @@
 #include "../../includes/ConfigParse.hpp"
+#include "../../includes/Parsing.hpp"
 # include <algorithm>
 # include <cctype>
 
@@ -131,13 +132,13 @@ void ConfigParse::parse()
 
 		//this->statementEnd = this->findEndOfStatement();
 		this->statementEnd = this->findEndOfStatement();
-		std::cout << "statementBegin ; statementEnd " << *this->statementBegin << " ; " <<  *this->statementEnd << std::endl;
+		// std::cout << "statementBegin ; statementEnd " << *this->statementBegin << " ; " <<  *this->statementEnd << std::endl;
 		if (statementEnd == this->eof)
 			return ;
 
-		std::cout << "STATEMENT: >>" << dumbGenString(this->statementBegin, this->statementEnd) << "<< " << std::endl;
-		std::cout << "*this->statementBegin: >>" << *this->statementBegin << std::endl;
-		std::cout << "statementBegin = statementEnd" << (this->statementBegin == this->statementEnd) << std::endl;
+		// std::cout << "STATEMENT: >>" << dumbGenString(this->statementBegin, this->statementEnd) << "<< " << std::endl;
+		// std::cout << "*this->statementBegin: >>" << *this->statementBegin << std::endl;
+		// std::cout << "statementBegin = statementEnd" << (this->statementBegin == this->statementEnd) << std::endl;
 		
 		if (*statementBegin == '{')
 		{
@@ -161,7 +162,20 @@ void ConfigParse::parse()
 		}
 		else if (this->statementEnd == this->eof || *this->statementEnd == ';')
 		{
+			while(std::isspace(*this->statementBegin))
+				this->statementBegin++;
 			statementStr = std::string(this->statementBegin, this->statementEnd);
+			std::string key = getKey(statementStr, ':'), value = getValue(statementStr, ':');
+			// std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
+			std::pair<iterator,bool> insertReturn;
+			insertReturn = std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
+			// std::cout << "first: " << (insertReturn.first == end()) << ", second: " << insertReturn.second <<std::endl;
+			if (!insertReturn.second)
+			{
+				std::cout << "user is stupid repited key parameter" << std::endl;
+				throw std::exception();
+			}
+			printMap(*this);
 		}
 		else if (*this->statementEnd == '{')
 		{

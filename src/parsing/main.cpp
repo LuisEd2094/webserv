@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/05 19:20:48 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/07 17:08:34 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ int fileConfig(void)
 	begin = fileStr.begin();
 	end = fileStr.end();
 	aux = fileStr.begin();
-	std::cout << "Should be equal : " << (begin == aux) << std::endl;
-	std::cout << "fkkk" << std::string(begin, end) << std::endl;
-	std::cout << "Should be equal : " << (begin == aux) << std::endl;
+	// std::cout << "Should be equal : " << (begin == aux) << std::endl;
+	// std::cout << "fkkk" << std::string(begin, end) << std::endl;
+	// std::cout << "Should be equal : " << (begin == aux) << std::endl;
 
 	ConfigGlobal 	parser(begin, end, aux);
 	parser.parse();
