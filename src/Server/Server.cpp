@@ -69,6 +69,13 @@ bool Server::getResponse(Client& client)
     //CGI?
     // We assume we called validateAction before reaching this point.
     const std::string & url = client.getURL();
+    
+
+    // Validar la accion a tomar.
+
+    // CGI, llaamar un archivo, direct listing
+
+    // server -> como localizar la accion a realizar.
 
     if (url == "/")
     {

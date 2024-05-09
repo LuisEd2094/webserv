@@ -36,6 +36,9 @@ class Server : public BaseHandler
         std::string         _port;
         struct addrinfo     _hints;
         struct addrinfo*    _servinfo;
+        /*
+            Guardar internamente todo para su funcionamiento desde el t_confi. 
+        */
         
         Server();      
         Server(const Server& rhs );

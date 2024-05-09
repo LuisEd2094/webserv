@@ -51,8 +51,6 @@ CGI::CGI(Client& client) : _client_fd(client.getFD())
         std::exit(-1);
     }
 	close(_pipe[1]);
-  
-
 }
 
 
@@ -72,8 +70,9 @@ void CGI::createNewCGI(Client& client)
 int CGI::Action(int event)
 {
     char buff[RECV_SIZE];
-    std::string buffer;
     int status = 0;
+
+    std::string buffer;
     (void)event;
 
 
@@ -92,9 +91,11 @@ int CGI::Action(int event)
 
         }
     }
+
+    waitpid(_pid, &status, WNOHANG);
+
     //_client_message.append(buff);
     close(_pipe[0]);
-    waitpid(_pid, &status, 0);
     return 0;
 }
 
