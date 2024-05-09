@@ -7,6 +7,7 @@ class ConfigCgi: public ConfigParse
 		void	createNestedElement(std::string param0, std::string param1);
 		ConfigCgi(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
 		~ConfigCgi(){};
+		void recursivePrint(void);
 		//parsing
 		//check key value
 		//check valid nested

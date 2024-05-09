@@ -21,6 +21,7 @@ class ConfigParse : public std::map<std::string, std::string>
 				this->endStatementChars.push_back('}');
 		};
 		virtual ~ConfigParse(){};
+		virtual void	recursivePrint(void) = 0;
 
 //		std::string _getFileContent() const { return fileContent; };
 

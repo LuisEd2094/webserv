@@ -6,12 +6,26 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/08 12:36:23 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/09 14:20:32 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSING_HPP
 #define PARSING_HPP
+
+/******************************************************************************/
+/*                            COLORS                                          */
+/******************************************************************************/
+
+# define END "\033[m"                 //end
+# define RED "\033[1m\033[1;31m"      //red
+# define GREEN "\033[1m\033[1;32m"      //green
+# define YELLOW "\033[1m\033[1;33m"      //yellow
+# define BLUE "\033[1;34m"             //blue
+# define TUR "\033[1m\033[1;35m"      //Turquesa
+# define CYAN "\033[1;36m"             //Cyan
+# define ORANGE "\033[1m\033[38;5;208m"  //orange
+# define PURPLE "\033[1m\033[38;5;128m"  //purple
 
 /******************************************************************************/
 /*                            INCLUDES                                        */
@@ -45,8 +59,10 @@ void	printMap(const M& map)
 {
 	typename M::const_iterator i;
 	for (i = map.begin(); i != map.end(); ++i)
-		std::cout << "Key: " << i->first << "\tValue: "
-			<< i->second << std::endl;
+	{
+		std::cout << ORANGE << "Key: " << END << i->first << ORANGE
+			<< "\tValue: " << END << i->second << std::endl;
+	}
 }
 
 template<typename K>

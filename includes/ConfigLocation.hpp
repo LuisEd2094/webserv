@@ -9,13 +9,15 @@ class ConfigLocation: public ConfigParse
 		void	createNestedElement(std::string param0, std::string param1);
 		ConfigLocation(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
 		~ConfigLocation(){};
+		void	recursivePrint(void);
 		//parsing
 		//check key value
 		//check valid nested
 		//initObj
 	private:
-		std::list<ConfigLocation>	locatinos;
+		std::list<ConfigLocation>	locations;
 		std::list<ConfigCgi>		cgis;
+
 
 };
 #endif

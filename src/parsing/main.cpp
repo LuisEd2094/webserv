@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/08 17:12:30 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/09 13:52:13 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 //#include "../../includes/ConfigServer.hpp"
 //#include "../../includes/ConfigLocation.hpp"
 #include "../../includes/ConfigGlobal.hpp"
+#include "../../includes/Parsing.hpp"
 //#include "../../includes/ConfigCgi.hpp"
 #include <iostream>
 
@@ -57,6 +58,9 @@ int fileConfig(void)
 	{
 		std::cerr << e.what() << '\n';
 	}
+	std::cout << "-------------------------------------" << std::endl;
+	parser.recursivePrint();
+	std::cout << "-------------------------------------" << std::endl;
 	return 0;
 	
 }

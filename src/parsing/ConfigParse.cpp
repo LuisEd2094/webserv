@@ -149,16 +149,18 @@ void ConfigParse::parse()
 		{
 			this->statementBegin++;
 			std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
+			std::cout << "Exiting parse" << std::endl;
+			printMap(*this);
 			return;
-			continue; //TODO this will be a return ;
 		}
 		else if (*statementEnd == '}')
 		{
 			this->statementBegin = statementEnd;
 			this->statementBegin++;
 			std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
+			std::cout << "Exiting parse" << std::endl;
+			printMap(*this);
 			return;
-			continue; //TODO this will be a return ;
 		}
 		else if (this->statementEnd == this->eof || *this->statementEnd == ';')
 		{
@@ -175,7 +177,8 @@ void ConfigParse::parse()
 				std::cout << "user is stupid repited key parameter" << std::endl;
 				throw std::exception();
 			}
-			printMap(*this);
+			std::cout << "----------------------*********" << std::endl;
+			std::cout << this << std::endl;
 		}
 		else if (*this->statementEnd == '{')
 		{
@@ -187,4 +190,6 @@ void ConfigParse::parse()
 			this->statementBegin++;
 		std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
 	}
+	std::cout << "Exiting parse" << std::endl;
+	printMap(*this);
 }
