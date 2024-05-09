@@ -32,6 +32,7 @@ class Server : public BaseHandler
         bool getResponse(Client& client);
     private:
         int                 _backlog;
+        std::string         _ip;
         std::string         _port;
         struct addrinfo     _hints;
         struct addrinfo*    _servinfo;

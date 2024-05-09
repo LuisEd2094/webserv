@@ -32,6 +32,7 @@ int main()
     confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
     confi.hints.ai_flags = AI_PASSIVE;
     confi.port = "80";
+    confi.ip = "";
     confi.backlog = 200;
     signal(SIGPIPE, SIG_IGN);
     // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;

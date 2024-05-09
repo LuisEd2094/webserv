@@ -11,6 +11,7 @@
 typedef struct s_confi
 {
     std::string     port;
+    std::string     ip;
     int             socket;
     int             backlog;
     struct addrinfo hints;
