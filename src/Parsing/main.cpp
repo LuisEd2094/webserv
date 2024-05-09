@@ -6,31 +6,67 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/04/25 09:56:17 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/09 13:52:13 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/Parsing.hpp"
+#include <fstream>
 
-	// DIR *directory = opendir("./");
-	// struct dirent *foo = readdir(directory);
-	// while(foo != NULL)
-	// {
-	// 	std::cout << foo->d_name << std::endl;
-	// 	foo = readdir(directory);
-	// }
+//#include "../../includes/ConfigParse.hpp"
+//#include "../../includes/ConfigServer.hpp"
+//#include "../../includes/ConfigLocation.hpp"
+#include "../../includes/ConfigGlobal.hpp"
+#include "../../includes/Parsing.hpp"
+//#include "../../includes/ConfigCgi.hpp"
+#include <iostream>
+
+int fileConfig(void)
+{
+	std::fstream	file("config_file.conf"); //TODO
+	std::string		fileStr;										  
+	std::string		tmp;
+	std::string::iterator begin;
+	std::string::iterator end;
+	std::string::iterator aux;
+
+	if (!file.is_open())
+	{
+		std::cout << "no toy" << std::endl;
+		return (1);
+	}
+	while (true)
+	{
+		file >> tmp;
+		if (file.eof())
+			break;
+		fileStr += tmp + " ";
+	}
+	std::cout << "**" << fileStr << "**" <<std::endl;
+	begin = fileStr.begin();
+	end = fileStr.end();
+	aux = fileStr.begin();
+	// std::cout << "Should be equal : " << (begin == aux) << std::endl;
+	// std::cout << "fkkk" << std::string(begin, end) << std::endl;
+	// std::cout << "Should be equal : " << (begin == aux) << std::endl;
+
+	ConfigGlobal 	parser(begin, end, aux);
+	try
+	{
+		parser.parse();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	std::cout << "-------------------------------------" << std::endl;
+	parser.recursivePrint();
+	std::cout << "-------------------------------------" << std::endl;
+	return 0;
+	
+}
 	
 int  main(void)
 {
-	// int fd = open("testHttp/hola.txt", O_RDONLY);
-	int fd = open("testHttp/defaultOK.txt", O_RDONLY);
-	if (fd == -1)
-	{
-		std::cout << "Error: open file" << std::endl;
-		return (EXIT_FAILURE);
-	}
-	Parsing http;
-	http.parsingHeader(http.readSocket(fd));
-	close(fd);
-	return ( EXIT_SUCCESS );
+	fileConfig();
+	return (0);
 }
