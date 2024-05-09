@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/07 17:08:34 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/08 17:12:30 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,14 @@ int fileConfig(void)
 	// std::cout << "Should be equal : " << (begin == aux) << std::endl;
 
 	ConfigGlobal 	parser(begin, end, aux);
-	parser.parse();
-
+	try
+	{
+		parser.parse();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 	return 0;
 	
 }
