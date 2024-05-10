@@ -170,6 +170,7 @@ void ConfigParse::parse()
 			std::string key = getKey(statementStr, ':'), value = getValue(statementStr, ':');
 			// std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
 			std::pair<iterator,bool> insertReturn;
+			std::cout << RED << ::wordCounter(value) << END << std::endl;
 			insertReturn = std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
 			// std::cout << "first: " << (insertReturn.first == end()) << ", second: " << insertReturn.second <<std::endl;
 			if (!insertReturn.second)

@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/09 17:51:24 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/10 17:31:17 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,19 @@ bool checkSpace(const S& str, const N num)
 	}
 	return (EXIT_SUCCESS);
 }
-
+template<typename S>
+size_t wordCounter(const S& str)
+{
+	typename S::const_iterator i = str.begin();
+	size_t		word = 0;
+	word += (*i and !::isblank(*i) ? 1 : 0);
+	for (; i != str.end(); ++i)
+	{
+		word += (::isblank(*i) and ((*(i + 1))
+			and !::isblank((*(i + 1)))) ? 1 : 0);
+	}
+	return (word);
+}
 //agregar atributo que indique si es de tipo RN o solo ON(only line)
 typedef struct s_request
 {
