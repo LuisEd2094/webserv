@@ -7,6 +7,11 @@
 
 std::list<char> ConfigParse::endStatementChars = std::list<char>();
 
+//temporal:
+short parsingListen(std::string &listen);
+std::string getIp(std::string &listen);
+std::string getPort(std::string &listen);
+
 std::string dumbGenString(std::string::iterator begin)
 {
 	std::string result("");
@@ -169,8 +174,10 @@ void ConfigParse::parse()
 			statementStr = std::string(this->statementBegin, this->statementEnd);
 			std::string key = getKey(statementStr, ':'), value = getValue(statementStr, ':');
 			// std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
+			std::cout << BLUE << "type ip: " << parsingListen(value) << END << std::endl;
+			std::cout << YELLOW << getIp(value) << END << std::endl;
+			std::cout << TUR << getPort(value) << END << std::endl;
 			std::pair<iterator,bool> insertReturn;
-			std::cout << RED << ::wordCounter(value) << END << std::endl;
 			insertReturn = std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
 			// std::cout << "first: " << (insertReturn.first == end()) << ", second: " << insertReturn.second <<std::endl;
 			if (!insertReturn.second)
