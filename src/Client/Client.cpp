@@ -30,6 +30,7 @@ Client::Client(Server *server) : BaseHandler()
     _action = WAIT;
     _found_http = false;
     _HTTP_bytes_sent = 0;
+    _requested_response = false;
 }
 
 
@@ -50,6 +51,7 @@ void Client::parseForHttp()
                 _content_length = std::atoi(content_len.c_str());
             }
         }
+        _server->getResponse(*this);
         _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
 
         _found_http = true;
@@ -113,10 +115,16 @@ int Client::Action (int event)
         readFromFD();
         if (_result < 0)
             return (-1);
+        if (_action  == POST)
+        {
+            return executePostAction();
+        }
     }
-    if (event & POLLOUT && _HTTP_response.empty())
-        return (1);
-    switch (_action)
+    else if (event & POLLOUT)
+    {
+        return executeGetAction();
+    }
+/*     switch (_action)
     {
         case WAIT: //This is in case we dont get the full verb in the first read
             return (1);
@@ -125,13 +133,12 @@ int Client::Action (int event)
             break;
 
         case POST:
-            return executePostAction();
             break;
 
         case DELETE:
             break;
 
-    }
+    } */
     return _result;
 }
 
@@ -181,10 +188,11 @@ int Client::executeGetAction()
 
     int chunk_size;
 
-    if (_found_http && _HTTP_response.empty()) //call server once we get everything from the parser.
+/*     if (_found_http && _HTTP_response.empty() && !_requested_response) //call server once we get everything from the parser.
     {
         _server->getResponse(*this);
-    }
+        _requested_response = true;
+    } */
     if (!_HTTP_response.empty() && _HTTP_response_len > _HTTP_bytes_sent) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
     {
         chunk_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;
@@ -221,7 +229,7 @@ int Client::executeGetAction()
         }
 
     }
-    return (_result);
+    return (1);
 }
 
 //private:

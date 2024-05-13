@@ -12,9 +12,10 @@
 # include <Aux.hpp>
 # include <BaseHandler.hpp>
 # include <cstring>
+# include <Overseer.hpp>
 
 
-# define SEND_SIZE 50
+# define SEND_SIZE 8000
 # define RECV_SIZE 8000
 
 
@@ -50,6 +51,7 @@ class Client : public BaseHandler
         std::size_t             _HTTP_bytes_sent;
         const char *            _C_type_HTTP;
 
+        bool                    _requested_response;
         std::string             _out_body;
         std::size_t             _body_response_len;
         std::size_t             _body_bytes_sent;

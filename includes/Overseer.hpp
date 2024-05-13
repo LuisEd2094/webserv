@@ -25,6 +25,8 @@ class Overseer
         static  void    addToPfds(Server *);
         static  void    addToPfds(CGI *);
 
+        static  void    setListenAction(int, int);
+
 
 
         static  void    saveServer(t_confi* confi);

@@ -37,8 +37,19 @@ Overseer::~Overseer()
 
 void Overseer::removeFromPFDS()
 {
-    Overseer::_pfds[Overseer::_i] = Overseer::_pfds[Overseer::_fd_count - 1];
-    Overseer::_fd_count--;
+    _pfds[_i] = _pfds[_fd_count - 1];
+    _fd_count--;
+}
+
+void Overseer::setListenAction(int fd, int action)
+{
+    for (int i = 0; i < _fd_count; ++i)
+    {
+        if (_pfds[i].fd == fd)
+        {
+            _pfds[i].events = action; 
+        } 
+    }
 }
 
 void    Overseer::addToPfds(Server * server)
@@ -50,7 +61,7 @@ void    Overseer::addToPfds(Server * server)
 void    Overseer::addToPfds(Client * client)
 {
     _pending_fds[client->getFD()] = client;
-    addToPfds(client->getFD(), POLLIN | POLLOUT, POLLIN); 
+    addToPfds(client->getFD(), POLLIN, POLLIN); 
 }
 
 void    Overseer::addToPfds(CGI * cgi)
