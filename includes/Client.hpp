@@ -15,10 +15,6 @@
 # include <Overseer.hpp>
 
 
-# define SEND_SIZE 8000
-# define RECV_SIZE 8000
-
-
 class Server;
 
 class Client : public BaseHandler

@@ -1,5 +1,6 @@
 #include <CGI.hpp>
 #include <Overseer.hpp>
+#include <Client.hpp>
 
 
 //Exception
@@ -80,7 +81,7 @@ bool    CGI::checkTimeOut()
     double seconds;
     seconds = std::difftime(current_time, _last_time) * 1000;
 
-    if (seconds > TIME_OUT)
+    if (TIME_OUT > 0 && seconds > TIME_OUT)
     {
         Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
         if (client)
@@ -91,35 +92,37 @@ bool    CGI::checkTimeOut()
 
     }
     return false;
-    
-}
+} 
+
 
 int CGI::Action(int event)
 {
     char buff[RECV_SIZE];
-    int status = 0;
-
-    std::string buffer;
+    int  result = read(_pipe[0], buff, sizeof(buff)); 
+    _buffer;
     (void)event;
-
-
-    while (read(_pipe[0], buff, sizeof(buff)) > 0)
+    if (result > 0)
     {
-        buffer.append(buff);
-        if (buffer.find("\n\n") != std::string::npos)
+        _buffer.append(buff, result);
+        return (1);
+    }
+    else if (result <= 0)
+    {
+        Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
+        if (client)
         {
-            Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
-            if (client)
+            if (result ==  0)
             {
-                client->setHTTPResponse(buffer.substr(0, buffer.find("\n\n") + 2));
-                client->setBodyResponse(buffer.substr(buffer.find("\n\n") + 2));
+                client->setHTTPResponse(_buffer.substr(0, _buffer.find("\n\n") + 2));
+                client->setBodyResponse(_buffer.substr(_buffer.find("\n\n") + 2)); 
             }
-
+            else
+            {
+                client->setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n");
+            }
+            return (0);
 
         }
     }
-
-
-    return 0;
+    return (1);
 }
-

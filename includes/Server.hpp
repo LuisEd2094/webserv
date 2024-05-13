@@ -10,6 +10,8 @@
 # include <Confi.hpp>
 # include <CGI.hpp>
 # include <BaseHandler.hpp>
+# include <FileReader.hpp>
+
 
 
 # include <Overseer.hpp>

@@ -6,7 +6,6 @@
 # include <Confi.hpp>
 # include <cerrno>
 # include <Server.hpp>
-# include <Client.hpp>
 # include <poll.h>
 
 
@@ -14,8 +13,8 @@
 
 # define    MAX_FDS 1000
 # define    TIME_OUT 1500
-
-class CGI;
+# define    SEND_SIZE 8000
+# define    RECV_SIZE 20
 
 class Overseer
 {
@@ -46,10 +45,6 @@ class Overseer
         static  void    addToPfds(int new_fd, int events, int revents);
 
         static  std::map<int, BaseHandler *> _pending_fds;
-        static  std::map<int, CGI *> _CGIs;
-        static  std::map<int, Server *> _servers;
-        static  std::map<int, Client *> _clients;
-
         //clients map
         static  std::size_t             _i;
         static  std::size_t             _fd_count;

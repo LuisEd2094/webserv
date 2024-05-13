@@ -85,9 +85,16 @@ bool Server::getResponse(Client& client)
     }
     else if (url == "/index.html")
     {
-        client.setHTTPResponse("HTTP/1.1 200 OK\r\n"
-                    "\r\n");
-        return true;  
+        try
+        {
+            FileReader::createNewFileReader(client);
+            return false;
+        }
+        catch(const std::exception& e)
+        {
+            client.setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n");
+            return true;
+        }  
     }
     else if (url == "/nolen.py")
     {

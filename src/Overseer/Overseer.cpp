@@ -3,9 +3,6 @@
 
 std::size_t Overseer::_i = 0;
 std::size_t Overseer::_fd_count = 0;
-std::map<int, CGI *> Overseer::_CGIs;
-std::map<int, Server *> Overseer::_servers;
-std::map<int, Client *> Overseer::_clients;
 std::map<int, BaseHandler *> Overseer::_pending_fds;
 
 struct pollfd  Overseer::_pfds[MAX_FDS];
@@ -58,7 +55,7 @@ void Overseer::setListenAction(int fd, int action) // might need to change this 
 void    Overseer::addToPfds(BaseHandler * base)
 {
     _pending_fds[base->getFD()] = base;
-    addToPfds(base->getFD(), POLLIN, 0);
+    addToPfds(base->getFD(), POLLIN | POLLHUP, 0);
     base->setTime();
 }
 
