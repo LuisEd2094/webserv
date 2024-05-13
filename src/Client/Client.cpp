@@ -96,8 +96,6 @@ void Client::readFromFD()
                 _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
                 parseForHttp();
             }
-
-            //std::cout << _parser_http.getMapValue("patata") << std::endl;
         }
         else if (_action == POST)
         {
@@ -107,6 +105,12 @@ void Client::readFromFD()
     }
 }
 
+
+
+bool Client::checkTimeOut()
+{
+    return false;
+}
 
 int Client::Action (int event)
 {
@@ -124,21 +128,6 @@ int Client::Action (int event)
     {
         return executeGetAction();
     }
-/*     switch (_action)
-    {
-        case WAIT: //This is in case we dont get the full verb in the first read
-            return (1);
-        case GET:
-            return executeGetAction();
-            break;
-
-        case POST:
-            break;
-
-        case DELETE:
-            break;
-
-    } */
     return _result;
 }
 
@@ -187,12 +176,6 @@ int Client::executeGetAction()
     //     "Hello, world!\r\n\0";
 
     int chunk_size;
-
-/*     if (_found_http && _HTTP_response.empty() && !_requested_response) //call server once we get everything from the parser.
-    {
-        _server->getResponse(*this);
-        _requested_response = true;
-    } */
     if (!_HTTP_response.empty() && _HTTP_response_len > _HTTP_bytes_sent) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
     {
         chunk_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;

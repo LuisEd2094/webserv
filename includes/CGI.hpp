@@ -16,6 +16,8 @@ class CGI : public BaseHandler
         ~CGI();
         int                 Action(int event);
 
+        bool                checkTimeOut();
+
         static void         createNewCGI(Client& client);
         const int           getFD() const;
         int                 readPipe();

@@ -29,8 +29,8 @@ CGI::CGI(Client& client) : _client_fd(client.getFD())
     }
     if (_pid == 0)
     {
-        signal(SIGINT, SIG_DFL);
-        signal(SIGQUIT, SIG_DFL);
+        //signal(SIGINT, SIG_DFL);
+        //signal(SIGQUIT, SIG_DFL);
         std::string cgi_path = "/home/luis/proyects/webserv/CGI" + client.getURL();
         char* argv[3];
         argv[0] = const_cast<char*>("/usr/bin/python3");
@@ -56,7 +56,12 @@ CGI::CGI(Client& client) : _client_fd(client.getFD())
 
 CGI::~CGI()
 {
-
+    int status;
+    
+    kill(_pid, SIGTERM);
+    waitpid(_pid, &status, 0);
+    //_client_message.append(buff);
+    close(_pipe[0]);
 }
 
 void CGI::createNewCGI(Client& client)
@@ -66,6 +71,28 @@ void CGI::createNewCGI(Client& client)
     //exit(0);
 }
 
+
+bool    CGI::checkTimeOut()
+{
+    time_t current_time;
+    std::time(&current_time);
+
+    double seconds;
+    seconds = std::difftime(current_time, _last_time) * 1000;
+
+    if (seconds > TIME_OUT)
+    {
+        Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
+        if (client)
+        {
+            client->setHTTPResponse("HTTP/1.1 408 Request Timeout\r\n");
+        }        
+        return true;
+
+    }
+    return false;
+    
+}
 
 int CGI::Action(int event)
 {
@@ -92,10 +119,7 @@ int CGI::Action(int event)
         }
     }
 
-    waitpid(_pid, &status, WNOHANG);
 
-    //_client_message.append(buff);
-    close(_pipe[0]);
     return 0;
 }
 

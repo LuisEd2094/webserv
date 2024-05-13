@@ -32,6 +32,7 @@ class Client : public BaseHandler
         // setters
         void                setHTTPResponse(const std::string &message);
         void                setBodyResponse(const std::string &message);
+        bool                checkTimeOut();
 
         //getters
         const int           getFD() const;
