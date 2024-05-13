@@ -12,7 +12,8 @@
 
 # include <BaseHandler.hpp>
 
-# define  MAX_FDS 1000
+# define    MAX_FDS 1000
+# define    TIME_OUT 1500
 
 class CGI;
 
@@ -21,16 +22,15 @@ class Overseer
     public:
         static void     cleanOverseer();
 
-        static  void    addToPfds(Client *);
-        static  void    addToPfds(Server *);
-        static  void    addToPfds(CGI *);
+        static  void    addToPfds(BaseHandler *);
+
 
         static  void    setListenAction(int, int);
 
 
 
         static  void    saveServer(t_confi* confi);
-        static  void    removeFromPFDS();
+        static  void    removeFromPFDS(BaseHandler *);
 
         static  BaseHandler* getObj(int);
 

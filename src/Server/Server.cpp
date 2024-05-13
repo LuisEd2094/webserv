@@ -53,7 +53,7 @@ bool Server::validateAction(Client& client)
 {
     // check method and url against config.
     const std::string url = client.getURL();
-    if (url == "/" or url == "/nolen.py")
+    if (url == "/" or url == "/nolen.py" or url == "/index.html")
         return true;
     else
     {
@@ -83,6 +83,12 @@ bool Server::getResponse(Client& client)
                     "\r\n");
         return true;
     }
+    else if (url == "/index.html")
+    {
+        client.setHTTPResponse("HTTP/1.1 200 OK\r\n"
+                    "\r\n");
+        return true;  
+    }
     else if (url == "/nolen.py")
     {
         try
@@ -101,7 +107,10 @@ bool Server::getResponse(Client& client)
 
 }
 
-
+bool Server::checkTimeOut()
+{
+    return false;
+}
 
 void Server::initSocket()
 {

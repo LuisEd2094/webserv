@@ -35,13 +35,16 @@ Overseer::~Overseer()
 }
 
 
-void Overseer::removeFromPFDS()
+void Overseer::removeFromPFDS(BaseHandler *obj)
 {
+
     _pfds[_i] = _pfds[_fd_count - 1];
     _fd_count--;
+    _pending_fds.erase(obj->getFD());
+    delete obj;
 }
 
-void Overseer::setListenAction(int fd, int action)
+void Overseer::setListenAction(int fd, int action) // might need to change this to a map since it will take a long time to go through the _pfds if you have alot of them
 {
     for (int i = 0; i < _fd_count; ++i)
     {
@@ -52,22 +55,11 @@ void Overseer::setListenAction(int fd, int action)
     }
 }
 
-void    Overseer::addToPfds(Server * server)
+void    Overseer::addToPfds(BaseHandler * base)
 {
-    _pending_fds[server->getFD()] = server;
-    addToPfds(server->getFD(), POLLIN, 0);
-}
-
-void    Overseer::addToPfds(Client * client)
-{
-    _pending_fds[client->getFD()] = client;
-    addToPfds(client->getFD(), POLLIN, POLLIN); 
-}
-
-void    Overseer::addToPfds(CGI * cgi)
-{
-    _pending_fds[cgi->getFD()] = cgi;
-    addToPfds(cgi->getFD(), POLLHUP , 0); 
+    _pending_fds[base->getFD()] = base;
+    addToPfds(base->getFD(), POLLIN, 0);
+    base->setTime();
 }
 
 BaseHandler* Overseer::getObj(int fd)
@@ -102,6 +94,7 @@ void Overseer::saveServer(t_confi* confi)
 
 void Overseer::handleAction(BaseHandler *obj, int event)
 {
+    obj->setTime();
     int status = obj->Action(event);
         
     if (status == 0 || status == -1)
@@ -110,10 +103,7 @@ void Overseer::handleAction(BaseHandler *obj, int event)
             std::cout << obj->getFD() << " closed connection" << std::endl;
         else
             std::cerr << "error: " << static_cast<std::string>(strerror(errno)) << std::endl;
-
-        removeFromPFDS(); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
-        _pending_fds.erase(obj->getFD());
-        delete obj;
+        removeFromPFDS(obj); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
     }
 }
 

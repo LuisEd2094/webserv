@@ -34,8 +34,9 @@ void Overseer::mainLoop()
     printHostName(); //REMOVE , IT USES INVALID FUNTIONS
     while(1) 
     {
+
         //std::cout << "Poll count " << _fd_count << std::endl;
-        poll_connection = poll(_pfds, _fd_count, -1);
+        poll_connection = poll(_pfds, _fd_count, TIME_OUT);
         found = 0;
         if (poll_connection == -1) 
         {
@@ -46,10 +47,12 @@ void Overseer::mainLoop()
         for(_i = 0; _i < _fd_count; _i++) 
         {
             // Check if someone's ready to read
-
+            std::map<int, BaseHandler *>::iterator it = _pending_fds.find(_pfds[_i].fd);
             if (_pfds[_i].revents & POLLIN)
             { // We got one!!
-                std::map<int, BaseHandler *>::iterator it3 = _pending_fds.find(_pfds[_i].fd);
+                handleAction(it->second, POLLIN);
+
+/*                 std::map<int, BaseHandler *>::iterator it3 = _pending_fds.find(_pfds[_i].fd);
 
                 if (it3 != _pending_fds.end()) //one server got a connection
                 {
@@ -57,28 +60,34 @@ void Overseer::mainLoop()
                     handleAction(it3->second, POLLIN);
                     //handleAction(newClient, POLLIN); 
                 } 
-                found++;
+                found++; */
             }
             else if (_pfds[_i].revents & POLLHUP)
             {
-                std::map<int, BaseHandler *>::iterator it2 = _pending_fds.find(_pfds[_i].fd);
+                handleAction(it->second, POLLHUP);
+
+           /*      std::map<int, BaseHandler *>::iterator it2 = _pending_fds.find(_pfds[_i].fd);
                 if (it2 != _pending_fds.end())
                 {
                     handleAction(it2->second, POLLHUP);
                 }
-                found++;
+                found++; */
             }
             else if (_pfds[_i].revents & POLLOUT)
             {
-                std::map<int, BaseHandler *>::iterator it = _pending_fds.find(_pfds[_i].fd);
+                handleAction(it->second, POLLOUT);
+                /*std::map<int, BaseHandler *>::iterator it = _pending_fds.find(_pfds[_i].fd);
                 if (it != _pending_fds.end() && _pfds[_i].fd == it->second->getFD() )
                 {
                     handleAction(it->second, POLLOUT);
                 }
-                found++;
+                found++; */
             }
-            if (found == poll_connection)
-                break;
+            else
+            {
+                if (it->second->checkTimeOut())
+                    removeFromPFDS(it->second);
+            }
         } 
     }
     return ;

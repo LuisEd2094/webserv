@@ -30,6 +30,7 @@ class Server : public BaseHandler
 
         bool validateAction(Client& client);
         bool getResponse(Client& client);
+        bool checkTimeOut();
     private:
         int                 _backlog;
         std::string         _ip;
