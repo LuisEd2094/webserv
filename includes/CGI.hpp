@@ -4,6 +4,8 @@
 # include <iostream>
 # include <unistd.h>
 # include <signal.h>
+# include <sys/wait.h>
+
 # include <BaseHandler.hpp>
 
 class Client;

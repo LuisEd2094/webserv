@@ -107,7 +107,7 @@ void Server::initSocket()
 {
     int status;
 
-    if ((status = getaddrinfo(_ip.c_str(), _port.c_str(), &_hints, &_servinfo)) != 0) 
+    if ((status = getaddrinfo(_ip.empty() ? NULL : _ip.c_str(), _port.c_str(), &_hints, &_servinfo)) != 0) 
             throw Server::socketException("getaddrinfo error: " + static_cast<std::string>(gai_strerror(status)));
 
     struct addrinfo *p;

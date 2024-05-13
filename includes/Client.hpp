@@ -11,9 +11,10 @@
 # include <Parsing.hpp>
 # include <Aux.hpp>
 # include <BaseHandler.hpp>
+# include <cstring>
 
 
-# define SEND_SIZE 8000
+# define SEND_SIZE 50
 # define RECV_SIZE 8000
 
 

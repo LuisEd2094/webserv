@@ -135,36 +135,6 @@ int Client::Action (int event)
     return _result;
 }
 
-int Client::clientAction( int event )
-{
-    if (event & POLLIN)
-    {
-        readFromFD();
-        if (_result < 0)
-            return (-1);
-    }
-    if (event & POLLOUT && _HTTP_response.empty())
-        return (1);
-    switch (_action)
-    {
-        case WAIT: //This is in case we dont get the full verb in the first read
-            return (1);
-        case GET:
-            return executeGetAction();
-            break;
-
-        case POST:
-            return executePostAction();
-            break;
-
-        case DELETE:
-            break;
-
-    }
-    return _result;
-}
-
-
 //getters
 
 
@@ -209,42 +179,47 @@ int Client::executeGetAction()
     //     "\r\n"
     //     "Hello, world!\r\n\0";
 
+    int chunk_size;
+
     if (_found_http && _HTTP_response.empty()) //call server once we get everything from the parser.
     {
         _server->getResponse(*this);
     }
-    if (!_HTTP_response.empty()) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
+    if (!_HTTP_response.empty() && _HTTP_response_len > _HTTP_bytes_sent) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
     {
-        int chunck_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;
-        if ((_result = send(_fd, _C_type_HTTP + _HTTP_bytes_sent, chunck_size, 0) ) == -1)
+        chunk_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;
+        if ((_result = send(_fd, _C_type_HTTP + _HTTP_bytes_sent, chunk_size, 0) ) == -1)
             return (-1);
         if (_result == 0)
             return (0);
-        if (_result + _HTTP_bytes_sent >= _HTTP_response_len && _out_body.empty())
+        _HTTP_bytes_sent += _result;
+        if (_HTTP_bytes_sent >= _HTTP_response_len && _out_body.empty())
         {
             return (0);
         }
         else
         {
-            _HTTP_bytes_sent += _result;
+            return (1);
         }
-        if (!_out_body.empty() && _HTTP_bytes_sent >= _HTTP_response_len)
-        {
-            chunck_size = (_body_response_len - _body_bytes_sent) > SEND_SIZE ? SEND_SIZE : _body_response_len - _body_bytes_sent;
-            if ((_result = send(_fd, _C_type_body + _body_bytes_sent, chunck_size, 0)) == -1)
-                return (-1);
-            if (_result == 0)
-                return (0);
-            if (_result + _body_bytes_sent >= _body_response_len)
-            {
-                return (0);
-            }
-            else
-            {
-                _body_bytes_sent += _result;
-            }
+    }
 
+    if (!_out_body.empty() && _HTTP_bytes_sent >= _HTTP_response_len)
+    {
+        chunk_size = (_body_response_len - _body_bytes_sent) > SEND_SIZE ? SEND_SIZE : _body_response_len - _body_bytes_sent;
+        if ((_result = send(_fd, _C_type_body + _body_bytes_sent, chunk_size, 0)) == -1)
+            return (-1);
+        if (_result == 0)
+            return (0);
+        _body_bytes_sent += _result;
+        if (_body_bytes_sent >= _body_response_len)
+        {
+            return (0);
         }
+        else
+        {
+            return (1);
+        }
+
     }
     return (_result);
 }
