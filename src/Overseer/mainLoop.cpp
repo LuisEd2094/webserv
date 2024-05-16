@@ -36,7 +36,7 @@ void Overseer::mainLoop()
     {
 
         //std::cout << "Poll count " << _fd_count << std::endl;
-        poll_connection = poll(_pfds, _fd_count, TIME_OUT);
+        poll_connection = poll(_pfds, _fd_count, TIME_OUT_POLL);
         found = 0;
         if (poll_connection == -1) 
         {

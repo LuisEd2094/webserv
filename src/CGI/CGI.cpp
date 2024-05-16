@@ -32,7 +32,7 @@ CGI::CGI(Client& client) : _client_fd(client.getFD())
     {
         //signal(SIGINT, SIG_DFL);
         //signal(SIGQUIT, SIG_DFL);
-        std::string cgi_path = "/home/luis/proyects/webserv/CGI" + client.getURL();
+        std::string cgi_path = "/Users/lsoto-do/core05/webserv/CGI" + client.getURL();
         char* argv[3];
         argv[0] = const_cast<char*>("/usr/bin/python3");
         argv[1] = const_cast<char*>(cgi_path.c_str()); // Convert const char* to char*
@@ -45,11 +45,21 @@ CGI::CGI(Client& client) : _client_fd(client.getFD())
 		dup2(_pipe[1], STDOUT_FILENO);
         close(_pipe[1]);
 
-        if (execve("/usr/bin/python3", argv, NULL) == -1)
-        {
-            throw CGIException(strerror(errno));
-        }
+        execve("/usr/bin/python3", argv, NULL);
+        std::cout << "HTTP/1.1 500 Internal Server Error\r\n" << std::endl;
         std::exit(-1);
+        // try
+        // {
+        //     execve("/usr/bin/python3", argv, NULL);
+        //     std::exit(0);
+        // }
+        // catch (const std::exception& e)
+        // {
+        //     throw CGIException(e.what() + std::string(strerror(errno)));
+        //     std::exit(-1);
+
+        // }
+
     }
 	close(_pipe[1]);
 }
@@ -58,7 +68,7 @@ CGI::CGI(Client& client) : _client_fd(client.getFD())
 CGI::~CGI()
 {
     int status;
-    
+
     kill(_pid, SIGTERM);
     waitpid(_pid, &status, 0);
     //_client_message.append(buff);
@@ -81,8 +91,9 @@ bool    CGI::checkTimeOut()
     double seconds;
     seconds = std::difftime(current_time, _last_time) * 1000;
 
-    if (TIME_OUT > 0 && seconds > TIME_OUT)
+    if (TIME_OUT_PROCESS > 0 && seconds >= TIME_OUT_PROCESS)
     {
+
         Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
         if (client)
         {
@@ -99,7 +110,6 @@ int CGI::Action(int event)
 {
     char buff[RECV_SIZE];
     int  result = read(_pipe[0], buff, sizeof(buff)); 
-    _buffer;
     (void)event;
     if (result > 0)
     {
@@ -113,8 +123,20 @@ int CGI::Action(int event)
         {
             if (result ==  0)
             {
-                client->setHTTPResponse(_buffer.substr(0, _buffer.find("\n\n") + 2));
-                client->setBodyResponse(_buffer.substr(_buffer.find("\n\n") + 2)); 
+                std::string http_response(_buffer.substr(0, _buffer.find("\n\n") + 2));
+                if (http_response.empty())
+                {
+                    client->setHTTPResponse("HTTP/1.1 200 OK\r\n\r\n");
+                }
+                else
+                {
+                    client->setHTTPResponse(http_response);
+                    std::string body_resposne(_buffer.substr(_buffer.find("\n\n") + 2));
+                    if (!body_resposne.empty())
+                    {
+                        client->setBodyResponse(body_resposne); 
+                    }
+                }
             }
             else
             {

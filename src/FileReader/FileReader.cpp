@@ -58,7 +58,6 @@ int FileReader::Action(int event)
 {
     char    buff[RECV_SIZE];
     int     result = read(_fd, buff, sizeof(buff)); 
-    _buffer;
     (void)event;
     if (result > 0)
     {

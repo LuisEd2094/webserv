@@ -1,6 +1,6 @@
 import time
 
-time.sleep(10)
+time.sleep(2)
 
 
 print("HTTP/1.1 200 OK")
