@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/09 13:52:13 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:59:31 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,17 @@ int fileConfig(void)
 	return 0;
 	
 }
-	
+
+int	testParseHtpp(void)	
+{
+	Parsing test;
+	std::cout << TUR << "test: " << ((int)test.getTypeLine("hola\n")[0]) << END << std::endl;
+	return (0);
+}
+
 int  main(void)
 {
-	fileConfig();
+//	fileConfig();
+	testParseHtpp();
 	return (0);
 }
