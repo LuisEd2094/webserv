@@ -15,7 +15,7 @@ class FileReader : public BaseHandler
 
         bool                checkTimeOut();
 
-        static void         createNewFileReader(Client& client);
+        static FileReader * createNewFileReader(Client& client);
         const int           getFD() const;
         class FileReaderException;
 

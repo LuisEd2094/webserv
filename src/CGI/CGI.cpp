@@ -75,11 +75,12 @@ CGI::~CGI()
     close(_pipe[0]);
 }
 
-void CGI::createNewCGI(Client& client)
+CGI* CGI::createNewCGI(Client& client)
 {
     CGI *new_cgi = new CGI(client);
     Overseer::addToPfds(new_cgi);
     //exit(0);
+    return new_cgi;
 }
 
 
@@ -97,7 +98,7 @@ bool    CGI::checkTimeOut()
         Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
         if (client)
         {
-            client->setHTTPResponse("HTTP/1.1 408 Request Timeout\r\n");
+            client->setHTTPResponse("HTTP/1.1 408 Request Timeout\r\n", this);
         }        
         return true;
 
@@ -126,21 +127,21 @@ int CGI::Action(int event)
                 std::string http_response(_buffer.substr(0, _buffer.find("\n\n") + 2));
                 if (http_response.empty())
                 {
-                    client->setHTTPResponse("HTTP/1.1 200 OK\r\n\r\n");
+                    client->setHTTPResponse("HTTP/1.1 200 OK\r\n\r\n", this);
                 }
                 else
                 {
-                    client->setHTTPResponse(http_response);
+                    client->setHTTPResponse(http_response, this);
                     std::string body_resposne(_buffer.substr(_buffer.find("\n\n") + 2));
                     if (!body_resposne.empty())
                     {
-                        client->setBodyResponse(body_resposne); 
+                        client->setBodyResponse(body_resposne, this); 
                     }
                 }
             }
             else
             {
-                client->setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n");
+                client->setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n", this);
             }
             return (0);
 

@@ -31,7 +31,7 @@ class Server : public BaseHandler
         const int getFD() const;
 
         bool validateAction(Client& client);
-        bool getResponse(Client& client);
+        BaseHandler* getResponse(Client& client);
         bool checkTimeOut();
     private:
         int                 _backlog;

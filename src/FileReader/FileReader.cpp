@@ -35,11 +35,12 @@ FileReader::~FileReader()
     close(_fd);
 }
 
-void FileReader::createNewFileReader(Client& client)
+FileReader* FileReader::createNewFileReader(Client& client)
 {
     FileReader *new_FileReader = new FileReader(client);
     Overseer::addToPfds(new_FileReader);
     //exit(0);
+    return new_FileReader;
 }
 
 
@@ -71,12 +72,12 @@ int FileReader::Action(int event)
         {
             if (result ==  0)
             {
-                client->setHTTPResponse("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n");
-                client->setBodyResponse(_buffer); 
+                client->setHTTPResponse("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n", this);
+                client->setBodyResponse(_buffer, this); 
             }
             else
             {
-                client->setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n");
+                client->setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n", this);
             }
             return (0);
 

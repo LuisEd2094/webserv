@@ -59,12 +59,12 @@ bool Server::validateAction(Client& client)
     {
         client.setHTTPResponse("HTTP/1.1 404 Not Found\r\n"
                         "Content-Length: 0\r\n"
-                        "\r\n\r\n");
+                        "\r\n\r\n", this);
         return (false);
     }
 }
 
-bool Server::getResponse(Client& client)
+BaseHandler* Server::getResponse(Client& client)
 {
     //CGI?
     // We assume we called validateAction before reaching this point.
@@ -80,37 +80,32 @@ bool Server::getResponse(Client& client)
     if (url == "/")
     {
         client.setHTTPResponse("HTTP/1.1 200 OK\r\n"
-                    "\r\n");
-        return true;
+                    "\r\n", this); // this should call an object to create the httpp
     }
     else if (url == "/index.html")
     {
         try
         {
-            FileReader::createNewFileReader(client);
-            return false;
+            return FileReader::createNewFileReader(client);
         }
         catch(const std::exception& e)
         {
-            client.setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n");
-            return true;
+            client.setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n", this);
         }  
     }
     else if (url == "/nolen.py")
     {
         try
         {
-            CGI::createNewCGI(client);
-            return false; // we return false since we create the CGI, which will then pass to the OVERSEER to handle. createNewCGI will not write into message at this point.
+            return CGI::createNewCGI(client);
         }
         catch(const std::exception& e)
         {
-            client.setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n");
-            return true;
+            client.setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n", this); // Should call an object to create the http
         }
         
     }
-    return false;
+    return NULL;
 
 }
 

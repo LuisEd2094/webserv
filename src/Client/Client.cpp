@@ -51,7 +51,13 @@ void Client::parseForHttp()
                 _content_length = std::atoi(content_len.c_str());
             }
         }
-        _server->getResponse(*this);
+        BaseHandler* newObject = _server->getResponse(*this);
+        if (newObject)
+        {
+            ClientHandler * newHandler = new ClientHandler();
+            _queue.push(newHandler);
+            _map[newObject] = newHandler;
+        }
         _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
 
         _found_http = true;
@@ -176,42 +182,62 @@ int Client::executeGetAction()
     //     "Hello, world!\r\n\0";
 
     int chunk_size;
-    if (!_HTTP_response.empty() && _HTTP_response_len > _HTTP_bytes_sent) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
+
+    ClientHandler * client = _queue.front();
+
+    if (client->has_body())
     {
-        chunk_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;
-        if ((_result = send(_fd, _C_type_HTTP + _HTTP_bytes_sent, chunk_size, 0) ) == -1)
-            return (-1);
-        if (_result == 0)
-            return (0);
-        _HTTP_bytes_sent += _result;
-        if (_HTTP_bytes_sent >= _HTTP_response_len && _out_body.empty())
+        _out_body = client->getBody();
+        _C_type_body = _out_body.c_str();
+        _body_response_len = _out_body.length();
+    }
+
+    if (client->has_http())
+    {
+        _HTTP_response = client->getHTTP();
+        _C_type_HTTP = _HTTP_response.c_str();
+        _HTTP_response_len = _HTTP_response.length();
+        if (!_HTTP_response.empty() && _HTTP_response_len > _HTTP_bytes_sent) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
         {
-            return (0);
+            chunk_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;
+            if ((_result = send(_fd, _C_type_HTTP + _HTTP_bytes_sent, chunk_size, 0) ) == -1)
+                return (-1);
+            if (_result == 0)
+                return (0);
+            _HTTP_bytes_sent += _result;
+            if (_HTTP_bytes_sent >= _HTTP_response_len && _out_body.empty())
+            {
+                return (0);
+            }
+            else
+            {
+                return (1);
+            }
         }
-        else
+    }
+    if (client->has_body())
+    {
+        if (!_out_body.empty() && _HTTP_bytes_sent >= _HTTP_response_len)
         {
-            return (1);
+            chunk_size = (_body_response_len - _body_bytes_sent) > SEND_SIZE ? SEND_SIZE : _body_response_len - _body_bytes_sent;
+            if ((_result = send(_fd, _C_type_body + _body_bytes_sent, chunk_size, 0)) == -1)
+                return (-1);
+            if (_result == 0)
+                return (0);
+            _body_bytes_sent += _result;
+            if (_body_bytes_sent >= _body_response_len)
+            {
+                return (0);
+            }
+            else
+            {
+                return (1);
+            }
+
         }
     }
 
-    if (!_out_body.empty() && _HTTP_bytes_sent >= _HTTP_response_len)
-    {
-        chunk_size = (_body_response_len - _body_bytes_sent) > SEND_SIZE ? SEND_SIZE : _body_response_len - _body_bytes_sent;
-        if ((_result = send(_fd, _C_type_body + _body_bytes_sent, chunk_size, 0)) == -1)
-            return (-1);
-        if (_result == 0)
-            return (0);
-        _body_bytes_sent += _result;
-        if (_body_bytes_sent >= _body_response_len)
-        {
-            return (0);
-        }
-        else
-        {
-            return (1);
-        }
 
-    }
     return (1);
 }
 
@@ -219,3 +245,50 @@ int Client::executeGetAction()
 Client::Client () {}
 Client::Client (const Client& rhs) {*this = rhs;}
 Client& Client::operator= (const Client& rhs) {(void)rhs; return *this;}
+
+
+
+
+
+
+void ClientHandler::setHTTPResponse(const std::string &message)
+{
+    _HTTP_response.append(message);
+    _C_type_HTTP = _HTTP_response.c_str();
+    _HTTP_response_len = std::strlen(_C_type_HTTP);
+}
+void ClientHandler::setBodyResponse(const std::string &message)
+{
+    _out_body.append(message);
+    _C_type_body = _out_body.c_str();
+    _body_response_len = std::strlen(_C_type_body);
+    _body_bytes_sent = 0;
+}
+
+bool    ClientHandler::has_http()
+{
+    return !_HTTP_response.empty();
+}
+bool    ClientHandler::has_body()
+{
+    return !_out_body.empty();
+}
+
+const std::string&      ClientHandler::getHTTP()
+{
+    return _HTTP_response;
+}
+const std::string&      ClientHandler::getBody()
+{
+    return _out_body;
+}
+
+ClientHandler::ClientHandler()
+{
+
+}
+
+ClientHandler::~ClientHandler()
+{
+    
+}

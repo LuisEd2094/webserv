@@ -13,9 +13,37 @@
 # include <BaseHandler.hpp>
 # include <cstring>
 # include <Overseer.hpp>
-
+# include <queue>
 
 class Server;
+
+class ClientHandler
+{
+    public:
+        ClientHandler();
+        ~ClientHandler();
+        void                setHTTPResponse(const std::string &message);
+        void                setBodyResponse(const std::string &message);
+
+        bool                has_http();
+        bool                has_body();
+
+        const std::string&      getHTTP();
+        const std::string&      getBody();
+
+    private:
+        std::string              _HTTP_response;
+        std::size_t             _HTTP_response_len;
+        std::size_t             _HTTP_bytes_sent;
+        const char *            _C_type_HTTP;
+
+        bool                    _requested_response;
+        std::string             _out_body;
+        std::size_t             _body_response_len;
+        std::size_t             _body_bytes_sent;
+        const char *            _C_type_body;
+
+};
 
 class Client : public BaseHandler
 {
@@ -23,11 +51,10 @@ class Client : public BaseHandler
         Client(Server *server);
         ~Client();
         int                 Action(int event);
-        int                 clientAction(int event);
 
         // setters
-        void                setHTTPResponse(const std::string &message);
-        void                setBodyResponse(const std::string &message);
+        void                setHTTPResponse(const std::string &message, BaseHandler *);
+        void                setBodyResponse(const std::string &message, BaseHandler *);
         bool                checkTimeOut();
 
         //getters
@@ -38,6 +65,8 @@ class Client : public BaseHandler
 
 
     private:
+        std::queue<ClientHandler *>               _queue;
+        std::map<BaseHandler*,  ClientHandler *>  _map;
         Parsing                 _parser_http;
         Actions                 _action;
         std::size_t             _result;
@@ -83,6 +112,7 @@ class Client : public BaseHandler
         Client (const Client& rhs);
         Client& operator= (const Client& rhs);
 };
+
 
 
 #endif
