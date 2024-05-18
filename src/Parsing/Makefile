@@ -6,7 +6,7 @@
 #    By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/06 08:47:28 by dacortes          #+#    #+#              #
-#    Updated: 2024/04/17 15:56:56 by dacortes         ###   ########.fr        #
+#    Updated: 2024/05/11 09:18:28 by dacortes         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,9 @@ RM = rm -rf
 #                               SOURCES                                        #
 ################################################################################
 
-SRC = main.cpp Parsing.cpp
+SRC = ConfigCgi.cpp ConfigGlobal.cpp ConfigLocation.cpp ConfigParse.cpp \
+	ConfigServer.cpp main.cpp Parsing.cpp \
+	parseListen.cpp
 INC = $(addprefix -I , ../../includes/)
 
 ################################################################################

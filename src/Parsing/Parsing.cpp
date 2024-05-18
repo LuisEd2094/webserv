@@ -6,11 +6,12 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/03 16:07:59 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:59:26 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <Parsing.hpp>
+// #include <Parsing.hpp>
+# include "../../includes/Parsing.hpp"
 
 Parsing::Parsing( void )
 {
@@ -142,6 +143,26 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		_findNewline = start;
 	}
 	return (EXIT_SUCCESS);
+}
+std::string	Parsing::getTypeLine(const std::string& strFind)
+{
+	short	flag = 0;
+	flag += (strFind.find("\r\n") != std::string::npos ? 2 : 0);
+	flag += (strFind.find("\n") != std::string::npos ? 1 : 0);
+	if (!flag)
+		return ("");
+	std::cout << RED << "Falg= " << END << flag << std::endl;
+	return (flag == 1 ? "\n" : "\r\n");
+}
+
+size_t	Parsing::getPos(void)
+{
+	return  (this->_findNewline);
+}
+
+std::map<std::string, std::string> Parsing::getMap(void)
+{
+	return (this->_method.content);
 }
 
 std::string Parsing::getMapValue(const std::string& key)
