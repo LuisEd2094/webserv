@@ -75,7 +75,7 @@ OVERSEER			=	Overseer.cpp mainLoop.cpp
 
 OVERSEER_FILES		=	$(addprefix $(OVERSEER_PATH), $(OVERSEER))
 
-CLIENT			=	Client.cpp getters.cpp setters.cpp
+CLIENT			=	Client.cpp getters.cpp setters.cpp ClientHandler.cpp DirectResponse.cpp
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
