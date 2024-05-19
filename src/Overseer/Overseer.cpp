@@ -10,7 +10,7 @@ struct pollfd  Overseer::_pfds[MAX_FDS];
 
 //Public
 
-void Overseer::cleanOverseer()
+void Overseer::cleanOverseer(int sig)
 {
     std::map<int, BaseHandler *>::iterator it = _pending_fds.begin();
     for (; it != _pending_fds.end(); it++)
@@ -18,6 +18,7 @@ void Overseer::cleanOverseer()
         delete it->second;
     }
     _pending_fds.clear();
+    std::exit(0);
 }
 
 Overseer::Overseer()
@@ -27,7 +28,7 @@ Overseer::Overseer()
 
 Overseer::~Overseer()
 {
-    cleanOverseer();
+    cleanOverseer(0);
 
 }
 

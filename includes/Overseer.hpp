@@ -20,7 +20,7 @@
 class Overseer
 {
     public:
-        static void     cleanOverseer();
+        static  void     cleanOverseer(int);
 
         static  void    addToPfds(BaseHandler *);
 

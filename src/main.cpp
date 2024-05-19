@@ -35,6 +35,7 @@ int main()
     confi.ip = "";
     confi.backlog = 200;
     signal(SIGPIPE, SIG_IGN);
+    signal(SIGINT, Overseer::cleanOverseer);
     // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;
     try
     {

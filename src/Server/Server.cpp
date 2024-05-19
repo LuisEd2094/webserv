@@ -82,7 +82,7 @@ BaseHandler* Server::getResponse(Client& client)
     if (url == "/")
     {
         return DirectResponse::createNewDirect("HTTP/1.1 200 OK\r\n"
-                    "\r\n", "");
+                    "\r\n", "HOLA");
     }
     else if (url == "/index.html")
     {
