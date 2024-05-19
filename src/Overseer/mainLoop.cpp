@@ -48,40 +48,20 @@ void Overseer::mainLoop()
         {
             // Check if someone's ready to read
             std::map<int, BaseHandler *>::iterator it = _pending_fds.find(_pfds[_i].fd);
-            if (_pfds[_i].revents & POLLIN)
-            { // We got one!!
-                handleAction(it->second, POLLIN);
-
-/*                 std::map<int, BaseHandler *>::iterator it3 = _pending_fds.find(_pfds[_i].fd);
-
-                if (it3 != _pending_fds.end()) //one server got a connection
-                {
-                    // If listener is ready to read, handle new connection
-                    handleAction(it3->second, POLLIN);
-                    //handleAction(newClient, POLLIN); 
-                } 
-                found++; */
-            }
-            else if (_pfds[_i].revents & POLLHUP)
+            if (_pfds[_i].revents & (POLLIN | POLLOUT | POLLHUP))
             {
-                handleAction(it->second, POLLHUP);
-
-           /*      std::map<int, BaseHandler *>::iterator it2 = _pending_fds.find(_pfds[_i].fd);
-                if (it2 != _pending_fds.end())
+                if (_pfds[_i].revents & POLLIN)
                 {
-                    handleAction(it2->second, POLLHUP);
+                    handleAction(it->second, POLLIN);
                 }
-                found++; */
-            }
-            else if (_pfds[_i].revents & POLLOUT)
-            {
-                handleAction(it->second, POLLOUT);
-                /*std::map<int, BaseHandler *>::iterator it = _pending_fds.find(_pfds[_i].fd);
-                if (it != _pending_fds.end() && _pfds[_i].fd == it->second->getFD() )
+                if (_pfds[_i].revents & POLLHUP)
+                {
+                    handleAction(it->second, POLLHUP);
+                }
+                if (_pfds[_i].revents & POLLOUT)
                 {
                     handleAction(it->second, POLLOUT);
                 }
-                found++; */
             }
             else
             {
