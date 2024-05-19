@@ -1,6 +1,6 @@
 #include <Client.hpp>
 #include <Server.hpp>
-
+#include <DirectResponse.hpp>
 //Exception
 class Client::clientException : public std::exception
 {
@@ -54,9 +54,30 @@ void Client::parseForHttp()
         BaseHandler* newObject = _server->getResponse(*this);
         if (newObject)
         {
-            ClientHandler * newHandler = new ClientHandler();
-            _response_objects_queue.push(newHandler);
-            _response_objects_map[newObject] = newHandler;
+            ClientHandler * new_handler = new ClientHandler();
+            DirectResponse * direct_object = dynamic_cast<DirectResponse *>(newObject);
+            _response_objects_queue.push(new_handler);
+
+            if (direct_object)
+            {
+                if (direct_object->has_http())
+                {
+                    new_handler->setHTTPResponse(direct_object->get_http());
+                }
+                if (direct_object->has_body())
+                {
+                    new_handler->setBodyResponse(direct_object->get_body());
+                }
+                if (_response_objects_queue.front() == new_handler)
+                {
+                    Overseer::setListenAction(_fd, POLLIN | POLLOUT);
+                }
+                delete direct_object; // I delete this since it wont be going to the FD POLL, so the overseer wont be keepting track of this object
+            }
+            else
+            {
+                _response_objects_map[newObject] = new_handler;
+            }
         }
         _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
 

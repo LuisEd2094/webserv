@@ -1,6 +1,7 @@
 #include <Server.hpp>
 #include <Client.hpp>
 #include <ClientHandler.hpp>
+#include <DirectResponse.hpp>
 
 //Exceptions
 
@@ -80,8 +81,8 @@ BaseHandler* Server::getResponse(Client& client)
 
     if (url == "/")
     {
-        client.setHTTPResponse("HTTP/1.1 200 OK\r\n"
-                    "\r\n", this); // this should call an object to create the httpp
+        return DirectResponse::createNewDirect("HTTP/1.1 200 OK\r\n"
+                    "\r\n", "");
     }
     else if (url == "/index.html")
     {
@@ -91,7 +92,7 @@ BaseHandler* Server::getResponse(Client& client)
         }
         catch(const std::exception& e)
         {
-            client.setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n", this);
+            return DirectResponse::createNewDirect("HTTP/1.1 500 Internal Server Error\r\n", "");
         }  
     }
     else if (url == "/nolen.py")
@@ -102,7 +103,7 @@ BaseHandler* Server::getResponse(Client& client)
         }
         catch(const std::exception& e)
         {
-            client.setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n", this); // Should call an object to create the http
+            return DirectResponse::createNewDirect("HTTP/1.1 500 Internal Server Error\r\n", ""); // Should call an object to create the http
         }
         
     }

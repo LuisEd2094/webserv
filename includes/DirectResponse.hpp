@@ -9,14 +9,23 @@ class Client;
 class DirectResponse : public BaseHandler
 {
     public:
-
-        DirectResponse(Client *, const std::string&, const std::string &);
+        static DirectResponse * createNewDirect(const std::string&, const std::string &);
+        DirectResponse(const std::string&, const std::string &);
         ~DirectResponse();
+
+        std::string& get_http();
+        std::string& get_body();
+
+        bool has_http();
+        bool has_body();
 
     private:
         int Action(int event);
         bool checkTimeOut();
         const int getFD() const;
+
+        std::string _http_response;
+        std::string _body_response;
 };
 
 #endif

@@ -42,7 +42,7 @@ class Client : public BaseHandler
 
     private:
         std::queue< ClientHandler *>               _response_objects_queue;
-        std::map<BaseHandler *,  ClientHandler *>  _response_objects_map;
+        std::map< BaseHandler *,  ClientHandler *> _response_objects_map;
         Parsing                 _parser_http;
         Actions                 _action;
         std::size_t             _result;

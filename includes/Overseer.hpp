@@ -15,7 +15,7 @@
 # define    TIME_OUT_POLL 500
 # define    TIME_OUT_PROCESS 1500
 # define    SEND_SIZE 8000
-# define    RECV_SIZE 20
+# define    RECV_SIZE 8000
 
 class Overseer
 {
