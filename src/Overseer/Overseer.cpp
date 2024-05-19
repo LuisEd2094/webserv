@@ -56,7 +56,7 @@ void Overseer::setListenAction(int fd, int action) // might need to change this 
 void    Overseer::addToPfds(BaseHandler * base)
 {
     _pending_fds[base->getFD()] = base;
-    addToPfds(base->getFD(), POLLIN | POLLHUP, 0);
+    addToPfds(base->getFD(), JUST_IN, 0);
     base->setTime();
 }
 
@@ -92,7 +92,6 @@ void Overseer::saveServer(t_confi* confi)
 
 void Overseer::handleAction(BaseHandler *obj, int event)
 {
-    obj->setTime();
     int status = obj->Action(event);
         
     if (status == 0 || status == -1)
@@ -102,7 +101,10 @@ void Overseer::handleAction(BaseHandler *obj, int event)
         else
             std::cerr << "error: " << static_cast<std::string>(strerror(errno)) << std::endl;
         removeFromPFDS(obj); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
+        return; 
     }
+    obj->setTime();
+
 }
 
 

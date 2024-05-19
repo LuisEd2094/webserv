@@ -92,7 +92,7 @@ bool    CGI::checkTimeOut()
     double seconds;
     seconds = std::difftime(current_time, _last_time) * 1000;
 
-    if (TIME_OUT_PROCESS > 0 && seconds >= TIME_OUT_PROCESS)
+    if (TIME_OUT_POLL > 0 && seconds >= TIME_OUT_PROCESS)
     {
 
         Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
@@ -145,6 +145,10 @@ int CGI::Action(int event)
             }
             return (0);
 
+        }
+        else 
+        {
+            return (0);
         }
     }
     return (1);

@@ -1,5 +1,4 @@
 #include <DirectResponse.hpp>
-#include <Client.hpp>
 
 DirectResponse* DirectResponse::createNewDirect(const std::string& http, const std::string & body)
 {

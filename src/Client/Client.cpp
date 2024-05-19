@@ -33,9 +33,22 @@ Client::Client(Server *server) : BaseHandler()
     _requested_response = false;
 }
 
-
-
-
+void Client::handleDirectObj(DirectResponse* direct_object, ClientHandler * new_handler)
+{
+    if (direct_object->has_http())
+    {
+        new_handler->setHTTPResponse(direct_object->get_http());
+    }
+    if (direct_object->has_body())
+    {
+        new_handler->setBodyResponse(direct_object->get_body());
+    }
+    if (_response_objects_queue.front() == new_handler)
+    {
+        Overseer::setListenAction(_fd, IN_AND_OUT);
+    }
+    delete direct_object; // I delete this since it wont be going to the FD POLL, so t
+}
 
 void Client::parseForHttp()
 {
@@ -54,25 +67,12 @@ void Client::parseForHttp()
         BaseHandler* newObject = _server->getResponse(*this);
         if (newObject)
         {
-            ClientHandler * new_handler = new ClientHandler();
-            DirectResponse * direct_object = dynamic_cast<DirectResponse *>(newObject);
+            ClientHandler* new_handler = new ClientHandler();
+            DirectResponse* direct_object = dynamic_cast<DirectResponse *>(newObject);
             _response_objects_queue.push(new_handler);
-
             if (direct_object)
             {
-                if (direct_object->has_http())
-                {
-                    new_handler->setHTTPResponse(direct_object->get_http());
-                }
-                if (direct_object->has_body())
-                {
-                    new_handler->setBodyResponse(direct_object->get_body());
-                }
-                if (_response_objects_queue.front() == new_handler)
-                {
-                    Overseer::setListenAction(_fd, POLLIN | POLLOUT);
-                }
-                delete direct_object; // I delete this since it wont be going to the FD POLL, so the overseer wont be keepting track of this object
+                handleDirectObj(direct_object, new_handler);
             }
             else
             {
@@ -155,6 +155,10 @@ int Client::Action (int event)
     {
         return executeGetAction();
     }
+    else if (event & POLLHUP)
+    {
+        return 0;
+    }
     return _result;
 }
 
@@ -163,6 +167,11 @@ int Client::Action (int event)
 
 Client::~Client() 
 {
+    while (!_response_objects_queue.empty())
+    {
+        delete _response_objects_queue.front();
+        _response_objects_queue.pop();
+    }
     close(_fd);
 }
 
@@ -190,6 +199,23 @@ int Client::executePostAction()
     return (1);
 }
 
+void Client::removeFirstObj()
+{
+    delete _response_objects_queue.front();
+    _response_objects_queue.pop();
+    if (!_response_objects_queue.empty())
+    {
+        if(_response_objects_queue.front()->has_http())
+        {
+            Overseer::setListenAction(_fd, IN_AND_OUT);
+        }
+        else
+        {
+            Overseer::setListenAction(_fd, JUST_IN);
+        }
+    }
+}
+ 
 int Client::executeGetAction()
 {
     // SUPPOSE WE ALREADY KNOW THE HTTP IS DONE;
@@ -223,11 +249,10 @@ int Client::executeGetAction()
             chunk_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;
             if ((_result = send(_fd, _C_type_HTTP + _HTTP_bytes_sent, chunk_size, 0) ) == -1)
                 return (-1);
-            if (_result == 0)
-                return (0);
             _HTTP_bytes_sent += _result;
             if (_HTTP_bytes_sent >= _HTTP_response_len && _out_body.empty())
             {
+                removeFirstObj();
                 return (0);
             }
             else
@@ -243,11 +268,10 @@ int Client::executeGetAction()
             chunk_size = (_body_response_len - _body_bytes_sent) > SEND_SIZE ? SEND_SIZE : _body_response_len - _body_bytes_sent;
             if ((_result = send(_fd, _C_type_body + _body_bytes_sent, chunk_size, 0)) == -1)
                 return (-1);
-            if (_result == 0)
-                return (0);
             _body_bytes_sent += _result;
             if (_body_bytes_sent >= _body_response_len)
             {
+                removeFirstObj();
                 return (0);
             }
             else

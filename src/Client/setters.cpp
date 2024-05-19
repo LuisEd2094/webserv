@@ -6,11 +6,12 @@ void   Client::setHTTPResponse(const std::string &message, BaseHandler *obj)
     if (it != _response_objects_map.end())
     {
         it->second->setHTTPResponse(message);
+        if (it->second == _response_objects_queue.front())
+        {
+            Overseer::setListenAction(_fd, IN_AND_OUT);
+        }
     }
-    if (it->second == _response_objects_queue.front())
-    {
-        Overseer::setListenAction(_fd, POLLIN | POLLOUT);
-    }
+
 }
 
 void Client::setBodyResponse(const std::string &message, BaseHandler *obj)
@@ -21,7 +22,7 @@ void Client::setBodyResponse(const std::string &message, BaseHandler *obj)
         it->second->setBodyResponse(message);
         if (it->second == _response_objects_queue.front())
         {
-            Overseer::setListenAction(_fd, POLLIN | POLLOUT);
+            Overseer::setListenAction(_fd, IN_AND_OUT);
         }
     }
 

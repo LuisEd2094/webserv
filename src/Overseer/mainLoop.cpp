@@ -50,13 +50,14 @@ void Overseer::mainLoop()
             std::map<int, BaseHandler *>::iterator it = _pending_fds.find(_pfds[_i].fd);
             if (_pfds[_i].revents & (POLLIN | POLLOUT | POLLHUP))
             {
-                if (_pfds[_i].revents & POLLIN)
-                {
-                    handleAction(it->second, POLLIN);
-                }
                 if (_pfds[_i].revents & POLLHUP)
                 {
                     handleAction(it->second, POLLHUP);
+                    continue;
+                }
+                if (_pfds[_i].revents & POLLIN)
+                {
+                    handleAction(it->second, POLLIN);
                 }
                 if (_pfds[_i].revents & POLLOUT)
                 {

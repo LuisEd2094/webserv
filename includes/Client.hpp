@@ -15,11 +15,9 @@
 # include <Overseer.hpp>
 # include <queue>
 # include <ClientHandler.hpp>
+# include <DirectResponse.hpp>
 
 class Server;
-
-
-
 
 class Client : public BaseHandler
 {
@@ -77,6 +75,10 @@ class Client : public BaseHandler
         void                    readFromFD();
         int                     executeGetAction();
         int                     executePostAction();
+
+
+        void                    handleDirectObj(DirectResponse*, ClientHandler *);
+        void                    removeFirstObj();
 
 
 
