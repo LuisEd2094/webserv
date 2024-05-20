@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME        = webserv
-CFLAGS      = -std=c++98 -pedantic -g  #-fsanitize=address #-Wall -Wextra  -Werror 
+CFLAGS      = -std=c++98 -pedantic -g  -fsanitize=address #-Wall -Wextra  -Werror 
 CC			= c++
 RM          = rm -f
 SRCS_PATH	= src/
@@ -63,7 +63,7 @@ BASE			=	BaseHandler.cpp
 
 BASE_FILES		=	$(addprefix $(BASE_PATH), $(BASE))
 
-PARSING			=	Parsing.cpp
+PARSING			=	ConfigCgi.cpp      ConfigGlobal.cpp   ConfigLocation.cpp ConfigParse.cpp    ConfigServer.cpp    Parsing.cpp parseListen.cpp
 
 PARSING_FILES		=	$(addprefix $(PARSING_PATH), $(PARSING))
 
