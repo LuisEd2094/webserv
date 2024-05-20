@@ -6,10 +6,10 @@
 # include <exception>
 # include <iostream>
 
-class ConfigParse : public std::map<std::string, std::string>
+class ParsingElement : public std::map<std::string, std::string>
 {
 	public: 
-		ConfigParse(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd) :
+		ParsingElement(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd) :
 			std::map<std::string, std::string>::map(),
 			statementBegin(begin), statementEnd(statementEnd), eof(eof)
 		{
@@ -20,7 +20,7 @@ class ConfigParse : public std::map<std::string, std::string>
 				this->endStatementChars.push_back('{');
 				this->endStatementChars.push_back('}');
 		};
-		virtual ~ConfigParse(){};
+		virtual ~ParsingElement(){};
 		virtual void	recursivePrint(void) = 0;
 
 //		std::string _getFileContent() const { return fileContent; };
@@ -34,7 +34,7 @@ class ConfigParse : public std::map<std::string, std::string>
 		virtual void				createNestedElement(std::string param0, std::string param1) = 0;
 
 
-		class ConfigParseException : public std::exception
+		class ParsingElementException : public std::exception
 		{
 			const char* what() const throw()
 			{
@@ -51,11 +51,11 @@ class ConfigParse : public std::map<std::string, std::string>
 	private:
 		static std::list<char> endStatementChars;
 		
-		// Needed to avoid ConfigParse() compilation errors
+		// Needed to avoid ParsingElement() compilation errors
 		const static std::string			empty;
 		static std::string::iterator		ebgn;
 		static std::string::iterator		eend;
-		ConfigParse() : statementBegin(ebgn), statementEnd(ebgn), eof(eend){};
+		ParsingElement() : statementBegin(ebgn), statementEnd(ebgn), eof(eend){};
 };
 	const std::string	empty = "";
 #endif

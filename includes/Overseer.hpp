@@ -5,11 +5,13 @@
 # include <iostream>
 # include <Confi.hpp>
 # include <cerrno>
-# include <Server.hpp>
+# include "Server.hpp"
 # include <poll.h>
 
 
 # include <BaseHandler.hpp>
+
+# include "ConfigVirtualServer.hpp"
 
 # define    MAX_FDS 1000
 # define    TIME_OUT_POLL -1
@@ -31,7 +33,7 @@ class Overseer
 
 
 
-        static  void    saveServer(t_confi* confi);
+        static  Server *saveServer(t_confi* confi);
         static  void    removeFromPFDS(BaseHandler *);
 
         static  BaseHandler* getObj(int);
@@ -52,6 +54,7 @@ class Overseer
         static  std::size_t             _i;
         static  std::size_t             _fd_count;
         static  struct pollfd           _pfds[MAX_FDS];
+
 
 
 

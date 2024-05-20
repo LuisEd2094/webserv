@@ -1,12 +1,12 @@
 #ifndef CONFIG_CGI_HPP
 # define CONFIG_CGI_HPP
-# include "ConfigParse.hpp"
-class ConfigCgi: public ConfigParse
+# include "ParsingElement.hpp"
+class ParsingCgi: public ParsingElement
 {
 	public:
 		void	createNestedElement(std::string param0, std::string param1);
-		ConfigCgi(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
-		~ConfigCgi(){};
+		ParsingCgi(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
+		~ParsingCgi(){};
 		void recursivePrint(void);
 		//parsing
 		//check key value
