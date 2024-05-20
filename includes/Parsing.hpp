@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/16 17:41:58 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/19 11:16:49 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,9 @@ class Parsing
 		std::list<std::string> _methods;
 		std::string	_read;
 		t_request	_method;
+		std::string	_typeLine;
 		size_t		_findNewline;
+		bool		_endRead;
 	public:
 		Parsing(void);
 		~Parsing(void);
@@ -173,6 +175,7 @@ class Parsing
 	size_t		getPos(void);
 	std::string getMapValue(const std::string& key);
 	std::map<std::string, std::string> getMap(void);
+	bool getEndRead() const;
 	/*
 	 * Exception Classes
 	*/

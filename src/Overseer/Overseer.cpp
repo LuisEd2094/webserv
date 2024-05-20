@@ -38,6 +38,7 @@ void Overseer::removeFromPFDS(BaseHandler *obj)
 
     _pfds[_i] = _pfds[_fd_count - 1];
     _fd_count--;
+    _i--;
     _pending_fds.erase(obj->getFD());
     delete obj;
 }
@@ -90,7 +91,7 @@ void Overseer::saveServer(t_confi* confi)
     addToPfds(server);
 }
 
-void Overseer::handleAction(BaseHandler *obj, int event)
+bool Overseer::handleAction(BaseHandler *obj, int event)
 {
     int status = obj->Action(event);
         
@@ -101,9 +102,10 @@ void Overseer::handleAction(BaseHandler *obj, int event)
         else
             std::cerr << "error: " << static_cast<std::string>(strerror(errno)) << std::endl;
         removeFromPFDS(obj); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
-        return; 
+        return false; 
     }
     obj->setTime();
+    return true;
 
 }
 

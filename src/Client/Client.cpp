@@ -54,7 +54,7 @@ void Client::parseForHttp()
 {
     std::size_t found = _in_http.find("\r\n\r\n");
 
-    if (found != std::string::npos)
+    if (_parser_http.getEndRead())
     {
         if(_action == POST)
         {
@@ -64,11 +64,11 @@ void Client::parseForHttp()
                 _content_length = std::atoi(content_len.c_str());
             }
         }
-        BaseHandler* newObject = _server->getResponse(*this);
-        if (newObject)
+        BaseHandler* new_object = _server->getResponse(*this);
+        if (new_object)
         {
             ClientHandler* new_handler = new ClientHandler();
-            DirectResponse* direct_object = dynamic_cast<DirectResponse *>(newObject);
+            DirectResponse* direct_object = dynamic_cast<DirectResponse *>(new_object);
             _response_objects_queue.push(new_handler);
             if (direct_object)
             {
@@ -76,7 +76,7 @@ void Client::parseForHttp()
             }
             else
             {
-                _response_objects_map[newObject] = new_handler;
+                _response_objects_map[new_object] = new_handler;
             }
         }
         _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
@@ -105,7 +105,7 @@ void Client::readFromFD()
     {
         if (!_found_http)
         {
-            _in_http.append((const char *)_in_message);
+            _in_http.append((const char *)_in_message, _result);
             if (_action == WAIT)
             {
                 if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
@@ -157,7 +157,7 @@ int Client::Action (int event)
     }
     else if (event & POLLHUP)
     {
-        return 0;
+        return 1;
     }
     return _result;
 }

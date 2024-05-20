@@ -31,7 +31,7 @@ int main()
     confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
     confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
     confi.hints.ai_flags = AI_PASSIVE;
-    confi.port = "8080";
+    confi.port = "80";
     confi.ip = "";
     confi.backlog = 200;
     signal(SIGPIPE, SIG_IGN);

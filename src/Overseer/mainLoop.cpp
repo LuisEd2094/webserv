@@ -52,16 +52,18 @@ void Overseer::mainLoop()
             {
                 if (_pfds[_i].revents & POLLHUP)
                 {
-                    handleAction(it->second, POLLHUP);
-                    continue;
+                    if (!handleAction(it->second, POLLHUP))
+                        continue;
                 }
                 if (_pfds[_i].revents & POLLIN)
                 {
-                    handleAction(it->second, POLLIN);
+                    if (!handleAction(it->second, POLLIN))
+                        continue;
                 }
                 if (_pfds[_i].revents & POLLOUT)
                 {
-                    handleAction(it->second, POLLOUT);
+                    if (!handleAction(it->second, POLLOUT))
+                        continue;
                 }
             }
             else

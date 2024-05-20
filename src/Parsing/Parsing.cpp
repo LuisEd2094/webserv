@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/16 17:59:26 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:28:28 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Parsing::Parsing( void )
 	_methods.push_back(std::string("POST"));
 	_methods.push_back(std::string("DELETE"));
 	_findNewline = 0;
+	_endRead = false;
 }
 
 Parsing::~Parsing( void )
@@ -67,9 +68,16 @@ bool Parsing::checkMethod(const std::string& strRead)
 	size_t	space = 0;
 	size_t	tmp = 0;
 
-	//\r \n --- \r\n --- \n
-	_findNewline = strRead.find("\r\n");
-	for (size_t i = 0; i < _findNewline && _findNewline != std::string::npos; i++)
+	_typeLine = getTypeLine(strRead);
+	if (!_typeLine[0])
+	{
+		std::cout << "estoy fuera" << std::endl;
+		return (EXIT_FAILURE);
+	}
+	std::cout << YELLOW << (int)_typeLine[0] << END << std::endl;
+	_findNewline = strRead.find(_typeLine);
+	std::cout << _findNewline << std::endl;
+	for (size_t i = 0; _findNewline != std::string::npos && i < _findNewline; i++)
 	{
 		tmp = word;
 		if (!::isblank(strRead[i]) and word != 3)
@@ -119,14 +127,29 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 	size_t start = _findNewline, end = 0;
 	while (true)
 	{
-		start += 2;
+		std::string typeLine = getTypeLine(&strRead[start]);
+		if (!typeLine[0] or typeLine != _typeLine)
+		{
+			std::cout << "estoy fuera" << std::endl;
+			return (EXIT_FAILURE);
+		}
+		start += (typeLine[0] == '\r' ? 2 : 1);
+		std::cout << "start: " << (typeLine[0] == '\r' ? 2 : 1) << std::endl;
 		std::string tmpEnd = &strRead[start]; 
 		std::size_t endPos = tmpEnd.find("\r\n");
+		
 		short emptyLine = 0;
-		if (this->isEmptyLine(tmpEnd))
+		// std::string nexLine = std::string(end);
+		if (this->isEmptyLine(tmpEnd)) //verificar si es la ultima linea del archivo
 			emptyLine++;
-		if ( endPos  == std::string::npos or emptyLine == 2)
-			break;
+		std::cout << "count empty line:" <<  emptyLine << std::endl;
+		if ( endPos  == std::string::npos or emptyLine == 1)
+		{
+			_endRead = (emptyLine == 1);
+			std::cout << YELLOW << (int)strRead[_findNewline] << END << std::endl;
+			return (EXIT_FAILURE);
+		}
+;
 		end = start + endPos;
 		std::string tmp(strRead.begin() + start , strRead.begin() + end);
 		if (tmp[0] != '\0')
@@ -149,9 +172,10 @@ std::string	Parsing::getTypeLine(const std::string& strFind)
 	short	flag = 0;
 	flag += (strFind.find("\r\n") != std::string::npos ? 2 : 0);
 	flag += (strFind.find("\n") != std::string::npos ? 1 : 0);
+	flag += (strFind.find("\n\r") != std::string::npos ? -1 : 0);
+	flag += (strFind.find("\r \n") != std::string::npos ? -1 : 0);
 	if (!flag)
 		return ("");
-	std::cout << RED << "Falg= " << END << flag << std::endl;
 	return (flag == 1 ? "\n" : "\r\n");
 }
 
@@ -171,4 +195,9 @@ std::string Parsing::getMapValue(const std::string& key)
 	if (it == this->_method.content.end())
 		return ("not found");
 	return (it->second);
+}
+
+bool Parsing::getEndRead() const
+{
+	return (_endRead);
 }

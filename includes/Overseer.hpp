@@ -15,7 +15,7 @@
 # define    TIME_OUT_POLL -1
 # define    TIME_OUT_PROCESS 1500
 # define    SEND_SIZE 8000
-# define    RECV_SIZE 8000
+# define    RECV_SIZE 20
 # define    IN_AND_OUT POLLIN | POLLOUT | POLLHUP
 # define    JUST_IN POLLIN | POLLHUP
 
@@ -37,7 +37,7 @@ class Overseer
         static  BaseHandler* getObj(int);
 
 
-        static  void    handleAction(BaseHandler * , int );
+        static  bool    handleAction(BaseHandler * , int );
         static  void    mainLoop();
         
 
