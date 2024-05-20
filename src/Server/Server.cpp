@@ -66,7 +66,7 @@ bool Server::validateAction(Client& client)
     }
 }
 
-BaseHandler* Server::getResponse(Client& client)
+BaseHandler* Server::getResponse(Client & client)
 {
     //CGI?
     // We assume we called validateAction before reaching this point.

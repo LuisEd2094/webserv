@@ -150,6 +150,7 @@ class Parsing
 		t_request	_method;
 		std::string	_typeLine;
 		size_t		_findNewline;
+		size_t		_begin;
 		bool		_endRead;
 	public:
 		Parsing(void);
@@ -175,6 +176,8 @@ class Parsing
 	size_t		getPos(void);
 	std::string getMapValue(const std::string& key);
 	std::map<std::string, std::string> getMap(void);
+	// const t_request	*getRequest(void) const;
+	void resetParsing(void);
 	bool getEndRead() const;
 	/*
 	 * Exception Classes

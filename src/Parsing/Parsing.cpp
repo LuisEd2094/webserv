@@ -62,22 +62,25 @@ bool Parsing::isVersion(const std::string& version) const
 	return (version != "HTTP/1.1");
 }
 
-bool Parsing::checkMethod(const std::string& strRead)
+bool Parsing::checkMethod(const std::string& strIn)
 {
 	size_t	word = 0;
 	size_t	space = 0;
 	size_t	tmp = 0;
 
-	_typeLine = getTypeLine(strRead);
+	_typeLine = getTypeLine(&strIn[_findNewline]);
 	if (!_typeLine[0])
 	{
 		std::cout << "estoy fuera" << std::endl;
 		return (EXIT_FAILURE);
 	}
 	std::cout << YELLOW << (int)_typeLine[0] << END << std::endl;
-	_findNewline = strRead.find(_typeLine);
-	std::cout << _findNewline << std::endl;
-	for (size_t i = 0; _findNewline != std::string::npos && i < _findNewline; i++)
+	_begin = _findNewline;
+
+	size_t end = strIn.substr(_findNewline).find(_typeLine) + _findNewline;
+	std::string strRead(strIn.begin() + _findNewline, strIn.begin() + end);
+
+	for (size_t i = 0; end != std::string::npos && i < strRead.length(); i++)
 	{
 		tmp = word;
 		if (!::isblank(strRead[i]) and word != 3)
@@ -107,6 +110,8 @@ bool Parsing::checkMethod(const std::string& strRead)
 		return (EXIT_FAILURE);
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
+	_findNewline = end;
+
 	return (EXIT_SUCCESS);
 }
 
@@ -136,20 +141,15 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		start += (typeLine[0] == '\r' ? 2 : 1);
 		std::cout << "start: " << (typeLine[0] == '\r' ? 2 : 1) << std::endl;
 		std::string tmpEnd = &strRead[start]; 
-		std::size_t endPos = tmpEnd.find("\r\n");
+		std::size_t endPos = tmpEnd.find(typeLine);
 		
 		short emptyLine = 0;
 		// std::string nexLine = std::string(end);
 		if (this->isEmptyLine(tmpEnd)) //verificar si es la ultima linea del archivo
 			emptyLine++;
 		std::cout << "count empty line:" <<  emptyLine << std::endl;
-		if ( endPos  == std::string::npos or emptyLine == 1)
-		{
-			_endRead = (emptyLine == 1);
-			std::cout << YELLOW << (int)strRead[_findNewline] << END << std::endl;
+		if ( endPos  == std::string::npos)
 			return (EXIT_FAILURE);
-		}
-;
 		end = start + endPos;
 		std::string tmp(strRead.begin() + start , strRead.begin() + end);
 		if (tmp[0] != '\0')
@@ -164,6 +164,12 @@ bool	Parsing::parsingHeader(const std::string& strRead)
 		}
 		start = end;
 		_findNewline = start;
+		if (emptyLine == 1)
+		{
+			_endRead = (emptyLine == 1);
+			std::cout << YELLOW << (int)strRead[_findNewline] << END << std::endl;
+			return (EXIT_SUCCESS);
+		}
 	}
 	return (EXIT_SUCCESS);
 }
@@ -201,3 +207,19 @@ bool Parsing::getEndRead() const
 {
 	return (_endRead);
 }
+
+void Parsing::resetParsing( void)
+{
+	_method.content.clear();
+	_method.method.clear();
+	_method.requested.clear();
+	_method.version.clear();
+	_endRead = false;
+	_findNewline += _typeLine.length();
+}
+
+
+// const t_request	*Parsing::getRequest(void) const 
+// {
+// 	return (&(this->_method));
+// }

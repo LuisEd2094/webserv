@@ -52,8 +52,6 @@ void Client::handleDirectObj(DirectResponse* direct_object, ClientHandler * new_
 
 void Client::parseForHttp()
 {
-    std::size_t found = _in_http.find("\r\n\r\n");
-
     if (_parser_http.getEndRead())
     {
         if(_action == POST)
@@ -64,6 +62,8 @@ void Client::parseForHttp()
                 _content_length = std::atoi(content_len.c_str());
             }
         }
+
+
         BaseHandler* new_object = _server->getResponse(*this);
         if (new_object)
         {
@@ -79,9 +79,11 @@ void Client::parseForHttp()
                 _response_objects_map[new_object] = new_handler;
             }
         }
-        _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
-
-        _found_http = true;
+        //_in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
+        
+        //reset parser
+        _parser_http.resetParsing();
+        _action = WAIT;
     }
 }
 
@@ -103,9 +105,9 @@ void Client::readFromFD()
 
     if (_result > 0)
     {
-        if (!_found_http)
+        _in_http.append((const char *)_in_message, _result);
+        while (_parser_http.getPos()  != _in_http.length())
         {
-            _in_http.append((const char *)_in_message, _result);
             if (_action == WAIT)
             {
                 if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
@@ -117,17 +119,46 @@ void Client::readFromFD()
                     }
                     updateMethodAction();
                 }
+                else
+                {
+                    break;
+                }
             }
             if (_action != WAIT) 
             {
-                _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
+                if (_parser_http.parsingHeader(_in_http)) // parsingHeader return 1 on failure
+                    break;
                 parseForHttp();
             }
         }
-        else if (_action == POST)
-        {
-            _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
-        }
+        // else if (_action == POST)
+        // {
+        //     _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
+        // }      
+        // if (!_found_http)
+        // {
+        //     if (_action == WAIT)
+        //     {
+        //         if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
+        //         {
+        //             if (!_server->validateAction(*this))
+        //             {
+        //                 _action = GET;
+        //                 return;
+        //             }
+        //             updateMethodAction();
+        //         }
+        //     }
+        //     if (_action != WAIT) 
+        //     {
+        //         _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
+        //         parseForHttp();
+        //     }
+        // // }
+        // else if (_action == POST)
+        // {
+        //     _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
+        // }
 
     }
 }
