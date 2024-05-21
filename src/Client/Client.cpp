@@ -29,8 +29,7 @@ Client::Client(Server *server) : BaseHandler()
     }
     _action = WAIT;
     _found_http = false;
-    _HTTP_bytes_sent = 0;
-    _requested_response = false;
+    _keep_alive = true;
 }
 
 void Client::handleDirectObj(DirectResponse* direct_object, ClientHandler * new_handler)
@@ -245,6 +244,10 @@ void Client::removeFirstObj()
             Overseer::setListenAction(_fd, JUST_IN);
         }
     }
+    else
+    {
+        Overseer::setListenAction(_fd, JUST_IN);
+    }
 }
  
 int Client::executeGetAction()
@@ -259,40 +262,32 @@ int Client::executeGetAction()
     //     "\r\n"
     //     "Hello, world!\r\n\0";
 
-    int chunk_size;
 
     ClientHandler * client = _response_objects_queue.front();
-
+/* 
     if (client->has_body())
     {
         _out_body = client->getBody();
         _C_type_body = _out_body.c_str();
         _body_response_len = _out_body.length();
-    }
+    } */
 
-    if (client->has_http())
+    if (client->pendingSend())
     {
-        _HTTP_response = client->getHTTP();
-        _C_type_HTTP = _HTTP_response.c_str();
-        _HTTP_response_len = _HTTP_response.length();
-        if (!_HTTP_response.empty() && _HTTP_response_len > _HTTP_bytes_sent) // Send if once we have a message pending. might come from an error from server or a response from getResponse.
+        if ((_result = send(_fd, client->getToSend(), client->getChunkSize(), 0) ) == -1)
+            return (-1);
+        client->updateBytesSent(_result);
+        if (client->isFinished())
         {
-            chunk_size = (_HTTP_response_len - _HTTP_bytes_sent) > SEND_SIZE ? SEND_SIZE : _HTTP_response_len - _HTTP_bytes_sent;
-            if ((_result = send(_fd, _C_type_HTTP + _HTTP_bytes_sent, chunk_size, 0) ) == -1)
-                return (-1);
-            _HTTP_bytes_sent += _result;
-            if (_HTTP_bytes_sent >= _HTTP_response_len && _out_body.empty())
-            {
-                removeFirstObj();
-                return (0);
-            }
-            else
-            {
-                return (1);
-            }
+            removeFirstObj();
+            return (!_response_objects_queue.empty() || _keep_alive);
+        }
+        else
+        {
+            return (1);
         }
     }
-    if (client->has_body())
+/*     if (client->has_body())
     {
         if (!_out_body.empty() && _HTTP_bytes_sent >= _HTTP_response_len)
         {
@@ -312,7 +307,7 @@ int Client::executeGetAction()
 
         }
     }
-
+ */
 
     return (1);
 }

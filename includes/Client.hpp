@@ -45,17 +45,7 @@ class Client : public BaseHandler
         Actions                 _action;
         std::size_t             _result;
 
-
-        std::string             _HTTP_response;
-        std::size_t             _HTTP_response_len;
-        std::size_t             _HTTP_bytes_sent;
-        const char *            _C_type_HTTP;
-
-        bool                    _requested_response;
-        std::string             _out_body;
-        std::size_t             _body_response_len;
-        std::size_t             _body_bytes_sent;
-        const char *            _C_type_body;
+        bool                    _keep_alive;
 
         char                    _in_message[RECV_SIZE];
 
@@ -69,7 +59,7 @@ class Client : public BaseHandler
 
 
 
-
+        void                    setSendValues(const ClientHandler &);
 
 
         void                    readFromFD();

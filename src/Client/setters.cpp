@@ -25,5 +25,5 @@ void Client::setBodyResponse(const std::string &message, BaseHandler *obj)
             Overseer::setListenAction(_fd, IN_AND_OUT);
         }
     }
-
 }
+
