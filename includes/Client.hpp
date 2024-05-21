@@ -27,6 +27,8 @@ class Client : public BaseHandler
         int                 Action(int event);
 
         // setters
+        void                addObject    // checks url
+(BaseHandler *);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
         bool                checkTimeOut();

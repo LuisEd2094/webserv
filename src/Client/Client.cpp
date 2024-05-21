@@ -29,10 +29,10 @@ Client::Client(Server *server) : BaseHandler()
     }
     _action = WAIT;
     _found_http = false;
-    _keep_alive = true;
+    _keep_alive = false;
 }
 
-void Client::handleDirectObj(DirectResponse* direct_object, ClientHandler * new_handler)
+void Client::handleDirectObj(DirectResponse* direct_object, ClientHandler *new_handler)
 {
     if (direct_object->has_http())
     {
@@ -46,7 +46,7 @@ void Client::handleDirectObj(DirectResponse* direct_object, ClientHandler * new_
     {
         Overseer::setListenAction(_fd, IN_AND_OUT);
     }
-    delete direct_object; // I delete this since it wont be going to the FD POLL, so t
+    delete direct_object; // I delete this since it wont be going to the FD POLL
 }
 
 void Client::parseForHttp()
@@ -61,26 +61,7 @@ void Client::parseForHttp()
                 _content_length = std::atoi(content_len.c_str());
             }
         }
-
-
-        BaseHandler* new_object = _server->getResponse(*this);
-        if (new_object)
-        {
-            ClientHandler* new_handler = new ClientHandler();
-            DirectResponse* direct_object = dynamic_cast<DirectResponse *>(new_object);
-            _response_objects_queue.push(new_handler);
-            if (direct_object)
-            {
-                handleDirectObj(direct_object, new_handler);
-            }
-            else
-            {
-                _response_objects_map[new_object] = new_handler;
-            }
-        }
-        //_in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
-        
-        //reset parser
+        _server->getResponse(*this);
         _parser_http.resetParsing();
         _action = WAIT;
     }

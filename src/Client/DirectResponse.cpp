@@ -2,8 +2,7 @@
 
 DirectResponse* DirectResponse::createNewDirect(const std::string& http, const std::string & body)
 {
-    DirectResponse* newDirect = new DirectResponse(http, body);
-    return newDirect;
+    return new DirectResponse(http, body);
 }
 
 DirectResponse::DirectResponse(const std::string& http, const std::string & body) :

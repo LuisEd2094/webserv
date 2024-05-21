@@ -10,6 +10,11 @@
 # define    JUST_IN POLLIN | POLLHUP
 
 
+# define NUM_OBJ 3
+# define FILE_OBJ "file"
+# define DIRECT_OBJ "direct"
+# define CGI_OBJ "cgi"
+
 #endif
 /* 
 GET / HTTP/1.1

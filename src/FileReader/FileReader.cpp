@@ -19,9 +19,7 @@ class FileReader::FileReaderException : public std::exception
 
 FileReader::FileReader(Client& client) : _client_fd(client.getFD())
 {
-    // checks url
-
-    _fd = open("/Users/lsoto-do/core05/webserv/html/index.html", O_RDONLY);
+    _fd = open("/home/luis/proyects/webserv/html/index.html", O_RDONLY);
     if (_fd == -1)
     {
         throw FileReaderException(strerror(errno));

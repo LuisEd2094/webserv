@@ -59,56 +59,50 @@ bool Server::validateAction(Client& client)
         return true;
     else
     {
-        client.setHTTPResponse("HTTP/1.1 404 Not Found\r\n"
+        BaseHandler* response = BaseHandler::createObject(DIRECT_OBJ,"HTTP/1.1 404 Not Found\r\n"
                         "Content-Length: 0\r\n"
-                        "\r\n\r\n", this);
+                        "\r\n", "");
+        client.addObject(response);
         return (false);
     }
 }
 
-BaseHandler* Server::getResponse(Client & client)
+void Server::getResponse(Client & client)
 {
     //CGI?
     // We assume we called validateAction before reaching this point.
     const std::string & url = client.getURL();
-    
-
-    // Validar la accion a tomar.
-
-    // CGI, llaamar un archivo, direct listing
-
-    // server -> como localizar la accion a realizar.
+    BaseHandler * response;
 
     if (url == "/")
     {
-        return DirectResponse::createNewDirect("HTTP/1.1 200 OK\r\n"
-                    "\r\n", "HOLA");
+        response = BaseHandler::createObject(DIRECT_OBJ,"HTTP/1.1 200 OK\r\n"
+                    "\r\n", "HOLA" );
     }
     else if (url == "/index.html")
     {
         try
         {
-            return FileReader::createNewFileReader(client);
+            response = BaseHandler::createObject(FILE_OBJ, client);
         }
         catch(const std::exception& e)
         {
-            return DirectResponse::createNewDirect("HTTP/1.1 500 Internal Server Error\r\n", "");
+            response = BaseHandler::createObject(DIRECT_OBJ,"HTTP/1.1 500 Internal Server Error\r\n", "");
         }  
     }
     else if (url == "/nolen.py")
     {
         try
         {
-            return CGI::createNewCGI(client);
-        }
+            response = BaseHandler::createObject(CGI_OBJ, client);
+         }
         catch(const std::exception& e)
         {
-            return DirectResponse::createNewDirect("HTTP/1.1 500 Internal Server Error\r\n", ""); // Should call an object to create the http
+            response = BaseHandler::createObject(DIRECT_OBJ,"HTTP/1.1 500 Internal Server Error\r\n", "");
         }
         
     }
-    return NULL;
-
+    client.addObject(response);
 }
 
 bool Server::checkTimeOut()

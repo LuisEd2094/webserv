@@ -27,3 +27,23 @@ void Client::setBodyResponse(const std::string &message, BaseHandler *obj)
     }
 }
 
+void    Client::addObject(BaseHandler * obj)
+{
+    if (obj)
+    {
+        ClientHandler* new_handler = new ClientHandler();
+        DirectResponse* direct_object = dynamic_cast<DirectResponse *>(obj);
+        
+        _response_objects_queue.push(new_handler);
+        if (direct_object)
+        {
+            handleDirectObj(direct_object, new_handler);
+        }
+        else
+        {
+            _response_objects_map[obj] = new_handler;
+        }
+    }
+}
+
+
