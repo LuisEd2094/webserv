@@ -5,36 +5,50 @@
 # include <iostream>
 # include <Confi.hpp>
 # include <cerrno>
-# include <Server.hpp>
-# include <Client.hpp>
+# include "Server.hpp"
 # include <poll.h>
 
-# define  MAX_FDS 1000
+
+# include <BaseHandler.hpp>
+
+# include "ConfigVirtualServer.hpp"
+
 
 class Overseer
 {
     public:
-        Overseer();
-        ~Overseer();
-        void    saveServer(t_confi* confi);
-        Client* createClient(Server * server);
+        static  void     cleanOverseer(int);
 
-        void    handleClientAction(Client * client, int action);
-        void    mainLoop();
+        static  void    addToPfds(BaseHandler *);
+
+
+        static  void    setListenAction(int, int);
+
+
+
+        static  Server *saveServer(t_confi* confi);
+        static  void    removeFromPFDS(BaseHandler *);
+
+        static  BaseHandler* getObj(int);
+
+
+        static  bool    handleAction(BaseHandler * , int );
+        static  void    mainLoop();
+        
 
     private:
-        std::map<int, Server *> _servers;
-        std::map<int, Client *> _clients;
+        Overseer();
+        ~Overseer();
+        
+        static  void    addToPfds(int new_fd, int events, int revents);
 
+        static  std::map<int, BaseHandler *> _pending_fds;
         //clients map
-        int                     _i;
-        int                     _fd_count;
-        struct pollfd           *_pfds;
-        Overseer(const Overseer& rhs);
-        Overseer& operator= (const Overseer& rhs);
+        static  std::size_t             _i;
+        static  std::size_t             _fd_count;
+        static  struct pollfd           _pfds[MAX_FDS];
 
-        void addToPfds(int new_fd, int events, int revents);
-        void removeFromPFDS();
+
 
 
         class pollException;
@@ -43,4 +57,9 @@ class Overseer
 
 };
 
+
+
+
 #endif
+
+

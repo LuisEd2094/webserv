@@ -1,4 +1,7 @@
 #include <Server.hpp>
+#include <Client.hpp>
+#include <ClientHandler.hpp>
+#include <DirectResponse.hpp>
 
 //Exceptions
 
@@ -18,8 +21,9 @@ class Server::socketException: public std::exception
 //Public Methods
 
 Server::Server(t_confi* confi) : 
-    _socket(confi->socket),
+    BaseHandler(),
     _backlog(confi->backlog),
+    _ip(confi->ip),
     _port(confi->port)
 {
     std::memset(&(_hints), 0, sizeof(_hints));
@@ -32,15 +36,81 @@ Server::Server(t_confi* confi) :
 
 Server::~Server()
 {
-    close(_socket);
-    std::memset((this), 0, sizeof(*this));
+    close(_fd);
+}
+
+
+int                Server::Action(int event)
+{
+    (void)event;
+    Client *newClient = new Client(this);
+    Overseer::addToPfds(newClient);
+    return (1);
+
+}
+
+
+bool Server::validateAction(Client& client)
+{
+    // check method and url against config.
+    const std::string url = client.getURL();
+    if (url == "/" or url == "/nolen.py" or url == "/index.html")
+        return true;
+    else
+    {
+        BaseHandler* response = BaseHandler::createObject(NOT_FOUND, BODY_NOT_FOUND);
+        client.addObject(response);
+        return (false);
+    }
+}
+
+void Server::getResponse(Client & client)
+{
+    //CGI?
+    // We assume we called validateAction before reaching this point.
+    const std::string & url = client.getURL();
+    BaseHandler * response;
+
+    if (url == "/")
+    {
+        response = BaseHandler::createObject(OK, "HOLA" );
+    }
+    else if (url == "/index.html")
+    {
+        try
+        {
+            response = BaseHandler::createObject(FILE_OBJ, client);
+        }
+        catch(const std::exception& e)
+        {
+            response = BaseHandler::createObject(INTERNAL_ERROR, "");
+        }  
+    }
+    else if (url == "/nolen.py")
+    {
+        try
+        {
+            response = BaseHandler::createObject(CGI_OBJ, client);
+         }
+        catch(const std::exception& e)
+        {
+            response = BaseHandler::createObject(INTERNAL_ERROR, "");
+        }
+        
+    }
+    client.addObject(response);
+}
+
+bool Server::checkTimeOut()
+{
+    return false;
 }
 
 void Server::initSocket()
 {
     int status;
 
-    if ((status = getaddrinfo(NULL, _port.c_str(), &_hints, &_servinfo)) != 0) 
+    if ((status = getaddrinfo(_ip.empty() ? NULL : _ip.c_str(), _port.c_str(), &_hints, &_servinfo)) != 0) 
             throw Server::socketException("getaddrinfo error: " + static_cast<std::string>(gai_strerror(status)));
 
     struct addrinfo *p;
@@ -48,25 +118,24 @@ void Server::initSocket()
     // need to check what serverinfo list has
     for (p = _servinfo; p != NULL; p = p->ai_next)
     {
-        if ((_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
+        if ((_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
         {
             std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue ; 
             // freeaddrinfo(_servinfo);
             // throw Server::socketException("socket error: " + static_cast<std::string>(strerror(errno)));
         };
-        if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &yes,
+        if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &yes,
                 sizeof(int)) == -1) {
-            close(_socket);
+            close(_fd);
             std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue ;
         } 
                 
         // bind it to the port we passed in to getaddrinfo():
-        
-        if (bind(_socket, p->ai_addr, p->ai_addrlen) != 0)
+        if (bind(_fd, p->ai_addr, p->ai_addrlen) != 0)
         {
-            close(_socket);
+            close(_fd);
             std::cerr << "bind error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue;
             // freeaddrinfo(_servinfo);
@@ -79,21 +148,16 @@ void Server::initSocket()
     if (p == NULL)
         throw Server::socketException("server: failed to bind");
 
-    if (listen(_socket, _backlog) == -1)
+    if (listen(_fd, _backlog) == -1)
         throw Server::socketException("listen error: " + static_cast<std::string>(strerror(errno)));
 }
 
-
-int Server::getSocket()
+std::ostream &operator<<(std::ostream &os,  Server &obj)
 {
-    return _socket;    
+	os << "Server: " << std::endl;
+    return os;
 }
 
-
-
-
-
-        
 //Private Methods
 
 Server::Server(){}      

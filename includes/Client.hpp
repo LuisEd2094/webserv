@@ -10,58 +10,67 @@
 # include <algorithm>
 # include <Parsing.hpp>
 # include <Aux.hpp>
-
-
-# define SEND_SIZE 8000
-# define RECV_SIZE 8000
-
+# include <BaseHandler.hpp>
+# include <cstring>
+# include <Overseer.hpp>
+# include <queue>
+# include <ClientHandler.hpp>
+# include <DirectResponse.hpp>
 
 class Server;
 
-class Client
+class Client : public BaseHandler
 {
     public:
         Client(Server *server);
         ~Client();
-        int     clientAction(int action);
+        int                 Action(int event);
+
+        // setters
+        void                addObject    // checks url
+(BaseHandler *);
+        void                setHTTPResponse(const std::string &message, BaseHandler*);
+        void                setBodyResponse(const std::string &message, BaseHandler*);
+        bool                checkTimeOut();
+
         //getters
-        int getSocket();
+        const int           getFD() const;
+        const std::string&  getURL();
+
         class clientException;
 
 
     private:
+        std::queue< ClientHandler *>               _response_objects_queue;
+        std::map< BaseHandler *,  ClientHandler *> _response_objects_map;
         Parsing                 _parser_http;
-        int                     _fd;
         Actions                 _action;
-
         std::size_t             _result;
 
-
-        bool                    _has_msg_pending;
-        std::string             _msg_pending;
-        std::size_t             _msg_pending_len;
-        std::size_t             _bytes_sent;
+        bool                    _keep_alive;
 
         char                    _in_message[RECV_SIZE];
-        const char *            _msg_to_send;
 
         bool                    _found_http;
         std::string             _in_http;
         std::vector<char>       _in_body;
         std::size_t             _content_length;
 
-        //PLACER HOLDER UNTIL WE ADD THE PARSER
-        void                    getMethodAction();
+        void                    updateMethodAction();
         void                    parseForHttp();
 
 
 
-
+        void                    setSendValues(const ClientHandler &);
 
 
         void                    readFromFD();
         int                     executeGetAction();
         int                     executePostAction();
+
+
+        void                    handleDirectObj(DirectResponse*, ClientHandler *);
+        void                    removeFirstObj();
 
 
 
@@ -73,6 +82,7 @@ class Client
         Client (const Client& rhs);
         Client& operator= (const Client& rhs);
 };
+
 
 
 #endif

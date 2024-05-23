@@ -1,6 +1,6 @@
 #include <Client.hpp>
 #include <Server.hpp>
-
+#include <DirectResponse.hpp>
 //Exception
 class Client::clientException : public std::exception
 {
@@ -16,43 +16,58 @@ class Client::clientException : public std::exception
 };
 
 //public:
-Client::Client(Server *server)
+Client::Client(Server *server) : BaseHandler()
 {
     if (!server)
         return;
     _server = server;
     _addrlen = sizeof(_remoteaddr);
-    _fd = accept(server->getSocket(), (struct sockaddr *)&_remoteaddr,&_addrlen);
+    _fd = accept(server->getFD(), (struct sockaddr *)&_remoteaddr,&_addrlen);
     if (_fd == -1) 
     {
         throw Client::clientException("accept" + static_cast<std::string>(strerror(errno)));
     }
     _action = WAIT;
-    _has_msg_pending = false;
     _found_http = false;
-    _bytes_sent = 0;
+    _keep_alive = false;
+}
+
+void Client::handleDirectObj(DirectResponse* direct_object, ClientHandler *new_handler)
+{
+    if (direct_object->has_http())
+    {
+        new_handler->setHTTPResponse(direct_object->get_http());
+    }
+    if (direct_object->has_body())
+    {
+        new_handler->setBodyResponse(direct_object->get_body());
+    }
+    if (_response_objects_queue.front() == new_handler)
+    {
+        Overseer::setListenAction(_fd, IN_AND_OUT);
+    }
+    delete direct_object; // I delete this since it wont be going to the FD POLL
 }
 
 void Client::parseForHttp()
 {
-    std::size_t found = _in_http.find("\r\n\r\n");
-
-    if (found != std::string::npos)
+    if (_parser_http.getEndRead())
     {
         if(_action == POST)
         {
-            std::size_t content_length_start = _in_http.find("Content-Length: ");
-            std::size_t content_length_end = _in_http.find("\r\n", content_length_start);
-            std::string content_length_str = _in_http.substr(content_length_start + std::strlen("Content-Length: "), content_length_end  - (content_length_start + std::strlen("Content-Length: ")));
-            _content_length = std::atoi(content_length_str.c_str());
+            std::string content_len = _parser_http.getMapValue("Content-Length");
+            if (content_len != "not found")
+            {
+                _content_length = std::atoi(content_len.c_str());
+            }
         }
-        _in_http = _in_http.substr(0, found + 4); // remove any extra characters you may have
-
-        _found_http = true;
+        _server->getResponse(*this);
+        _parser_http.resetParsing();
+        _action = WAIT;
     }
 }
 
-void Client::getMethodAction()
+void Client::updateMethodAction()
 {
     const std::string & method = _parser_http.getMethod();
       
@@ -70,62 +85,104 @@ void Client::readFromFD()
 
     if (_result > 0)
     {
-        if (!_found_http)
+        _in_http.append((const char *)_in_message, _result);
+        while (_parser_http.getPos()  != _in_http.length())
         {
-            _in_http.append((const char *)_in_message);
             if (_action == WAIT)
             {
-                _parser_http.checkMethod(_in_http);
-                getMethodAction();
+                if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
+                {
+                    if (!_server->validateAction(*this))
+                    {
+                        _action = GET;
+                        return;
+                    }
+                    updateMethodAction();
+                }
+                else
+                {
+                    break;
+                }
             }
-            _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
-            parseForHttp();
-            //std::cout << _parser_http.getMapValue("patata") << std::endl;
+            if (_action != WAIT) 
+            {
+                if (_parser_http.parsingHeader(_in_http)) // parsingHeader return 1 on failure
+                    break;
+                parseForHttp();
+            }
         }
-        else if (_action == POST)
-        {
-            _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
-        }
+        // else if (_action == POST)
+        // {
+        //     _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
+        // }      
+        // if (!_found_http)
+        // {
+        //     if (_action == WAIT)
+        //     {
+        //         if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
+        //         {
+        //             if (!_server->validateAction(*this))
+        //             {
+        //                 _action = GET;
+        //                 return;
+        //             }
+        //             updateMethodAction();
+        //         }
+        //     }
+        //     if (_action != WAIT) 
+        //     {
+        //         _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
+        //         parseForHttp();
+        //     }
+        // // }
+        // else if (_action == POST)
+        // {
+        //     _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
+        // }
 
     }
 }
 
-int Client::clientAction( int action )
+
+
+bool Client::checkTimeOut()
 {
-    if (action & POLLIN)
+    return false;
+}
+
+int Client::Action (int event)
+{
+    if (event & POLLIN)
     {
         readFromFD();
         if (_result < 0)
             return (-1);
-    }
-    switch (_action)
-    {
-        case WAIT: //This is in case we dont get the full verb in the first read
-            return (1);
-        case GET:
-            return executeGetAction();
-            break;
-
-        case POST:
+        if (_action  == POST)
+        {
             return executePostAction();
-            break;
-
-        case DELETE:
-            break;
-
+        }
+    }
+    else if (event & POLLOUT)
+    {
+        return executeGetAction();
+    }
+    else if (event & POLLHUP)
+    {
+        return 1;
     }
     return _result;
 }
 
-
-int Client::getSocket()
-{
-    return _fd;
-}
+//getters
 
 
 Client::~Client() 
 {
+    while (!_response_objects_queue.empty())
+    {
+        delete _response_objects_queue.front();
+        _response_objects_queue.pop();
+    }
     close(_fd);
 }
 
@@ -142,7 +199,7 @@ int Client::executePostAction()
             std::cout << "Binary data written to file.\n";
             _action = GET;
             return executeGetAction();
-        }
+        } 
         else
         {
             std::cerr << "Error opening file for writing.\n";
@@ -153,6 +210,27 @@ int Client::executePostAction()
     return (1);
 }
 
+void Client::removeFirstObj()
+{
+    delete _response_objects_queue.front();
+    _response_objects_queue.pop();
+    if (!_response_objects_queue.empty())
+    {
+        if(_response_objects_queue.front()->has_http())
+        {
+            Overseer::setListenAction(_fd, IN_AND_OUT);
+        }
+        else
+        {
+            Overseer::setListenAction(_fd, JUST_IN);
+        }
+    }
+    else
+    {
+        Overseer::setListenAction(_fd, JUST_IN);
+    }
+}
+ 
 int Client::executeGetAction()
 {
     // SUPPOSE WE ALREADY KNOW THE HTTP IS DONE;
@@ -165,37 +243,62 @@ int Client::executeGetAction()
     //     "\r\n"
     //     "Hello, world!\r\n\0";
 
-    if (_has_msg_pending == false  && _in_http.find("\r\n\r\n") != std::string::npos)
+
+    ClientHandler * client = _response_objects_queue.front();
+/* 
+    if (client->has_body())
     {
-        _msg_pending = "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/plain\r\n"
-            "Content-Length: 13\r\n"
-            "\r\n"
-            "Hello, world!\r\n\0";
-        _msg_to_send = _msg_pending.c_str();
-        _msg_pending_len = std::strlen(_msg_to_send);
-        _has_msg_pending = true;
-    }
-    if (_has_msg_pending)
+        _out_body = client->getBody();
+        _C_type_body = _out_body.c_str();
+        _body_response_len = _out_body.length();
+    } */
+
+    if (client->pendingSend())
     {
-        int chunck_size = (_msg_pending_len - _bytes_sent) > SEND_SIZE ? SEND_SIZE : _msg_pending_len - _bytes_sent;
-        if ((_result = send(_fd, _msg_to_send + _bytes_sent, chunck_size, 0) ) == -1)
+        if ((_result = send(_fd, client->getToSend(), client->getChunkSize(), 0) ) == -1)
             return (-1);
-        if (_result == 0)
-            return (0);
-        if (_result + _bytes_sent >= std::strlen(_msg_to_send))
+        client->updateBytesSent(_result);
+        if (client->isFinished())
         {
-            return (0);
+            removeFirstObj();
+            return (!_response_objects_queue.empty() || _keep_alive);
         }
         else
         {
-            _bytes_sent += _result;
+            return (1);
         }
     }
-    return (_result);
+/*     if (client->has_body())
+    {
+        if (!_out_body.empty() && _HTTP_bytes_sent >= _HTTP_response_len)
+        {
+            chunk_size = (_body_response_len - _body_bytes_sent) > SEND_SIZE ? SEND_SIZE : _body_response_len - _body_bytes_sent;
+            if ((_result = send(_fd, _C_type_body + _body_bytes_sent, chunk_size, 0)) == -1)
+                return (-1);
+            _body_bytes_sent += _result;
+            if (_body_bytes_sent >= _body_response_len)
+            {
+                removeFirstObj();
+                return (0);
+            }
+            else
+            {
+                return (1);
+            }
+
+        }
+    }
+ */
+
+    return (1);
 }
 
 //private:
 Client::Client () {}
 Client::Client (const Client& rhs) {*this = rhs;}
 Client& Client::operator= (const Client& rhs) {(void)rhs; return *this;}
+
+
+
+
+

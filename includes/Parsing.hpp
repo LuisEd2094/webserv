@@ -6,12 +6,27 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
+/*   Updated: 2024/05/23 10:59:47 by dacortes         ###   ########.fr       */
 /*   Updated: 2024/05/04 15:53:21 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSING_HPP
 #define PARSING_HPP
+
+/******************************************************************************/
+/*                            COLORS                                          */
+/******************************************************************************/
+
+# define END "\033[m"                 //end
+# define RED "\033[1m\033[1;31m"      //red
+# define GREEN "\033[1m\033[1;32m"      //green
+# define YELLOW "\033[1m\033[1;33m"      //yellow
+# define BLUE "\033[1;34m"             //blue
+# define TUR "\033[1m\033[1;35m"      //Turquesa
+# define CYAN "\033[1;36m"             //Cyan
+# define ORANGE "\033[1m\033[38;5;208m"  //orange
+# define PURPLE "\033[1m\033[38;5;128m"  //purple
 
 /******************************************************************************/
 /*                            INCLUDES                                        */
@@ -33,7 +48,11 @@
 /*                            MACROS                                          */
 /******************************************************************************/
 
-# define BUFFER_READ 3000
+# define BUFFER_READ	3000
+# define ERROR			-1
+# define WARNING 		1
+# define ERROR_STATUS "\033[1m\033[1;31m[ Error ]\033[m"
+# define WARNING_StATUS "\033[1m\033[1;33m[ Warning ]\033[m"
 # define IS_IN_ROOT(c) ((c) == '/')
 
 /******************************************************************************/
@@ -45,8 +64,10 @@ void	printMap(const M& map)
 {
 	typename M::const_iterator i;
 	for (i = map.begin(); i != map.end(); ++i)
-		std::cout << "Key: " << i->first << "\tValue: "
-			<< i->second << std::endl;
+	{
+		std::cout << ORANGE << "Key: " << END << i->first << ORANGE
+			<< "\tValue: " << END << i->second << std::endl;
+	}
 }
 
 template<typename K>
@@ -101,7 +122,19 @@ bool checkSpace(const S& str, const N num)
 	}
 	return (EXIT_SUCCESS);
 }
-
+template<typename S>
+size_t wordCounter(const S& str)
+{
+	typename S::const_iterator i = str.begin();
+	size_t		word = 0;
+	word += (*i and !::isblank(*i) ? 1 : 0);
+	for (; i != str.end(); ++i)
+	{
+		word += (::isblank(*i) and ((*(i + 1))
+			and !::isblank((*(i + 1)))) ? 1 : 0);
+	}
+	return (word);
+}
 //agregar atributo que indique si es de tipo RN o solo ON(only line)
 typedef struct s_request
 {
@@ -120,7 +153,10 @@ class Parsing
 		std::list<std::string> _methods;
 		std::string	_read;
 		t_request	_method;
+		std::string	_typeLine;
 		size_t		_findNewline;
+		size_t		_begin;
+		bool		_endRead;
 	public:
 		Parsing(void);
 		~Parsing(void);
@@ -132,18 +168,23 @@ class Parsing
 	*/
 	//utils
 	std::string readSocket(int fd);
-	short typeLine(const std::string& line);
+	const std::string& getMethod(void);
+	const std::string& getRequested(void);
+
 	bool isEmptyLine(const std::string& line) const;
 	bool isMethods(const std::string& keyword) const;
 	bool isVersion(const std::string& version) const;
-	const std::string& getMethod(void);
-	bool checkMethod(const std::string& strRead);
-	bool parsingHeader(const std::string& strRead);
+	int  printStatus(const std::string& messages, short flag, int exitCode);
+	int	 checkMethod(const std::string& strRead);
+	int  parsingHeader(const std::string& strRead);
+	//getMethods
+	std::string		getTypeLine(const std::string& strFind);
+	size_t		getPos(void);
 	std::string getMapValue(const std::string& key);
-
-
-	//getMapValue
-
+	std::map<std::string, std::string> getMap(void);
+	// const t_request	*getRequest(void) const;
+	void resetParsing(void);
+	bool getEndRead() const;
 	/*
 	 * Exception Classes
 	*/

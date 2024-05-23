@@ -11,10 +11,15 @@
 typedef struct s_confi
 {
     std::string     port;
-    int             socket;
-    int             backlog;
-    struct addrinfo hints;
-    struct addrinfo *servinfo;
+    std::string     ip;
+    /*
+        Todas las clases, listas, ect, para este servidor real. 
+    */
+
+    int             socket; // hard code 
+    int             backlog; // hard code
+    struct addrinfo hints; // hard code 
+    struct addrinfo *servinfo; // hard code
 } t_confi;
 
 

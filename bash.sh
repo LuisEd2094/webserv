@@ -1,6 +1,5 @@
 #!/bin/bash
 
-sudo rm responses
 mkdir -p responses
 # Number of simultaneous connections to simulate
 num_connections=500
