@@ -6,6 +6,7 @@
 
 
 void exitError(const std::string& error);
+
 enum Actions {
     WAIT,
     GET,

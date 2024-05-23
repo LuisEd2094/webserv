@@ -59,9 +59,7 @@ bool Server::validateAction(Client& client)
         return true;
     else
     {
-        BaseHandler* response = BaseHandler::createObject(DIRECT_OBJ,"HTTP/1.1 404 Not Found\r\n"
-                        "Content-Length: 0\r\n"
-                        "\r\n", "");
+        BaseHandler* response = BaseHandler::createObject(NOT_FOUND, "");
         client.addObject(response);
         return (false);
     }
@@ -76,8 +74,7 @@ void Server::getResponse(Client & client)
 
     if (url == "/")
     {
-        response = BaseHandler::createObject(DIRECT_OBJ,"HTTP/1.1 200 OK\r\n"
-                    "\r\n", "HOLA" );
+        response = BaseHandler::createObject(OK, "HOLA" );
     }
     else if (url == "/index.html")
     {
@@ -87,7 +84,7 @@ void Server::getResponse(Client & client)
         }
         catch(const std::exception& e)
         {
-            response = BaseHandler::createObject(DIRECT_OBJ,"HTTP/1.1 500 Internal Server Error\r\n", "");
+            response = BaseHandler::createObject(INTERNAL_ERROR, "");
         }  
     }
     else if (url == "/nolen.py")
@@ -98,7 +95,7 @@ void Server::getResponse(Client & client)
          }
         catch(const std::exception& e)
         {
-            response = BaseHandler::createObject(DIRECT_OBJ,"HTTP/1.1 500 Internal Server Error\r\n", "");
+            response = BaseHandler::createObject(INTERNAL_ERROR, "");
         }
         
     }

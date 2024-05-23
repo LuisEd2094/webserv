@@ -17,7 +17,7 @@ class BaseHandler
         virtual void    setTime();
         virtual bool    checkTimeOut() = 0;
         static BaseHandler*     createObject(const std::string&, Client&);
-        static BaseHandler*     createObject(const std::string&, const std::string&, const std::string&);
+        static BaseHandler*     createObject(const std::string& , const std::string&);
 
     protected:
         static std::string valid_objs[NUM_OBJ] ;

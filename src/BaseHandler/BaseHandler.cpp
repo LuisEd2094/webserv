@@ -33,19 +33,20 @@ BaseHandler* BaseHandler::createObject(const std::string& obj, Client& client)
     }
     return NULL;
 }
-BaseHandler* BaseHandler::createObject(const std::string& obj,  const std::string& http, const std::string& body)
+BaseHandler* BaseHandler::createObject(const std::string& http, const std::string& body)
 {
-    for (std::size_t i = 0; i < NUM_OBJ; ++i)
-    {
-        if (obj == valid_objs[i])
-        {
-            if (valid_objs[i] == DIRECT_OBJ)
-                return DirectResponse::createNewDirect(http, body);
-            else
-                return NULL;
-        }
-    }
-    return NULL;
+    return DirectResponse::createNewDirect(http, body);
+    // for (std::size_t i = 0; i < NUM_OBJ; ++i)
+    // {
+    //     if (obj == valid_objs[i])
+    //     {
+    //         if (valid_objs[i] == DIRECT_OBJ)
+    //             return DirectResponse::createNewDirect(http, body);
+    //         else
+    //             return NULL;
+    //     }
+    // }
+    // return NULL;
 
 }
 
