@@ -14,6 +14,7 @@
 #include <vector>
 #include <netinet/in.h>
 #include <signal.h>
+#include "ParsingGlobal.hpp"
 
 
 /*
@@ -28,6 +29,7 @@ int main()
     t_confi confi;
 
     // all this info should come from the confi file
+    /*
     std::memset(&(confi.hints), 0, sizeof(confi.hints));
     confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
     confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
@@ -37,13 +39,20 @@ int main()
     confi.backlog = 200;
     signal(SIGPIPE, SIG_IGN);
     signal(SIGINT, Overseer::cleanOverseer);
+    */
     // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;
+    ParsingGlobal parser = ParsingGlobal::parseFromFile("./src/Parsing/config_file.conf");
+    std::cout << "Num of servers: " << &parser << " " << parser.servers.size() << std::endl;
+    parser.recursivePrint();
+    ConfigElement::configure(parser);
+    Overseer::mainLoop();
     try
     {
         //overseer.file(argv[1]);
         // Should read from file or default info, internally call saveServer for each server
         // throws exception when server fails
-        Overseer::saveServer(&confi);
+        // Overseer::saveServer(&confi);
+        
 /*         std::memset(&(confi.hints), 0, sizeof(confi.hints));
         confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
         confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
@@ -52,7 +61,7 @@ int main()
         confi.backlog = 10;
         overseer.saveServer(&confi); */
 
-        Overseer::mainLoop();
+        // Overseer::mainLoop();
     }
     catch(const std::exception& e)
     {

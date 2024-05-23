@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/19 11:16:49 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/23 10:59:47 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,11 @@
 /*                            MACROS                                          */
 /******************************************************************************/
 
-# define BUFFER_READ 3000
+# define BUFFER_READ	3000
+# define ERROR			-1
+# define WARNING 		1
+# define ERROR_STATUS "\033[1m\033[1;31m[ Error ]\033[m"
+# define WARNING_StATUS "\033[1m\033[1;33m[ Warning ]\033[m"
 # define IS_IN_ROOT(c) ((c) == '/')
 
 /******************************************************************************/
@@ -169,8 +173,9 @@ class Parsing
 	bool isEmptyLine(const std::string& line) const;
 	bool isMethods(const std::string& keyword) const;
 	bool isVersion(const std::string& version) const;
-	bool checkMethod(const std::string& strRead);
-	bool parsingHeader(const std::string& strRead);
+	int  printStatus(const std::string& messages, short flag, int exitCode);
+	int	 checkMethod(const std::string& strRead);
+	int  parsingHeader(const std::string& strRead);
 	//getMethods
 	std::string		getTypeLine(const std::string& strFind);
 	size_t		getPos(void);

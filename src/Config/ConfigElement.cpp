@@ -1,32 +1,42 @@
 #include "ConfigElement.hpp"
 #include "ConfigVirtualServer.hpp"
+#include "Overseer.hpp"
+# include <map> //map
 
-Overseer ConfigElement::parse(ParsingGlobal parsedData)
+void ConfigElement::configure(ParsingGlobal parsedData)
 {
 	t_confi confi;
 	Server *server;
-	std::map<std::string, Server>::iterator serverIterator;
-	std::map<std::string, Server> servers;
+	std::map<std::string, Server*>::iterator serverIterator;
+	std::map<std::string, Server*> servers;
 
     std::memset(&(confi.hints), 0, sizeof(confi.hints));
     confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
     confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
     confi.hints.ai_flags = AI_PASSIVE;
     confi.backlog = 200;
+	std::cout << "Num of servers: " <<  parsedData.servers.size() << std::endl;
 	 
 	for (std::list<ParsingServer>::iterator i = parsedData.servers.begin(); i != parsedData.servers.end(); i++)
 	{
+		std::cout << "sdaf" << std::endl;
 		confi.ip = (*i)["host"];		//TODO checkear un poco
-		confi.port = (*i)["port"];		//TODO checkear un poco 
-		serverIterator = servers.find(confi.ip + confi.port);
+		// std::cout << "host " << (*i)["host"] << " " << confi.ip << std::endl;
+		confi.port = (*i)["port"];		//TODO checkear un poco
+		std::cout << "fasd" << std::endl;
+		std::cout << "IP: " << confi.ip <<  " " << "PORT: " << confi.port <<std::endl;
+		std::string phisicServerId = confi.ip + confi.port;
+		serverIterator = servers.find(phisicServerId);
 		if (serverIterator == servers.end())
+		{
 			server = Overseer::saveServer(&confi);
+			servers.insert(std::pair<std::string,Server*>(phisicServerId, server));
+		}
 		else
-			server = &(serverIterator->second);
+			server = serverIterator->second;
+		std::cout << " sddaaaf" << std::endl;
 		server->virtualServers.push_back(ConfigVirtualServer(*i));
-		
-		
-
+		std::cout << " fasd" << std::endl;
 	}
 }
 

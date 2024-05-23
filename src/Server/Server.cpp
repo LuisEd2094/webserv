@@ -143,7 +143,6 @@ void Server::initSocket()
         } 
                 
         // bind it to the port we passed in to getaddrinfo():
-        
         if (bind(_fd, p->ai_addr, p->ai_addrlen) != 0)
         {
             close(_fd);
