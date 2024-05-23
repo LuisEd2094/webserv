@@ -1,5 +1,43 @@
 #include "../../includes/ParsingGlobal.hpp"
 #include "../../includes/Parsing.hpp"
+#include <fstream>
+
+ParsingGlobal	ParsingGlobal::parseFromFile(std::string fileName)
+{
+	std::fstream	file(fileName); //TODO"config_file.conf"
+	std::string		fileStr;										  
+	std::string		tmp;
+	std::string::iterator begin;
+	std::string::iterator end;
+	std::string::iterator aux;
+
+	std::cout << fileName <<std::endl;
+	if (!file.is_open())
+	{
+		std::cout << "file not found" << std::endl;
+		throw std::exception();
+	}
+	while (true)
+	{
+		file >> tmp;
+		if (file.eof())
+			break;
+		fileStr += tmp + " ";
+	}
+	begin = fileStr.begin();
+	end = fileStr.end();
+	aux = fileStr.begin();
+	ParsingGlobal 	parser(begin, end, aux);
+	try
+	{
+		parser.parse();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	return (parser);
+}
 
 ParsingGlobal::ParsingGlobal(std::string::iterator &begin,
 				std::string::iterator &eof,

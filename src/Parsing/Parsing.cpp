@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/19 17:28:28 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/23 11:00:10 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ bool Parsing::isVersion(const std::string& version) const
 	return (version != "HTTP/1.1");
 }
 
-bool Parsing::checkMethod(const std::string& strIn)
+int Parsing::checkMethod(const std::string& strIn)
 {
 	size_t	word = 0;
 	size_t	space = 0;
@@ -70,10 +70,11 @@ bool Parsing::checkMethod(const std::string& strIn)
 
 	_typeLine = getTypeLine(&strIn[_findNewline]);
 	if (!_typeLine[0])
-	{
-		std::cout << "estoy fuera" << std::endl;
-		return (EXIT_FAILURE);
-	}
+		return (this->printStatus(" End of line not found ", WARNING, WARNING));
+	// {
+	// 	std::cout << "estoy fuera" << std::endl;
+	// 	return (EXIT_FAILURE);
+	// }
 	std::cout << YELLOW << (int)_typeLine[0] << END << std::endl;
 	_begin = _findNewline;
 
@@ -126,18 +127,25 @@ const std::string& Parsing::getRequested(void)
 	return _method.requested;
 }
 
+int	Parsing::printStatus(const std::string& messages, short flag, int exitCode)
+{
+	std::cout << (flag == -1 ? ERROR_STATUS : WARNING_StATUS)
+	<< messages << std::endl;
+	return (exitCode);
+}
 
-bool	Parsing::parsingHeader(const std::string& strRead)
+int	Parsing::parsingHeader(const std::string& strRead)
 {
 	size_t start = _findNewline, end = 0;
 	while (true)
 	{
 		std::string typeLine = getTypeLine(&strRead[start]);
 		if (!typeLine[0] or typeLine != _typeLine)
-		{
-			std::cout << "estoy fuera" << std::endl;
-			return (EXIT_FAILURE);
-		}
+			return (this->printStatus("End of line not found ", WARNING, WARNING));
+		// {
+		// 	std::cout << "estoy fuera" << std::endl;
+		// 	return (EXIT_FAILURE);
+		// }
 		start += (typeLine[0] == '\r' ? 2 : 1);
 		std::cout << "start: " << (typeLine[0] == '\r' ? 2 : 1) << std::endl;
 		std::string tmpEnd = &strRead[start]; 

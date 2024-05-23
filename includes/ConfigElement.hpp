@@ -8,7 +8,7 @@ class ConfigElement
 	private:
 
 	public:
-
+		static void configure(ParsingGlobal parsedData);
 		class ParamError: public std::exception
 		{
 			private:

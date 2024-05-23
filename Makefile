@@ -6,7 +6,7 @@
 #    By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 10:55:00 by lsoto-do          #+#    #+#              #
-#    Updated: 2024/05/20 20:59:28 by dacortes         ###   ########.fr        #
+#    Updated: 2024/05/23 11:20:47 by dacortes         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -80,7 +80,7 @@ CLIENT			=	Client.cpp getters.cpp setters.cpp ClientHandler.cpp DirectResponse.c
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
-CONF			=	ConfigVirtualServer.cpp
+CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp
 
 CONF_FILES		=	$(addprefix $(CONF_PATH), $(CONF))
 
@@ -92,8 +92,6 @@ SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) $(PARSI
 OBJS 			=	$(addprefix $(OBJS_PATH), $(SRC:.cpp=.o))
 all: $(NAME)
 
-printd:
-	echo "$(SRC)"
 
 $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
@@ -101,7 +99,7 @@ $(NAME): $(OBJS)
 	
 $(OBJS_PATH)%.o: $(SRCS_PATH)%.cpp | $(MAKE_OBJ_DIR) $(DEPS_PATH)
 			@echo "$(CYAN)Compiling $< $(DEF_COLOR)"
-			$(CC) $(CFLAGS) $(INCS) -MMD -MP -c $< -o $@
+			@$(CC) $(CFLAGS) $(INCS) -MMD -MP -c $< -o $@
 			@mv $(basename $@).d $(DEPS_PATH)
 
 $(MAKE_OBJ_DIR):

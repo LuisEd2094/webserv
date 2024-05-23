@@ -6,8 +6,8 @@
 # define    MAX_FDS 1000
 # define    TIME_OUT_POLL -1
 # define    TIME_OUT_PROCESS 1500
-# define    SEND_SIZE 8000
-# define    RECV_SIZE 8000
+# define    SEND_SIZE 5
+# define    RECV_SIZE 5
 # define    IN_AND_OUT POLLIN | POLLOUT | POLLHUP
 # define    JUST_IN POLLIN | POLLHUP
 

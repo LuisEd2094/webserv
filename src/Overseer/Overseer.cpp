@@ -109,7 +109,3 @@ bool Overseer::handleAction(BaseHandler *obj, int event)
     return true;
 
 }
-
-
-
-

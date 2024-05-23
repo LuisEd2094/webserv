@@ -26,7 +26,6 @@ Server::Server(t_confi* confi) :
     _ip(confi->ip),
     _port(confi->port)
 {
-    _fd = confi->socket;
     std::memset(&(_hints), 0, sizeof(_hints));
     _hints.ai_family = confi->hints.ai_family; //takes ipv4 and ipv6
     _hints.ai_socktype = confi->hints.ai_socktype; // TCP stream sockets
@@ -134,7 +133,6 @@ void Server::initSocket()
         } 
                 
         // bind it to the port we passed in to getaddrinfo():
-        
         if (bind(_fd, p->ai_addr, p->ai_addrlen) != 0)
         {
             close(_fd);
@@ -157,6 +155,7 @@ void Server::initSocket()
 std::ostream &operator<<(std::ostream &os,  Server &obj)
 {
 	os << "Server: " << std::endl;
+    return os;
 }
 
 //Private Methods
