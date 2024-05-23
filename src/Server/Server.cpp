@@ -59,7 +59,7 @@ bool Server::validateAction(Client& client)
         return true;
     else
     {
-        BaseHandler* response = BaseHandler::createObject(NOT_FOUND, "");
+        BaseHandler* response = BaseHandler::createObject(NOT_FOUND, BODY_NOT_FOUND);
         client.addObject(response);
         return (false);
     }

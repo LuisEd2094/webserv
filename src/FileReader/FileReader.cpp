@@ -47,7 +47,6 @@ FileReader::FileReader(Client& client) : _client_fd(client.getFD())
     if (start_ext != std::string::npos)
     {
         _file_type = getMimeType(client.getURL().substr(start_ext + 1, client.getURL().length()));
-        std::cout << _file_type << std::endl;
     }
 
     if (_fd == -1)
@@ -87,7 +86,7 @@ std::string  FileReader::setContentType(std::string http)
 {
     if (!_file_type.empty())
     {
-        http.append("Content-Type: " + _file_type + CRNL);
+        http.append("Content-Type: " + _file_type  + CRNL); // needs charset = utf-8 to be able to decode // but it's enough if it's on the html itself. Should parse maybe?
     }
     return (http);
 }
@@ -110,7 +109,9 @@ int FileReader::Action(int event)
             if (result ==  0)
             {
                 std::string http = setContentType(std::string(OK));
-                client->setHTTPResponse(generateHTTP(http, _buffer) , this);
+                if (_buffer.find_last_of("\n") != _buffer.length() - 1) /*Just to make sure there is an end of line */
+                    _buffer.append("\n");
+                client->setHTTPResponse(generateHTTP(http, _buffer) , this); 
                 client->setBodyResponse(_buffer, this); 
             }
             else
