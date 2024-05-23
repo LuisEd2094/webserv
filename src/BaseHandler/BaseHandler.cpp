@@ -19,6 +19,7 @@ void    BaseHandler::setTime()
 
 BaseHandler* BaseHandler::createObject(const std::string& obj, Client& client)
 {
+    //Factory creator, requires string to identify it and client that'd be assigned to that Object
     for (std::size_t i = 0; i < NUM_OBJ; ++i)
     {
         if (obj == valid_objs[i])
@@ -35,18 +36,9 @@ BaseHandler* BaseHandler::createObject(const std::string& obj, Client& client)
 }
 BaseHandler* BaseHandler::createObject(const std::string& http, const std::string& body)
 {
-    return DirectResponse::createNewDirect(http, body);
-    // for (std::size_t i = 0; i < NUM_OBJ; ++i)
-    // {
-    //     if (obj == valid_objs[i])
-    //     {
-    //         if (valid_objs[i] == DIRECT_OBJ)
-    //             return DirectResponse::createNewDirect(http, body);
-    //         else
-    //             return NULL;
-    //     }
-    // }
-    // return NULL;
+    // This is for when you want to generate a DirectResponse Object, 
+    // it needs a HTTP and Body string to create it. 
+    return DirectResponse::createNewDirect(generateHTTP(http, body), body);
 
 }
 

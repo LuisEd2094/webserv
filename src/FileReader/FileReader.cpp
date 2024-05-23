@@ -70,18 +70,19 @@ int FileReader::Action(int event)
         {
             if (result ==  0)
             {
-                client->setHTTPResponse("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n", this);
+                client->setHTTPResponse(generateHTTP(std::string(OK), _buffer) , this);
                 client->setBodyResponse(_buffer, this); 
             }
             else
             {
-                client->setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n", this);
+                client->setHTTPResponse(generateHTTP(INTERNAL_ERROR, ""), this);
             }
             return (0);
 
         }
-
+        return (0);
     }
-    return (1);
+        return (0);
+
 }
 
