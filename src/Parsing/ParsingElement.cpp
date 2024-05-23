@@ -1,11 +1,11 @@
-#include "../../includes/ConfigParse.hpp"
+#include "../../includes/ParsingElement.hpp"
 #include "../../includes/Parsing.hpp"
 # include <algorithm>
 # include <cctype>
 
 # include <iostream>
 
-std::list<char> ConfigParse::endStatementChars = std::list<char>();
+std::list<char> ParsingElement::endStatementChars = std::list<char>();
 
 //temporal:
 short parsingListen(std::string &listen);
@@ -36,21 +36,21 @@ std::string dumbGenString(std::string::iterator begin, std::string::iterator end
 	return result;
 }
 
-bool ConfigParse::isEndOfStatement(char target)
+bool ParsingElement::isEndOfStatement(char target)
 {
-	std::list<char>::iterator firstEndStatement = ConfigParse::endStatementChars.begin();
-	std::list<char>::iterator lastEndStatement = ConfigParse::endStatementChars.end();
+	std::list<char>::iterator firstEndStatement = ParsingElement::endStatementChars.begin();
+	std::list<char>::iterator lastEndStatement = ParsingElement::endStatementChars.end();
 	return std::find(firstEndStatement,lastEndStatement, target) != lastEndStatement;
 
 }
 
 /*
-std::string::iterator ConfigParse::findEndOfStatement()
+std::string::iterator ParsingElement::findEndOfStatement()
 {
 	std::string::iterator end;
 	end = this->statementBegin;
 	end++;
-	while (end != this->eof && !ConfigParse::isEndOfStatement(*end))
+	while (end != this->eof && !ParsingElement::isEndOfStatement(*end))
 	{
 		end++;
 	}
@@ -59,16 +59,16 @@ std::string::iterator ConfigParse::findEndOfStatement()
 }
 */
 
-std::string::iterator ConfigParse::findEndOfStatement()
+std::string::iterator ParsingElement::findEndOfStatement()
 {
-	while (this->statementEnd != this->eof && !ConfigParse::isEndOfStatement(*this->statementEnd))
+	while (this->statementEnd != this->eof && !ParsingElement::isEndOfStatement(*this->statementEnd))
 	{
 		this->statementEnd++;
 	}
 	return (this->statementEnd); //TODO no no need for retrun; 
 }
 
-void ConfigParse::newNestedElement(void)
+void ParsingElement::newNestedElement(void)
 {
 	std::string::iterator beginParam = statementBegin;
 	std::string::iterator endParam;
@@ -126,7 +126,7 @@ void ConfigParse::newNestedElement(void)
 	*/
 }
 
-void ConfigParse::parse()
+void ParsingElement::parse()
 {
 	std::string				statementStr;
 	//this->statementBegin = this->fileContent.begin();

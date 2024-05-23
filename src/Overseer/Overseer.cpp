@@ -84,11 +84,12 @@ void Overseer::addToPfds(int new_fd, int events, int revents)
     }
 }
 
-void Overseer::saveServer(t_confi* confi)
+Server* Overseer::saveServer(t_confi* confi)
 {
 
     Server * server = new Server(confi);
     addToPfds(server);
+    return server;
 }
 
 bool Overseer::handleAction(BaseHandler *obj, int event)

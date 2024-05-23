@@ -1,5 +1,6 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
+# include <BaseHandler.hpp>
 # include <iostream>
 # include <sys/types.h>
 # include <sys/socket.h>
@@ -9,12 +10,11 @@
 # include <unistd.h>
 # include <Confi.hpp>
 # include <CGI.hpp>
-# include <BaseHandler.hpp>
 # include <FileReader.hpp>
 # include <Parsing.hpp>
+# include "ConfigVirtualServer.hpp"
 
 
-# include <Overseer.hpp>
 # include <ProgramConfigs.hpp>
 class Client; 
 
@@ -33,6 +33,8 @@ class Server : public BaseHandler
         bool validateAction(Client& client);
         void getResponse(Client& client);
         bool checkTimeOut();
+        std::list<ConfigVirtualServer>         virtualServers; // TODO wolud be nice if it was private
+
     private:
         int                 _backlog;
         std::string         _ip;
@@ -52,6 +54,8 @@ class Server : public BaseHandler
 
         class   socketException;
 };
+
+std::ostream &operator<<(std::ostream &os,  Server &obj);
 
 
 

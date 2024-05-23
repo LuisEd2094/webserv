@@ -22,6 +22,7 @@
     Structs for when we just need to save or manipulate without the need of validation
 */
 
+
 int main()
 {
     t_confi confi;

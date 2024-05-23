@@ -154,6 +154,10 @@ void Server::initSocket()
         throw Server::socketException("listen error: " + static_cast<std::string>(strerror(errno)));
 }
 
+std::ostream &operator<<(std::ostream &os,  Server &obj)
+{
+	os << "Server: " << std::endl;
+}
 
 //Private Methods
 
