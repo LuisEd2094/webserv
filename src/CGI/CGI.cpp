@@ -127,7 +127,7 @@ int CGI::Action(int event)
                 std::string http_response(_buffer.substr(0, _buffer.find("\n\n") + 2));
                 if (http_response.empty())
                 {
-                    client->setHTTPResponse("HTTP/1.1 200 OK\r\n\r\n", this);
+                    client->setHTTPResponse(generateHTTP(OK, ""), this);
                 }
                 else
                 {
@@ -141,7 +141,7 @@ int CGI::Action(int event)
             }
             else
             {
-                client->setHTTPResponse("HTTP/1.1 500 Internal Server Error\r\n", this);
+                client->setHTTPResponse(generateHTTP(INTERNAL_ERROR, ""), this);
             }
             return (0);
 

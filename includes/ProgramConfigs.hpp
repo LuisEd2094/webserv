@@ -1,7 +1,7 @@
 #ifndef PROGRAMCONFIGS_HPP
 # define PROGRAMCONFIGS_HPP
 
-# include <ResponseHeaders.hpp>
+# include <Response.hpp>
 
 # define    MAX_FDS 1000
 # define    TIME_OUT_POLL -1
@@ -17,6 +17,9 @@
 # define DIRECT_OBJ "direct"
 # define CGI_OBJ "cgi"
 
+
+
+std::string generateHTTP(std::string http, const std::string& body);
 
 #endif
 /* 

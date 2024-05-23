@@ -1,7 +1,6 @@
-#ifndef RESPONSEHEADERS_HPP
-# define RESPONSEHEADERS_HPP
+#ifndef RESPONSE_HPP
+# define RESPONSE_HPP
 
-# include <map>
 # include <iostream>
 # include <sstream>
 
@@ -13,6 +12,7 @@
 # define CONTENTLENGTH "Content-Length: "
 # define CRNL "\r\n"
 
+
 template<typename T>
 std::string toString(const T& value)
 {
@@ -20,6 +20,5 @@ std::string toString(const T& value)
     oss << value;
     return oss.str();
 }
-
 
 #endif
