@@ -18,8 +18,7 @@
 # define CGI_OBJ "cgi"
 
 
-
-std::string generateHTTP(std::string http, const std::string& body);
+std::string generateHTTP(const std::string& http, const std::string& body);
 
 #endif
 /* 

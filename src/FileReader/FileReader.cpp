@@ -3,6 +3,8 @@
 #include <Client.hpp>
 
 
+std::map<std::string, std::string> FileReader::types;
+
 //Exception
 class FileReader::FileReaderException : public std::exception
 {
@@ -17,9 +19,37 @@ class FileReader::FileReaderException : public std::exception
         }
 };
 
+void FileReader::initTypeMaps()
+{
+    types["empty"] = "";
+    types["html"] = "text/html";
+    types["htm"] = "text/html";
+
+}
+
+const std::string& FileReader::getMimeType(const std::string& to_find)
+{
+    std::map<std::string, std::string>::iterator found = types.find(to_find);
+
+    if (found != types.end())
+        return (found->second);
+    return (types["empty"]);
+
+}
+
+
 FileReader::FileReader(Client& client) : _client_fd(client.getFD())
 {
     _fd = open("/Users/lsoto-do/core05/webserv/html/index.html", O_RDONLY);
+
+    std::size_t start_ext = client.getURL().find_last_of(".");
+    
+    if (start_ext != std::string::npos)
+    {
+        _file_type = getMimeType(client.getURL().substr(start_ext + 1, client.getURL().length()));
+        std::cout << _file_type << std::endl;
+    }
+
     if (_fd == -1)
     {
         throw FileReaderException(strerror(errno));
@@ -53,6 +83,15 @@ bool    FileReader::checkTimeOut()
     
 }
 
+std::string  FileReader::setContentType(std::string http)
+{
+    if (!_file_type.empty())
+    {
+        http.append("Content-Type: " + _file_type + CRNL);
+    }
+    return (http);
+}
+
 int FileReader::Action(int event)
 {
     char    buff[RECV_SIZE];
@@ -70,7 +109,8 @@ int FileReader::Action(int event)
         {
             if (result ==  0)
             {
-                client->setHTTPResponse(generateHTTP(std::string(OK), _buffer) , this);
+                std::string http = setContentType(std::string(OK));
+                client->setHTTPResponse(generateHTTP(http, _buffer) , this);
                 client->setBodyResponse(_buffer, this); 
             }
             else
