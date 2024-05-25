@@ -1,5 +1,5 @@
-#ifndef CONFIG_CGI_HPP
-# define CONFIG_CGI_HPP
+#ifndef PARSING_CGI_HPP
+# define PARSING_CGI_HPP
 # include "ParsingElement.hpp"
 class ParsingCgi: public ParsingElement
 {

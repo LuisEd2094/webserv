@@ -1,5 +1,5 @@
-#ifndef CONFIG_SERVER_HPP
-# define CONFIG_SERVER_HPP
+#ifndef PARSING_SERVER_HPP
+# define PARSING_SERVER_HPP
 # include "ParsingElement.hpp"
 # include "ParsingLocation.hpp"
 
@@ -15,7 +15,6 @@ class ParsingServer: public ParsingElement
 		//check key value
 		//check valid nested
 		//initObj
-	private:
-		std::list<ParsingLocation>	locations;
+		std::list<ParsingLocation>	locations; //TODO woluld be nice to encapsulate it 
 };
 #endif

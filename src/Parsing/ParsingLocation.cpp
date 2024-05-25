@@ -14,6 +14,7 @@ void	ParsingLocation::createNestedElement(std::string param0, std::string param1
 	std::cout << "location nested: " << param0 << "  " << param1 << std::endl;
 	if (param0 == "location")
 	{
+		//put second parameter
 		ParsingLocation element(this->statementBegin, this->eof, this->statementEnd);	
 		element.parse();
 		this->locations.push_back(element);
