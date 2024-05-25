@@ -6,12 +6,12 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/23 11:00:10 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/25 16:54:15 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include <Parsing.hpp>
-# include "../../includes/Parsing.hpp"
+#include <Parsing.hpp>
+// # include "../../includes/Parsing.hpp"
 
 Parsing::Parsing( void )
 {
@@ -226,6 +226,16 @@ void Parsing::resetParsing( void)
 	_findNewline += _typeLine.length();
 }
 
+std::list<std::string> ft_split(const std::string& str, char delimiter)
+{
+    std::list<std::string> list;
+    std::istringstream input(str);
+    std::string word;
+    
+    while (std::getline(input, word, delimiter))
+        list.push_back(word);
+    return (list);
+}
 
 // const t_request	*Parsing::getRequest(void) const 
 // {

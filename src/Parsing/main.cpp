@@ -6,32 +6,26 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/25 16:35:24 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/25 16:49:55 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fstream>
-
-//#include "../../includes/ParsingElement.hpp"
-//#include "../../includes/ParsingServer.hpp"
-//#include "../../includes/ParsingLocation.hpp"
 #include "../../includes/ParsingGlobal.hpp"
 #include "../../includes/Parsing.hpp"
-//#include "../../includes/ParsingCgi.hpp"
 #include <iostream>
-#include <sstream>
 #include <string>
 
-std::list<std::string> split(const std::string& str, char delimiter)
-{
-    std::list<std::string> list;
-    std::istringstream input(str);
-    std::string word;
+// std::list<std::string> split(const std::string& str, char delimiter)
+// {
+//     std::list<std::string> list;
+//     std::istringstream input(str);
+//     std::string word;
     
-    while (std::getline(input, word, delimiter))
-        list.push_back(word);
-    return (list);
-}
+//     while (std::getline(input, word, delimiter))
+//         list.push_back(word);
+//     return (list);
+// }
 
 // int fileConfig(void)
 // {
@@ -89,7 +83,7 @@ int  main(void)
 {
 	// fileConfig();
 	// testParseHtpp();
-	std::list<std::string> res = split("GET POST DELEETE", ' ');
+	std::list<std::string> res = ft_split("GET POST DELEETE", ' ');
 	for (std::list<std::string>::iterator iter = res.begin(); iter != res.end(); iter++)
 		std::cout << YELLOW << "word: " << END << *iter << std::endl;
 	return (0);
