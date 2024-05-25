@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/25 11:16:26 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/25 16:35:24 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,25 +19,17 @@
 #include "../../includes/Parsing.hpp"
 //#include "../../includes/ParsingCgi.hpp"
 #include <iostream>
+#include <sstream>
+#include <string>
 
-std::list<std::string> split(std::string str, char cut)
+std::list<std::string> split(const std::string& str, char delimiter)
 {
     std::list<std::string> list;
-	size_t end = str.find(cut);
-	size_t start = 0;
-	while (true)
-	{
-		if (str[start] != '\0')
-			list.push_back(std::string(str.begin() + start, str.begin() + end));
-		start = end;
-		while (str[start] == cut)
-			start++;
-		end = str.find(cut, start);
-		if (end == std::string::npos)
-			end = str.length();
-		if (start == str.length())
-			break ;
-	}
+    std::istringstream input(str);
+    std::string word;
+    
+    while (std::getline(input, word, delimiter))
+        list.push_back(word);
     return (list);
 }
 
@@ -99,6 +91,6 @@ int  main(void)
 	// testParseHtpp();
 	std::list<std::string> res = split("GET POST DELEETE", ' ');
 	for (std::list<std::string>::iterator iter = res.begin(); iter != res.end(); iter++)
-		std::cout << YELLOW << "word: " << *iter << std::endl;
+		std::cout << YELLOW << "word: " << END << *iter << std::endl;
 	return (0);
 }
