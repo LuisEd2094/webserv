@@ -4,7 +4,7 @@
 
 ParsingGlobal	ParsingGlobal::parseFromFile(std::string fileName)
 {
-	std::fstream	file(fileName); //TODO"config_file.conf"
+	std::fstream	file(fileName.c_str()); //TODO"config_file.conf"
 	std::string		fileStr;										  
 	std::string		tmp;
 	std::string::iterator begin;
