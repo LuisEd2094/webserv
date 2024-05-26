@@ -39,5 +39,5 @@ bool DirectResponse::has_body()
 }
 
 int DirectResponse::Action(int event){(void)event; return 0;}
-bool DirectResponse::checkTimeOut(){return false;}
+bool DirectResponse::checkObjTimeOut(){return false;}
 const int DirectResponse::getFD() const {return 0;}

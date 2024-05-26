@@ -31,7 +31,7 @@ class Client : public BaseHandler
 (BaseHandler *);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
-        bool                checkTimeOut();
+        bool                checkObjTimeOut();
 
         //getters
         const int           getFD() const;
@@ -51,7 +51,7 @@ class Client : public BaseHandler
 
         char                    _in_message[RECV_SIZE];
 
-        bool                    _found_http;
+        bool                    _pending_read;
         std::string             _in_http;
         std::vector<char>       _in_body;
         std::size_t             _content_length;

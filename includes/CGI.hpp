@@ -16,7 +16,7 @@ class CGI : public BaseHandler
         ~CGI();
         int                 Action(int event);
 
-        bool                checkTimeOut();
+        bool                checkObjTimeOut();
 
         static CGI *        createNewCGI(Client& client);
         const int           getFD() const;

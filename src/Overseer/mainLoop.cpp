@@ -68,7 +68,7 @@ void Overseer::mainLoop()
             }
             else
             {
-                if (it->second->checkTimeOut())
+                if (it->second->checkObjTimeOut())
                     removeFromPFDS(it->second);
             }
         } 

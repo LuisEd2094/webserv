@@ -28,8 +28,8 @@ Client::Client(Server *server) : BaseHandler()
         throw Client::clientException("accept" + static_cast<std::string>(strerror(errno)));
     }
     _action = WAIT;
-    _found_http = false;
-    _keep_alive = false;
+    _pending_read = false;
+    _keep_alive = true;
 }
 
 void Client::handleDirectObj(DirectResponse* direct_object, RequestHandler *new_handler)
@@ -63,6 +63,7 @@ void Client::parseForHttp()
         }
         _server->getResponse(*this);
         _parser_http.resetParsing();
+        _pending_read = false;
         _action = WAIT;
     }
 }
@@ -88,6 +89,8 @@ void Client::readFromFD()
         _in_http.append((const char *)_in_message, _result);
         while (_parser_http.getPos()  != _in_http.length())
         {
+            if (!_pending_read)
+                _pending_read = true;
             if (_action == WAIT)
             {
                 if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
@@ -115,7 +118,7 @@ void Client::readFromFD()
         // {
         //     _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
         // }      
-        // if (!_found_http)
+        // if (!_pending_read)
         // {
         //     if (_action == WAIT)
         //     {
@@ -145,8 +148,15 @@ void Client::readFromFD()
 
 
 
-bool Client::checkTimeOut()
+bool Client::checkObjTimeOut()
 {
+    if(_pending_read && checkTimeOut())
+    {
+        BaseHandler * obj = createObject(TIMEOUT_408, TIMEOUT_BODY);
+        addObject(obj);
+        _keep_alive = false;
+        return false;
+    }
     return false;
 }
 
@@ -168,6 +178,7 @@ int Client::Action (int event)
     }
     else if (event & POLLHUP)
     {
+        std::cout << "POLL HUP" << std::endl;
         return 1;
     }
     return _result;
@@ -189,7 +200,7 @@ Client::~Client()
 
 int Client::executePostAction()
 {
-    if (_found_http && _in_body.size() >= _content_length) // check _found_http just in case we got the first line but not the full http.
+    if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
     {
         std::ofstream outfile("output_file.jpeg", std::ios::binary);
         if (outfile.is_open())

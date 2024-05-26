@@ -101,7 +101,7 @@ void Server::getResponse(Client & client)
     client.addObject(response);
 }
 
-bool Server::checkTimeOut()
+bool Server::checkObjTimeOut()
 {
     return false;
 }

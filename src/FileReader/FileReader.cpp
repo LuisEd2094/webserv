@@ -40,7 +40,7 @@ const std::string& FileReader::getMimeType(const std::string& to_find)
 
 FileReader::FileReader(Client& client) : _client_fd(client.getFD())
 {
-    _fd = open("/Users/lsoto-do/core05/webserv/html/index.html", O_RDONLY);
+    _fd = open("/home/luis/proyects/webserv/html/index.html", O_RDONLY);
 
     std::size_t start_ext = client.getURL().find_last_of(".");
     
@@ -76,7 +76,7 @@ const int FileReader::getFD() const
     return _fd;
 }
 
-bool    FileReader::checkTimeOut()
+bool    FileReader::checkObjTimeOut()
 {
     return false;
     

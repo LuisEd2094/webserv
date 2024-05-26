@@ -42,5 +42,15 @@ BaseHandler* BaseHandler::createObject(const std::string& http, const std::strin
 
 }
 
+bool    BaseHandler::checkTimeOut()
+{
+    time_t current_time;
+    std::time(&current_time);
+
+    double seconds;
+    seconds = std::difftime(current_time, _last_time) * 1000;
+    return (TIME_OUT_POLL > 0 && seconds >= TIME_OUT_PROCESS);
+}
+
 BaseHandler::BaseHandler(){}
 BaseHandler::~BaseHandler() {}

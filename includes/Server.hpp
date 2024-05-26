@@ -32,7 +32,7 @@ class Server : public BaseHandler
 
         bool validateAction(Client& client);
         void getResponse(Client& client);
-        bool checkTimeOut();
+        bool checkObjTimeOut();
         std::list<ConfigVirtualServer>         virtualServers; // TODO wolud be nice if it was private
 
     private:
