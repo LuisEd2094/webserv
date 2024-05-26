@@ -1,14 +1,14 @@
-#include <ClientHandler.hpp>
+#include <RequestHandler.hpp>
 
 
-void ClientHandler::setHTTPResponse(const std::string &message)
+void RequestHandler::setHTTPResponse(const std::string &message)
 {
     _HTTP_response.append(message);
     _C_type_HTTP = _HTTP_response.c_str();
     _HTTP_response_len = std::strlen(_C_type_HTTP);
     _HTTP_bytes_sent = 0;
 }
-void ClientHandler::setBodyResponse(const std::string &message)
+void RequestHandler::setBodyResponse(const std::string &message)
 {
     _out_body.append(message);
     _C_type_body = _out_body.c_str();
@@ -16,25 +16,25 @@ void ClientHandler::setBodyResponse(const std::string &message)
     _body_bytes_sent = 0;
 }
 
-bool    ClientHandler::has_http()
+bool    RequestHandler::has_http()
 {
     return !_HTTP_response.empty();
 }
-bool    ClientHandler::has_body()
+bool    RequestHandler::has_body()
 {
     return !_out_body.empty();
 }
 
-const std::string&      ClientHandler::getHTTP()
+const std::string&      RequestHandler::getHTTP()
 {
     return _HTTP_response;
 }
-const std::string&      ClientHandler::getBody()
+const std::string&      RequestHandler::getBody()
 {
     return _out_body;
 }
 
-size_t ClientHandler::getChunkSize()
+size_t RequestHandler::getChunkSize()
 {
     if (_HTTP_response_len > _HTTP_bytes_sent)
     {
@@ -49,24 +49,24 @@ size_t ClientHandler::getChunkSize()
 
 }
 
-const char * ClientHandler::getC_HTTP()
+const char * RequestHandler::getC_HTTP()
 {
     return _C_type_HTTP + _HTTP_bytes_sent;
 }
 
-const char * ClientHandler::getC_Body()
+const char * RequestHandler::getC_Body()
 {
     return _C_type_body;
 }
 
 
-bool ClientHandler::pendingSend()
+bool RequestHandler::pendingSend()
 {
     return (_HTTP_response_len > _HTTP_bytes_sent || _body_response_len > _body_bytes_sent);
 }
 
 
-const char * ClientHandler::getToSend()
+const char * RequestHandler::getToSend()
 {
     if (_HTTP_response_len > _HTTP_bytes_sent)
         return _C_type_HTTP + _HTTP_bytes_sent;
@@ -75,7 +75,7 @@ const char * ClientHandler::getToSend()
 
 }
 
-void ClientHandler::updateBytesSent(std::size_t result)
+void RequestHandler::updateBytesSent(std::size_t result)
 {
     if (_HTTP_response_len > _HTTP_bytes_sent)
         _HTTP_bytes_sent += result;
@@ -83,7 +83,7 @@ void ClientHandler::updateBytesSent(std::size_t result)
         _body_bytes_sent += result;   
 }
 
-bool    ClientHandler::isFinished()
+bool    RequestHandler::isFinished()
 {
     if (_HTTP_bytes_sent >= _HTTP_response_len && _out_body.empty())
         return true;
@@ -93,12 +93,12 @@ bool    ClientHandler::isFinished()
         return false;
 }
 
-ClientHandler::ClientHandler()
+RequestHandler::RequestHandler()
 {
 
 }
 
-ClientHandler::~ClientHandler()
+RequestHandler::~RequestHandler()
 {
     
 }

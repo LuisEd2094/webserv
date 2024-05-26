@@ -22,10 +22,14 @@ OVERSEER_PATH = Overseer/
 PARSING_PATH =	Parsing/
 BASE_PATH	= BaseHandler/
 CLIENT_PATH =	Client/
+RESPONSE_PATH = Responses/
 CGI_PATH 	= CGI/
 FILE_READ_PATH = FileReader/
 OBJS_PATH	= obj/
-MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH) $(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH) $(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)) 
+MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH)\
+								$(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH)\
+								$(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)\
+								$(RESPONSE_PATH)) 
 DEPS_PATH	= deps/
 INCS        = -I./includes
 
@@ -76,7 +80,7 @@ OVERSEER			=	Overseer.cpp mainLoop.cpp
 
 OVERSEER_FILES		=	$(addprefix $(OVERSEER_PATH), $(OVERSEER))
 
-CLIENT			=	Client.cpp getters.cpp setters.cpp ClientHandler.cpp DirectResponse.cpp Response.cpp
+CLIENT			=	Client.cpp getters.cpp setters.cpp RequestHandler.cpp DirectResponse.cpp 
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
@@ -84,10 +88,18 @@ CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp
 
 CONF_FILES		=	$(addprefix $(CONF_PATH), $(CONF))
 
+RESPONSE			=	Response.cpp
 
-DEPS			= 	$(addprefix $(DEPS_PATH), $(FILE:.cpp=.d) $(SRC:.cpp=.d) $(SERVER:.cpp=.d) $(AUX:.cpp=.d) $(OVERSEER:.cpp=.d) $(CLIENT:.cpp=.d) $(PARSING:.cpp=.d) $(CGI:.cpp=.d) $(BASE:.cpp=.d) $(CONF:.cpp=.d))
+RESPONSE_FILES		=	$(addprefix $(RESPONSE_PATH), $(RESPONSE))
 
-SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) $(PARSING_FILES) $(CGI_FILES) $(BASE_FILES) $(FILE_READ_FILES) $(CONF_FILES)
+DEPS			= 	$(addprefix $(DEPS_PATH), $(FILE:.cpp=.d) $(SRC:.cpp=.d)\
+					$(SERVER:.cpp=.d) $(AUX:.cpp=.d) $(OVERSEER:.cpp=.d) \
+					ma$(CLIENT:.cpp=.d) $(PARSING:.cpp=.d) $(CGI:.cpp=.d) \
+					$(BASE:.cpp=.d) $(CONF:.cpp=.d) $(RESPONSE:.cpp=.d))
+
+SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) \
+					$(PARSING_FILES) $(CGI_FILES) $(BASE_FILES) $(FILE_READ_FILES) \
+					$(CONF_FILES) $(RESPONSE_FILES)
 				
 OBJS 			=	$(addprefix $(OBJS_PATH), $(SRC:.cpp=.o))
 all: $(NAME)

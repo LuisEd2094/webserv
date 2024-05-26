@@ -32,7 +32,7 @@ Client::Client(Server *server) : BaseHandler()
     _keep_alive = false;
 }
 
-void Client::handleDirectObj(DirectResponse* direct_object, ClientHandler *new_handler)
+void Client::handleDirectObj(DirectResponse* direct_object, RequestHandler *new_handler)
 {
     if (direct_object->has_http())
     {
@@ -244,7 +244,7 @@ int Client::executeGetAction()
     //     "Hello, world!\r\n\0";
 
 
-    ClientHandler * client = _response_objects_queue.front();
+    RequestHandler * client = _response_objects_queue.front();
 /* 
     if (client->has_body())
     {

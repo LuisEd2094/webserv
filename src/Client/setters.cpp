@@ -2,7 +2,7 @@
 
 void   Client::setHTTPResponse(const std::string &message, BaseHandler *obj)
 {
-    std::map<BaseHandler*,  ClientHandler *>::iterator it = _response_objects_map.find(obj);
+    std::map<BaseHandler*,  RequestHandler *>::iterator it = _response_objects_map.find(obj);
     if (it != _response_objects_map.end())
     {
         it->second->setHTTPResponse(message);
@@ -16,7 +16,7 @@ void   Client::setHTTPResponse(const std::string &message, BaseHandler *obj)
 
 void Client::setBodyResponse(const std::string &message, BaseHandler *obj)
 {
-    std::map<BaseHandler*,  ClientHandler *>::iterator it = _response_objects_map.find(obj);
+    std::map<BaseHandler*,  RequestHandler *>::iterator it = _response_objects_map.find(obj);
     if (it != _response_objects_map.end())
     {
         it->second->setBodyResponse(message);
@@ -31,7 +31,7 @@ void    Client::addObject(BaseHandler * obj)
 {
     if (obj)
     {
-        ClientHandler* new_handler = new ClientHandler();
+        RequestHandler* new_handler = new RequestHandler();
         DirectResponse* direct_object = dynamic_cast<DirectResponse *>(obj);
         
         _response_objects_queue.push(new_handler);

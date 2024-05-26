@@ -1,6 +1,6 @@
 #include <Server.hpp>
 #include <Client.hpp>
-#include <ClientHandler.hpp>
+#include <RequestHandler.hpp>
 #include <DirectResponse.hpp>
 
 //Exceptions

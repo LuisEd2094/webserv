@@ -12,10 +12,9 @@
 4. buscar CGI real para verificar como funciona correctamente
 - posiblemente buscar de varios tipos para el bonus
 
+  
 
-https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.2
-
- Code | Name |  Use case |Condition | Additional Information | Status |
+ |Code | Name |  Use case |Condition | Additional Information | Status |
 | ---- | --|--------- | ----------------- | --| -- |
 https://datatracker.ietf.org/doc/html/rfc7231#page-50
 | 100  | Continue |  Client might send a big payload and wants to confirm server can handle  it | Client sends a Expect: 100-continue header action| Make sure we can serve the request| ❌|

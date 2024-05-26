@@ -1,14 +1,14 @@
-#ifndef CLIENTHANDLER_HPP
-# define CLIENTHANDLER_HPP
+#ifndef REQUESTHANDLER_HPP
+# define REQUESTHANDLER_HPP
 # include <iostream>
 # include  <cstring>
 # include <ProgramConfigs.hpp>
 
-class ClientHandler
+class RequestHandler
 {
     public:
-        ClientHandler();
-        ~ClientHandler();
+        RequestHandler();
+        ~RequestHandler();
         void                setHTTPResponse(const std::string &message);
         void                setBodyResponse(const std::string &message);
 

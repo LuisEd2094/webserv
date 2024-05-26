@@ -14,7 +14,7 @@
 # include <cstring>
 # include <Overseer.hpp>
 # include <queue>
-# include <ClientHandler.hpp>
+# include <RequestHandler.hpp>
 # include <DirectResponse.hpp>
 
 class Server;
@@ -41,8 +41,8 @@ class Client : public BaseHandler
 
 
     private:
-        std::queue< ClientHandler *>               _response_objects_queue;
-        std::map< BaseHandler *,  ClientHandler *> _response_objects_map;
+        std::queue< RequestHandler *>               _response_objects_queue;
+        std::map< BaseHandler *,  RequestHandler *> _response_objects_map;
         Parsing                 _parser_http;
         Actions                 _action;
         std::size_t             _result;
@@ -61,7 +61,7 @@ class Client : public BaseHandler
 
 
 
-        void                    setSendValues(const ClientHandler &);
+        void                    setSendValues(const RequestHandler &);
 
 
         void                    readFromFD();
@@ -69,7 +69,7 @@ class Client : public BaseHandler
         int                     executePostAction();
 
 
-        void                    handleDirectObj(DirectResponse*, ClientHandler *);
+        void                    handleDirectObj(DirectResponse*, RequestHandler *);
         void                    removeFirstObj();
 
 
