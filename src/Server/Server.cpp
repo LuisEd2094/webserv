@@ -73,10 +73,8 @@ void Server::getResponse(Client & client)
 
     if (url == "/")
     {
-        const fullResponse& test = Response::getDefault(OK);
-        std::cout << &test << std::endl;
 
-        response = BaseHandler::createObject(test);
+        response = BaseHandler::createObject(Response::getDefault(OK));
     }
     else if (url == "/index.html")
     {
