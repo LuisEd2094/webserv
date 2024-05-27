@@ -58,7 +58,7 @@ bool Server::validateAction(Client& client)
         return true;
     else
     {
-        BaseHandler* response = BaseHandler::createObject(NOT_FOUND, BODY_NOT_FOUND);
+        BaseHandler* response = BaseHandler::createObject(Response::getDefault(NOT_FOUND));
         client.addObject(response);
         return (false);
     }
@@ -73,11 +73,10 @@ void Server::getResponse(Client & client)
 
     if (url == "/")
     {
-        // fullResponse * testBody = Response::getDefault(OK, "HOLA");
-        const fullResponse& test = Response::getDefault(REQUEST_TIMEOUT);
+        const fullResponse& test = Response::getDefault(OK);
         std::cout << &test << std::endl;
 
-        response = BaseHandler::createObject(HTTP_OK, "HOLA" );
+        response = BaseHandler::createObject(test);
     }
     else if (url == "/index.html")
     {
@@ -87,7 +86,7 @@ void Server::getResponse(Client & client)
         }
         catch(const std::exception& e)
         {
-            response = BaseHandler::createObject(INTERNAL_ERROR, "");
+            response = BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));
         }  
     }
     else if (url == "/nolen.py")
@@ -98,7 +97,7 @@ void Server::getResponse(Client & client)
          }
         catch(const std::exception& e)
         {
-            response = BaseHandler::createObject(INTERNAL_ERROR, "");
+            response = BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));
         }
         
     }

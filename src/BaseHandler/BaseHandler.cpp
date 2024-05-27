@@ -34,11 +34,11 @@ BaseHandler* BaseHandler::createObject(const std::string& obj, Client& client)
     }
     return NULL;
 }
-BaseHandler* BaseHandler::createObject(const std::string& http, const std::string& body)
+BaseHandler* BaseHandler::createObject(const fullResponse & obj)
 {
     // This is for when you want to generate a DirectResponse Object, 
     // it needs a HTTP and Body string to create it. 
-    return DirectResponse::createNewDirect(generateHTTP(http, body), body);
+    return DirectResponse::createNewDirect(obj._http, obj._body);
 
 }
 

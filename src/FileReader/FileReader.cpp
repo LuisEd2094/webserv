@@ -40,7 +40,7 @@ const std::string& FileReader::getMimeType(const std::string& to_find)
 
 FileReader::FileReader(Client& client) : _client_fd(client.getFD())
 {
-    _fd = open("/home/luis/proyects/webserv/html/index.html", O_RDONLY);
+    _fd = open("/Users/lsoto-do/core05/webserv/html/index.html", O_RDONLY);
 
     std::size_t start_ext = client.getURL().find_last_of(".");
     
@@ -111,12 +111,12 @@ int FileReader::Action(int event)
                 std::string http = setContentType(std::string(HTTP_OK));
                 if (_buffer.find_last_of("\n") != _buffer.length() - 1) /*Just to make sure there is an end of line */
                     _buffer.append("\n");
-                client->setHTTPResponse(generateHTTP(http, _buffer) , this); 
+                client->setHTTPResponse(setContentLenHTTP(http, _buffer) , this); 
                 client->setBodyResponse(_buffer, this); 
             }
             else
             {
-                client->setHTTPResponse(generateHTTP(INTERNAL_ERROR, ""), this);
+                client->setHTTPResponse(setContentLenHTTP(INTERNAL_ERROR_HTTP, ""), this);
             }
             return (0);
 

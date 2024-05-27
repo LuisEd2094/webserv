@@ -152,7 +152,7 @@ bool Client::checkObjTimeOut()
 {
     if(_pending_read && checkTimeOut())
     {
-        BaseHandler * obj = createObject(TIMEOUT_HTTP, TIMEOUT_BODY);
+        BaseHandler * obj = createObject(Response::getDefault(REQUEST_TIMEOUT));
         addObject(obj);
         _keep_alive = false;
         return false;

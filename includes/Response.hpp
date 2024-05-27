@@ -11,8 +11,9 @@
 
 # define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\n"
 
-# define NOT_FOUND      "HTTP/1.1 404 Not Found\r\n"
-# define BODY_NOT_FOUND "<!DOCTYPE html><html>\n<head><title>404 Not Found</title></head>\n<body>\n<h1>Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n</body>\n</html>"
+# define NOT_FOUND_HTTP "HTTP/1.1 404 Not Found\r\n"
+# define NOT_FOUND_TILE "404 Not Found"
+# define NOT_FOUND_BODY "The requested URL was not found on this server."
  
 # define TIMEOUT_HTTP   "HTTP/1.1 408 Request Timeout\r\nConnection: close\r\n"
 # define TIMEOUT_TITLE  "408 Request Timeout"
@@ -21,7 +22,10 @@
 
 # define TEMPLATE "<!DOCTYPE html><html>\n<head><title></title></head>\n<body>\n<p></p>\n</body>\n</html>\n"
 
-# define INTERNAL_ERROR "HTTP/1.1 500 Internal Server Error\r\n"
+# define INTERNAL_ERROR_HTTP    "HTTP/1.1 500 Internal Server Error\r\n"
+# define INTERNAL_ERROR_TITLE  "500 Internal Server Error"
+# define INTERNAL_ERROR_BODY   "The server ran into a problem while executing your request."
+
 # define CONTENTLENGTH "Content-Length: "
 # define CRNL "\r\n"
 
@@ -29,7 +33,9 @@
 enum Codes
 {
     OK,
-    REQUEST_TIMEOUT 
+    REQUEST_TIMEOUT,
+    NOT_FOUND,
+    INTERNAL_SERVER_ERROR 
 };
 
 typedef struct Responses
@@ -49,7 +55,6 @@ typedef struct fullResponse
 {
     std::string _http;
     std::string _body;
-    fullResponse(const std::string&, const std::string&);
     fullResponse(const Responses&);
 } fullResponse;
 
@@ -62,18 +67,16 @@ class Response
 {
     public:
         static void initDefaultMap();
+        static const fullResponse& getDefault(Codes code, const std::string& body);
         static const fullResponse& getDefault(Codes code);
-        // static fullResponse* getDefault(Codes code, const std::string& body);
-
 
     private:
         static void createFullResponses();
         static responsesMap defaults;
-
         static fullResponsesMap fullResponses;
 };
 
-std::string generateHTTP(const std::string& http, const std::string& body);
+std::string setContentLenHTTP(const std::string& http, const std::string& body);
 
 
 template<typename T>
