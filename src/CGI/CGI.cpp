@@ -127,7 +127,7 @@ int CGI::Action(int event)
                 std::string http_response(_buffer.substr(0, _buffer.find("\n\n") + 2));
                 if (http_response.empty())
                 {
-                    client->setHTTPResponse(generateHTTP(OK, ""), this);
+                    client->setHTTPResponse(generateHTTP(HTTP_OK, ""), this);
                 }
                 else
                 {

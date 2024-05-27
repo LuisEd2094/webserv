@@ -73,7 +73,11 @@ void Server::getResponse(Client & client)
 
     if (url == "/")
     {
-        response = BaseHandler::createObject(OK, "HOLA" );
+        // fullResponse * testBody = Response::getDefault(OK, "HOLA");
+        const fullResponse& test = Response::getDefault(REQUEST_TIMEOUT);
+        std::cout << &test << std::endl;
+
+        response = BaseHandler::createObject(HTTP_OK, "HOLA" );
     }
     else if (url == "/index.html")
     {

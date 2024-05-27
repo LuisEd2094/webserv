@@ -42,7 +42,7 @@ void Overseer::mainLoop()
         {
             throw Overseer::pollException("poll: " + static_cast<std::string>(strerror(errno)));
         }
-        // Run through the existing connections looking for data to read
+        // Run through the existing connections loHTTP_OKing for data to read
 
         for(_i = 0; _i < _fd_count; _i++) 
         {

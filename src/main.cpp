@@ -29,6 +29,7 @@ int main()
 {
     t_confi confi;
     FileReader::initTypeMaps();
+    Response::initDefaultMap();
     // all this info should come from the confi file
     /*
     std::memset(&(confi.hints), 0, sizeof(confi.hints));

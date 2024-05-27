@@ -108,7 +108,7 @@ int FileReader::Action(int event)
         {
             if (result ==  0)
             {
-                std::string http = setContentType(std::string(OK));
+                std::string http = setContentType(std::string(HTTP_OK));
                 if (_buffer.find_last_of("\n") != _buffer.length() - 1) /*Just to make sure there is an end of line */
                     _buffer.append("\n");
                 client->setHTTPResponse(generateHTTP(http, _buffer) , this); 

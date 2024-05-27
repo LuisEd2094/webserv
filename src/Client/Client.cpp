@@ -152,7 +152,7 @@ bool Client::checkObjTimeOut()
 {
     if(_pending_read && checkTimeOut())
     {
-        BaseHandler * obj = createObject(TIMEOUT_408, TIMEOUT_BODY);
+        BaseHandler * obj = createObject(TIMEOUT_HTTP, TIMEOUT_BODY);
         addObject(obj);
         _keep_alive = false;
         return false;
@@ -248,7 +248,7 @@ int Client::executeGetAction()
 
     // AFTER GET IS DONE WE SHOULD CHECK AND SEE WHAT THE MESSAGE WE ARE GOING TO SEND IS.
 
-    // std::string http = "HTTP/1.1 200 OK\r\n"
+    // std::string http = "HTTP/1.1 200 HTTP_OK\r\n"
     //     "Content-Type: text/plain\r\n"
     //     "Content-Length: 13\r\n"
     //     "\r\n"

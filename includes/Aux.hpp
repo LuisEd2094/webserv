@@ -2,7 +2,7 @@
 # define AUX_HPP
 # include <iostream>
 # include <cstdlib>
-
+# include <map>
 
 
 void exitError(const std::string& error);
@@ -13,5 +13,7 @@ enum Actions {
     POST, 
     DELETE
 };
+
+
 
 #endif
