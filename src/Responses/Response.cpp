@@ -74,6 +74,7 @@ void    Response::initDefaultMap()
 
     /*5xx ERRORS*/
     defaults.insert(std::make_pair(INTERNAL_SERVER_ERROR, Responses(INTERNAL_ERROR_HTTP, INTERNAL_ERROR_TITLE, INTERNAL_ERROR_BODY)));
+    defaults.insert(std::make_pair(GATEWAY_TIMEOUT, Responses(GATEWAY_TIMEOUT_HTTP, GATEWAY_TIMEOUT_TITLE, GATEWAY_TIMEOUT_BODY)));
 
     createFullResponses();
     defaults.clear();

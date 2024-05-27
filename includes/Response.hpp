@@ -24,8 +24,11 @@ enum ErrorCodes
     URI_TOO_LONG,
     MEDIA_TYPE,
     EXPECTATION,
-    UPGRADE, 
-    INTERNAL_SERVER_ERROR 
+    UPGRADE,
+
+
+    INTERNAL_SERVER_ERROR,
+    GATEWAY_TIMEOUT 
 };
 
 # define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\n"
@@ -101,9 +104,14 @@ enum ErrorCodes
 
 /*5xx ERRORS*/
 
-# define INTERNAL_ERROR_HTTP    "HTTP/1.1 500 Internal Server Error\r\n"
+# define INTERNAL_ERROR_HTTP    "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/html\r\n"
 # define INTERNAL_ERROR_TITLE  "500 Internal Server Error"
-# define INTERNAL_ERROR_BODY   "The server ran into a problem while executing your request."
+# define INTERNAL_ERROR_BODY   "The server ran into a problem while executing your request. 💀"
+
+# define GATEWAY_TIMEOUT_HTTP   "HTTP/1.1 504 Gateway Timeout\r\nContent-Type: text/html\r\n"
+# define GATEWAY_TIMEOUT_TITLE  "504 Gateway Timeout"
+# define GATEWAY_TIMEOUT_BODY   "The server, acting as a gateway or proxy, did not receive a timely response from the upstream server. 💀"
+
 
 # define TEMPLATE "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<title></title>\n</head>\n<body>\n<p></p>\n</body>\n</html>\n"
 # define CONTENTLENGTH "Content-Length: "

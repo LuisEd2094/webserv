@@ -48,7 +48,6 @@ FileReader::FileReader(Client& client) : _client_fd(client.getFD())
     {
         _file_type = getMimeType(client.getURL().substr(start_ext + 1, client.getURL().length()));
     }
-
     if (_fd == -1)
     {
         throw FileReaderException(strerror(errno));
@@ -116,7 +115,7 @@ int FileReader::Action(int event)
             }
             else
             {
-                client->setHTTPResponse(setContentLenHTTP(INTERNAL_ERROR_HTTP, ""), this);
+                client->setFullResponse(Response::getDefault(INTERNAL_ERROR_BODY), this);
             }
             return (0);
 

@@ -1,5 +1,21 @@
 #include <Client.hpp>
 
+void Client::setFullResponse(const fullResponse& response, BaseHandler* obj)
+{
+    std::map<BaseHandler*,  RequestHandler *>::iterator it = _response_objects_map.find(obj);
+    if (it != _response_objects_map.end())
+    {
+        it->second->setHTTPResponse(response._http);
+        it->second->setBodyResponse(response._body);
+        if (it->second == _response_objects_queue.front())
+        {
+            Overseer::setListenAction(_fd, IN_AND_OUT);
+        }
+    }
+
+}
+
+
 void   Client::setHTTPResponse(const std::string &message, BaseHandler *obj)
 {
     std::map<BaseHandler*,  RequestHandler *>::iterator it = _response_objects_map.find(obj);

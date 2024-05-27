@@ -71,33 +71,27 @@ void Server::getResponse(Client & client)
     const std::string & url = client.getURL();
     BaseHandler * response;
 
-    if (url == "/")
+    try
     {
+        if (url == "/")
+        {
 
-        response = BaseHandler::createObject(Response::getDefault(OK));
-    }
-    else if (url == "/index.html")
-    {
-        try
+            response = BaseHandler::createObject(Response::getDefault(OK));
+        }
+        else if (url == "/index.html")
         {
             response = BaseHandler::createObject(FILE_OBJ, client);
         }
-        catch(const std::exception& e)
-        {
-            response = BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));
-        }  
-    }
-    else if (url == "/nolen.py")
-    {
-        try
+        else if (url == "/nolen.py")
         {
             response = BaseHandler::createObject(CGI_OBJ, client);
-         }
-        catch(const std::exception& e)
-        {
-            response = BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));
         }
-        
+
+    }
+    catch(const std::exception& e)
+    {
+        response = BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));
+
     }
     client.addObject(response);
 }

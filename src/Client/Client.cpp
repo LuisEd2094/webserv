@@ -160,7 +160,7 @@ bool Client::checkObjTimeOut()
     return false;
 }
 
-int Client::Action (int event)
+int Client::Action (int event)TimeOut
 {
     if (event & POLLIN)
     {
