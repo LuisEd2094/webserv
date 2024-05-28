@@ -13,6 +13,7 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed)
 		location != parsed.locations.end(); location++)
 	{
 		this->getLocations().push_back(ConfigLocation(*location));
+		// ;
 	}
 }
 

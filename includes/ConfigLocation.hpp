@@ -8,42 +8,42 @@
 # include <string>
 # include "ConfigCgi.hpp"
 
-
 class ConfigLocation: public ConfigElement
 {
 	private:
-		std::string				errorPage;
-		std::list<std::string>	methods;
-		std::string				redirection;
-		std::string				root; // would be nice to change it to an oject
-		bool					dirListing;
-		std::list<std::string>	index;
-		std::list<ConfigCgi>	cgis;
+		std::string				_errorPage;
+		std::list<std::string>	_methods;
+		std::string				_redirection;
+		std::string				_root; // would be nice to change it to an oject
+		bool					_dirListing;
+		std::list<std::string>	_index;
+		std::list<ConfigCgi>	_cgis;
+		//Add list configureLocation 
 
 	public:
 		void parseKeyVal(std::string key, std::string val);
-		ConfigLocation(void){};
+		ConfigLocation(void);
 		ConfigLocation(ParsingLocation& obj);
-		ConfigLocation &operator=( ConfigLocation& obj);
+		ConfigLocation &operator=( const ConfigLocation& obj);
 		~ConfigLocation(){};
 
 
 		void							setErrorPage(std::string inpErrorPage);
 		void							setMethods(std::string methods);
-		void							setRedirection(std::string methods);
-		void							setRoot(std::string methods);
-		void							setDirListing(std::string methods);
-		void							setIndex(std::string methods);
-		void							setCgis(std::string methods);
+		void							setRedirection(std::string redirection);
+		void							setRoot(std::string root);
+		void							setDirListing(std::string dirListing);
+		void							setIndex(std::string index);
+		void							setCgis(std::string cgis);//*
 
-		std::string						getErrorPage(void);
-		std::list<std::string>			getMethods(void);
-		std::string						getRedirection(void);
-		std::string						getRoot(void);
-		bool							getDirListing(void);
-		std::list<std::string>			getIndex(void);
-		std::list<ConfigCgi>			getCgis(void);
-		std::list<ConfigLocation>		getLocations(void);
+		std::string						getErrorPage(void) const;
+		std::list<std::string>			getMethods(void) const;
+		std::string						getRedirection(void) const;
+		std::string						getRoot(void) const;
+		bool							getDirListing(void) const;
+		std::list<std::string>			getIndex(void) const;
+		std::list<ConfigCgi>			getCgis(void) const;//*
+		std::list<ConfigLocation>		getLocations(void) const;
 };
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj);
 

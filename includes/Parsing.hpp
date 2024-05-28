@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/23 10:59:47 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/28 17:34:28 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,17 @@
 # include <algorithm>
 # include <dirent.h> //readdir
 # include <map> //map
+# include <sstream>
+# include <vector>
 
 /******************************************************************************/
 /*                            MACROS                                          */
 /******************************************************************************/
 
-# define BUFFER_READ	3000
+# define BUFFER_READ	1
 # define ERROR			-1
 # define WARNING 		1
+# define ERROR_FORMAT	2
 # define ERROR_STATUS "\033[1m\033[1;31m[ Error ]\033[m"
 # define WARNING_StATUS "\033[1m\033[1;33m[ Warning ]\033[m"
 # define IS_IN_ROOT(c) ((c) == '/')
@@ -134,6 +137,7 @@ size_t wordCounter(const S& str)
 	}
 	return (word);
 }
+
 //agregar atributo que indique si es de tipo RN o solo ON(only line)
 typedef struct s_request
 {
@@ -149,7 +153,8 @@ typedef struct s_request
 class Parsing
 {
 	private:
-		std::list<std::string> _methods;
+		std::list<std::string>		_methods;
+		std::vector<std::string>	_errors;
 		std::string	_read;
 		t_request	_method;
 		std::string	_typeLine;
@@ -188,4 +193,6 @@ class Parsing
 	 * Exception Classes
 	*/
 };
+
+std::list<std::string> ft_split(const std::string& str, char delimiter);
 #endif

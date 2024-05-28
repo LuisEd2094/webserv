@@ -1,8 +1,9 @@
 
-# ifndef CONFIG_VIRTUAL_ELEMENT_HPP
-# define CONFIG_VIRTUAL_ELEMENT_HPP
+# ifndef CONFIG_VIRTUAL_SERVER_HPP
+# define CONFIG_VIRTUAL_SERVER_HPP
 
 # include "ConfigElement.hpp"
+# include "ConfigLocation.hpp"
 # include "ParsingServer.hpp"
 # include "Parsing.hpp"
 # include <string>
