@@ -5,6 +5,17 @@ ConfigLocation::ConfigLocation(void)
 	_dirListing = false;
 }
 
+
+ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
+{
+	*this = father;
+
+	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
+	{
+		this->parseKeyVal(i->first, i->second);
+	}
+}
+
 ConfigLocation::ConfigLocation( ParsingLocation& obj)
 {
 
@@ -22,7 +33,7 @@ void ConfigLocation::parseKeyVal(std::string key, std::string val)
 		this->setMethods(val);	
 	else if (key == "redirection")
 		this->setRedirection(val);	
-	else if (key == "root")
+	else if (key == "root") // if father root = /tmp/sdaf/; then for child root = wololo -> /tmp/sdaf, else for child root = /var -> /var
 		this->setRoot(val);	
 	else if (key == "dirListing")
 		this->setDirListing(val);	
@@ -109,14 +120,26 @@ std::list<ConfigCgi> ConfigLocation::getCgis(void) const
 
 ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 {
-		this->_errorPage = obj.getErrorPage();
-		this->_methods = obj.getMethods();
-		this->_redirection = obj.getRedirection();
-		this->_root = obj.getRoot();
-		this->_dirListing = obj.getDirListing();
-		this->_index = obj.getIndex();
-		this->_cgis = obj.getCgis();
+	this->_errorPage = obj.getErrorPage();
+	this->_methods = obj.getMethods();
+	this->_redirection = obj.getRedirection();
+	this->_root = obj.getRoot();
+	this->_dirListing = obj.getDirListing();
+	this->_index = obj.getIndex();
+	this->_cgis = obj.getCgis();
+
 	return (*this);
+}
+
+ConfigLocation::ConfigLocation(const ConfigLocation& obj)
+{
+	this->_errorPage = obj.getErrorPage();
+	this->_methods = obj.getMethods();
+	this->_redirection = obj.getRedirection();
+	this->_root = obj.getRoot();
+	this->_dirListing = obj.getDirListing();
+	this->_index = obj.getIndex();
+	this->_cgis = obj.getCgis();
 }
 
 std::ostream &operator<<(std::ostream &os,  ConfigLocation &obj)

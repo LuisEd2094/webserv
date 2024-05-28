@@ -24,6 +24,8 @@ class ConfigLocation: public ConfigElement
 		void parseKeyVal(std::string key, std::string val);
 		ConfigLocation(void);
 		ConfigLocation(ParsingLocation& obj);
+		ConfigLocation(const ConfigLocation& obj);
+		ConfigLocation( ParsingLocation& obj, ConfigLocation& father);
 		ConfigLocation &operator=( const ConfigLocation& obj);
 		~ConfigLocation(){};
 
