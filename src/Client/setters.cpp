@@ -32,7 +32,7 @@ void    Client::addObject(BaseHandler * obj)
     if (obj)
     {
         ClientHandler* new_handler = new ClientHandler();
-        DirectResponse* direct_object = dynamic_cast<DirectResponse *>(obj);
+        DirectResponse* direct_object = dynamic_cast<DirectResponse *>(obj);//segmentatio fault, validar configuracion
         
         _response_objects_queue.push(new_handler);
         if (direct_object)

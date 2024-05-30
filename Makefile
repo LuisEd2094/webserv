@@ -6,12 +6,12 @@
 #    By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 10:55:00 by lsoto-do          #+#    #+#              #
-#    Updated: 2024/05/28 15:55:53 by dacortes         ###   ########.fr        #
+#    Updated: 2024/05/30 12:04:20 by dacortes         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME        = webserv
-CFLAGS      = -std=c++98 -pedantic -g  #-fsanitize=address #-Wall -Wextra  -Werror 
+CFLAGS      = -std=c++98 -pedantic -g  -fsanitize=address #-Wall -Wextra  -Werror 
 CC			= c++
 RM          = rm -f
 SRCS_PATH	= src/

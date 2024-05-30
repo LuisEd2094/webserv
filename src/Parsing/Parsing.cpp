@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/30 10:56:20 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/30 12:02:31 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,11 @@ int Parsing::checkMethod(const std::string& strIn)
 	size_t	space = 0;
 	size_t	tmp = 0;
 
-	// std::cout << TUR << "status error: " << END << _statusError << std::endl;
 	if (_statusError < 0 or _statusError > 1)
 		return (_statusError);
 	_typeLine = getTypeLine(&strIn[_findNewline]);
 	if (!_typeLine[0])
-		return (_statusError = WARNING, this->printStatus(" End of line not found. ", WARNING, WARNING));
+		return (_statusError = this->printStatus(" End of line not found. ", WARNING, WARNING));
 	_begin = _findNewline;
 	size_t end = strIn.substr(_findNewline).find(_typeLine) + _findNewline;
 	std::string strRead(strIn.begin() + _findNewline, strIn.begin() + end);
