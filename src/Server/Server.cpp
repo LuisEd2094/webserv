@@ -53,6 +53,8 @@ int                Server::Action(int event)
 bool Server::validateAction(Client& client)
 {
     // check method and url against config.
+    // GET es valido para esta URL
+    // POST valido para uRL etc 
     const std::string url = client.getURL();
     if (url == "/" or url == "/nolen.py" or url == "/index.html")
         return true;

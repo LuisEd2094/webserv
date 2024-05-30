@@ -152,7 +152,7 @@ int	Parsing::parsingHeader(const std::string& strRead)
 		if (this->isEmptyLine(tmpEnd))
 			emptyLine++;
 		if ( endPos  == std::string::npos)
-			return (_statusError = EXIT_FAILURE);
+			return (_statusError = WARNING);
 		end = start + endPos;
 		std::string tmp(strRead.begin() + start , strRead.begin() + end);
 		if (tmp[0] != '\0')

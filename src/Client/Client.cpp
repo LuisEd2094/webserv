@@ -53,6 +53,7 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
+        _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if(_action == POST)
         {
             /* this should check what type of post they are doing, could be a contentlen or a chunked sent */
@@ -61,12 +62,23 @@ void Client::parseForHttp()
             {
                 _content_length = std::atoi(content_len.c_str());
             }
+            _in_body.append(_in_container, 0, _content_length);
+            if (_in_body.length() == _content_length)//terminamos el body
+            {
+                _in_container.erase(0, _content_length);
+                _server->getResponse(*this);
+                _pending_read = false;
+                _in_body.clear();
+                _action = WAIT;
+            }
         }
-        _server->getResponse(*this);
-        _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
+        else 
+        {
+            _server->getResponse(*this);
+            _pending_read = false;
+            _action = WAIT;
+        }
         _parser_http.resetParsing();
-        _pending_read = false;
-        _action = WAIT;
     }
 }
 
@@ -88,34 +100,55 @@ void Client::readFromFD()
 
     if (_result > 0)
     {
-        _in_container.append((const char *)_in_message, _result);
-        while (_parser_http.getPos()  != _in_container.length())
+        if (_action != POST)
         {
-            if (!_pending_read)
-                _pending_read = true;
-            if (_action == WAIT)
+            _in_container.append((const char *)_in_message, _result);
+            while (_parser_http.getPos()  != _in_container.length())
             {
-                if (!_parser_http.checkMethod(_in_container)) //check method returns 0 on success
+                if (!_pending_read)
+                    _pending_read = true;
+                if (_action == WAIT)
                 {
-                    if (!_server->validateAction(*this))
+                    if (!_parser_http.checkMethod(_in_container)) //check method returns 0 on success
                     {
-                        _action = GET;
-                        return;
+                        if (!_server->validateAction(*this))
+                        {
+                            _action = GET;
+                            return;
+                        }
+                        updateMethodAction();
                     }
-                    updateMethodAction();
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
+                if (_action != WAIT) 
                 {
-                    break;
+                    if (_parser_http.parsingHeader(_in_container)) // parsingHeader return 1 on failure
+                        break;
+                    parseForHttp();
                 }
-            }
-            if (_action != WAIT) 
-            {
-                if (_parser_http.parsingHeader(_in_container)) // parsingHeader return 1 on failure
-                    break;
-                parseForHttp();
             }
         }
+        else if (_action == POST)
+        {
+            std::size_t size_to_append = std::min(_result, _content_length - _in_body.length());
+            _in_body.append((const char *)_in_message, size_to_append);
+            if (_in_body.size() == _content_length) // we done with body
+            {  
+                _server->getResponse(*this);
+                if (size_to_append != _result)
+                {
+                    _in_container.append((const char *)&(_in_message[size_to_append + 1]));
+                }
+                _action = WAIT;
+
+            }
+
+
+        }
+       
         // else if (_action == POST)
         // {
         //     _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
@@ -169,10 +202,10 @@ int Client::Action (int event)
         readFromFD();
         if (_result < 0)
             return (-1);
-        if (_action  == POST)
-        {
-            return executePostAction();
-        }
+        // if (_action  == POST)
+        // {
+        //     return executePostAction();
+        // }
     }
     else if (event & POLLOUT)
     {

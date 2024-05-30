@@ -56,7 +56,7 @@ class Client : public BaseHandler
 
         bool                    _pending_read;
         std::string             _in_container;
-        std::vector<char>       _in_body;
+        std::string             _in_body;
         std::size_t             _content_length;
 
         void                    updateMethodAction();

@@ -147,8 +147,6 @@ typedef struct s_request
 	std::string	method;
 	std::string requested;
 	std::string version;
-	short		typeMethod;
-	short		typeNewLine;
 	bool		requestedIsInRoot;
 	std::map<std::string, std::string> content;
 } t_request;
