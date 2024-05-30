@@ -22,56 +22,76 @@ Path &Path::operator=(Path &orig)
 Path::Path(std::string pathStr)
 {
 
-    std::cout << TUR << "Holiiiiiii" << END << std::endl;
         this->directories = ft_split(pathStr, '/');
-        this->normalize();
+        while (this->normalize());
 }
 
-void Path::normalize(void)
+int Path::normalize(void)
 {
-    std::list<std::string>::iterator begin = this->directories.begin();
+    std::list<std::string>::iterator currFile = this->directories.begin();
+    bool lastEmpty = true;
+    bool modified = false;
 
-    while (begin != this->directories.end())
+    while (currFile != this->directories.end())
     {
-        //std::cout << TUR << "looping:" << END << *begin << std::endl;
-        //std::cout << TUR << *begin <<  END << std::endl;
-        if (*begin == ".")
-            this->normalize1dot(begin);
-        if (*begin == "..")
+        if (*currFile == "")
         {
-            this->normalize2dot(begin);
+            if (lastEmpty)
+                deleteAndBack(currFile);
+            modified = lastEmpty;
+            lastEmpty = !lastEmpty;
         }
-        begin++;
+        else if (*currFile == ".")
+        {
+            this->deleteAndBack(currFile);
+            modified = true;
+        }
+        else if (*currFile == "..")
+        {
+            if (currFile == this->directories.begin())
+            {
+                throw InvalidPathException();
+                return 0;
+            }
+            this->deleteAndBack(currFile);
+            this->deleteAndBack(currFile);
+            modified = true;
+        }
+        currFile++;
     }
+    return modified;
 }
 
-void Path::normalize1dot(std::list<std::string>::iterator &curFile)
+void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
 {
-    this->directories.erase(curFile);
+    std::list<std::string>::iterator del = currFile--; 
+    this->directories.erase(del);
 }
 
-void Path::normalize2dot(std::list<std::string>::iterator &begin)
+/*
+void Path::normalize2dot(std::list<std::string>::iterator &currFile)
 {
-    std::list<std::string>::iterator tmp = begin--; 
-    this->directories.erase(begin);
-    begin = tmp;
-    tmp = begin--;
-    this->directories.erase(tmp);
+    std::list<std::string>::iterator del = currFile; 
+    del--;
+    this->directories.erase(del);
+    del = currFile--;
+    this->directories.erase(del);
+    //std::list<std::string>::iterator tmp = currFile--; 
+    //this->directories.erase(currFile);
+    //currFile = tmp;
+    //tmp = currFile--;
+    //this->directories.erase(tmp);
 }
-
+*/
 Path::operator std::string()
 {
     std::list<std::string>::iterator begin;
     std::string result;
 
-
-    std::cout << RED << "size: " <<  this->directories.size() << END << std:: endl;
     for (begin = this->directories.begin(); begin != this->directories.end(); begin++)
     {
         result += "/";
         result += *begin;
-        std::cout << YELLOW << "result: " << END <<  result << std:: endl;
     }
-    std::cout << BLUE << "result: " <<  END << result << std:: endl;
     return (result);
 }

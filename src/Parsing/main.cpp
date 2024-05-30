@@ -78,13 +78,33 @@
 // 	std::cout << TUR << "test: " << ((int)test.getTypeLine("hola\n")[0]) << END << std::endl;
 // 	return (0);
 // }
+# include "Path.hpp"
+
+void testPath(std::string test)
+{
+	std::cout << "Testing:" << test << ":" << std::endl;
+	try {
+		Path path(test);
+		std::cout << GREEN << "Path: " << (std::string)path << END << std::endl << std::endl;
+
+	} catch (Path::InvalidPathException &e) {
+		std::cout << e.what() << std::endl;
+	}
+}
 
 int  main(void)
 {
 	// fileConfig();
 	// testParseHtpp();
-	std::list<std::string> res = ft_split("GET POST DELEETE", ' ');
-	for (std::list<std::string>::iterator iter = res.begin(); iter != res.end(); iter++)
-		std::cout << YELLOW << "word: " << END << *iter << std::endl;
+	testPath("/queso/./Dirhola/../fkkkk");
+	testPath("////////");
+	testPath("././././.");
+	testPath("");
+	testPath("  ");
+	testPath("runaway/../..");
+
+	//std::list<std::string> res = ft_split("GET POST DELEETE", ' ');
+	//for (std::list<std::string>::iterator iter = res.begin(); iter != res.end(); iter++)
+		//std::cout << YELLOW << "word: " << END << *iter << std::endl;
 	return (0);
 }

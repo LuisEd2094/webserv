@@ -2,14 +2,15 @@
 #include <algorithm>
 #include <iostream>
 #include <list>
+#include <exception>
 #include "Parsing.hpp"
 
 
 class Path
 {
 	private:
-		void normalize1dot(std::list<std::string>::iterator &curFile);
-		void normalize2dot(std::list<std::string>::iterator &curFile);
+		void deleteAndBack(std::list<std::string>::iterator &curFile);
+//		void normalize2dot(std::list<std::string>::iterator &curFile);
 
 		std::list<std::string> directories;
 
@@ -20,7 +21,16 @@ class Path
 		Path &operator=(Path &orig);
 		operator std::string();
 		~Path();	
-		void normalize(void);
+		int normalize(void);
+
+	class InvalidPathException: public std::exception
+	{
+		 public: 
+			//virtual const char* what() const throw() {
+			virtual const char* what() const throw() {
+				return "ERROR on file path"; 
+			}
+	} ;
 };
 
 
