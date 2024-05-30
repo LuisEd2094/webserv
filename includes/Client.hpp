@@ -31,11 +31,14 @@ class Client : public BaseHandler
         void                setFullResponse(const fullResponse& response, BaseHandler*);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
+
+        void                setResponseType(const std::string& );
         bool                checkObjTimeOut();
 
         //getters
         const int           getFD() const;
         const std::string&  getURL();
+        const std::string&  getResponseType();
 
         class clientException;
 
@@ -71,6 +74,8 @@ class Client : public BaseHandler
 
         void                    handleDirectObj(DirectResponse*, RequestHandler *);
         void                    removeFirstObj();
+
+        std::string             _response_type;
 
 
 

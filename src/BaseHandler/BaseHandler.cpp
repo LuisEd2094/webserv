@@ -2,6 +2,7 @@
 #include <CGI.hpp>
 #include <FileReader.hpp>
 #include <DirectResponse.hpp>
+#include <Client.hpp>
 
  std::string BaseHandler::valid_objs[NUM_OBJ] = {
     std::string(FILE_OBJ),
@@ -17,17 +18,22 @@ void    BaseHandler::setTime()
 
 }
 
-BaseHandler* BaseHandler::createObject(const std::string& obj, Client& client)
+BaseHandler* BaseHandler::createObject(Client& client)
 {
     //Factory creator, requires string to identify it and client that'd be assigned to that Object
     for (std::size_t i = 0; i < NUM_OBJ; ++i)
     {
-        if (obj == valid_objs[i])
+        if (client.getResponseType() == valid_objs[i])
         {
             if (valid_objs[i] == FILE_OBJ)
                 return FileReader::createNewFileReader(client);
             else if (valid_objs[i] == CGI_OBJ)
                 return CGI::createNewCGI(client);
+            else if (valid_objs[i] == DIRECT_OBJ)
+            {
+                std::string listing = "THIS IS LISTING";
+                return DirectResponse::createNewDirect(setContentLenHTTP(HTTP_OK, listing), listing);
+            }
             else
                 return NULL;
         }

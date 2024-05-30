@@ -115,7 +115,7 @@ int FileReader::Action(int event)
             }
             else
             {
-                client->setFullResponse(Response::getDefault(INTERNAL_ERROR_BODY), this);
+                client->setFullResponse(Response::getDefault(INTERNAL_SERVER_ERROR), this);
             }
             return (0);
 

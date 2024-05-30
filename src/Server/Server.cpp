@@ -75,17 +75,18 @@ void Server::getResponse(Client & client)
     {
         if (url == "/")
         {
-
-            response = BaseHandler::createObject(Response::getDefault(OK));
+            client.setResponseType(DIRECT_OBJ);
         }
         else if (url == "/index.html")
         {
-            response = BaseHandler::createObject(FILE_OBJ, client);
+            client.setResponseType(FILE_OBJ);
         }
         else if (url == "/nolen.py")
         {
-            response = BaseHandler::createObject(CGI_OBJ, client);
+            client.setResponseType(CGI_OBJ);
         }
+        response = BaseHandler::createObject(client);
+
 
     }
     catch(const std::exception& e)
