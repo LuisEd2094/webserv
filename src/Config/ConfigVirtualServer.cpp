@@ -1,12 +1,19 @@
-#include "../../includes/ConfigVirtualServer.hpp"
+#include "ConfigVirtualServer.hpp"
+#include "ConfigLocation.hpp"
 
-ConfigVirtualServer::ConfigVirtualServer( ParsingServer& obj)
+ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed)
 {
 	this->errorPage = "";
 	this->maxClientBodySize = 30000;
-	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
+	for (std::map<std::string, std::string>::iterator i = parsed.begin(); i != parsed.end(); i++)
 	{
 		this->parseKeyVal(i->first, i->second);
+	}
+	for (std::list<ParsingLocation>::iterator location = parsed.locations.begin();
+		location != parsed.locations.end(); location++)
+	{
+		this->getLocations().push_back(ConfigLocation(*location));
+		// ;
 	}
 }
 

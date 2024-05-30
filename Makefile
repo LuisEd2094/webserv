@@ -6,12 +6,12 @@
 #    By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 10:55:00 by lsoto-do          #+#    #+#              #
-#    Updated: 2024/05/23 11:20:47 by dacortes         ###   ########.fr        #
+#    Updated: 2024/05/30 12:04:20 by dacortes         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME        = webserv
-CFLAGS      = -std=c++98 -pedantic -g  #-fsanitize=address #-Wall -Wextra  -Werror 
+CFLAGS      = -std=c++98 -pedantic -g  -fsanitize=address #-Wall -Wextra  -Werror 
 CC			= c++
 RM          = rm -f
 SRCS_PATH	= src/
@@ -84,7 +84,7 @@ CLIENT			=	Client.cpp getters.cpp setters.cpp RequestHandler.cpp DirectResponse.
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
-CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp
+CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp ConfigLocation.cpp
 
 CONF_FILES		=	$(addprefix $(CONF_PATH), $(CONF))
 

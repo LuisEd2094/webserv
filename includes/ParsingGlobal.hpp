@@ -1,5 +1,5 @@
-#ifndef CONFIG_GLOBAL_HPP
-# define CONFIG_GLOBAL_HPP
+#ifndef PARSING_GLOBAL_HPP
+# define PARSING_GLOBAL_HPP
 # include "ParsingElement.hpp"
 # include "ParsingServer.hpp"
 

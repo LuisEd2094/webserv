@@ -1,5 +1,5 @@
-#ifndef PROGRAMCONFIGS_HPP
-# define PROGRAMCONFIGS_HPP
+#ifndef PROGRAM_CONFIGS_HPP
+# define PROGRAM_CONFIGS_HPP
 
 # include <Response.hpp>
 

@@ -6,20 +6,27 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/23 11:00:10 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/30 12:02:31 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include <Parsing.hpp>
-# include "../../includes/Parsing.hpp"
+#include <Parsing.hpp>
+// # include "../../includes/Parsing.hpp"
 
 Parsing::Parsing( void )
 {
 	_methods.push_back(std::string("GET"));
 	_methods.push_back(std::string("POST"));
 	_methods.push_back(std::string("DELETE"));
+	_errors.push_back(" Format space.");
+	_errors.push_back(" Format Key.");
+	_errors.push_back(" Format Value.");
+	_errors.push_back(" Invalid Header");
+	_errors.push_back(" Invalid Method");
+	_errors.push_back(" Invalid Version");
 	_findNewline = 0;
 	_endRead = false;
+	_statusError = 0;
 }
 
 Parsing::~Parsing( void )
@@ -68,16 +75,12 @@ int Parsing::checkMethod(const std::string& strIn)
 	size_t	space = 0;
 	size_t	tmp = 0;
 
+	if (_statusError < 0 or _statusError > 1)
+		return (_statusError);
 	_typeLine = getTypeLine(&strIn[_findNewline]);
 	if (!_typeLine[0])
-		return (this->printStatus(" End of line not found ", WARNING, WARNING));
-	// {
-	// 	std::cout << "estoy fuera" << std::endl;
-	// 	return (EXIT_FAILURE);
-	// }
-	std::cout << YELLOW << (int)_typeLine[0] << END << std::endl;
+		return (_statusError = this->printStatus(" End of line not found. ", WARNING, WARNING));
 	_begin = _findNewline;
-
 	size_t end = strIn.substr(_findNewline).find(_typeLine) + _findNewline;
 	std::string strRead(strIn.begin() + _findNewline, strIn.begin() + end);
 
@@ -96,35 +99,31 @@ int Parsing::checkMethod(const std::string& strIn)
 				and !::isblank(strRead[i + 1])) ? 1 : 0);
 			space += (::isblank(strRead[i]) ? 1 : 0);
 			if (space > 2)
-			{
-				std::cout << "Error: format space" << std::endl;
-				return (EXIT_FAILURE);
-			}
+				return (_statusError = this->printStatus(_errors[0], ERROR, ERROR_FORMAT));
 			space = (tmp != word ? 0 : space);
 		}
 	}
 	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))
 	{
-		std::cout << "Error: invalid " <<
-		(word > 2 ? "Header" : (isMethods(_method.method) == 1 \
-		? "Method" : "Version")) << std::endl;
-		return (EXIT_FAILURE);
+		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method) == 1) \
+			? ERROR_METHOD : ERROR_VERSION);
+		return (_statusError = this->printStatus(_errors[error], ERROR, error));
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
 	_findNewline = end;
 
-	return (EXIT_SUCCESS);
+	return (_statusError = EXIT_SUCCESS);
 }
 
 
 const std::string& Parsing::getMethod(void)
 {
-	return _method.method;
+	return (_method.method);
 }
 
 const std::string& Parsing::getRequested(void)
 {
-	return _method.requested;
+	return (_method.requested);
 }
 
 int	Parsing::printStatus(const std::string& messages, short flag, int exitCode)
@@ -137,27 +136,23 @@ int	Parsing::printStatus(const std::string& messages, short flag, int exitCode)
 int	Parsing::parsingHeader(const std::string& strRead)
 {
 	size_t start = _findNewline, end = 0;
+
+	if (_statusError < 0 or _statusError > 1)
+		return (_statusError);
 	while (true)
 	{
 		std::string typeLine = getTypeLine(&strRead[start]);
 		if (!typeLine[0] or typeLine != _typeLine)
-			return (this->printStatus("End of line not found ", WARNING, WARNING));
-		// {
-		// 	std::cout << "estoy fuera" << std::endl;
-		// 	return (EXIT_FAILURE);
-		// }
+			return (_statusError = this->printStatus("End of line not found ", WARNING, WARNING));
 		start += (typeLine[0] == '\r' ? 2 : 1);
-		std::cout << "start: " << (typeLine[0] == '\r' ? 2 : 1) << std::endl;
 		std::string tmpEnd = &strRead[start]; 
 		std::size_t endPos = tmpEnd.find(typeLine);
 		
 		short emptyLine = 0;
-		// std::string nexLine = std::string(end);
-		if (this->isEmptyLine(tmpEnd)) //verificar si es la ultima linea del archivo
+		if (this->isEmptyLine(tmpEnd))
 			emptyLine++;
-		std::cout << "count empty line:" <<  emptyLine << std::endl;
 		if ( endPos  == std::string::npos)
-			return (EXIT_FAILURE);
+			return (_statusError = EXIT_FAILURE);
 		end = start + endPos;
 		std::string tmp(strRead.begin() + start , strRead.begin() + end);
 		if (tmp[0] != '\0')
@@ -165,8 +160,8 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			std::string key = ::getKey(tmp, ':'), value = ::getValue(tmp, ':');
 			if (key == "ERROR" or value == "ERROR" or ::checkSpace(value, 2))
 			{
-				std::cout << "Error: format key or value" << std::endl;
-				return (EXIT_FAILURE);
+				short error = (key == "ERROR") + ((value == "ERROR") * 2);
+				return (_statusError = this->printStatus(_errors[error], ERROR, ERROR_FORMAT));
 			}
 			_method.content.insert(std::pair<std::string,std::string>(key, value));
 		}
@@ -175,11 +170,10 @@ int	Parsing::parsingHeader(const std::string& strRead)
 		if (emptyLine == 1)
 		{
 			_endRead = (emptyLine == 1);
-			std::cout << YELLOW << (int)strRead[_findNewline] << END << std::endl;
-			return (EXIT_SUCCESS);
+			return (_statusError = EXIT_SUCCESS);
 		}
 	}
-	return (EXIT_SUCCESS);
+	return (_statusError = EXIT_SUCCESS);
 }
 std::string	Parsing::getTypeLine(const std::string& strFind)
 {
@@ -226,6 +220,16 @@ void Parsing::resetParsing( void)
 	_findNewline += _typeLine.length();
 }
 
+std::list<std::string> ft_split(const std::string& str, char delimiter)
+{
+    std::list<std::string> list;
+    std::istringstream input(str);
+    std::string word;
+    
+    while (std::getline(input, word, delimiter))
+        list.push_back(word);
+    return (list);
+}
 
 // const t_request	*Parsing::getRequest(void) const 
 // {

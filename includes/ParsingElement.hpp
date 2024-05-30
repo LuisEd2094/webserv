@@ -1,5 +1,5 @@
-#ifndef CONFIG_PARSE_HPP
-# define CONFIG_PARSE_HPP
+#ifndef PARSING_PARSE_HPP
+# define PARSING_PARSE_HPP
 # include <map>
 # include <list>
 # include <string>

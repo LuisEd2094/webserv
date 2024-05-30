@@ -1,5 +1,5 @@
-#ifndef CONFIG_LOCATION_HPP
-# define CONFIG_LOCATION_HPP
+#ifndef PARSING_LOCATION_HPP
+# define PARSING_LOCATION_HPP
 # include "ParsingElement.hpp"
 # include "ParsingCgi.hpp"
 
@@ -17,6 +17,7 @@ class ParsingLocation: public ParsingElement
 	private:
 		std::list<ParsingLocation>	locations;
 		std::list<ParsingCgi>		cgis;
+	//ADD  value protedtec
 
 
 };
