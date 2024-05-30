@@ -16,6 +16,7 @@ class ConfigLocation: public ConfigElement
 		std::string				_redirection;
 		std::string				_root; // would be nice to change it to an oject
 		bool					_dirListing;
+		bool					_inheriting;
 		std::list<std::string>	_index;
 		std::list<ConfigCgi>	_cgis;
 		//Add list configureLocation 
@@ -29,12 +30,13 @@ class ConfigLocation: public ConfigElement
 		ConfigLocation &operator=( const ConfigLocation& obj);
 		~ConfigLocation(){};
 
-
+		void							setDefaults();
 		void							setErrorPage(std::string inpErrorPage);
 		void							setMethods(std::string methods);
 		void							setRedirection(std::string redirection);
 		void							setRoot(std::string root);
 		void							setDirListing(std::string dirListing);
+		void							setDirListing(bool dirListing);
 		void							setIndex(std::string index);
 		void							setCgis(std::string cgis);//*
 

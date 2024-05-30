@@ -64,7 +64,7 @@ BASE			=	BaseHandler.cpp
 
 BASE_FILES		=	$(addprefix $(BASE_PATH), $(BASE))
 
-PARSING			=	ParsingCgi.cpp      ParsingGlobal.cpp   ParsingLocation.cpp ParsingElement.cpp    ParsingServer.cpp    Parsing.cpp parseListen.cpp
+PARSING			=	ParsingCgi.cpp      ParsingGlobal.cpp   ParsingLocation.cpp ParsingElement.cpp    ParsingServer.cpp    Parsing.cpp parseListen.cpp	Path.cpp
 
 PARSING_FILES		=	$(addprefix $(PARSING_PATH), $(PARSING))
 

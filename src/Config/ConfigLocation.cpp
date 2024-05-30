@@ -9,20 +9,32 @@ ConfigLocation::ConfigLocation(void)
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 {
 	*this = father;
+	this->_inheriting = true;
 
+	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
+	{
+		this->parseKeyVal(i->first, i->second);
+	}
+	this->_inheriting = false;
+}
+
+ConfigLocation::ConfigLocation( ParsingLocation& obj)
+{
+	this->setDefaults();
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
 		this->parseKeyVal(i->first, i->second);
 	}
 }
 
-ConfigLocation::ConfigLocation( ParsingLocation& obj)
+void ConfigLocation::setDefaults()
 {
-
-	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
-	{
-		this->parseKeyVal(i->first, i->second);
-	}
+	this->setErrorPage("");	
+	this->setMethods("");	
+	this->setRedirection("");	
+	this->setRoot("");	
+	this->setDirListing(true);	
+	this->setIndex("");
 }
 
 void ConfigLocation::parseKeyVal(std::string key, std::string val)
@@ -84,11 +96,15 @@ std::string ConfigLocation::getRoot(void) const
 	return (this->_root);
 }
 
+
+void ConfigLocation::setDirListing(bool dirListing)
+{
+		_dirListing = dirListing == "true" || dirListing == "True";
+}
+
 void ConfigLocation::setDirListing(std::string dirListing)
 {
-	//check with Joan
-	if (dirListing[0])
-		_dirListing = true;
+		_dirListing = dirListing == "true" || dirListing == "True";
 }
 
 bool ConfigLocation::getDirListing(void) const
