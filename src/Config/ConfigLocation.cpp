@@ -54,7 +54,6 @@ std::string	ConfigLocation::getErrorPage(void) const
 
 void ConfigLocation::setMethods(std::string inpMethods)
 {
-	//hacer split con iteradores y find
 	_methods = ft_split(inpMethods, ' ');
 	for (std::list<std::string>::iterator iter = _methods.begin(); iter != _methods.end(); iter++)
 		std::cout << YELLOW << "word: " << END << *iter << std::endl;

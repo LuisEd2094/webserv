@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/28 15:37:41 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/30 10:56:20 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,12 @@ Parsing::Parsing( void )
 	_errors.push_back(" Format space.");
 	_errors.push_back(" Format Key.");
 	_errors.push_back(" Format Value.");
+	_errors.push_back(" Invalid Header");
+	_errors.push_back(" Invalid Method");
+	_errors.push_back(" Invalid Version");
 	_findNewline = 0;
 	_endRead = false;
+	_statusError = 0;
 }
 
 Parsing::~Parsing( void )
@@ -71,9 +75,12 @@ int Parsing::checkMethod(const std::string& strIn)
 	size_t	space = 0;
 	size_t	tmp = 0;
 
+	// std::cout << TUR << "status error: " << END << _statusError << std::endl;
+	if (_statusError < 0 or _statusError > 1)
+		return (_statusError);
 	_typeLine = getTypeLine(&strIn[_findNewline]);
 	if (!_typeLine[0])
-		return (this->printStatus(" End of line not found. ", WARNING, WARNING));
+		return (_statusError = WARNING, this->printStatus(" End of line not found. ", WARNING, WARNING));
 	_begin = _findNewline;
 	size_t end = strIn.substr(_findNewline).find(_typeLine) + _findNewline;
 	std::string strRead(strIn.begin() + _findNewline, strIn.begin() + end);
@@ -93,33 +100,31 @@ int Parsing::checkMethod(const std::string& strIn)
 				and !::isblank(strRead[i + 1])) ? 1 : 0);
 			space += (::isblank(strRead[i]) ? 1 : 0);
 			if (space > 2)
-				return (this->printStatus(_errors[0], ERROR, ERROR_FORMAT));
+				return (_statusError = this->printStatus(_errors[0], ERROR, ERROR_FORMAT));
 			space = (tmp != word ? 0 : space);
 		}
 	}
 	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))
 	{
-		// arreglar este Error
-		std::cout << "Error: invalid " <<
-		(word > 2 ? "Header" : (isMethods(_method.method) == 1 \
-		? "Method" : "Version")) << std::endl;
-		return (EXIT_FAILURE);
+		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method) == 1) \
+			? ERROR_METHOD : ERROR_VERSION);
+		return (_statusError = this->printStatus(_errors[error], ERROR, error));
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
 	_findNewline = end;
 
-	return (EXIT_SUCCESS);
+	return (_statusError = EXIT_SUCCESS);
 }
 
 
 const std::string& Parsing::getMethod(void)
 {
-	return _method.method;
+	return (_method.method);
 }
 
 const std::string& Parsing::getRequested(void)
 {
-	return _method.requested;
+	return (_method.requested);
 }
 
 int	Parsing::printStatus(const std::string& messages, short flag, int exitCode)
@@ -132,11 +137,14 @@ int	Parsing::printStatus(const std::string& messages, short flag, int exitCode)
 int	Parsing::parsingHeader(const std::string& strRead)
 {
 	size_t start = _findNewline, end = 0;
+
+	if (_statusError < 0 or _statusError > 1)
+		return (_statusError);
 	while (true)
 	{
 		std::string typeLine = getTypeLine(&strRead[start]);
 		if (!typeLine[0] or typeLine != _typeLine)
-			return (this->printStatus("End of line not found ", WARNING, WARNING));
+			return (_statusError = this->printStatus("End of line not found ", WARNING, WARNING));
 		start += (typeLine[0] == '\r' ? 2 : 1);
 		std::string tmpEnd = &strRead[start]; 
 		std::size_t endPos = tmpEnd.find(typeLine);
@@ -145,15 +153,17 @@ int	Parsing::parsingHeader(const std::string& strRead)
 		if (this->isEmptyLine(tmpEnd))
 			emptyLine++;
 		if ( endPos  == std::string::npos)
-			return (EXIT_FAILURE);
+			return (_statusError = EXIT_FAILURE);
 		end = start + endPos;
 		std::string tmp(strRead.begin() + start , strRead.begin() + end);
 		if (tmp[0] != '\0')
 		{
 			std::string key = ::getKey(tmp, ':'), value = ::getValue(tmp, ':');
 			if (key == "ERROR" or value == "ERROR" or ::checkSpace(value, 2))
-				return (this->printStatus(_errors[(key == "ERROR")
-					+ ((value == "ERROR") * 2)], ERROR, ERROR_FORMAT));
+			{
+				short error = (key == "ERROR") + ((value == "ERROR") * 2);
+				return (_statusError = this->printStatus(_errors[error], ERROR, ERROR_FORMAT));
+			}
 			_method.content.insert(std::pair<std::string,std::string>(key, value));
 		}
 		start = end;
@@ -161,10 +171,10 @@ int	Parsing::parsingHeader(const std::string& strRead)
 		if (emptyLine == 1)
 		{
 			_endRead = (emptyLine == 1);
-			return (EXIT_SUCCESS);
+			return (_statusError = EXIT_SUCCESS);
 		}
 	}
-	return (EXIT_SUCCESS);
+	return (_statusError = EXIT_SUCCESS);
 }
 std::string	Parsing::getTypeLine(const std::string& strFind)
 {

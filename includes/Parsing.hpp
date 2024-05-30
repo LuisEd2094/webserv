@@ -6,7 +6,7 @@
 /*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/28 17:34:28 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/05/30 10:47:40 by dacortes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@
 # define ERROR			-1
 # define WARNING 		1
 # define ERROR_FORMAT	2
+# define ERROR_HEADER	3
+# define ERROR_METHOD	4
+# define ERROR_VERSION	5
 # define ERROR_STATUS "\033[1m\033[1;31m[ Error ]\033[m"
 # define WARNING_StATUS "\033[1m\033[1;33m[ Warning ]\033[m"
 # define IS_IN_ROOT(c) ((c) == '/')
@@ -161,6 +164,7 @@ class Parsing
 		size_t		_findNewline;
 		size_t		_begin;
 		bool		_endRead;
+		int			_statusError;
 	public:
 		Parsing(void);
 		~Parsing(void);
