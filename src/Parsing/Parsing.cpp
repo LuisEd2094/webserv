@@ -205,6 +205,11 @@ std::string Parsing::getMapValue(const std::string& key)
 	return (it->second);
 }
 
+size_t Parsing::getEndSize(void)
+{
+	return (this->_typeLine.length());
+}
+
 bool Parsing::getEndRead() const
 {
 	return (_endRead);
@@ -217,7 +222,7 @@ void Parsing::resetParsing( void)
 	_method.requested.clear();
 	_method.version.clear();
 	_endRead = false;
-	_findNewline += _typeLine.length();
+	_findNewline = 0;
 }
 
 std::list<std::string> ft_split(const std::string& str, char delimiter)

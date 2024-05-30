@@ -55,6 +55,7 @@ void Client::parseForHttp()
     {
         if(_action == POST)
         {
+            /* this should check what type of post they are doing, could be a contentlen or a chunked sent */
             std::string content_len = _parser_http.getMapValue("Content-Length");
             if (content_len != "not found")
             {
@@ -62,6 +63,7 @@ void Client::parseForHttp()
             }
         }
         _server->getResponse(*this);
+        _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         _parser_http.resetParsing();
         _pending_read = false;
         _action = WAIT;
@@ -86,14 +88,14 @@ void Client::readFromFD()
 
     if (_result > 0)
     {
-        _in_http.append((const char *)_in_message, _result);
-        while (_parser_http.getPos()  != _in_http.length())
+        _in_container.append((const char *)_in_message, _result);
+        while (_parser_http.getPos()  != _in_container.length())
         {
             if (!_pending_read)
                 _pending_read = true;
             if (_action == WAIT)
             {
-                if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
+                if (!_parser_http.checkMethod(_in_container)) //check method returns 0 on success
                 {
                     if (!_server->validateAction(*this))
                     {
@@ -109,7 +111,7 @@ void Client::readFromFD()
             }
             if (_action != WAIT) 
             {
-                if (_parser_http.parsingHeader(_in_http)) // parsingHeader return 1 on failure
+                if (_parser_http.parsingHeader(_in_container)) // parsingHeader return 1 on failure
                     break;
                 parseForHttp();
             }
@@ -122,7 +124,7 @@ void Client::readFromFD()
         // {
         //     if (_action == WAIT)
         //     {
-        //         if (!_parser_http.checkMethod(_in_http)) //check method returns 0 on success
+        //         if (!_parser_http.checkMethod(_in_container)) //check method returns 0 on success
         //         {
         //             if (!_server->validateAction(*this))
         //             {
@@ -134,7 +136,7 @@ void Client::readFromFD()
         //     }
         //     if (_action != WAIT) 
         //     {
-        //         _parser_http.parsingHeader(_in_http); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
+        //         _parser_http.parsingHeader(_in_container); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
         //         parseForHttp();
         //     }
         // // }

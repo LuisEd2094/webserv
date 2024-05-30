@@ -55,7 +55,7 @@ class Client : public BaseHandler
         char                    _in_message[RECV_SIZE];
 
         bool                    _pending_read;
-        std::string             _in_http;
+        std::string             _in_container;
         std::vector<char>       _in_body;
         std::size_t             _content_length;
 

@@ -189,6 +189,7 @@ class Parsing
 	std::string		getTypeLine(const std::string& strFind);
 	size_t		getPos(void);
 	std::string getMapValue(const std::string& key);
+	size_t	getEndSize(void);
 	std::map<std::string, std::string> getMap(void);
 	// const t_request	*getRequest(void) const;
 	void resetParsing(void);
