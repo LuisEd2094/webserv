@@ -17,6 +17,8 @@ void	ParsingLocation::createNestedElement(std::string param0, std::string param1
 		//put second parameter
 		ParsingLocation element(this->statementBegin, this->eof, this->statementEnd);	
 		element.parse();
+		element.insert(std::make_pair("__elemType__", param0));
+		element.insert(std::make_pair("__elemArgument__", param1));
 		this->locations.push_back(element);
 	}
 	else if (param0 == "cgi")
@@ -46,4 +48,5 @@ void	ParsingLocation::recursivePrint(void)
 	{
 		i->recursivePrint();
 	}
+	std::cout << "-----------------------------------------" << std::endl;
 }

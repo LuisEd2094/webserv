@@ -99,6 +99,7 @@ int  main(void)
 	testPath("/queso/./Dirhola/../fkkkk");
 	testPath("////////");
 	testPath("././././.");
+	testPath("./");
 	testPath("");
 	testPath("  ");
 	testPath("runaway/../..");

@@ -103,27 +103,7 @@ void ParsingElement::newNestedElement(void)
 	while ( this->statementBegin != this->statementEnd)
 		this->statementBegin++;
 	
-	std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
 	this->createNestedElement(param1, param2);
-	/*
-	if (param1 == "server")
-	{
-		std::cout << "new server" << std::endl;
-	}
-	else if (param1 == "location")
-	{
-		std::cout << "new location" << std::endl;
-	}
-	else if  (param1 == "cgi")
-	{
-		std::cout << "new cgi" << std::endl;
-	}
-	else
-	{
-		std::cout << "user is stupid: " << param1 << std::endl;
-		throw std::exception();
-	}
-	*/
 }
 
 void ParsingElement::parse()

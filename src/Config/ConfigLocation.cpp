@@ -15,6 +15,8 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	{
 		this->parseKeyVal(i->first, i->second);
 	}
+	this->__elemType__ = obj["__elemType__"]; 
+	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_inheriting = false;
 }
 
@@ -39,20 +41,22 @@ void ConfigLocation::setDefaults()
 
 void ConfigLocation::parseKeyVal(std::string key, std::string val)
 {
-	if (key == "errorPage")
+	if (key == "__elemType__") ;
+	else if (key == "__elemArgument__") ;
+	else if (key == "errorPage")
 		this->setErrorPage(val);	
 	else if (key == "methods")
 		this->setMethods(val);	
 	else if (key == "redirection")
 		this->setRedirection(val);	
 	else if (key == "root") // if father root = /tmp/sdaf/; then for child root = wololo -> /tmp/sdaf, else for child root = /var -> /var
-		this->setRoot(val);	
+		this->initializeRoot(val);	
 	else if (key == "dirListing")
 		this->setDirListing(val);	
 	else if (key == "index")
 		this->setIndex(val);
 	else
-		throw ParamError(std::string("Error: key not found.") + std::string(" key:") + key);
+		throw ParamError(std::string("Error: location key not found.") + std::string(" key:") + key);
 }
 
 void	ConfigLocation::setErrorPage(std::string inpErrorPage)
@@ -88,10 +92,37 @@ std::string ConfigLocation::getRedirection(void) const
 
 void ConfigLocation::setRoot(std::string root)
 {
-	_root = root;
+	this->_root = Path(root);
 }
 
-std::string ConfigLocation::getRoot(void) const
+void ConfigLocation::setRoot(Path root)
+{
+	this->_root = root;
+}
+
+void ConfigLocation::initializeRoot(std::string root)
+{
+	initializeRoot(Path(root));
+}
+
+void ConfigLocation::initializeRoot(Path root)
+{
+	if (!_inheriting)
+	{
+		_root = root;
+		return ;
+	}	
+	else if (root.getIsRelative())
+	{
+		_root.append(root);
+	}
+	else	
+		_root = root;
+	std::cout << (std::string) _root << std::endl;
+	//TODO the file is coorrect
+}
+
+Path ConfigLocation::getRoot(void) const
 {
 	return (this->_root);
 }
@@ -99,7 +130,7 @@ std::string ConfigLocation::getRoot(void) const
 
 void ConfigLocation::setDirListing(bool dirListing)
 {
-		_dirListing = dirListing == "true" || dirListing == "True";
+		_dirListing = dirListing;
 }
 
 void ConfigLocation::setDirListing(std::string dirListing)
@@ -159,7 +190,7 @@ ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 
 std::ostream &operator<<(std::ostream &os,  ConfigLocation &obj)
 {
-	os << "VirtualServer: " << std::endl;
+	os << "ConfigLocation: " << std::endl;
 	os << "  errorPage: " << obj.getErrorPage() << std::endl;
 	return os;
 }

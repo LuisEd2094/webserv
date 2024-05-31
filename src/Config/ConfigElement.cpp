@@ -16,7 +16,7 @@ void ConfigElement::configure(ParsingGlobal parsedData)
     confi.hints.ai_flags = AI_PASSIVE;
     confi.backlog = 200;
 	std::cout << "Num of servers: " <<  parsedData.servers.size() << std::endl;
-	 
+ 
 	for (std::list<ParsingServer>::iterator i = parsedData.servers.begin(); i != parsedData.servers.end(); i++)
 	{
 	    std::memset(&(confi.hints), 0, sizeof(confi.hints));
@@ -32,7 +32,9 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 		if (serverIterator == servers.end())
 		{
 			server = Overseer::saveServer(&confi);
+			std::cout << "*******-*-*-*--*************" << std::endl;
 			servers.insert(std::pair<std::string,Server*>(phisicServerId, server));
+			std::cout << "*******-*-*-*--*************" << std::endl;
 		}
 		else
 			server = serverIterator->second;

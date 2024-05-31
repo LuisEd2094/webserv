@@ -8,12 +8,13 @@ Path::Path()
 {
 }
 
-Path::Path(Path &orig)
+Path::Path(const Path &orig)
 {
     this->directories = orig.directories;
+    this->isRelative = orig.getIsRelative();
 }
 
-Path &Path::operator=(Path &orig)
+Path &Path::operator=(const Path &orig)
 {
     this->directories = orig.directories;
     return *this;
@@ -21,25 +22,28 @@ Path &Path::operator=(Path &orig)
 
 Path::Path(std::string pathStr)
 {
-
+        this->isRelative = pathStr[0] == '/';
         this->directories = ft_split(pathStr, '/');
         while (this->normalize());
+}
+
+void Path::append(Path tail)
+{
+    for (std::list<std::string>::iterator te = tail.directories.begin(); te != tail.directories.end(); te++)
+            this->directories.push_back(*te);
 }
 
 int Path::normalize(void)
 {
     std::list<std::string>::iterator currFile = this->directories.begin();
-    bool lastEmpty = true;
     bool modified = false;
 
     while (currFile != this->directories.end())
     {
         if (*currFile == "")
         {
-            if (lastEmpty)
-                deleteAndBack(currFile);
-            modified = lastEmpty;
-            lastEmpty = !lastEmpty;
+            deleteAndBack(currFile);
+            modified = true;
         }
         else if (*currFile == ".")
         {
@@ -68,30 +72,17 @@ void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
     this->directories.erase(del);
 }
 
-/*
-void Path::normalize2dot(std::list<std::string>::iterator &currFile)
-{
-    std::list<std::string>::iterator del = currFile; 
-    del--;
-    this->directories.erase(del);
-    del = currFile--;
-    this->directories.erase(del);
-    //std::list<std::string>::iterator tmp = currFile--; 
-    //this->directories.erase(currFile);
-    //currFile = tmp;
-    //tmp = currFile--;
-    //this->directories.erase(tmp);
-}
-*/
 Path::operator std::string()
 {
     std::list<std::string>::iterator begin;
     std::string result;
 
+    if (!this->isRelative)
+        result += "/";
     for (begin = this->directories.begin(); begin != this->directories.end(); begin++)
     {
-        result += "/";
         result += *begin;
+        result += "/";
     }
     return (result);
 }

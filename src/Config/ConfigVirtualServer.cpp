@@ -25,7 +25,7 @@ void ConfigVirtualServer::parseKeyVal(std::string key, std::string val)
 		this->setMaxClientBodySize(val);
 	else if (key == "host" || key == "port");
 	else
-		throw ParamError(std::string("Error: key not found.") + std::string(" key:") + key);
+		throw ParamError(std::string("Error: server config key not found.") + std::string(" key:") + key);
 }
 
 ConfigVirtualServer &ConfigVirtualServer::operator=(ConfigVirtualServer& obj)
