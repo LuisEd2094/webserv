@@ -60,8 +60,7 @@ bool Server::validateAction(Client& client)
         return true;
     else
     {
-        BaseHandler* response = BaseHandler::createObject(Response::getDefault(NOT_FOUND));
-        client.addObject(response);
+        client.addObject(BaseHandler::createObject(getErrorResponseObject(NOT_FOUND)));
         return (false);
     }
 }
@@ -93,10 +92,22 @@ void Server::getResponse(Client & client)
     }
     catch(const std::exception& e)
     {
-        response = BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));
-
+        response = BaseHandler::createObject(getErrorResponseObject(INTERNAL_SERVER_ERROR));
     }
     client.addObject(response);
+}
+
+
+const fullResponse& Server::getErrorResponseObject(ErrorCodes code)
+{
+    // check code against files in config
+    // else returns default error
+    // Server map con FullResponseObjs. Full response objs. HTTP y el Contenido del FILE si es que fue indicado en el 
+    // confi 
+    // 
+
+    return Response::getDefault(code);
+
 }
 
 bool Server::checkObjTimeOut()

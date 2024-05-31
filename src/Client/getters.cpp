@@ -22,3 +22,8 @@ const std::string& Client::getBody() const
 {
     return _in_body;
 }
+
+Server* Client::getServer()
+{
+    return _server;
+}

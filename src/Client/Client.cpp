@@ -41,66 +41,27 @@ Client::~Client()
     close(_fd);
 }
 
-void Client::checkFirstQueue(RequestHandler *obj)
+
+int Client::Action (int event)
 {
-    if (_response_objects_queue.front() == obj)
+    if (event & POLLIN)
     {
-        Overseer::setListenAction(_fd, IN_AND_OUT);
-    } 
+        readFromFD();
+        if (_result < 0)
+            return (-1);
+    }
+    if (event & POLLOUT)
+    {
+        return sendResponse();
+    }
+    if (event & POLLHUP)
+    {
+        std::cout << "POLL HUP" << std::endl;
+        return 0;
+    }
+    return _result;
 }
 
-void Client::handleDirectObj(DirectResponse* direct_object, RequestHandler *new_handler)
-{
-    if (direct_object->has_http())
-    {
-        new_handler->setHTTPResponse(direct_object->get_http());
-    }
-    if (direct_object->has_body())
-    {
-        new_handler->setBodyResponse(direct_object->get_body());
-    }
-    checkFirstQueue(new_handler);
-    delete direct_object; // I delete this since it wont be going to the FD POLL
-}
-
-void Client::parseForHttp()
-{
-    if (_parser_http.getEndRead())
-    {
-        _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
-        if(_action == POST)
-        {
-            /* this should check what type of post they are doing, could be a contentlen or a chunked sent */
-            std::string content_len = _parser_http.getMapValue("Content-Length");
-            if (content_len != "not found")
-            {
-                _content_length = std::atoi(content_len.c_str());
-            }
-            _in_body.append(_in_container, 0, _content_length);
-            if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
-            {
-                resetClient(true);
-            }
-            _in_container.erase(0, _in_body.length());
-        }
-        else 
-        {
-            resetClient(false);
-        }
-    }
-}
-
-void Client::updateMethodAction()
-{
-    const std::string & method = _parser_http.getMethod();
-      
-    if (method == "GET")
-        _action = GET;
-    else if (method == "POST")
-        _action = POST;
-    else if (method == "DELETE")
-        _action = DELETE;
-}
 
 void Client::readFromFD()
 {
@@ -123,7 +84,8 @@ void Client::readFromFD()
                     _pending_read = true;
                 if (_action == WAIT)
                 {
-                    if (!_parser_http.checkMethod(_in_container)) //check method returns 0 on success
+                    int parser_method = _parser_http.checkMethod(_in_container);
+                    if (!parser_method) //check method returns 0 on success
                     {
                         if (!_server->validateAction(*this))
                         {
@@ -133,7 +95,21 @@ void Client::readFromFD()
                     }
                     else
                     {
-                        std::cout << _parser_http.checkMethod(_in_container) << std::endl;
+                        /*
+                            if parseer method wrong (not GET, POST or DELETE) then its a 501
+                            Error fortmat == Bad Request
+                            ERROR_HEADER == BAD_REQUEST
+                            if ERROR_VERSION == HTTP Version Not Supported if 1.1+
+                        */
+                        if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
+                        {
+                            addObject(BaseHandler::createObject(_server->getErrorResponseObject(BAD_REQUEST)));
+                        }
+                        else if (parser_method == ERROR_VERSION)
+                        {
+                            addObject(BaseHandler::createObject(_server->getErrorResponseObject(VERSION_NOT_SUPPORTED)));
+                        }
+                        std::cout << parser_method << std::endl;
                         break;
                     }
                 }
@@ -190,27 +166,68 @@ void Client::readFromFD()
 }
 
 
-
-
-int Client::Action (int event)
+void Client::checkFirstQueue(RequestHandler *obj)
 {
-    if (event & POLLIN)
+    if (_response_objects_queue.front() == obj)
     {
-        readFromFD();
-        if (_result < 0)
-            return (-1);
+        Overseer::setListenAction(_fd, IN_AND_OUT);
     }
-    if (event & POLLOUT)
-    {
-        return sendResponse();
-    }
-    if (event & POLLHUP)
-    {
-        std::cout << "POLL HUP" << std::endl;
-        return 0;
-    }
-    return _result;
 }
+
+void Client::handleDirectObj(DirectResponse* direct_object, RequestHandler *new_handler)
+{
+    if (direct_object->has_http())
+    {
+        new_handler->setHTTPResponse(direct_object->get_http());
+    }
+    if (direct_object->has_body())
+    {
+        new_handler->setBodyResponse(direct_object->get_body());
+    }
+    checkFirstQueue(new_handler);
+    delete direct_object; // I delete this since it wont be going to the FD POLL
+}
+
+void Client::parseForHttp()
+{
+    if (_parser_http.getEndRead())
+    {
+        _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
+        if(_action == POST)
+        {
+            /* this should check what type of post they are doing, could be a contentlen or a chunked sent */
+            std::string content_len = _parser_http.getMapValue("Content-Length");
+            if (content_len != "not found")
+            {
+                _content_length = std::atoi(content_len.c_str());
+            }
+            _in_body.append(_in_container, 0, _content_length);
+            if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
+            {
+                resetClient(true);
+            }
+            _in_container.erase(0, _in_body.length());
+        }
+        else 
+        {
+            resetClient(false);
+        }
+    }
+}
+
+void Client::updateMethodAction()
+{
+    const std::string & method = _parser_http.getMethod();
+      
+    if (method == "GET")
+        _action = GET;
+    else if (method == "POST")
+        _action = POST;
+    else if (method == "DELETE")
+        _action = DELETE;
+}
+
+
 
 
 
@@ -300,8 +317,10 @@ bool Client::checkObjTimeOut()
 {
     if(_pending_read && checkTimeOut())
     {
-        BaseHandler * obj = createObject(Response::getDefault(REQUEST_TIMEOUT));
-        addObject(obj);
+        //When time out, client will stop listening for incoming messages, will send everything it has
+        // in queue and thenn close connection.
+        addObject(BaseHandler::createObject(_server->getErrorResponseObject(REQUEST_TIMEOUT)));
+        Overseer::setListenAction(_fd, JUST_OUT);
         _keep_alive = false;
         return false;
     }

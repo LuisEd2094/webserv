@@ -52,7 +52,7 @@
 # define BUFFER_READ	1
 # define ERROR			-1
 # define WARNING 		1
-# define ERROR_FORMAT	2
+# define ERROR_FORMAT	2 //si no es htttp numero punto numero HTTP 1.0 es valido 2.0
 # define ERROR_HEADER	3
 # define ERROR_METHOD	4
 # define ERROR_VERSION	5

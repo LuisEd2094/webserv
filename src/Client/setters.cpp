@@ -33,7 +33,7 @@ void Client::setBodyResponse(const std::string &message, BaseHandler *obj)
     }
 }
 
-void    Client::addObject(BaseHandler   * obj)
+void    Client::addObject(BaseHandler * obj)
 {
     if (obj)
     {

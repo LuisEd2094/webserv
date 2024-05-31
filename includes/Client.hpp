@@ -36,6 +36,7 @@ class Client : public BaseHandler
         bool                checkObjTimeOut();
 
         //getters
+        Server *            getServer();
         const int           getFD() const;
         const std::string&  getURL();
         const std::string&  getResponseType() const;

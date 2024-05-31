@@ -3,15 +3,7 @@ responsesMap Response::defaults;
 fullResponsesMap Response::fullResponses;
 
 
-std::string setContentLenHTTP(const std::string& http, const std::string& body)
-{
-    /*Checks body and generates Content-Len, can be used to generate other header lines in the future*/
-    std::string new_http(http);
 
-    new_http.append(CONTENTLENGTH + toString(body.length()) + CRNL);
-    new_http.append(CRNL);
-    return new_http;   
-}
 
 const fullResponse& Response::getDefault(ErrorCodes code)
 {
@@ -75,6 +67,8 @@ void    Response::initDefaultMap()
     /*5xx ERRORS*/
     defaults.insert(std::make_pair(INTERNAL_SERVER_ERROR, Responses(INTERNAL_ERROR_HTTP, INTERNAL_ERROR_TITLE, INTERNAL_ERROR_BODY)));
     defaults.insert(std::make_pair(GATEWAY_TIMEOUT, Responses(GATEWAY_TIMEOUT_HTTP, GATEWAY_TIMEOUT_TITLE, GATEWAY_TIMEOUT_BODY)));
+    defaults.insert(std::make_pair(VERSION_NOT_SUPPORTED, Responses(VERSION_NOT_SUPPORTED_HTTP, VERSION_NOT_SUPPORTED_TITLE, VERSION_NOT_SUPPORTED_BODY)));
+    defaults.insert(std::make_pair(BAD_GATEWAY, Responses(BAD_GATEWAY_HTTP, BAD_GATEWAY_TITLE, BAD_GATEWAY_BODY)));
 
     createFullResponses();
     defaults.clear();

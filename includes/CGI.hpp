@@ -29,7 +29,6 @@ class CGI : public BaseHandler
         int             _client_fd;
         pid_t           _pid;
         std::string     _buffer;
-
 };
 
 

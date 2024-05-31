@@ -2,9 +2,9 @@
 # define RESPONSE_HPP
 
 # include <iostream>
-# include <sstream>
 # include <map>
 # include <cstring>
+# include <Aux.hpp>
 
 
 
@@ -28,7 +28,9 @@ enum ErrorCodes
 
 
     INTERNAL_SERVER_ERROR,
-    GATEWAY_TIMEOUT 
+    GATEWAY_TIMEOUT, 
+    VERSION_NOT_SUPPORTED,
+    BAD_GATEWAY
 };
 
 # define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\n"
@@ -112,10 +114,19 @@ enum ErrorCodes
 # define GATEWAY_TIMEOUT_TITLE  "504 Gateway Timeout"
 # define GATEWAY_TIMEOUT_BODY   "The server, acting as a gateway or proxy, did not receive a timely response from the upstream server. 💀"
 
+# define VERSION_NOT_SUPPORTED_HTTP   "HTTP/1.1 505 HTTP Version Not Supported\r\nContent-Type: text/html\r\n"
+# define VERSION_NOT_SUPPORTED_TITLE  "505 HTTP Version Not Supported"
+# define VERSION_NOT_SUPPORTED_BODY   "This server only supports HTTP 1.1, please make sure your request are in the correct version."
+
+
+# define BAD_GATEWAY_HTTP   "HTTP/1.1 502 Bad Gateway\r\nContent-Type: text/html\r\n"
+# define BAD_GATEWAY_TITLE  "502 Bad Gateway"
+# define BAD_GATEWAY_BODY   "We encountered an error from the Gateway."
+
+
 
 # define TEMPLATE "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<title></title>\n</head>\n<body>\n<p></p>\n</body>\n</html>\n"
-# define CONTENTLENGTH "Content-Length: "
-# define CRNL "\r\n"
+
 
 
 
@@ -158,15 +169,8 @@ class Response
         static fullResponsesMap fullResponses;
 };
 
-std::string setContentLenHTTP(const std::string& http, const std::string& body);
 
 
-template<typename T>
-std::string toString(const T& value)
-{
-    std::ostringstream oss;
-    oss << value;
-    return oss.str();
-}
+
 
 #endif
