@@ -63,22 +63,16 @@ void Client::parseForHttp()
                 _content_length = std::atoi(content_len.c_str());
             }
             _in_body.append(_in_container, 0, _content_length);
-            if (_in_body.length() == _content_length)//terminamos el body
+            if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
             {
-                _in_container.erase(0, _content_length);
-                _server->getResponse(*this);
-                _pending_read = false;
-                _in_body.clear();
-                _action = WAIT;
+                resetClient(true);
             }
+            _in_container.erase(0, _in_body.length());
         }
         else 
         {
-            _server->getResponse(*this);
-            _pending_read = false;
-            _action = WAIT;
+            resetClient(false);
         }
-        _parser_http.resetParsing();
     }
 }
 
@@ -100,7 +94,13 @@ void Client::readFromFD()
 
     if (_result > 0)
     {
-        if (_action != POST)
+        //recv > 0
+        // Http todavia _parse_http me indica si no termina.
+        // post/get/delete > _in_container, hasta que terminas
+        // post > in_body, parseeer URl, METHod, Client dame el body
+
+
+        if (!_parser_http.getEndRead()) // and nott MAX HEADER SIZE?
         {
             _in_container.append((const char *)_in_message, _result);
             while (_parser_http.getPos()  != _in_container.length())
@@ -133,17 +133,11 @@ void Client::readFromFD()
         }
         else if (_action == POST)
         {
-            std::size_t size_to_append = std::min(_result, _content_length - _in_body.length());
-            _in_body.append((const char *)_in_message, size_to_append);
-            if (_in_body.size() == _content_length) // we done with body
+            _size_to_append = std::min(_result, _content_length - _in_body.length());
+            _in_body.append((const char *)_in_message, _size_to_append);
+            if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
             {  
-                _server->getResponse(*this);
-                if (size_to_append != _result)
-                {
-                    _in_container.append((const char *)&(_in_message[size_to_append + 1]));
-                }
-                _action = WAIT;
-
+                resetClient(true);
             }
 
 
@@ -207,11 +201,11 @@ int Client::Action (int event)
         //     return executePostAction();
         // }
     }
-    else if (event & POLLOUT)
+    if (event & POLLOUT)
     {
         return executeGetAction();
     }
-    else if (event & POLLHUP)
+    if (event & POLLHUP)
     {
         std::cout << "POLL HUP" << std::endl;
         return 1;
@@ -230,6 +224,27 @@ Client::~Client()
         _response_objects_queue.pop();
     }
     close(_fd);
+}
+
+
+void Client::resetClient(bool has_body)
+{
+    _server->getResponse(*this);
+
+    if (has_body)
+    {
+        if (_size_to_append != _result)
+        {
+            _in_container.append((const char *)&(_in_message[_size_to_append + 1]));
+        }
+        _in_body.clear();
+    }
+    _pending_read = false;
+    _action = WAIT;
+    _response_type.clear();
+    _size_to_append = 0;
+    _parser_http.resetParsing();
+
 }
 
 

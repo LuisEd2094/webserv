@@ -38,7 +38,8 @@ class Client : public BaseHandler
         //getters
         const int           getFD() const;
         const std::string&  getURL();
-        const std::string&  getResponseType();
+        const std::string&  getResponseType() const;
+        const std::string&  getBody() const;
 
         class clientException;
 
@@ -49,6 +50,7 @@ class Client : public BaseHandler
         Parsing                 _parser_http;
         Actions                 _action;
         std::size_t             _result;
+        std::size_t             _size_to_append;
 
         bool                    _keep_alive;
 
@@ -68,6 +70,7 @@ class Client : public BaseHandler
 
 
         void                    readFromFD();
+        void                    resetClient(bool);
         int                     executeGetAction();
         int                     executePostAction();
 

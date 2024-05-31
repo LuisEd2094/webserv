@@ -4,7 +4,7 @@
 #include <DirectResponse.hpp>
 #include <Client.hpp>
 
- std::string BaseHandler::valid_objs[NUM_OBJ] = {
+const std::string BaseHandler::valid_objs[NUM_OBJ] = {
     std::string(FILE_OBJ),
     std::string(DIRECT_OBJ),
     std::string(CGI_OBJ),
@@ -23,8 +23,10 @@ BaseHandler* BaseHandler::createObject(Client& client)
     //Factory creator, requires string to identify it and client that'd be assigned to that Object
     for (std::size_t i = 0; i < NUM_OBJ; ++i)
     {
+        std::cout << client.getResponseType() << std::endl;
         if (client.getResponseType() == valid_objs[i])
         {
+            std::cout << " I AM EQUAL " << std::endl;
             if (valid_objs[i] == FILE_OBJ)
                 return FileReader::createNewFileReader(client);
             else if (valid_objs[i] == CGI_OBJ)

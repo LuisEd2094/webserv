@@ -1,0 +1,49 @@
+=================================================================
+==19113==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x616000002718 at pc 0x00010cc84a29 bp 0x7ffee2fbbb40 sp 0x7ffee2fbbb38
+WRITE of size 8 at 0x616000002718 thread T0
+    #0 0x10cc84a28 in std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::__zero() string:1521
+    #1 0x10cc84950 in std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::basic_string() string:1729
+    #2 0x10cc76954 in std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::basic_string() string:1725
+    #3 0x10cc760d3 in Client::Client(Server*) Client.cpp:19
+    #4 0x10cc76a0c in Client::Client(Server*) Client.cpp:20
+    #5 0x10cc60cca in Server::Action(int) Server.cpp:46
+    #6 0x10cc67fa6 in Overseer::handleAction(BaseHandler*, int) Overseer.cpp:97
+    #7 0x10cc73937 in Overseer::mainLoop() mainLoop.cpp:61
+    #8 0x10cc477e2 in main main.cpp:51
+    #9 0x7fff72f33cc8 in start+0x0 (libdyld.dylib:x86_64+0x1acc8)
+
+Address 0x616000002718 is a wild pointer.
+SUMMARY: AddressSanitizer: heap-buffer-overflow string:1521 in std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::__zero()
+Shadow bytes around the buggy address:
+  0x1c2c00000490: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c000004a0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c000004b0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c000004c0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c000004d0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>0x1c2c000004e0: fa fa fa[fa]fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c000004f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c00000500: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c00000510: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c00000520: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x1c2c00000530: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==19113==ABORTING

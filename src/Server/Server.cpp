@@ -72,9 +72,9 @@ void Server::getResponse(Client & client)
     // We assume we called validateAction before reaching this point.
     const std::string & url = client.getURL();
     BaseHandler * response;
-
     try
     {
+        std::cout << client.getBody() << std::endl;
         if (url == "/")
         {
             client.setResponseType(DIRECT_OBJ);

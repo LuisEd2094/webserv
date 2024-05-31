@@ -12,6 +12,26 @@
 4. buscar CGI real para verificar como funciona correctamente
 - posiblemente buscar de varios tipos para el bonus
 
+
+5. Validar Max Size de Header.
+-  Si Header error (parseer) leer hasta doble salto de linea o Max size
+- Si, doble salto de linea, enviar respuesta, tratar siguientes caracteres como una solicitud nueva
+- else, Max Size, se envia lo que se tenga en cola (si se tiene) y se cierra conexion.
+
+6. Cerrar client si es POST, si NO tiene 100-Continue Y si NO es valido.
+- Leemos hasta fin HTTP o Max HTTP size.
+-  MaxBodyError es pequeno, unos 16000 bytes, para permitir conexiones cuando tiene error, mandaron un body, y el body es relativamente pequeño. Si es un post con error y ya han enviado el archivo y el archivo es muy grande, le cerramos. No perdemos recursos/tiempo en user is stupid. 
+- Si llegamos al fin HTTP, verificamos ContentLen vs MaxBodyError
+- - Si Content Len < Max Body Error, leemos y lo siguiente es una solicitud nueva
+- - Si es chunked, leemos hasta que la suma sea > MaxBodyError, si es mayor entonces cerramos. 
+
+7. Si Post errone y con 100-continue:
+- Leemos hasta el HTTP end o Max HTTP 
+- Si es Max HTTP cerramos conexion
+- Else, damos respuesta con codigo de error, y la siguiente la tomamos como una petecion nueva, si nos mandaran el Body porque USER IS STUPID entonces parseer daria error.
+
+8. MaxHeaderSize o MaxBody error == 413 Payload TOO large
+
   
 
 |Code | Name |  Use case |Condition | Additional Information | Dev Notes | Status |
