@@ -23,7 +23,7 @@ class Server::socketException: public std::exception
 Server::Server(t_confi* confi) : 
     BaseHandler(),
     _backlog(confi->backlog),
-    _ip(confi->ip),
+    _ip(confi->ip == "localhost" ? "" : confi->ip), //If config file host:locahost then IP == ""
     _port(confi->port)
 {
     std::memset(&(_hints), 0, sizeof(_hints));

@@ -120,6 +120,7 @@ void Client::readFromFD()
                     }
                     else
                     {
+                        std::cout << _parser_http.checkMethod(_in_container) << std::endl;
                         break;
                     }
                 }
@@ -208,7 +209,7 @@ int Client::Action (int event)
     if (event & POLLHUP)
     {
         std::cout << "POLL HUP" << std::endl;
-        return 1;
+        return 0;
     }
     return _result;
 }
