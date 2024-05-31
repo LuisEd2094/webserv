@@ -7,10 +7,7 @@ void Client::setFullResponse(const fullResponse& response, BaseHandler* obj)
     {
         it->second->setHTTPResponse(response._http);
         it->second->setBodyResponse(response._body);
-        if (it->second == _response_objects_queue.front())
-        {
-            Overseer::setListenAction(_fd, IN_AND_OUT);
-        }
+        checkFirstQueue(it->second);
     }
 
 }
@@ -22,10 +19,7 @@ void   Client::setHTTPResponse(const std::string &message, BaseHandler *obj)
     if (it != _response_objects_map.end())
     {
         it->second->setHTTPResponse(message);
-        if (it->second == _response_objects_queue.front())
-        {
-            Overseer::setListenAction(_fd, IN_AND_OUT);
-        }
+        checkFirstQueue(it->second);
     }
 
 }
@@ -36,10 +30,6 @@ void Client::setBodyResponse(const std::string &message, BaseHandler *obj)
     if (it != _response_objects_map.end())
     {
         it->second->setBodyResponse(message);
-        if (it->second == _response_objects_queue.front())
-        {
-            Overseer::setListenAction(_fd, IN_AND_OUT);
-        }
     }
 }
 

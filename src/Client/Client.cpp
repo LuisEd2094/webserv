@@ -16,11 +16,10 @@ class Client::clientException : public std::exception
 };
 
 //public:
-Client::Client(Server *server) : BaseHandler()
+Client::Client(Server *server) : BaseHandler(), _server(server)
 {
     if (!server)
         return;
-    _server = server;
     _addrlen = sizeof(_remoteaddr);
     _fd = accept(server->getFD(), (struct sockaddr *)&_remoteaddr,&_addrlen);
     if (_fd == -1) 
@@ -30,6 +29,24 @@ Client::Client(Server *server) : BaseHandler()
     _action = WAIT;
     _pending_read = false;
     _keep_alive = true;
+}
+
+Client::~Client() 
+{
+    while (!_response_objects_queue.empty())
+    {
+        delete _response_objects_queue.front();
+        _response_objects_queue.pop();
+    }
+    close(_fd);
+}
+
+void Client::checkFirstQueue(RequestHandler *obj)
+{
+    if (_response_objects_queue.front() == obj)
+    {
+        Overseer::setListenAction(_fd, IN_AND_OUT);
+    } 
 }
 
 void Client::handleDirectObj(DirectResponse* direct_object, RequestHandler *new_handler)
@@ -42,10 +59,7 @@ void Client::handleDirectObj(DirectResponse* direct_object, RequestHandler *new_
     {
         new_handler->setBodyResponse(direct_object->get_body());
     }
-    if (_response_objects_queue.front() == new_handler)
-    {
-        Overseer::setListenAction(_fd, IN_AND_OUT);
-    }
+    checkFirstQueue(new_handler);
     delete direct_object; // I delete this since it wont be going to the FD POLL
 }
 
@@ -113,7 +127,6 @@ void Client::readFromFD()
                     {
                         if (!_server->validateAction(*this))
                         {
-                            _action = GET;
                             return;
                         }
                         updateMethodAction();
@@ -178,17 +191,6 @@ void Client::readFromFD()
 
 
 
-bool Client::checkObjTimeOut()
-{
-    if(_pending_read && checkTimeOut())
-    {
-        BaseHandler * obj = createObject(Response::getDefault(REQUEST_TIMEOUT));
-        addObject(obj);
-        _keep_alive = false;
-        return false;
-    }
-    return false;
-}
 
 int Client::Action (int event)
 {
@@ -197,14 +199,10 @@ int Client::Action (int event)
         readFromFD();
         if (_result < 0)
             return (-1);
-        // if (_action  == POST)
-        // {
-        //     return executePostAction();
-        // }
     }
     if (event & POLLOUT)
     {
-        return executeGetAction();
+        return sendResponse();
     }
     if (event & POLLHUP)
     {
@@ -214,19 +212,70 @@ int Client::Action (int event)
     return _result;
 }
 
-//getters
 
 
-Client::~Client() 
+
+
+int Client::saveInBodyAsFile()
 {
-    while (!_response_objects_queue.empty())
+    if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
     {
-        delete _response_objects_queue.front();
-        _response_objects_queue.pop();
+        std::ofstream outfile("output_file.jpeg", std::ios::binary);
+        if (outfile.is_open())
+        {
+            outfile.write(_in_body.data(), _in_body.size());
+            outfile.close();
+            std::cout << "Binary data written to file.\n";
+            _action = GET;
+            return sendResponse();
+        } 
+        else
+        {
+            std::cerr << "Error opening file for writing.\n";
+            return (-1);
+        }
+
     }
-    close(_fd);
+    return (1);
 }
 
+void Client::removeFirstObj()
+{
+    delete _response_objects_queue.front();
+    _response_objects_queue.pop();
+    if (!_response_objects_queue.empty())
+    {
+        if(!(_response_objects_queue.front()->has_http()))
+        {
+            Overseer::setListenAction(_fd, JUST_IN);
+        }
+    }
+    else
+    {
+        Overseer::setListenAction(_fd, JUST_IN);
+    }
+}
+ 
+int Client::sendResponse()
+{
+    RequestHandler * client = _response_objects_queue.front();
+    if (client->pendingSend())
+    {
+        if ((_result = send(_fd, client->getToSend(), client->getChunkSize(), 0) ) == -1)
+            return (-1);
+        client->updateBytesSent(_result);
+        if (client->isFinished())
+        {
+            removeFirstObj();
+            return (!_response_objects_queue.empty() || _keep_alive);
+        }
+        else
+        {
+            return (1);
+        }
+    }
+    return (1);
+}
 
 void Client::resetClient(bool has_body)
 {
@@ -247,112 +296,16 @@ void Client::resetClient(bool has_body)
     _parser_http.resetParsing();
 
 }
-
-
-int Client::executePostAction()
+bool Client::checkObjTimeOut()
 {
-    if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
+    if(_pending_read && checkTimeOut())
     {
-        std::ofstream outfile("output_file.jpeg", std::ios::binary);
-        if (outfile.is_open())
-        {
-            outfile.write(_in_body.data(), _in_body.size());
-            outfile.close();
-            std::cout << "Binary data written to file.\n";
-            _action = GET;
-            return executeGetAction();
-        } 
-        else
-        {
-            std::cerr << "Error opening file for writing.\n";
-            return (-1);
-        }
-
+        BaseHandler * obj = createObject(Response::getDefault(REQUEST_TIMEOUT));
+        addObject(obj);
+        _keep_alive = false;
+        return false;
     }
-    return (1);
-}
-
-void Client::removeFirstObj()
-{
-    delete _response_objects_queue.front();
-    _response_objects_queue.pop();
-    if (!_response_objects_queue.empty())
-    {
-        if(_response_objects_queue.front()->has_http())
-        {
-            Overseer::setListenAction(_fd, IN_AND_OUT);
-        }
-        else
-        {
-            Overseer::setListenAction(_fd, JUST_IN);
-        }
-    }
-    else
-    {
-        Overseer::setListenAction(_fd, JUST_IN);
-    }
-}
- 
-int Client::executeGetAction()
-{
-    // SUPPOSE WE ALREADY KNOW THE HTTP IS DONE;
-
-    // AFTER GET IS DONE WE SHOULD CHECK AND SEE WHAT THE MESSAGE WE ARE GOING TO SEND IS.
-
-    // std::string http = "HTTP/1.1 200 HTTP_OK\r\n"
-    //     "Content-Type: text/plain\r\n"
-    //     "Content-Length: 13\r\n"
-    //     "\r\n"
-    //     "Hello, world!\r\n\0";
-
-
-    RequestHandler * client = _response_objects_queue.front();
-/* 
-    if (client->has_body())
-    {
-        _out_body = client->getBody();
-        _C_type_body = _out_body.c_str();
-        _body_response_len = _out_body.length();
-    } */
-
-    if (client->pendingSend())
-    {
-        if ((_result = send(_fd, client->getToSend(), client->getChunkSize(), 0) ) == -1)
-            return (-1);
-        client->updateBytesSent(_result);
-        if (client->isFinished())
-        {
-            removeFirstObj();
-            return (!_response_objects_queue.empty() || _keep_alive);
-        }
-        else
-        {
-            return (1);
-        }
-    }
-/*     if (client->has_body())
-    {
-        if (!_out_body.empty() && _HTTP_bytes_sent >= _HTTP_response_len)
-        {
-            chunk_size = (_body_response_len - _body_bytes_sent) > SEND_SIZE ? SEND_SIZE : _body_response_len - _body_bytes_sent;
-            if ((_result = send(_fd, _C_type_body + _body_bytes_sent, chunk_size, 0)) == -1)
-                return (-1);
-            _body_bytes_sent += _result;
-            if (_body_bytes_sent >= _body_response_len)
-            {
-                removeFirstObj();
-                return (0);
-            }
-            else
-            {
-                return (1);
-            }
-
-        }
-    }
- */
-
-    return (1);
+    return false;
 }
 
 //private:

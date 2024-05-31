@@ -10,6 +10,7 @@
 # define    RECV_SIZE 8000
 # define    IN_AND_OUT POLLIN | POLLOUT | POLLHUP
 # define    JUST_IN POLLIN | POLLHUP
+# define    JUST_OUT POLLOUT | POLLHUP
 
 
 # define NUM_OBJ 3

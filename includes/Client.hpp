@@ -66,15 +66,12 @@ class Client : public BaseHandler
 
 
 
-        void                    setSendValues(const RequestHandler &);
-
-
         void                    readFromFD();
         void                    resetClient(bool);
-        int                     executeGetAction();
-        int                     executePostAction();
+        int                     sendResponse();
+        int                     saveInBodyAsFile();
 
-
+        void                    checkFirstQueue(RequestHandler *);
         void                    handleDirectObj(DirectResponse*, RequestHandler *);
         void                    removeFirstObj();
 
