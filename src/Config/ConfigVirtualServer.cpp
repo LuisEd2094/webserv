@@ -3,6 +3,7 @@
 
 ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed)
 {
+	this->nestedPrint = 0;
 	this->errorPage = "";
 	this->maxClientBodySize = 30000;
 	for (std::map<std::string, std::string>::iterator i = parsed.begin(); i != parsed.end(); i++)
@@ -73,8 +74,16 @@ int ConfigVirtualServer::getMaxClientBodySize(void)
 
 std::ostream &operator<<(std::ostream &os,  ConfigVirtualServer &obj)
 {
-	os << "VirtualServer: " << std::endl;
-	os << "  maxbodySize: " << obj.getMaxClientBodySize() << std::endl;
-	os << "  errorPage: " << obj.getErrorPage() << std::endl;
+	os << ConfigElement::genSpace(obj.nestedPrint) << "::: VirtualServer ::: " << std::endl;
+	obj.nestedPrint++;
+	os << ConfigElement::genSpace(obj.nestedPrint) << "maxbodySize: " << obj.getMaxClientBodySize() << std::endl;
+	os << ConfigElement::genSpace(obj.nestedPrint) << "errorPage: " << obj.getErrorPage() << std::endl;
+	os << ConfigElement::genSpace(obj.nestedPrint) << "Locations: ";
+	for (std::list<ConfigLocation>::iterator loc = obj.getLocations().begin(); loc != obj.getLocations().end();loc++)
+	{
+		loc->nestedPrint = obj.nestedPrint + 1;
+		os << *loc << std::endl;
+	}
+
 	return os;
 }

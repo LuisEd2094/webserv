@@ -50,6 +50,7 @@ int main()
         std::cout << "wololooooooo" << std::endl;
         ConfigElement::configure(parser);
         std::cout << "patata" << std::endl;
+        Overseer::
         Overseer::mainLoop();
         //overseer.file(argv[1]);
         // Should read from file or default info, internally call saveServer for each server

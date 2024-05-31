@@ -2,6 +2,7 @@
 
 ConfigLocation::ConfigLocation(void)
 {
+	this->nestedPrint = 0;
 	_dirListing = false;
 }
 
@@ -10,6 +11,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 {
 	*this = father;
 	this->_inheriting = true;
+	this->nestedPrint = 0;
 
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
@@ -18,10 +20,13 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_inheriting = false;
+	if (obj.find("root") == obj.end())
+		this->_root.append(obj.find("__elemArgument__")->second);
 }
 
 ConfigLocation::ConfigLocation( ParsingLocation& obj)
 {
+	this->nestedPrint = 0;
 	this->setDefaults();
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
@@ -188,9 +193,10 @@ ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 	this->_cgis = obj.getCgis();
 }
 
-std::ostream &operator<<(std::ostream &os,  ConfigLocation &obj)
+std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)
 {
 	os << "ConfigLocation: " << std::endl;
 	os << "  errorPage: " << obj.getErrorPage() << std::endl;
 	return os;
 }
+

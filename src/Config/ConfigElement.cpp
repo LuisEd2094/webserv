@@ -3,6 +3,13 @@
 #include "Overseer.hpp"
 # include <map> //map
 
+std::string ConfigElement::genSpace(int ammount)
+{
+	std::string	result;
+	while (ammount)
+		result += " ";
+	return result;
+}
 void ConfigElement::configure(ParsingGlobal parsedData)
 {
 	t_confi confi;
