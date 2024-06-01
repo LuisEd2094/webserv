@@ -4,10 +4,10 @@
 #include <DirectResponse.hpp>
 #include <Client.hpp>
 
-const std::string BaseHandler::valid_objs[NUM_OBJ] = {
-    std::string(FILE_OBJ),
-    std::string(DIRECT_OBJ),
-    std::string(CGI_OBJ),
+const ObjectTypes BaseHandler::valid_objs[NUM_OBJ] = {
+    FILE_OBJ,
+    DIRECT_OBJ,
+    CGI_OBJ,
  };
 
 
@@ -26,7 +26,6 @@ BaseHandler* BaseHandler::createObject(Client& client)
         std::cout << client.getResponseType() << std::endl;
         if (client.getResponseType() == valid_objs[i])
         {
-            std::cout << " I AM EQUAL " << std::endl;
             if (valid_objs[i] == FILE_OBJ)
                 return FileReader::createNewFileReader(client);
             else if (valid_objs[i] == CGI_OBJ)

@@ -121,7 +121,7 @@ const std::string& Parsing::getMethod(void)
 	return (_method.method);
 }
 
-const std::string& Parsing::getRequested(void)
+const std::string& Parsing::getRequested(void) const
 {
 	return (_method.requested);
 }

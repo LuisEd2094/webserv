@@ -32,14 +32,14 @@ class Client : public BaseHandler
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
 
-        void                setResponseType(const std::string& );
+        void                setResponseType(ObjectTypes );
         bool                checkObjTimeOut();
 
         //getters
-        Server *            getServer();
+        Server *            getServer() const;
         int                 getFD() const;
-        const std::string&  getURL();
-        const std::string&  getResponseType() const;
+        const std::string&  getURL() const;
+        ObjectTypes         getResponseType() const;
         const std::string&  getBody() const;
 
         class clientException;
@@ -76,7 +76,7 @@ class Client : public BaseHandler
         void                    handleDirectObj(DirectResponse*, RequestHandler *);
         void                    removeFirstObj();
 
-        std::string             _response_type;
+        ObjectTypes             _response_type;
 
 
 

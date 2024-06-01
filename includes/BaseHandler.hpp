@@ -22,7 +22,7 @@ class BaseHandler
 
     protected:
         bool    checkTimeOut();
-        static const std::string valid_objs[NUM_OBJ] ;
+        static const ObjectTypes valid_objs[NUM_OBJ] ;
         int _fd;
         time_t _last_time;
 };

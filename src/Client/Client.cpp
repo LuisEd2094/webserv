@@ -26,6 +26,7 @@ Client::Client(Server *server) : BaseHandler(), _server(server)
     {
         throw Client::clientException("accept" + static_cast<std::string>(strerror(errno)));
     }
+    _response_type = NOT_SET;
     _action = WAIT;
     _pending_read = false;
     _keep_alive = true;
@@ -310,7 +311,7 @@ void Client::resetClient(bool has_body)
     }
     _pending_read = false;
     _action = WAIT;
-    _response_type.clear();
+    _response_type = NOT_SET;
     _size_to_append = 0;
     _parser_http.resetParsing();
 

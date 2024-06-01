@@ -53,7 +53,7 @@ void    Client::addObject(BaseHandler * obj)
 }
 
 
-void  Client::setResponseType(const std::string& type )
+void  Client::setResponseType(ObjectTypes type )
 {
     _response_type = type;
 }

@@ -14,11 +14,17 @@
 
 
 # define NUM_OBJ 3
-# define FILE_OBJ "file"
+/* # define FILE_OBJ "file"
 # define DIRECT_OBJ "direct"
-# define CGI_OBJ "cgi"
+# define CGI_OBJ "cgi" */
 
-
+enum ObjectTypes
+{
+    NOT_SET,
+    FILE_OBJ,
+    DIRECT_OBJ,
+    CGI_OBJ
+};
 
 #endif
 /* 
