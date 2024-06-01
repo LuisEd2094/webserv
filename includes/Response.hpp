@@ -28,6 +28,7 @@ enum ErrorCodes
 
 
     INTERNAL_SERVER_ERROR,
+    NOT_IMPLEMENTED,
     GATEWAY_TIMEOUT, 
     VERSION_NOT_SUPPORTED,
     BAD_GATEWAY
@@ -109,6 +110,11 @@ enum ErrorCodes
 # define INTERNAL_ERROR_HTTP    "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/html\r\n"
 # define INTERNAL_ERROR_TITLE  "500 Internal Server Error"
 # define INTERNAL_ERROR_BODY   "The server ran into a problem while executing your request. 💀"
+
+
+# define NOT_IMPLEMENTED_HTTP   "HTTP/1.1 501 Not Implemented\r\nContent-Type: text/html\r\n"
+# define NOT_IMPLEMENTED_TITLE  "501 Not Implemented"
+# define NOT_IMPLEMENTED_BODY   "The server does not support this method. 💀"
 
 # define GATEWAY_TIMEOUT_HTTP   "HTTP/1.1 504 Gateway Timeout\r\nContent-Type: text/html\r\n"
 # define GATEWAY_TIMEOUT_TITLE  "504 Gateway Timeout"

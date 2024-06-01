@@ -1,5 +1,17 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
+
+# include <Parsing.hpp>
+# include <Aux.hpp>
+# include <BaseHandler.hpp>
+# include <Overseer.hpp>
+# include <RequestHandler.hpp>
+# include <DirectResponse.hpp>
+# include <ProgramConfigs.hpp>
+
+# include <queue>
+# include <cstring>
+# include <algorithm>
 # include <iostream>
 # include <sys/socket.h>
 # include <cerrno>
@@ -7,15 +19,6 @@
 # include <vector>
 # include <fstream>
 # include <poll.h>
-# include <algorithm>
-# include <Parsing.hpp>
-# include <Aux.hpp>
-# include <BaseHandler.hpp>
-# include <cstring>
-# include <Overseer.hpp>
-# include <queue>
-# include <RequestHandler.hpp>
-# include <DirectResponse.hpp>
 
 class Server;
 

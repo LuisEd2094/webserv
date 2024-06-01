@@ -1,6 +1,7 @@
-#include <Client.hpp>
 #include <Server.hpp>
 #include <DirectResponse.hpp>
+#include <Client.hpp>
+
 //Exception
 class Client::clientException : public std::exception
 {
@@ -107,6 +108,10 @@ void Client::readFromFD()
                         if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
                         {
                             addObject(BaseHandler::createObject(_server->getErrorResponseObject(BAD_REQUEST)));
+                        }
+                        else if (parser_method == ERROR_METHOD)
+                        {
+                            addObject(BaseHandler::createObject(_server->getErrorResponseObject(NOT_IMPLEMENTED)));
                         }
                         else if (parser_method == ERROR_VERSION)
                         {

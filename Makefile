@@ -26,11 +26,16 @@ RESPONSE_PATH = Responses/
 CGI_PATH 	= CGI/
 FILE_READ_PATH = FileReader/
 OBJS_PATH	= obj/
+DEPS_PATH	= deps/
+
 MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH)\
 								$(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH)\
 								$(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)\
-								$(RESPONSE_PATH)) 
-DEPS_PATH	= deps/
+								$(RESPONSE_PATH)) \
+					$(addprefix $(DEPS_PATH), $(AUX_PATH) $(SERVER_PATH)\
+								$(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH)\
+								$(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)\
+								$(RESPONSE_PATH))  
 INCS        = -I./includes
 
 
@@ -92,16 +97,15 @@ RESPONSE			=	Response.cpp
 
 RESPONSE_FILES		=	$(addprefix $(RESPONSE_PATH), $(RESPONSE))
 
-DEPS			= 	$(addprefix $(DEPS_PATH), $(FILE:.cpp=.d) $(SRC:.cpp=.d)\
-					$(SERVER:.cpp=.d) $(AUX:.cpp=.d) $(OVERSEER:.cpp=.d) \
-					ma$(CLIENT:.cpp=.d) $(PARSING:.cpp=.d) $(CGI:.cpp=.d) \
-					$(BASE:.cpp=.d) $(CONF:.cpp=.d) $(RESPONSE:.cpp=.d))
 
 SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) \
 					$(PARSING_FILES) $(CGI_FILES) $(BASE_FILES) $(FILE_READ_FILES) \
 					$(CONF_FILES) $(RESPONSE_FILES)
 				
+DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d))
+
 OBJS 			=	$(addprefix $(OBJS_PATH), $(SRC:.cpp=.o))
+
 all: $(NAME)
 
 
@@ -112,7 +116,8 @@ $(NAME): $(OBJS)
 $(OBJS_PATH)%.o: $(SRCS_PATH)%.cpp | $(MAKE_OBJ_DIR) $(DEPS_PATH)
 			@echo "$(CYAN)Compiling $< $(DEF_COLOR)"
 			@$(CC) $(CFLAGS) $(INCS) -MMD -MP -c $< -o $@
-			@mv $(basename $@).d $(DEPS_PATH)
+			@mv $(basename $@).d $(patsubst $(SRCS_PATH)%,$(DEPS_PATH)%,$(dir $<))
+
 
 $(MAKE_OBJ_DIR):
 	@echo "$(GREEN)Creating $(NAME) Obj Dir $(DEF_COLOR)"
