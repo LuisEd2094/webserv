@@ -73,7 +73,6 @@ void Server::getResponse(Client & client)
     BaseHandler * response;
     try
     {
-        std::cout << client.getBody() << std::endl;
         if (url == "/")
         {
             client.setResponseType(DIRECT_OBJ);

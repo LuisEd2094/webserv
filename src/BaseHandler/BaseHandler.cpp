@@ -23,7 +23,6 @@ BaseHandler* BaseHandler::createObject(Client& client)
     //Factory creator, requires string to identify it and client that'd be assigned to that Object
     for (std::size_t i = 0; i < NUM_OBJ; ++i)
     {
-        std::cout << client.getResponseType() << std::endl;
         if (client.getResponseType() == valid_objs[i])
         {
             if (valid_objs[i] == FILE_OBJ)

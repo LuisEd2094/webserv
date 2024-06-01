@@ -16,7 +16,7 @@ class Client::clientException : public std::exception
 };
 
 //public:
-Client::Client(Server *server) : BaseHandler(), _server(server)
+Client::Client(Server *server) : BaseHandler()
 {
     if (!server)
         return;
@@ -26,10 +26,12 @@ Client::Client(Server *server) : BaseHandler(), _server(server)
     {
         throw Client::clientException("accept" + static_cast<std::string>(strerror(errno)));
     }
+    _server = server;
     _response_type = NOT_SET;
     _action = WAIT;
     _pending_read = false;
-    _keep_alive = true;
+    _keep_alive = KEEP_ALIVE;
+    _size_to_append = 0;
 }
 
 Client::~Client() 
@@ -110,7 +112,6 @@ void Client::readFromFD()
                         {
                             addObject(BaseHandler::createObject(_server->getErrorResponseObject(VERSION_NOT_SUPPORTED)));
                         }
-                        std::cout << parser_method << std::endl;
                         break;
                     }
                 }
@@ -126,7 +127,7 @@ void Client::readFromFD()
         {
             _size_to_append = std::min(_result, static_cast<int>(_content_length - _in_body.length()));
             _in_body.append((const char *)_in_message, _size_to_append);
-            if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
+            if (_in_body.length() == _content_length ) // we done with body || if chunked, if read size is 0
             {  
                 resetClient(true);
             }
@@ -164,6 +165,11 @@ void Client::readFromFD()
         // }
 
     }
+    else
+    {
+        if (_result == 0)
+            _result = _keep_alive;
+    }
 }
 
 
@@ -194,6 +200,10 @@ void Client::parseForHttp()
     if (_parser_http.getEndRead())
     {
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
+        if (_parser_http.getMapValue("Connection") == "Keep-Alive")
+        {
+            _keep_alive = true;
+        }
         if(_action == POST)
         {
             /* this should check what type of post they are doing, could be a contentlen or a chunked sent */
@@ -202,12 +212,20 @@ void Client::parseForHttp()
             {
                 _content_length = std::atoi(content_len.c_str());
             }
-            _in_body.append(_in_container, 0, _content_length);
+            _in_body.append(_in_container, 0, std::min(_content_length, _in_container.length()));
             if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
             {
                 resetClient(true);
             }
-            _in_container.erase(0, _in_body.length());
+            else
+            {
+                /*  
+                    Clear _in_container if _in_body doesn't == content_lenght, since that means we are missing data
+                    and we will be getting it next read.
+                    If we get the full body in a single read, reset will remove body size from in container
+                */
+                _in_container.clear();
+            }
         }
         else 
         {
@@ -234,6 +252,7 @@ void Client::updateMethodAction()
 
 
 
+/*This should also go to the server?*/
 int Client::saveInBodyAsFile()
 {
     if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
@@ -252,7 +271,6 @@ int Client::saveInBodyAsFile()
             std::cerr << "Error opening file for writing.\n";
             return (-1);
         }
-
     }
     return (1);
 }
@@ -302,10 +320,18 @@ void Client::resetClient(bool has_body)
     if (has_body)
     {
         /* gives seg fault*/
-        if (static_cast<int>(_size_to_append) != _result)
+        /*If _size_to_append == 0 it means we got the full body in the first read with HTTP*/
+        if (_size_to_append == 0)
         {
-            _in_container.append((const char *)&(_in_message[_size_to_append ]));         
-            /* gives seg fault should check size in _in_message that corresponds to body and append rest if there are more values*/
+            _in_container.erase(0, _in_body.length());
+        }
+        else if (static_cast<int>(_size_to_append) != _result)
+        {
+            /*If size to append is not == 0 it means we went through at least a second read
+                if that append size doesnt equal _result, it means we appended less than the characters we read
+                so we can assume that there might be a new http request after the body of the first one.
+            */
+            _in_container = ((const char *)&(_in_message[_size_to_append + 1]));         
         }
         _in_body.clear();
     }
