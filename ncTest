@@ -1,11 +1,11 @@
-aPOST / HTTP/1.1
+POST / HTTP/1.1
 Host: localhost
 User-Agent: curl/7.64.1
 Accept: */*
 Connection: Keep-Alive
 Content-Length: 2
 
-1 GET / HTTP/1.1
+1 GET /index.html HTTP/1.1
 Host: localhost
 User-Agent: curl/7.64.1
 Accept: */*
@@ -20,6 +20,6 @@ Content-Length: 2
 
 1
 
-asda
+asda This should be badrequest
 
 

@@ -112,7 +112,7 @@ enum ErrorCodes
 # define INTERNAL_ERROR_BODY   "The server ran into a problem while executing your request. 💀"
 
 
-# define NOT_IMPLEMENTED_HTTP   "HTTP/1.1 501 Not Implemented\r\nContent-Type: text/html\r\n"
+# define NOT_IMPLEMENTED_HTTP   "HTTP/1.1 501 Not Implemented\r\nConnection: close\r\nContent-Type: text/html\r\n"
 # define NOT_IMPLEMENTED_TITLE  "501 Not Implemented"
 # define NOT_IMPLEMENTED_BODY   "The server does not support this method. 💀"
 

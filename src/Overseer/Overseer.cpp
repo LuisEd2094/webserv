@@ -50,7 +50,7 @@ void Overseer::setListenAction(int fd, int action) // might need to change this 
     {
         if (_pfds[i].fd == fd)
         {
-            _pfds[i].events = action; 
+            _pfds[i].events = action;
         } 
     }
 }

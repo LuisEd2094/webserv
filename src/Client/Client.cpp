@@ -33,6 +33,8 @@ Client::Client(Server *server) : BaseHandler()
     _pending_read = false;
     _keep_alive = KEEP_ALIVE;
     _size_to_append = 0;
+    _can_read = true;
+    _error = false;
 }
 
 Client::~Client() 
@@ -50,9 +52,13 @@ int Client::Action (int event)
 {
     if (event & POLLIN)
     {
-        readFromFD();
-        if (_result < 0)
-            return (-1);
+        if (_can_read)
+        {
+            readFromFD();
+            if (_result < 0)
+                return (-1);
+        }
+
     }
     if (event & POLLOUT)
     {
@@ -105,18 +111,26 @@ void Client::readFromFD()
                             ERROR_HEADER == BAD_REQUEST
                             if ERROR_VERSION == HTTP Version Not Supported if 1.1+
                         */
-                        if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
+                        if (parser_method != WARNING)
                         {
-                            addObject(BaseHandler::createObject(_server->getErrorResponseObject(BAD_REQUEST)));
+                            if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
+                            {
+                                addObject(BaseHandler::createObject(_server->getErrorResponseObject(BAD_REQUEST)));
+                            }
+                            else if (parser_method == ERROR_METHOD)
+                            {
+                                addObject(BaseHandler::createObject(_server->getErrorResponseObject(NOT_IMPLEMENTED)));
+                            }
+                            else if (parser_method == ERROR_VERSION)
+                            {
+                                addObject(BaseHandler::createObject(_server->getErrorResponseObject(VERSION_NOT_SUPPORTED)));
+                            }
+                            _error = true;
+                            _can_read = false;
+                            _pending_read = false;
+                            Overseer::setListenAction(_fd, JUST_OUT);
                         }
-                        else if (parser_method == ERROR_METHOD)
-                        {
-                            addObject(BaseHandler::createObject(_server->getErrorResponseObject(NOT_IMPLEMENTED)));
-                        }
-                        else if (parser_method == ERROR_VERSION)
-                        {
-                            addObject(BaseHandler::createObject(_server->getErrorResponseObject(VERSION_NOT_SUPPORTED)));
-                        }
+                        
                         break;
                     }
                 }
@@ -293,19 +307,26 @@ void Client::removeFirstObj()
     }
     else
     {
-        Overseer::setListenAction(_fd, JUST_IN);
+        if (_error)
+        {
+            Overseer::setListenAction(_fd, 0);
+        }
+        else
+        {
+            Overseer::setListenAction(_fd, JUST_IN);
+        }
     }
 }
  
 int Client::sendResponse()
 {
-    RequestHandler * client = _response_objects_queue.front();
-    if (client->pendingSend())
+    RequestHandler * request = _response_objects_queue.front();
+    if (request && request->pendingSend())
     {
-        if ((_result = send(_fd, client->getToSend(), client->getChunkSize(), 0) ) == -1)
+        if ((_result = send(_fd, request->getToSend(), request->getChunkSize(), 0) ) == -1)
             return (-1);
-        client->updateBytesSent(_result);
-        if (client->isFinished())
+        request->updateBytesSent(_result);
+        if (request->isFinished())
         {
             removeFirstObj();
             return (!_response_objects_queue.empty() || _keep_alive);
@@ -349,12 +370,19 @@ void Client::resetClient(bool has_body)
 }
 bool Client::checkObjTimeOut()
 {
-    if(_pending_read && checkTimeOut())
+    if((_pending_read || _error) && checkTimeOut())
     {
         //When time out, client will stop listening for incoming messages, will send everything it has
         // in queue and thenn close connection.
-        addObject(BaseHandler::createObject(_server->getErrorResponseObject(REQUEST_TIMEOUT)));
-        Overseer::setListenAction(_fd, JUST_OUT);
+        if (_pending_read)
+        {
+            addObject(BaseHandler::createObject(_server->getErrorResponseObject(REQUEST_TIMEOUT)));
+            Overseer::setListenAction(_fd, JUST_OUT);
+        }
+        else
+        {
+            return true;
+        }
         _keep_alive = false;
         return false;
     }

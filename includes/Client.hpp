@@ -69,7 +69,8 @@ class Client : public BaseHandler
         void                    parseForHttp();
 
 
-
+        bool                    _can_read;
+        bool                    _error;
         void                    readFromFD();
         void                    resetClient(bool);
         int                     sendResponse();
