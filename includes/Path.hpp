@@ -38,4 +38,4 @@ class Path
 	} ;
 };
 
-
+std::ostream &operator<<(std::ostream &os, const Path &obj);

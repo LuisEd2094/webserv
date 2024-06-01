@@ -47,19 +47,8 @@ class Overseer
         static  std::size_t             _i;
         static  std::size_t             _fd_count;
         static  struct pollfd           _pfds[MAX_FDS];
-
-
-
-
         class pollException;
-
-
-
 };
-
-
-
-
 #endif
 
 

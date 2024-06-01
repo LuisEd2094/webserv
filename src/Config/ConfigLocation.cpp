@@ -6,6 +6,28 @@ ConfigLocation::ConfigLocation(void)
 	_dirListing = false;
 }
 
+ConfigLocation::ConfigLocation(const ConfigLocation& obj)
+{
+	this->__elemArgument__ = obj.__elemArgument__;
+	this->__elemType__ = obj.__elemType__;
+	this->_errorPage = obj.getErrorPage();
+	this->_methods = obj.getMethods();
+	this->_redirection = obj.getRedirection();
+	this->_root = obj.getRoot();
+	this->_dirListing = obj.getDirListing();
+	this->_index = obj.getIndex();
+	this->_cgis = obj.getCgis();
+	std::list<ConfigLocation> locs = obj.getLocations(); 
+	//TODO mmaybe with list was enough
+	for (std::list<ConfigLocation>::iterator location = locs.begin();
+		location != locs.end();
+		location++
+	)
+	{
+		this->_locations.push_back(ConfigLocation(*location));
+	}
+	this->_locations = obj.getLocations();
+}
 
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 {
@@ -22,16 +44,21 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	this->_inheriting = false;
 	if (obj.find("root") == obj.end())
 		this->_root.append(obj.find("__elemArgument__")->second);
+	// TODO add nested elements
 }
 
+/**/
 ConfigLocation::ConfigLocation( ParsingLocation& obj)
 {
+	this->__elemType__ = obj["__elemType__"]; 
+	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->nestedPrint = 0;
 	this->setDefaults();
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
 		this->parseKeyVal(i->first, i->second);
 	}
+	// TODO add nested elements
 }
 
 void ConfigLocation::setDefaults()
@@ -124,7 +151,7 @@ void ConfigLocation::initializeRoot(Path root)
 	else	
 		_root = root;
 	std::cout << (std::string) _root << std::endl;
-	//TODO the file is coorrect
+	// TODO the file is correct
 }
 
 Path ConfigLocation::getRoot(void) const
@@ -169,6 +196,11 @@ std::list<ConfigCgi> ConfigLocation::getCgis(void) const
 	return (this->_cgis);
 }
 
+std::list<ConfigLocation> ConfigLocation::getLocations(void) const
+{
+	return (this->_locations);
+}
+
 ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 {
 	this->_errorPage = obj.getErrorPage();
@@ -182,15 +214,39 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	return (*this);
 }
 
-ConfigLocation::ConfigLocation(const ConfigLocation& obj)
+std::ostream &operator<<(std::ostream &os,  std::list<std::string> &listObj)
 {
-	this->_errorPage = obj.getErrorPage();
-	this->_methods = obj.getMethods();
-	this->_redirection = obj.getRedirection();
-	this->_root = obj.getRoot();
-	this->_dirListing = obj.getDirListing();
-	this->_index = obj.getIndex();
-	this->_cgis = obj.getCgis();
+	for (typename std::list<std::string>::iterator elem = listObj.begin(); elem != listObj.end(); elem++)
+	{
+		os << *elem << " ";
+	}
+	return os;
+}
+
+void ConfigLocation::recursivePrint(int recursiveLvl)
+{
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->__elemArgument__ << ")" << std::endl;
+	recursiveLvl++;
+
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "Methods: " << this->_methods << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "Root: " << this->_root << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "Index: " << this->_index << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "Redirection: " << this->_redirection << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "Error page: " << this->_errorPage << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "Dir listing: " << this->_dirListing << std::endl;
+
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "Locations(" << this->_locations.size() << "):" << std::endl;
+	for (std::list<ConfigLocation>::iterator loc = this->_locations.begin(); loc != this->_locations.end();loc++)
+	{
+		loc->recursivePrint(recursiveLvl);
+	}
+	// TODO copy code above for cgis instead of locations
 }
 
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)

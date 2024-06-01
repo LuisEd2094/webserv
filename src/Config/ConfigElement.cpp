@@ -5,8 +5,9 @@
 
 std::string ConfigElement::genSpace(int ammount)
 {
+	ammount *= 2;
 	std::string	result;
-	while (ammount)
+	while (ammount--)
 		result += " ";
 	return result;
 }
@@ -27,6 +28,7 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 	for (std::list<ParsingServer>::iterator i = parsedData.servers.begin(); i != parsedData.servers.end(); i++)
 	{
 	    std::memset(&(confi.hints), 0, sizeof(confi.hints));
+		// TODO repeated lines
 		confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
 		confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
 		confi.hints.ai_flags = AI_PASSIVE;
@@ -39,13 +41,24 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 		if (serverIterator == servers.end())
 		{
 			server = Overseer::saveServer(&confi);
-			std::cout << "*******-*-*-*--*************" << std::endl;
+			std::cout << "*******-*-*-*-*************" << std::endl;
 			servers.insert(std::pair<std::string,Server*>(phisicServerId, server));
-			std::cout << "*******-*-*-*--*************" << std::endl;
+			std::cout << "*******-*-*-*-*************" << std::endl;
 		}
 		else
 			server = serverIterator->second;
 		server->virtualServers.push_back(ConfigVirtualServer(*i));
+		//TODO delete print
+		for (
+			std::list<ConfigVirtualServer>::iterator serv = server->virtualServers.begin();
+			serv != server->virtualServers.end(); 
+			serv++
+			)
+		{
+			std::cout << " -  -  -  -  -  -  -  -  -  - " << std::endl;
+			std::cout << "server: " ; serv->recursivePrint(0) ; std::cout << std::endl;
+			std::cout << " -  -  -  -  -  -  -  -  -  - " << std::endl;
+		}
 	}
 }
 

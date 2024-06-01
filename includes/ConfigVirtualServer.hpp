@@ -22,9 +22,12 @@ class ConfigVirtualServer: public ConfigElement
 		void setMaxClientBodySize(std::string bodySize);
 		void setLocations(std::list<ConfigLocation> inpLocations) {this->locations = inpLocations;};
 		//get
-		std::string getErrorPage(void) ;
-		int getMaxClientBodySize(void) ;
+		std::string getErrorPage(void)  const;
+		int getMaxClientBodySize(void)  const;
 		std::list<ConfigLocation> getLocations(void) {return this->locations;};
+
+		void recursivePrint(void);
+		void recursivePrint(int recursiveLvl);
 
 		void parseKeyVal(std::string key, std::string val);
 		ConfigVirtualServer(void): errorPage(""), maxClientBodySize(30000){};

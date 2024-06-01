@@ -8,6 +8,13 @@ Path::Path()
 {
 }
 
+Path::Path(std::string pathStr)
+{
+        this->isRelative = pathStr[0] == '/';
+        this->directories = ft_split(pathStr, '/');
+        while (this->normalize());
+}
+
 Path::Path(const Path &orig)
 {
     this->directories = orig.directories;
@@ -18,13 +25,6 @@ Path &Path::operator=(const Path &orig)
 {
     this->directories = orig.directories;
     return *this;
-}
-
-Path::Path(std::string pathStr)
-{
-        this->isRelative = pathStr[0] == '/';
-        this->directories = ft_split(pathStr, '/');
-        while (this->normalize());
 }
 
 void Path::append(Path tail)
@@ -74,15 +74,25 @@ void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
 
 Path::operator std::string()
 {
-    std::list<std::string>::iterator begin;
+    std::list<std::string>::iterator dir;
     std::string result;
 
     if (!this->isRelative)
         result += "/";
-    for (begin = this->directories.begin(); begin != this->directories.end(); begin++)
+    for (dir = this->directories.begin(); dir != this->directories.end(); dir++)
     {
-        result += *begin;
+        result += *dir;
         result += "/";
     }
     return (result);
+}
+
+std::ostream &operator<<(std::ostream &os, const Path &obj)
+{
+
+// TODO too much variables
+    Path &fkk = const_cast<Path &>(obj);
+    std::string pathstr = (std::string) fkk; 
+    os << pathstr;
+    return os;
 }

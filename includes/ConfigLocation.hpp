@@ -12,16 +12,17 @@
 class ConfigLocation: public ConfigElement
 {
 	private:
-		std::string				_errorPage;
-		std::list<std::string>	_methods;
-		std::string				_redirection;
-		Path					_root; // would be nice to change it to an oject
-		bool					_dirListing;
-		bool					_inheriting;
-		std::list<std::string>	_index;
-		std::list<ConfigCgi>	_cgis;
-		std::string				__elemType__;
-		std::string				__elemArgument__;
+		std::string					__elemType__;
+		std::string					__elemArgument__;
+		std::list<std::string>		_methods;
+		Path						_root; // would be nice to change it to an oject
+		std::list<std::string>		_index;
+		std::string					_redirection;
+		std::string					_errorPage;
+		bool						_dirListing;
+		std::list<ConfigCgi>		_cgis;
+		std::list<ConfigLocation>	_locations;
+		bool						_inheriting;
 		//Add list configureLocation 
 
 	public:
@@ -54,6 +55,8 @@ class ConfigLocation: public ConfigElement
 		std::list<std::string>			getIndex(void) const;
 		std::list<ConfigCgi>			getCgis(void) const;//*
 		std::list<ConfigLocation>		getLocations(void) const;
+
+		void							recursivePrint(int recursiveLvl);
 };
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj);
 
