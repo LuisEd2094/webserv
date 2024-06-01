@@ -70,7 +70,7 @@ FileReader* FileReader::createNewFileReader(Client& client)
 }
 
 
-const int FileReader::getFD() const
+int FileReader::getFD() const
 {
     return _fd;
 }

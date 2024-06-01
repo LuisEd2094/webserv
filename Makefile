@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME        = webserv
-CFLAGS      = -std=c++98 -pedantic -g  -fsanitize=address #-Wall -Wextra  -Werror 
+CFLAGS      = -std=c++98 -pedantic -g -Wall -Wextra -Werror #-fsanitize=address
 CC			= c++
 RM          = rm -f
 SRCS_PATH	= src/

@@ -12,7 +12,7 @@ class BaseHandler
     public:
         BaseHandler();
         virtual ~BaseHandler() = 0;
-        virtual const int getFD() const = 0;
+        virtual int getFD() const = 0;
         virtual int Action( int ) = 0;
         virtual void    setTime();
         virtual bool    checkObjTimeOut() = 0;

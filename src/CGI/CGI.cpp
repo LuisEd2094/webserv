@@ -86,12 +86,6 @@ CGI* CGI::createNewCGI(Client& client)
 
 bool    CGI::checkObjTimeOut()
 {
-    time_t current_time;
-    std::time(&current_time);
-
-    double seconds;
-    seconds = std::difftime(current_time, _last_time) * 1000;
-
     if (checkTimeOut())
     {
 

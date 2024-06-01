@@ -37,7 +37,7 @@ class Client : public BaseHandler
 
         //getters
         Server *            getServer();
-        const int           getFD() const;
+        int                 getFD() const;
         const std::string&  getURL();
         const std::string&  getResponseType() const;
         const std::string&  getBody() const;
@@ -50,7 +50,7 @@ class Client : public BaseHandler
         std::map< BaseHandler *,  RequestHandler *> _response_objects_map;
         Parsing                 _parser_http;
         Actions                 _action;
-        std::size_t             _result;
+        int                      _result;
         std::size_t             _size_to_append;
 
         bool                    _keep_alive;

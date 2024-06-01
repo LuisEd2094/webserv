@@ -1,7 +1,7 @@
 #include <Client.hpp>
 
 
-const int Client::getFD() const
+int Client::getFD() const
 {
     return _fd;
 }

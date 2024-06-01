@@ -123,7 +123,7 @@ void Client::readFromFD()
         }
         else if (_action == POST)
         {
-            _size_to_append = std::min(_result, _content_length - _in_body.length());
+            _size_to_append = std::min(_result, static_cast<int>(_content_length - _in_body.length()));
             _in_body.append((const char *)_in_message, _size_to_append);
             if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
             {  
@@ -301,7 +301,7 @@ void Client::resetClient(bool has_body)
     if (has_body)
     {
         /* gives seg fault*/
-        if (_size_to_append != _result)
+        if (static_cast<int>(_size_to_append) != _result)
         {
             _in_container.append((const char *)&(_in_message[_size_to_append ]));         
             /* gives seg fault should check size in _in_message that corresponds to body and append rest if there are more values*/

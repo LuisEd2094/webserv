@@ -163,6 +163,7 @@ void Server::initSocket()
 
 std::ostream &operator<<(std::ostream &os,  Server &obj)
 {
+    (void)obj;
 	os << "Server: " << std::endl;
     return os;
 }

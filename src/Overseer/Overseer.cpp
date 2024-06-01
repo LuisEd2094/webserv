@@ -12,6 +12,7 @@ struct pollfd  Overseer::_pfds[MAX_FDS];
 
 void Overseer::cleanOverseer(int sig)
 {
+    (void)sig;
     std::map<int, BaseHandler *>::iterator it = _pending_fds.begin();
     for (; it != _pending_fds.end(); it++)
     {
@@ -45,7 +46,7 @@ void Overseer::removeFromPFDS(BaseHandler *obj)
 
 void Overseer::setListenAction(int fd, int action) // might need to change this to a map since it will take a long time to go through the _pfds if you have alot of them
 {
-    for (int i = 0; i < _fd_count; ++i)
+    for (std::size_t i = 0; i < _fd_count; ++i)
     {
         if (_pfds[i].fd == fd)
         {

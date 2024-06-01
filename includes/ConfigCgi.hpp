@@ -24,7 +24,7 @@ class ConfigCgi: public ConfigElement
 		void parseKeyVal(std::string key, std::string val);
 		ConfigCgi(void){}; // TODO
 		ConfigCgi(ParsingServer& obj);
-		ConfigCgi &operator=( const ConfigCgi& obj){return *this;};
+		ConfigCgi &operator=( const ConfigCgi& obj){(void)obj; return *this;};
 		~ConfigCgi(){};
 };
 

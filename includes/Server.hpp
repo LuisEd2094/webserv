@@ -28,7 +28,7 @@ class Server : public BaseHandler
 
 
         //Getters
-        const int getFD() const;
+        int getFD() const;
 
         bool validateAction(Client& client);
         void getResponse(Client& client);

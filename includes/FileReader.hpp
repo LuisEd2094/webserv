@@ -17,7 +17,7 @@ class FileReader : public BaseHandler
         bool                checkObjTimeOut();
 
         std::string         setContentType(std::string);
-        const int           getFD() const;
+        int           getFD() const;
 
         static FileReader* createNewFileReader(Client& client);
         static const std::string& getContentType(const std::string&);

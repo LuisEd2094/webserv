@@ -19,7 +19,7 @@ class CGI : public BaseHandler
         bool                checkObjTimeOut();
 
         static CGI *        createNewCGI(Client& client);
-        const int           getFD() const;
+        int           getFD() const;
         int                 readPipe();
 
         class CGIException;
