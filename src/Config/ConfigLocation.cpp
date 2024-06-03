@@ -2,8 +2,7 @@
 
 ConfigLocation::ConfigLocation(void)
 {
-	this->nestedPrint = 0;
-	_dirListing = false;
+	this->setDefaults();
 }
 
 ConfigLocation::ConfigLocation(const ConfigLocation& obj)
@@ -17,21 +16,16 @@ ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 	this->_dirListing = obj.getDirListing();
 	this->_index = obj.getIndex();
 	this->_cgis = obj.getCgis();
-	std::list<ConfigLocation> locs = obj.getLocations(); 
-	//TODO mmaybe with list was enough
-	for (std::list<ConfigLocation>::iterator location = locs.begin();
-		location != locs.end();
-		location++
-	)
-	{
-		this->_locations.push_back(ConfigLocation(*location));
-	}
 	this->_locations = obj.getLocations();
+	this->_cgis = obj.getCgis();
 }
 
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 {
 	*this = father;
+	// TODO erase the nested elements from the father
+	this->_locations.empty();
+	this->_cgis.empty();
 	this->_inheriting = true;
 	this->nestedPrint = 0;
 
@@ -44,31 +38,69 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	this->_inheriting = false;
 	if (obj.find("root") == obj.end())
 		this->_root.append(obj.find("__elemArgument__")->second);
-	// TODO add nested elements
+
+	std::list<ParsingLocation> locs = obj.getLocations(); 
+	for (std::list<ParsingLocation>::iterator location = locs.begin();
+		location != locs.end();
+		location++
+	)
+	{
+		this->_locations.push_back(ConfigLocation(*location, *this));
+	}
+	std::list<ParsingCgi> cgis = obj.getCgis(); 
+	for (std::list<ParsingCgi>::iterator cgi = cgis.begin();
+		cgi != cgis.end();
+		cgi++
+	)
+	{
+		this->_cgis.push_back(ConfigCgi(*cgi));
+	}
 }
 
 /**/
 ConfigLocation::ConfigLocation( ParsingLocation& obj)
 {
-	this->__elemType__ = obj["__elemType__"]; 
-	this->__elemArgument__ = obj["__elemArgument__"]; 
+	// TODO erase the nested elements from the father
+	this->_locations.empty();
+	this->_cgis.empty();
+	this->_inheriting = true;
 	this->nestedPrint = 0;
-	this->setDefaults();
+
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
 		this->parseKeyVal(i->first, i->second);
 	}
-	// TODO add nested elements
+	this->__elemType__ = obj["__elemType__"]; 
+	this->__elemArgument__ = obj["__elemArgument__"]; 
+	this->_inheriting = false;
+	if (obj.find("root") == obj.end())
+		this->_root.append(obj.find("__elemArgument__")->second);
+	std::list<ParsingLocation> locs = obj.getLocations(); 
+	for (std::list<ParsingLocation>::iterator location = locs.begin();
+		location != locs.end();
+		location++
+	)
+	{
+		this->_locations.push_back(ConfigLocation(*location, *this));
+	}
+	std::list<ParsingCgi> cgis = obj.getCgis(); 
+	for (std::list<ParsingCgi>::iterator cgi = cgis.begin();
+		cgi != cgis.end();
+		cgi++
+	)
+	{
+		this->_cgis.push_back(ConfigCgi(*cgi));
+	}
 }
 
 void ConfigLocation::setDefaults()
 {
-	this->setErrorPage("");	
 	this->setMethods("");	
-	this->setRedirection("");	
 	this->setRoot("");	
-	this->setDirListing(true);	
 	this->setIndex("");
+	this->setErrorPage("");	
+	this->setRedirection("");	
+	this->setDirListing(true);	
 }
 
 void ConfigLocation::parseKeyVal(std::string key, std::string val)
@@ -245,6 +277,11 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 	for (std::list<ConfigLocation>::iterator loc = this->_locations.begin(); loc != this->_locations.end();loc++)
 	{
 		loc->recursivePrint(recursiveLvl);
+	}
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "CGIS(" << this->_cgis.size() << "):" << std::endl;
+	for (std::list<ConfigCgi>::iterator cgi = this->_cgis.begin(); cgi != this->_cgis.end();cgi++)
+	{
+		cgi->recursivePrint(recursiveLvl);
 	}
 	// TODO copy code above for cgis instead of locations
 }

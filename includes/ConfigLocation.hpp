@@ -32,7 +32,7 @@ class ConfigLocation: public ConfigElement
 		ConfigLocation(const ConfigLocation& obj);
 		ConfigLocation( ParsingLocation& obj, ConfigLocation& father);
 		ConfigLocation &operator=( const ConfigLocation& obj);
-		~ConfigLocation(){};
+		~ConfigLocation(){}
 
 		void							setDefaults();
 		void							setErrorPage(std::string inpErrorPage);//
@@ -47,6 +47,18 @@ class ConfigLocation: public ConfigElement
 		void							setIndex(std::string index);//
 		void							setCgis(std::string cgis);//*
 
+/*
+		template <typename DataContainer, typename ElementType>
+		void appendNestedElements(DataContainer elementsList)
+		{
+			for (typename DataContainer::iterator element = elementsList.begin();
+				element != elementsList.end();
+				element++)
+			{
+				this->_locations.push_back(ElementType(*element));
+			}
+		}
+*/
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;

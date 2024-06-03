@@ -80,7 +80,7 @@ CLIENT			=	Client.cpp getters.cpp setters.cpp ClientHandler.cpp DirectResponse.c
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
-CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp ConfigLocation.cpp
+CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp ConfigLocation.cpp ConfigCgi.cpp
 
 CONF_FILES		=	$(addprefix $(CONF_PATH), $(CONF))
 

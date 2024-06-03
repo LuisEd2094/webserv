@@ -25,6 +25,8 @@ void	ParsingLocation::createNestedElement(std::string param0, std::string param1
 	{
 		ParsingCgi element(this->statementBegin, this->eof, this->statementEnd);	
 		element.parse();
+		element.insert(std::make_pair("__elemType__", param0));
+		element.insert(std::make_pair("__elemArgument__", param1));
 		this->cgis.push_back(element);
 	}
 	else

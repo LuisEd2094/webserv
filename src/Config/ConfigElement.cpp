@@ -5,7 +5,7 @@
 
 std::string ConfigElement::genSpace(int ammount)
 {
-	ammount *= 2;
+	ammount *= 4;
 	std::string	result;
 	while (ammount--)
 		result += " ";
