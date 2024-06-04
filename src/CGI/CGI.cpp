@@ -92,7 +92,7 @@ bool    CGI::checkObjTimeOut()
         Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
         if (client)
         {
-            client->setFullResponse(client->getServer()->getErrorResponseObject(GATEWAY_TIMEOUT),this);
+            client->setdefaultResponse(client->getServer()->getErrorResponseObject(GATEWAY_TIMEOUT),this);
         }        
         return true;
 
@@ -121,7 +121,7 @@ int CGI::Action(int event)
                 std::string http_response(_buffer.substr(0, _buffer.find("\n\n") + 2));
                 if (http_response.empty())
                 {
-                    client->setFullResponse(client->getServer()->getErrorResponseObject(BAD_GATEWAY), this);
+                    client->setdefaultResponse(client->getServer()->getErrorResponseObject(BAD_GATEWAY), this);
                 }
                 else
                 {
@@ -135,7 +135,7 @@ int CGI::Action(int event)
             }
             else
             {
-                client->setFullResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
+                client->setdefaultResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
             }
             return (0);
 

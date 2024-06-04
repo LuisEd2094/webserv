@@ -2,7 +2,6 @@
 #include <Overseer.hpp>
 #include <Client.hpp>
 
-
 std::map<std::string, std::string> FileReader::types;
 
 //Exception
@@ -34,15 +33,12 @@ const std::string& FileReader::getMimeType(const std::string& to_find)
     if (found != types.end())
         return (found->second);
     return (types["empty"]);
-
 }
 
 
 FileReader::FileReader(Client& client) : _client_fd(client.getFD())
 {
     _fd = open(client.getPathFile().c_str(), O_RDONLY);
-    std::cout << _fd << std::endl;
-
     std::size_t start_ext = client.getURL().find_last_of(".");
     
     if (start_ext != std::string::npos)
@@ -52,8 +48,7 @@ FileReader::FileReader(Client& client) : _client_fd(client.getFD())
     if (_fd == -1)
     {
         throw FileReaderException(strerror(errno));
-    }
-   
+    }   
 }
 
 
@@ -66,7 +61,6 @@ FileReader* FileReader::createNewFileReader(Client& client)
 {
     FileReader *new_FileReader = new FileReader(client);
     Overseer::addToPfds(new_FileReader);
-    //exit(0);
     return new_FileReader;
 }
 
@@ -108,23 +102,21 @@ int FileReader::Action(int event)
         {
             if (result ==  0)
             {
-                /*I should be setting this with setFullResponse*/
+                /*I should be setting this with setdefaultResponse*/
                 std::string http = setContentType(std::string(HTTP_OK));
-                if (_buffer.find_last_of("\n") != _buffer.length() - 1) /*Just to make sure there is an end of line */
-                    _buffer.append("\n");
                 client->setHTTPResponse(setContentLenHTTP(http, _buffer) , this); 
                 client->setBodyResponse(_buffer, this); 
             }
             else
             {
-                client->setFullResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
+                client->setdefaultResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
             }
             return (0);
 
         }
         return (0);
     }
-        return (0);
+    return (0);
 
 }
 

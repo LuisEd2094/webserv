@@ -40,3 +40,8 @@ const std::string&  Client::getMapValue(const std::string& value)
 
 } 
 
+
+const std::queue<std::string>& Client::getHTTPAddons() const
+{
+    return _http_addons;
+}

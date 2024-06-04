@@ -34,7 +34,7 @@ enum ErrorCodes
     BAD_GATEWAY
 };
 
-# define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\nConnection: keep-alive\r\nSet-Cookie: SID=1234; Path=/Cookies; Max-Age=10\r\nSet-Cookie:lang=en-US; Max-Age=10\r\n"
+# define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\n"
 
 /*4xx ERRORS*/
 
@@ -150,14 +150,14 @@ typedef struct Responses
 typedef std::map<ErrorCodes, Responses > responsesMap;
 
 
-typedef struct fullResponse
+typedef struct defaultResponse
 {
     std::string _http;
     std::string _body;
-    fullResponse(const Responses&);
-} fullResponse;
+    defaultResponse(const Responses&);
+} defaultResponse;
 
-typedef std::map<ErrorCodes, fullResponse > fullResponsesMap; 
+typedef std::map<ErrorCodes, defaultResponse > defaultResponsesMap; 
 
 // One to create HTTP and add size from body
 // One to create both HTTP and BODY if none is provided in config
@@ -166,13 +166,13 @@ class Response
 {
     public:
         static void initDefaultMap();
-        static const fullResponse& getDefault(ErrorCodes code, const std::string& body);
-        static const fullResponse& getDefault(ErrorCodes code);
+        static const defaultResponse& getDefault(ErrorCodes code, const std::string& body);
+        static const defaultResponse& getDefault(ErrorCodes code);
 
     private:
-        static void createFullResponses();
+        static void createDefaultResponses();
         static responsesMap defaults;
-        static fullResponsesMap fullResponses;
+        static defaultResponsesMap defaultResponses;
 };
 
 

@@ -40,7 +40,7 @@ BaseHandler* BaseHandler::createObject(Client& client)
     }
     return NULL;
 }
-BaseHandler* BaseHandler::createObject(const fullResponse & obj)
+BaseHandler* BaseHandler::createObject(const defaultResponse & obj)
 {
     // This is for when you want to generate a DirectResponse Object, 
     // it needs a HTTP and Body string to create it. 

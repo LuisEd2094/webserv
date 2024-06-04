@@ -18,7 +18,7 @@ class BaseHandler
         virtual bool    checkObjTimeOut() = 0;
 
         static BaseHandler*     createObject(Client&);
-        static BaseHandler*     createObject(const fullResponse &);
+        static BaseHandler*     createObject(const defaultResponse &);
 
     protected:
         bool    checkTimeOut();

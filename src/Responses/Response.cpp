@@ -1,21 +1,21 @@
 #include <ProgramConfigs.hpp>
 responsesMap Response::defaults;
-fullResponsesMap Response::fullResponses;
+defaultResponsesMap Response::defaultResponses;
 
 
 
 
-const fullResponse& Response::getDefault(ErrorCodes code)
+const defaultResponse& Response::getDefault(ErrorCodes code)
 {
-    fullResponsesMap::iterator it = fullResponses.find(code);
+    defaultResponsesMap::iterator it = defaultResponses.find(code);
 
     return it->second;
 }
 
 
-fullResponse::fullResponse(const Responses& obj) : _body(obj._title.empty() ? "" : TEMPLATE)
+defaultResponse::defaultResponse(const Responses& obj) : _body(obj._title.empty() ? "" : TEMPLATE)
 {
-        //fullResponse*res = new fullResponse();
+        //defaultResponse*res = new defaultResponse();
         if (!obj._title.empty())
         {
             _body.insert(_body.find("<title>") + std::strlen("<title>"), obj._title);
@@ -33,13 +33,13 @@ Responses::Responses(const std::string& http, const std::string& title, const st
 
 }
 
-void Response::createFullResponses()
+void Response::createDefaultResponses()
 {
     responsesMap::iterator it = defaults.begin();
 
     for (; it != defaults.end(); ++it)
     {
-        fullResponses.insert(std::make_pair(it->first, fullResponse(it->second)));
+        defaultResponses.insert(std::make_pair(it->first, defaultResponse(it->second)));
     }
 
 }
@@ -71,6 +71,6 @@ void    Response::initDefaultMap()
     defaults.insert(std::make_pair(VERSION_NOT_SUPPORTED, Responses(VERSION_NOT_SUPPORTED_HTTP, VERSION_NOT_SUPPORTED_TITLE, VERSION_NOT_SUPPORTED_BODY)));
     defaults.insert(std::make_pair(BAD_GATEWAY, Responses(BAD_GATEWAY_HTTP, BAD_GATEWAY_TITLE, BAD_GATEWAY_BODY)));
 
-    createFullResponses();
+    createDefaultResponses();
     defaults.clear();
 }

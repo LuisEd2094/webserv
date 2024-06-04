@@ -11,10 +11,10 @@
 # define    IN_AND_OUT POLLIN | POLLOUT | POLLHUP
 # define    JUST_IN POLLIN | POLLHUP
 # define    JUST_OUT POLLOUT | POLLHUP
-# define    KEEP_ALIVE true
+# define    KEEP_ALIVE false
 
 
-# define NUM_OBJ 3
+# define NUM_OBJ 4
 /* # define FILE_OBJ "file"
 # define DIRECT_OBJ "direct"
 # define CGI_OBJ "cgi" */

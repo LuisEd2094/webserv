@@ -5,10 +5,12 @@
 # include <ProgramConfigs.hpp>
 # include <queue>
 
+class Client;
+
 class RequestHandler
 {
     public:
-        RequestHandler();
+        RequestHandler(const Client&);
         ~RequestHandler();
         void                setHTTPResponse(const std::string &message);
         void                setBodyResponse(const std::string &message);
@@ -20,8 +22,6 @@ class RequestHandler
 
         void                    updateBytesSent(std::size_t);
 
-
-        void                    setHeaderAddons(const std::queue<std::string>&);
         const char *            getToSend();
         std::size_t             getChunkSize();
         const std::string&      getHTTP();

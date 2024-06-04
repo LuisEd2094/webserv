@@ -362,6 +362,7 @@ void Client::resetClient(bool has_body)
         }
         _in_body.clear();
     }
+    _http_addons.empty();
     _pending_read = false;
     _action = WAIT;
     _response_type = NOT_SET;

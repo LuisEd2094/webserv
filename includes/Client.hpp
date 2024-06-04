@@ -32,21 +32,24 @@ class Client : public BaseHandler
         void                addObject(BaseHandler *);
 
         // setters
+        void                addHeader(const std::string &new_element);
         void                addHeader(const std::queue<std::string> &);
-        void                setFullResponse(const fullResponse& response, BaseHandler*);
+        void                setdefaultResponse(const defaultResponse& response, BaseHandler*);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
         void                setResponseType(ObjectTypes );
         void                setPathFile(const std::string&);
 
         //getters
-        Server *            getServer() const;
-        int                 getFD() const;
-        const std::string&  getURL() const;
-        ObjectTypes         getResponseType() const;
-        const std::string&  getBody() const;
-        const std::string&  getPathFile() const;
-        const std::string&  getMapValue(const std::string& ); 
+        Server *                        getServer() const;
+        int                             getFD() const;
+        const std::string&              getURL() const;
+        ObjectTypes                     getResponseType() const;
+        const std::string&              getBody() const;
+        const std::string&              getPathFile() const;
+        const std::string&              getMapValue(const std::string& );
+        const std::queue<std::string>&  getHTTPAddons() const;
+ 
 
         class clientException;
 

@@ -1,4 +1,5 @@
 #include <RequestHandler.hpp>
+#include <Client.hpp>
 
 
 void RequestHandler::setHTTPResponse(const std::string &message)
@@ -6,8 +7,7 @@ void RequestHandler::setHTTPResponse(const std::string &message)
     _HTTP_response.append(message);
     while (!_header_addons.empty())
     {
-        std::cout << _header_addons.front() << std::endl;
-        _HTTP_response.append(_header_addons.front());
+        _HTTP_response.insert(_HTTP_response.find_first_of('\n') + 1, _header_addons.front());
         _header_addons.pop();
     }
     _C_type_HTTP = _HTTP_response.c_str();
@@ -101,11 +101,12 @@ bool    RequestHandler::isFinished()
 
 void    RequestHandler::setHeaderAddons(const std::queue<std::string>& addons)
 {
-    _header_addons = addons;
+    _header_addons += addons;
 }
 
 
-RequestHandler::RequestHandler():
+RequestHandler::RequestHandler(const Client & client):
+    _header_addons(client.getHTTPAddons()),
     _HTTP_response(""),
     _HTTP_response_len(0),
     _HTTP_bytes_sent(0),
@@ -115,7 +116,6 @@ RequestHandler::RequestHandler():
     _body_response_len(0),
     _body_bytes_sent(0),
     _C_type_body(NULL)
-
 {
 
 }

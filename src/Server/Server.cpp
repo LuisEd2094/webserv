@@ -128,8 +128,10 @@ void Server::getResponse(Client & client)
         response = BaseHandler::createObject(getErrorResponseObject(INTERNAL_SERVER_ERROR));
     }
     std::queue<std::string> queue;
-    queue.push("Set-Cookie: 1");
-    client.addHeader(queue);    
+    queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10") + CRNL);
+
+    client.addHeader(queue);   
+    client.addHeader(std::string("Connection: keep-alive") + CRNL); 
     client.addObject(response);
     /*
         Check here to add Redirect headers and other HTTPS?
@@ -138,11 +140,11 @@ void Server::getResponse(Client & client)
 }
 
 
-const fullResponse& Server::getErrorResponseObject(ErrorCodes code)
+const defaultResponse& Server::getErrorResponseObject(ErrorCodes code)
 {
     // check code against files in config
     // else returns default error
-    // Server map con FullResponseObjs. Full response objs. HTTP y el Contenido del FILE si es que fue indicado en el 
+    // Server map con defaultResponseObjs. Full response objs. HTTP y el Contenido del FILE si es que fue indicado en el 
     // confi 
     // 
 
