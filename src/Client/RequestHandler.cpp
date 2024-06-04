@@ -4,6 +4,11 @@
 void RequestHandler::setHTTPResponse(const std::string &message)
 {
     _HTTP_response.append(message);
+    while (!_header_addons.empty())
+    {
+        _HTTP_response.append(_header_addons.front());
+        _header_addons.pop();
+    }
     _C_type_HTTP = _HTTP_response.c_str();
     _HTTP_response_len = std::strlen(_C_type_HTTP);
     _HTTP_bytes_sent = 0;
@@ -92,6 +97,12 @@ bool    RequestHandler::isFinished()
     else
         return false;
 }
+
+void    RequestHandler::setHeaderAddons(const std::queue<std::string>& addons)
+{
+    _header_addons = addons;
+}
+
 
 RequestHandler::RequestHandler():
     _HTTP_response(""),

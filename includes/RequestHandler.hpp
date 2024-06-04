@@ -3,6 +3,7 @@
 # include <iostream>
 # include <cstring>
 # include <ProgramConfigs.hpp>
+# include <queue>
 
 class RequestHandler
 {
@@ -19,9 +20,9 @@ class RequestHandler
 
         void                    updateBytesSent(std::size_t);
 
+
+        void                    setHeaderAddons(const std::queue<std::string>&);
         const char *            getToSend();
-
-
         std::size_t             getChunkSize();
         const std::string&      getHTTP();
         const std::string&      getBody();
@@ -29,6 +30,7 @@ class RequestHandler
         const char *            getC_Body();
 
     private:
+        std::queue<std::string> _header_addons;
         std::string             _HTTP_response;
         std::size_t             _HTTP_response_len;
         std::size_t             _HTTP_bytes_sent;

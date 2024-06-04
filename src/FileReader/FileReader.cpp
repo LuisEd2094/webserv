@@ -108,6 +108,7 @@ int FileReader::Action(int event)
         {
             if (result ==  0)
             {
+                /*I should be setting this with setFullResponse*/
                 std::string http = setContentType(std::string(HTTP_OK));
                 if (_buffer.find_last_of("\n") != _buffer.length() - 1) /*Just to make sure there is an end of line */
                     _buffer.append("\n");

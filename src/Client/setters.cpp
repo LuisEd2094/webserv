@@ -1,5 +1,15 @@
 #include <Client.hpp>
 
+
+void    Client::addHeader(const std::queue<std::string> &queue)
+{
+    RequestHandler * last = _response_objects_queue.back();
+
+    last->setHeaderAddons(queue);
+
+}
+
+
 void Client::setFullResponse(const fullResponse& response, BaseHandler* obj)
 {
     std::map<BaseHandler*,  RequestHandler *>::iterator it = _response_objects_map.find(obj);

@@ -32,6 +32,7 @@ class Client : public BaseHandler
         void                addObject(BaseHandler *);
 
         // setters
+        void                addHeader(const std::queue<std::string> &);
         void                setFullResponse(const fullResponse& response, BaseHandler*);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);

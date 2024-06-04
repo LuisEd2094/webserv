@@ -34,7 +34,7 @@ enum ErrorCodes
     BAD_GATEWAY
 };
 
-# define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\nSet-Cookie: SID=1234; Path=/Cookies\r\nSet-Cookie: lang=en-US\r\n"
+# define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\nConnection: keep-alive\r\nSet-Cookie: SID=1234; Path=/Cookies; Max-Age=10\r\nSet-Cookie:lang=en-US; Max-Age=10\r\n"
 
 /*4xx ERRORS*/
 

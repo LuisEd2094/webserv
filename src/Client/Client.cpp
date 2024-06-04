@@ -324,7 +324,6 @@ int Client::sendResponse()
     RequestHandler * request = _response_objects_queue.front();
     if (request && request->pendingSend())
     {
-        std::cout << request->getToSend() << std::endl;
         if ((_result = send(_fd, request->getToSend(), request->getChunkSize(), 0) ) == -1)
             return (-1);
         request->updateBytesSent(_result);
@@ -372,7 +371,9 @@ void Client::resetClient(bool has_body)
 }
 bool Client::checkObjTimeOut()
 {
-    if((_pending_read || _error) && checkTimeOut())
+    /* Should have a different time out setting for open connections that are not being used*/
+/*     char *error_buffer[1];
+ */    if((_pending_read || _error) && checkTimeOut())
     {
         //When time out, client will stop listening for incoming messages, will send everything it has
         // in queue and thenn close connection.
@@ -388,6 +389,10 @@ bool Client::checkObjTimeOut()
         _keep_alive = false;
         return false;
     }
+/*     else if (!checkTimeOut() && !_pending_read && recv(_fd, error_buffer, sizeof(error_buffer), MSG_DONTWAIT) == -1)
+    {
+        return true;   
+    } */
     return false;
 }
 

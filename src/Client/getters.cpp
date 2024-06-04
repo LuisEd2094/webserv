@@ -33,3 +33,10 @@ const std::string&  Client::getPathFile() const
     return _path_to_file;
 }
 
+
+const std::string&  Client::getMapValue(const std::string& value)
+{
+    return _parser_http.getMapValue(value);
+
+} 
+

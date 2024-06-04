@@ -79,7 +79,34 @@ void Server::getResponse(Client & client)
         }
         else if (url.find("/Cookies/") != std::string::npos)
         {
-            client.setPathFile("/home/luis/proyects/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
+            const std::string& cookie = client.getMapValue("Cookie");
+
+            std::cout << cookie << std::endl;
+            if (cookie != "not found")
+            {
+                std::stringstream   iss(cookie);
+                std::string         parser;
+                while (getline(iss, parser, ';'))
+                {
+                    std::cout << &parser[parser.find_first_not_of(' ')] << std::endl;
+                    if (parser.find("lang=") != std::string::npos)
+                    {
+                        if (parser.find("en-US", parser.find("lang=") + std::strlen("lang=")) != std::string::npos)
+                        {
+                            client.setPathFile("/home/luis/proyects/webserv/html/CookiesHTTPEng.html");
+                        }
+                        else
+                            client.setPathFile("/home/luis/proyects/webserv/html/CookiesHTTPEsp.html");
+                    }
+
+                }
+            }
+            else
+            {
+                client.setPathFile("/home/luis/proyects/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
+            }
+            std::cout << client.getPathFile() << std::endl;
+            //client.setPathFile("/home/luis/proyects/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
             client.setResponseType(FILE_OBJ);
         }
         else if (url == "/index.html")
@@ -101,6 +128,12 @@ void Server::getResponse(Client & client)
         response = BaseHandler::createObject(getErrorResponseObject(INTERNAL_SERVER_ERROR));
     }
     client.addObject(response);
+    /*
+        Check here to add Redirect headers and other HTTPS?
+    */
+    std::queue<std::string> queue;
+    queue.push("Set-Cookie: 1");
+    client.addHeader(queue);
 }
 
 
