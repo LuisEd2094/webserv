@@ -45,6 +45,7 @@ class Client : public BaseHandler
         ObjectTypes         getResponseType() const;
         const std::string&  getBody() const;
         const std::string&  getPathFile() const;
+        const std::string&  getMapValue(const std::string& ); 
 
         class clientException;
 

@@ -163,6 +163,10 @@ class Parsing
 		size_t		_begin;
 		bool		_endRead;
 		int			_statusError;
+
+
+
+		std::string _not_found;
 	public:
 		Parsing(void);
 		~Parsing(void);
@@ -186,7 +190,7 @@ class Parsing
 	//getMethods
 	std::string		getTypeLine(const std::string& strFind);
 	size_t		getPos(void);
-	std::string getMapValue(const std::string& key);
+	const std::string& getMapValue(const std::string& key);
 	size_t	getEndSize(void);
 	std::map<std::string, std::string> getMap(void);
 	// const t_request	*getRequest(void) const;

@@ -27,6 +27,7 @@ Parsing::Parsing( void )
 	_findNewline = 0;
 	_endRead = false;
 	_statusError = 0;
+	_not_found = "not found";
 }
 
 Parsing::~Parsing( void )
@@ -197,11 +198,13 @@ std::map<std::string, std::string> Parsing::getMap(void)
 	return (this->_method.content);
 }
 
-std::string Parsing::getMapValue(const std::string& key)
+const std::string& Parsing::getMapValue(const std::string& key)
 {
 	std::map<std::string, std::string>::iterator it = this->_method.content.find(key);
 	if (it == this->_method.content.end())
-		return ("not found");
+	{
+		return (_not_found);
+	}
 	return (it->second);
 }
 
