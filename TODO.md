@@ -31,6 +31,11 @@
 - Else, damos respuesta con codigo de error, y la siguiente la tomamos como una petecion nueva, si nos mandaran el Body porque USER IS STUPID entonces parseer daria error.
 
 8. MaxHeaderSize o MaxBody error == 413 Payload TOO large
+9. BONUS COOKIES
+   - En el config ponemos algo estilo if ($cookies) para identificar que el server debe de verificar el contenido de cookies en esta conexion. De esta forma podemos retornar diferentes htmls dependiendo de configuracion de lang
+   - Se puede colocar una directiva de set_header Cookie + variable name? 
+   - Pasar estos headers a el CGI? O lo maneja directamente el server?
+   - El JS puede tambien manejar los cookies con  document.cookie
 
 | Cookies State                 | Acciones                                                     | Status |
 | ----------------------------- | ------------------------------------------------------------ | ------ |
