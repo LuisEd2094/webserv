@@ -32,10 +32,10 @@ CGI::CGI(Client& client) : _client_fd(client.getFD())
     {
         //signal(SIGINT, SIG_DFL);
         //signal(SIGQUIT, SIG_DFL);
-        std::string cgi_path = "/home/luis/proyects/webserv/CGI" + client.getURL();
+        const std::string cgi_path = "/home/luis/proyects/webserv/CGI" + client.getURL();
         char* argv[3];
         argv[0] = const_cast<char*>("/usr/bin/python3");
-        argv[1] = const_cast<char*>(cgi_path.c_str()); // Convert const char* to char*
+        argv[1] = const_cast<char*>(client.getPathFile().c_str()); // Convert const char* to char*
         argv[2] = NULL; // Null-terminate the array
         //close(_pipe[0]);
         //dup2(_pipe[1], STDOUT_FILENO);

@@ -5,16 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cookie Example</title>
     <script>
-        // Function to set a cookie
-        function setCookie(name, value, days) {
-            let expires = "";
-            if (days) {
-                const date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-        }
 
         // Function to get a cookie
         function getCookie(name) {
@@ -41,13 +31,12 @@
 
         // Set the cookie on page load
         window.onload = function() {
-            setCookie("lang", "en-US", 7); // Set cookie to 'en-US' for 7 days
+            getCookie("lang", "en-US", 7); // Set cookie to 'en-US' for 7 days
             checkLangCookie();
         };
 
         // Set the cookie on page load
         window.onload = function() {
-            setCookie("lang", "en-US", 7); // Set cookie to 'en-US' for 7 days
             checkLangCookie();
         };
     </script>

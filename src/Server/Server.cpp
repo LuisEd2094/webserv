@@ -56,7 +56,7 @@ bool Server::validateAction(Client& client)
     // GET es valido para esta URL
     // POST valido para uRL etc 
     const std::string url = client.getURL();
-    if (url == "/" or url == "/nolen.py" or url == "/index.html")
+    if (url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
         return true;
     else
     {
@@ -77,12 +77,19 @@ void Server::getResponse(Client & client)
         {
             client.setResponseType(DIRECT_OBJ);
         }
+        else if (url.find("/Cookies/") != std::string::npos)
+        {
+            client.setPathFile("/home/luis/proyects/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
+            client.setResponseType(FILE_OBJ);
+        }
         else if (url == "/index.html")
         {
+            client.setPathFile("/home/luis/proyects/webserv/html/index.html");
             client.setResponseType(FILE_OBJ);
         }
         else if (url == "/nolen.py")
         {
+            client.setPathFile("/home/luis/proyects/webserv/CGI/nolen.py");
             client.setResponseType(CGI_OBJ);
         }
         response = BaseHandler::createObject(client);

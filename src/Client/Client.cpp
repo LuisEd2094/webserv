@@ -218,6 +218,7 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
+        std::cout << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "Keep-Alive")
         {
@@ -323,6 +324,7 @@ int Client::sendResponse()
     RequestHandler * request = _response_objects_queue.front();
     if (request && request->pendingSend())
     {
+        std::cout << request->getToSend() << std::endl;
         if ((_result = send(_fd, request->getToSend(), request->getChunkSize(), 0) ) == -1)
             return (-1);
         request->updateBytesSent(_result);

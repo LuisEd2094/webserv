@@ -40,7 +40,8 @@ const std::string& FileReader::getMimeType(const std::string& to_find)
 
 FileReader::FileReader(Client& client) : _client_fd(client.getFD())
 {
-    _fd = open("/home/luis/proyects/webserv/html/index.html", O_RDONLY);
+    _fd = open(client.getPathFile().c_str(), O_RDONLY);
+    std::cout << _fd << std::endl;
 
     std::size_t start_ext = client.getURL().find_last_of(".");
     

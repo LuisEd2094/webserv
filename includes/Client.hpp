@@ -28,15 +28,15 @@ class Client : public BaseHandler
         Client(Server *server);
         ~Client();
         int                 Action(int event);
+        bool                checkObjTimeOut();
+        void                addObject(BaseHandler *);
 
         // setters
-        void                addObject(BaseHandler *);
         void                setFullResponse(const fullResponse& response, BaseHandler*);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
-
         void                setResponseType(ObjectTypes );
-        bool                checkObjTimeOut();
+        void                setPathFile(const std::string&);
 
         //getters
         Server *            getServer() const;
@@ -44,6 +44,7 @@ class Client : public BaseHandler
         const std::string&  getURL() const;
         ObjectTypes         getResponseType() const;
         const std::string&  getBody() const;
+        const std::string&  getPathFile() const;
 
         class clientException;
 
@@ -81,6 +82,8 @@ class Client : public BaseHandler
         void                    removeFirstObj();
 
         ObjectTypes             _response_type;
+
+        std::string             _path_to_file;
 
 
 

@@ -32,7 +32,31 @@
 
 8. MaxHeaderSize o MaxBody error == 413 Payload TOO large
 
-  
+| Cookies State                 | Acciones                                                     | Status |
+| ----------------------------- | ------------------------------------------------------------ | ------ |
+| First Connection              | Client no envia cookies en su HTTP. Se crea una session para el cliente, se debe de guardar el SESION ID para posteriores solicitudes. Key=Value pairs | ❌      |
+| Que contendria el COOKIE?     | Son Key=Value pairs. Enviamos un header Set-Cookie= Key=Value. Podemos pasar attributos con cada cookie separando con ";" See [Attributes](#Attributes) |        |
+| More Connections              | Client envia TODOS los cookies que le enviamos, tanto en la ultima respuesta como en anteriores. En un campo Cookies, con valores separados por ; para cada cookie. Las cookies en si son Key=Value pairs | ❌      |
+| Que hacer si tenemos cookies? | Modificar coomportamiento/respuestas dependiendo de si el cliente nos envia Cookies validas o no. | ❌      |
+|                               |                                                              |        |
+|                               |                                                              |        |
+|                               |                                                              |        |
+|                               |                                                              |        |
+|                               |                                                              |        |
+
+
+## Attributes
+
+| Attribute Name                                               | Attribute Action                                             | Dev Notes | Dev State |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | --------- | --------- |
+| Expires=sane-cookie-date ([Sane Cookie Definition](https://datatracker.ietf.org/doc/html/rfc2616#section-3.3.1)) | Sets expiration date for Cookie. Client doesnt HAVE to keep that Cookie up to that date |           | ❌         |
+| Max-Age=non-zero-digit                                       | Similar to Expires. It re presents the number of seconds until it expires.<br />Si Max-age y Expires esta presente, Max Age toma prioridad. Si no se envia ninguno, user agent decide cuando dejar de guardar cookies<br /> |           | ❌         |
+| Domain=domain-value ([Domain-Value Definition](https://datatracker.ietf.org/doc/html/rfc1034#section-3.5) [Domain-Value Enhancement](https://datatracker.ietf.org/doc/html/rfc1123#section-2.1)) | Le indica al cliente a que HOSTS debe de enviar este cookie. Si enviamos Domain=example.com, entonces el cliente enviara el cookie a example.com, www.example.com, www.corp.example.com, por ejemplo. <br />Sera rechazado  si es que el Domain no incluye el Origin server:<br />For example, the user agent will accept a cookie with a    Domain attribute of "example.com" or of "foo.example.com" from    foo.example.com, but the user agent will not accept a cookie with a    Domain attribute of "bar.example.com". |           | ❌         |
+| Path=<any CHAR except CTLs or ";">                           | The user agent will include the cookie in an HTTP request only if the    path portion of the request-uri matches (or is a subdirectory of) the    cookie's Path attribute, where the %x2F ("/") character is    interpreted as a directory separator. |           | ❌         |
+| Secure                                                       | The Secure attribute limits the scope of the cookie to "secure"    channels (where "secure" is defined by the user agent).  When a    cookie has the Secure attribute, the user agent will include the    cookie in an HTTP request only if the request is transmitted over a    secure channel (typically HTTP over Transport Layer Security (TLS)    [RFC2818]). |           | ❌         |
+| HttpOnly                                                     | The HttpOnly attribute limits the scope of the cookie to HTTP    requests.  In particular, the attribute instructs the user agent to    omit the cookie when providing access to cookies via "non-HTTP" APIs    (such as a web browser API that exposes cookies to scripts).     Note that the HttpOnly attribute is independent of the Secure    attribute: a cookie can have both the HttpOnly and the Secure    attribute. | Por ejemplo, si tratamos de usar JS para leer las cookies, pero las cookies estan en HttpOnly, entonces JS **no** tendra acceso a las cookies, pero si podremos verlas en el HTTP Request!      | ❌         |
+
+
 
 |Code | Name |  Use case |Condition | Additional Information | Dev Notes | Status |
 | ---- | --|--------- | ----------------- | --| -- | -- |
