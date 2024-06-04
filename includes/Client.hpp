@@ -52,6 +52,7 @@ class Client : public BaseHandler
 
 
     private:
+        std::queue< std::string>                    _http_addons;
         std::queue< RequestHandler *>               _response_objects_queue;
         std::map< BaseHandler *,  RequestHandler *> _response_objects_map;
         Parsing                 _parser_http;

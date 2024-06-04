@@ -127,13 +127,14 @@ void Server::getResponse(Client & client)
     {
         response = BaseHandler::createObject(getErrorResponseObject(INTERNAL_SERVER_ERROR));
     }
+    std::queue<std::string> queue;
+    queue.push("Set-Cookie: 1");
+    client.addHeader(queue);    
     client.addObject(response);
     /*
         Check here to add Redirect headers and other HTTPS?
     */
-    std::queue<std::string> queue;
-    queue.push("Set-Cookie: 1");
-    client.addHeader(queue);
+
 }
 
 

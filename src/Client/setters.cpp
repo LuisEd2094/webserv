@@ -3,9 +3,7 @@
 
 void    Client::addHeader(const std::queue<std::string> &queue)
 {
-    RequestHandler * last = _response_objects_queue.back();
-
-    last->setHeaderAddons(queue);
+    _http_addons = queue;
 
 }
 
@@ -51,6 +49,7 @@ void    Client::addObject(BaseHandler * obj)
         DirectResponse* direct_object = dynamic_cast<DirectResponse *>(obj);
         
         _response_objects_queue.push(new_handler);
+        new_handler->setHeaderAddons(_http_addons);
         if (direct_object)
         {
             handleDirectObj(direct_object, new_handler);

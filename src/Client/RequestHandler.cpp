@@ -6,6 +6,7 @@ void RequestHandler::setHTTPResponse(const std::string &message)
     _HTTP_response.append(message);
     while (!_header_addons.empty())
     {
+        std::cout << _header_addons.front() << std::endl;
         _HTTP_response.append(_header_addons.front());
         _header_addons.pop();
     }
