@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Example</title>
+    <script>
+        // Function to set a cookie
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+
+        // Function to get a cookie
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i=0;i < ca.length;i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
+        // Function to check the language cookie and display a message
+        function checkLangCookie() {
+            const lang = getCookie("lang");
+            if (lang === "en-US") {
+                document.getElementById("message").innerText = "Language is set to English (US)";
+            } else {
+                document.getElementById("message").innerText = "Language is not set to English (US)";
+            }
+            console.log(lang);
+        }
+
+        // Set the cookie on page load
+        window.onload = function() {
+            setCookie("lang", "en-US", 7); // Set cookie to 'en-US' for 7 days
+            checkLangCookie();
+        };
+
+        // Set the cookie on page load
+        window.onload = function() {
+            setCookie("lang", "en-US", 7); // Set cookie to 'en-US' for 7 days
+            checkLangCookie();
+        };
+    </script>
+</head>
+<body>
+    <h1>Cookie Example</h1>
+    <p id="message"></p>
+</body>
+</html>
