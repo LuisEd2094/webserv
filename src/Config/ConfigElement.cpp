@@ -3,6 +3,8 @@
 #include "Overseer.hpp"
 # include <map> //map
 
+void fileElement4Response();
+
 std::string ConfigElement::genSpace(int ammount)
 {
 	ammount *= 4;

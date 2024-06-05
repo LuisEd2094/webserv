@@ -72,11 +72,40 @@ bool Server::validateAction(Client& client)
     }
 }
 
+/*
+
+Proceso de desicion :3
+
+inputs:serName peticion y metodo;
+
+host port for server (listen)
+
+server_name
+  default server
+  
+path
+valid methods 
+root
+index
+dirlisting
+normal file
+ 
+ 
+ error page
+
+*/
 void Server::getResponse(Client & client)
 {
     //CGI?
     // We assume we called validateAction before reaching this point.
     const std::string & url = client.getURL();
+    const std::string & hostHeader = client.getMapValue("Host");
+
+    std::cout << RED << "Host:" << END << hostHeader << std::endl;
+    std::string serverName = getKey(hostHeader, ':');
+    std::string port = getValue(hostHeader, ':');
+    std::cout << YELLOW << "serverName: " << END << serverName << YELLOW << " port: " << END << port << std::endl;
+
     BaseHandler * response;
     try
     {
