@@ -18,7 +18,7 @@ class ConfigCgi: public ConfigElement
 		ConfigCgi(void); // TODO
 		ConfigCgi(ParsingCgi& obj);
 		ConfigCgi(const ConfigCgi& obj);
-		ConfigCgi &operator=( const ConfigCgi& obj){ return (*this);};
+		ConfigCgi &operator=( const ConfigCgi& obj){(void)obj; return (*this);};
 		~ConfigCgi(){};
 
 		void set__elemType__(std::string v){this->__elemArgument__ = v;};

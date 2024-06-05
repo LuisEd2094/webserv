@@ -117,7 +117,7 @@ int Parsing::checkMethod(const std::string& strIn)
 }
 
 
-const std::string& Parsing::getMethod(void)
+const std::string& Parsing::getMethod(void) const
 {
 	return (_method.method);
 }
@@ -168,9 +168,13 @@ int	Parsing::parsingHeader(const std::string& strRead)
 		}
 		start = end;
 		_findNewline = start;
-		if (emptyLine == 1)
+		if (emptyLine == 1) // This is when we get the double new line, end of HTTP
 		{
 			_endRead = (emptyLine == 1);
+			if (getMapValue("Host") == "not found")
+			{
+				return (_statusError = this->printStatus(_errors[3], ERROR, ERROR_FORMAT));
+			}
 			return (_statusError = EXIT_SUCCESS);
 		}
 	}

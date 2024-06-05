@@ -44,6 +44,8 @@ class Client : public BaseHandler
         Server *                        getServer() const;
         int                             getFD() const;
         const std::string&              getURL() const;
+        const std::string&              getMethod() const;
+    
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
         const std::string&              getPathFile() const;
