@@ -101,7 +101,7 @@ bool    RequestHandler::isFinished()
 
 void    RequestHandler::setHeaderAddons(const std::queue<std::string>& addons)
 {
-    _header_addons += addons;
+    _header_addons = addons;
 }
 
 

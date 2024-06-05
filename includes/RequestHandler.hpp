@@ -14,6 +14,7 @@ class RequestHandler
         ~RequestHandler();
         void                setHTTPResponse(const std::string &message);
         void                setBodyResponse(const std::string &message);
+        void                setHeaderAddons(const std::queue<std::string>& addons);
 
         bool                has_http();
         bool                has_body();
