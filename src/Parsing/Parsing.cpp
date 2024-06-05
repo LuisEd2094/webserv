@@ -202,9 +202,9 @@ std::map<std::string, std::string> Parsing::getMap(void)
 	return (this->_method.content);
 }
 
-const std::string& Parsing::getMapValue(const std::string& key)
+const std::string& Parsing::getMapValue(const std::string& key) const
 {
-	std::map<std::string, std::string>::iterator it = this->_method.content.find(key);
+	std::map<std::string, std::string>::const_iterator it = this->_method.content.find(key);
 	if (it == this->_method.content.end())
 	{
 		return (_not_found);

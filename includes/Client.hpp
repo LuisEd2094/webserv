@@ -45,11 +45,13 @@ class Client : public BaseHandler
         int                             getFD() const;
         const std::string&              getURL() const;
         const std::string&              getMethod() const;
+        const std::string&              getHost() const;
+
     
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
         const std::string&              getPathFile() const;
-        const std::string&              getMapValue(const std::string& );
+        const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
  
 

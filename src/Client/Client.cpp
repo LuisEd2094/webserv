@@ -97,10 +97,6 @@ void Client::readFromFD()
                     int parser_method = _parser_http.checkMethod(_in_container);
                     if (!parser_method) //check method returns 0 on success
                     {
-                        if (!_server->validateAction(*this))
-                        {
-                            return;
-                        }
                         updateMethodAction();
                     }
                     else
@@ -136,8 +132,22 @@ void Client::readFromFD()
                 }
                 if (_action != WAIT) 
                 {
-                    if (_parser_http.parsingHeader(_in_container)) // parsingHeader return 1 on failure
+                    int parsingMessage = _parser_http.parsingHeader(_in_container);
+
+                    if (parsingMessage == WARNING) // parsingHeader return 1 on failure
                         break;
+                    else if (parsingMessage) // parsingHeader returns something different to warning when error
+                    {
+                            if (parsingMessage == ERROR_FORMAT)
+                            {
+                                addObject(BaseHandler::createObject(_server->getErrorResponseObject(BAD_REQUEST)));
+                            }
+                            _error = true;
+                            _can_read = false;
+                            _pending_read = false;
+                            Overseer::setListenAction(_fd, JUST_OUT);
+                            break;
+                    } 
                     parseForHttp();
                 }
             }
@@ -218,9 +228,13 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
+        if (!_server->validateAction(*this))
+        {
+            return;
+        }
         std::cout << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
-        if (_parser_http.getMapValue("Connection") == "Keep-Alive")
+        if (_parser_http.getMapValue("Connection") == "keep-alive")
         {
             _keep_alive = true;
         }

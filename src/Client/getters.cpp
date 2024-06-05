@@ -34,7 +34,7 @@ const std::string&  Client::getPathFile() const
 }
 
 
-const std::string&  Client::getMapValue(const std::string& value)
+const std::string&  Client::getMapValue(const std::string& value) const
 {
     return _parser_http.getMapValue(value);
 
@@ -45,3 +45,13 @@ const std::queue<std::string>& Client::getHTTPAddons() const
 {
     return _http_addons;
 }
+
+const std::string& Client::getMethod() const
+{
+    return _parser_http.getMethod();
+}
+
+const std::string& Client::getHost() const
+{
+    return _parser_http.getMapValue("Host");
+}     

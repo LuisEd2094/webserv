@@ -55,7 +55,14 @@ bool Server::validateAction(Client& client)
     // check method and url against config.
     // GET es valido para esta URL
     // POST valido para uRL etc 
-    const std::string url = client.getURL();
+    const std::string& url = client.getURL();
+    const std::string& method = client.getMethod();
+    const std::string& host = client.getHost();
+
+    std::cout << method << std::endl;
+    std::cout << host << std::endl;
+    virtualServers.back().recursivePrint();
+
     if (url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
         return true;
     else
