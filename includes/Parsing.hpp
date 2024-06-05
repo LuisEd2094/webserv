@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/30 10:47:40 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/06/05 14:50:45 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,23 @@ void	printMap(const M& map)
 		std::cout << ORANGE << "Key: " << END << i->first << ORANGE
 			<< "\tValue: " << END << i->second << std::endl;
 	}
+}
+
+template<typename LV>
+std::string	containerToString(const LV& obj)
+{
+	typename LV::const_iterator i;
+	std::string resul;
+	bool	noBegin = false;
+	for (i = obj.begin(); i != obj.end(); ++i)
+	{
+		if (noBegin)
+			resul += "; ";
+		else
+			noBegin = true;
+		resul += *i;
+	}
+	return (resul);
 }
 
 template<typename K>

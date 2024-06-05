@@ -13,6 +13,7 @@ class ConfigVirtualServer: public ConfigElement
 	private:
 		std::string	errorPage;
 		int			maxClientBodySize;
+		std::list<std::string> serverNames;
 		std::list<ConfigLocation> locations;
 
 	public:
@@ -20,10 +21,12 @@ class ConfigVirtualServer: public ConfigElement
 		void setErrorPage(std::string error);
 		void setMaxClientBodySize(int bodySize);
 		void setMaxClientBodySize(std::string bodySize);
+		void setServerNames(std::string serverName);
 		void setLocations(std::list<ConfigLocation> inpLocations) {this->locations = inpLocations;};
 		//get
 		std::string getErrorPage(void)  const;
 		int getMaxClientBodySize(void)  const;
+		std::list<std::string> getServerNames(void);
 		std::list<ConfigLocation> getLocations(void) {return this->locations;};
 
 		void recursivePrint(void);
