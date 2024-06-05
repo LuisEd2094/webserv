@@ -87,7 +87,6 @@ void Overseer::addToPfds(int new_fd, int events, int revents)
 
 Server* Overseer::saveServer(t_confi* confi)
 {
-
     Server * server = new Server(confi);
     addToPfds(server);
     return server;

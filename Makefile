@@ -74,7 +74,7 @@ BASE			=	BaseHandler.cpp
 
 BASE_FILES		=	$(addprefix $(BASE_PATH), $(BASE))
 
-PARSING			=	ParsingCgi.cpp      ParsingGlobal.cpp   ParsingLocation.cpp ParsingElement.cpp    ParsingServer.cpp    Parsing.cpp parseListen.cpp
+PARSING			=	ParsingCgi.cpp      ParsingGlobal.cpp   ParsingLocation.cpp ParsingElement.cpp    ParsingServer.cpp    Parsing.cpp parseListen.cpp	Path.cpp
 
 PARSING_FILES		=	$(addprefix $(PARSING_PATH), $(PARSING))
 
@@ -90,7 +90,7 @@ CLIENT			=	Client.cpp getters.cpp setters.cpp RequestHandler.cpp DirectResponse.
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
-CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp ConfigLocation.cpp
+CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp ConfigLocation.cpp ConfigCgi.cpp
 
 CONF_FILES		=	$(addprefix $(CONF_PATH), $(CONF))
 

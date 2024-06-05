@@ -7,17 +7,22 @@
 # include "Parsing.hpp"
 # include <string>
 # include "ConfigCgi.hpp"
+# include "Path.hpp"
 
 class ConfigLocation: public ConfigElement
 {
 	private:
-		std::string				_errorPage;
-		std::list<std::string>	_methods;
-		std::string				_redirection;
-		std::string				_root; // would be nice to change it to an oject
-		bool					_dirListing;
-		std::list<std::string>	_index;
-		std::list<ConfigCgi>	_cgis;
+		std::string					__elemType__;
+		std::string					__elemArgument__;
+		std::list<std::string>		_methods;
+		Path						_root; // would be nice to change it to an oject
+		std::list<std::string>		_index;
+		std::string					_redirection;
+		std::string					_errorPage;
+		bool						_dirListing;
+		std::list<ConfigCgi>		_cgis;
+		std::list<ConfigLocation>	_locations;
+		bool						_inheriting;
 		//Add list configureLocation 
 
 	public:
@@ -27,25 +32,43 @@ class ConfigLocation: public ConfigElement
 		ConfigLocation(const ConfigLocation& obj);
 		ConfigLocation( ParsingLocation& obj, ConfigLocation& father);
 		ConfigLocation &operator=( const ConfigLocation& obj);
-		~ConfigLocation(){};
+		~ConfigLocation(){}
 
-
-		void							setErrorPage(std::string inpErrorPage);
-		void							setMethods(std::string methods);
-		void							setRedirection(std::string redirection);
+		void							setDefaults();
+		void							setErrorPage(std::string inpErrorPage);//
+		void							setMethods(std::string methods);//
+		void							setRedirection(std::string redirection);//
 		void							setRoot(std::string root);
+		void							setRoot(Path root);
+		void							initializeRoot(Path root);
+		void							initializeRoot(std::string root);
 		void							setDirListing(std::string dirListing);
-		void							setIndex(std::string index);
+		void							setDirListing(bool dirListing);
+		void							setIndex(std::string index);//
 		void							setCgis(std::string cgis);//*
 
+/*
+		template <typename DataContainer, typename ElementType>
+		void appendNestedElements(DataContainer elementsList)
+		{
+			for (typename DataContainer::iterator element = elementsList.begin();
+				element != elementsList.end();
+				element++)
+			{
+				this->_locations.push_back(ElementType(*element));
+			}
+		}
+*/
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;
-		std::string						getRoot(void) const;
+		Path							getRoot(void) const;
 		bool							getDirListing(void) const;
 		std::list<std::string>			getIndex(void) const;
 		std::list<ConfigCgi>			getCgis(void) const;//*
 		std::list<ConfigLocation>		getLocations(void) const;
+
+		void							recursivePrint(int recursiveLvl);
 };
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj);
 

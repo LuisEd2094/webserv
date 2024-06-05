@@ -18,6 +18,9 @@ void	ParsingServer::createNestedElement(std::string param0, std::string param1)
 		{
 			ParsingLocation element(this->statementBegin, this->eof, this->statementEnd);
 			element.parse();
+			//element.insert(std::make_pair(param0, param1));
+			element.insert(std::make_pair("__elemType__", param0));
+			element.insert(std::make_pair("__elemArgument__", param1));
 			this->locations.push_back(element);
 		}
 		catch(const std::exception& e)

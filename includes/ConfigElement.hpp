@@ -8,7 +8,10 @@ class ConfigElement
 	private:
 
 	public:
+		int			nestedPrint;
 		static void configure(ParsingGlobal parsedData);
+		static std::string genSpace(int ammount);
+
 		class ParamError: public std::exception
 		{
 			private:

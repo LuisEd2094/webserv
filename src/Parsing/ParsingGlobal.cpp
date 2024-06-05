@@ -48,11 +48,14 @@ ParsingGlobal::ParsingGlobal(std::string::iterator &begin,
 
 void	ParsingGlobal::createNestedElement(std::string param0, std::string param1)
 {
+
 	std::cout << "global nested: " << param0 << "  " << param1 << std::endl;
 	if (param0 == "server")
 	{
 		ParsingServer element(this->statementBegin, this->eof, this->statementEnd);	
 		element.parse();
+		//element.insert(std::make_pair("__elemType__", param0));
+		//element.insert(std::make_pair("__elemArgument__", param1));
 		this->servers.push_back(element);
 	}
 	else
@@ -64,7 +67,7 @@ void	ParsingGlobal::createNestedElement(std::string param0, std::string param1)
 
 void	ParsingGlobal::recursivePrint(void)
 {
-	std::cout << TUR << "Call ParsingGlobal" << END << std::endl;
+	std::cout << TUR << "Call ParsingGlobal " << servers.size() << END << std::endl;
 	std::list<ParsingServer>::iterator it;
 	for (it = this->servers.begin(); it != this->servers.end(); ++it)
 		it->recursivePrint();

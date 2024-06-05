@@ -3,6 +3,7 @@
 
 ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed)
 {
+	this->nestedPrint = 0;
 	this->errorPage = "";
 	this->maxClientBodySize = 30000;
 	for (std::map<std::string, std::string>::iterator i = parsed.begin(); i != parsed.end(); i++)
@@ -12,8 +13,7 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed)
 	for (std::list<ParsingLocation>::iterator location = parsed.locations.begin();
 		location != parsed.locations.end(); location++)
 	{
-		this->getLocations().push_back(ConfigLocation(*location));
-		// ;
+		this->locations.push_back(ConfigLocation(*location));
 	}
 }
 
@@ -25,7 +25,7 @@ void ConfigVirtualServer::parseKeyVal(std::string key, std::string val)
 		this->setMaxClientBodySize(val);
 	else if (key == "host" || key == "port");
 	else
-		throw ParamError(std::string("Error: key not found.") + std::string(" key:") + key);
+		throw ParamError(std::string("Error: server config key not found.") + std::string(" key:") + key);
 }
 
 ConfigVirtualServer &ConfigVirtualServer::operator=(ConfigVirtualServer& obj)
@@ -61,20 +61,40 @@ void ConfigVirtualServer::setMaxClientBodySize(int bodySize)
 	this->maxClientBodySize = bodySize;
 }
 
-std::string ConfigVirtualServer::getErrorPage(void) 
+std::string ConfigVirtualServer::getErrorPage(void) const 
 {
 	return (this->errorPage);
 }
 
-int ConfigVirtualServer::getMaxClientBodySize(void) 
+int ConfigVirtualServer::getMaxClientBodySize(void) const 
 {
 	return (this->maxClientBodySize);
 }
 
-std::ostream &operator<<(std::ostream &os,  ConfigVirtualServer &obj)
+//std::ostream &operator<<(std::ostream &os, ConfigVirtualServer &obj)
+void ConfigVirtualServer::recursivePrint()
 {
-	os << "VirtualServer: " << std::endl;
-	os << "  maxbodySize: " << obj.getMaxClientBodySize() << std::endl;
-	os << "  errorPage: " << obj.getErrorPage() << std::endl;
+	ConfigVirtualServer::recursivePrint(0);
+}
+
+void ConfigVirtualServer::recursivePrint(int recursiveLvl)
+{
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "::: VirtualServer ::: " << std::endl;
+	recursiveLvl++;
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "maxBodySize: " << this->getMaxClientBodySize() << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "errorPage: " << this->getErrorPage() << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "Locations(" << this->locations.size() << "):" << std::endl;
+	for (std::list<ConfigLocation>::iterator loc = this->locations.begin(); loc != this->locations.end();loc++)
+	{
+		loc->recursivePrint(recursiveLvl);
+	}
+}
+
+std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj)
+{
+	os << "::: VirtualServer ::: " << std::endl;
+	os << "maxBodySize: " << obj.getMaxClientBodySize() << std::endl;
+	os << "errorPage: " << obj.getErrorPage() << std::endl;
+	os << "Locations: ";
 	return os;
 }

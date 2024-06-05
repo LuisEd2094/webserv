@@ -24,7 +24,7 @@ RM = rm -rf
 #                               SOURCES                                        #
 ################################################################################
 
-SRC = main.cpp Parsing.cpp\
+SRC = main.cpp Parsing.cpp Path.cpp\
 	#ParsingCgi.cpp ParsingGlobal.cpp ParsingLocation.cpp ParsingElement.cpp \
 	ParsingServer.cpp  Parsing.cpp parseListen.cpp
 INC = $(addprefix -I , ../../includes/)
@@ -67,7 +67,7 @@ all: dir $(NAME)
 -include $(DEP)
 
 dir:
-	-mkdir $(D_OBJ)
+	-mkdir -p $(D_OBJ)
 
 $(D_OBJ)/%.o:$(D_SRC)/%.cpp Makefile
 	$(CPP) $(FLAGS) -MMD -c $< -o $@ $(INC)
