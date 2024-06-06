@@ -39,11 +39,11 @@ Server::~Server()
     close(_fd);
 }
 
-
 int                Server::Action(int event)
 {
     (void)event;
     Client *newClient = new Client(this);
+
     Overseer::addToPfds(newClient);
     return (1);
 

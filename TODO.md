@@ -37,6 +37,15 @@
    - Pasar estos headers a el CGI? O lo maneja directamente el server?
    - El JS puede tambien manejar los cookies con  document.cookie
 
+10. Listen en cada server, cada bloque de server puede usar el mismo Listen port
+- -  el IP de resolucion en socket siempre sera "", tambien conocido como localhost, o la misma maquina usada, solo cambiarian los puertos usados.
+- -  Si un server block usa el mismo listen port que otro server block, se considera un virtual server. NO se hace un nuevo binding, si no que todos quedan asignados al mismo
+      server object (mismo _fd, mismo puerto). Al recibir una conexion nueva, cada Server Obj chequea el campo Host: "domain name". y lo verifica con el server_names de cada
+      server block. SI tenemos un Server block SIN server_names y NO es el primero, es basicamente inutil. El perimer Server{} con la misma combinacion domain:port sera el default
+11. Handle Chunked Posts
+
+12. The CGI should be run in the correct directory for relative path file access.
+
 | Cookies State                 | Acciones                                                     | Status |
 | ----------------------------- | ------------------------------------------------------------ | ------ |
 | First Connection              | Client no envia cookies en su HTTP. Se crea una session para el cliente, se debe de guardar el SESION ID para posteriores solicitudes. Key=Value pairs | ❌      |
