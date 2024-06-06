@@ -1,5 +1,8 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
+
+class Server;
+
 # include <BaseHandler.hpp>
 # include <iostream>
 # include <sys/types.h>
@@ -32,6 +35,7 @@ class Server : public BaseHandler
 
         bool validateAction(Client& client);
         void getResponse(Client& client);
+        bool prepareClient4ResponseGeneration(Client& client);
         bool checkObjTimeOut();
         const defaultResponse& getErrorResponseObject(ErrorCodes);
         std::list<ConfigVirtualServer>         virtualServers; // TODO wolud be nice if it was private

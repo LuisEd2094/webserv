@@ -283,6 +283,11 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 	// TODO copy code above for cgis instead of locations
 }
 
+bool ConfigLocation::prepareClient4ResponseGeneration(Client& client)
+{
+	
+}
+
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)
 {
 	os << "ConfigLocation: " << std::endl;

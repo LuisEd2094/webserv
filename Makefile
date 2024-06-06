@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+         #
+#    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 10:55:00 by lsoto-do          #+#    #+#              #
-#    Updated: 2024/05/30 12:04:20 by dacortes         ###   ########.fr        #
+#    Updated: 2024/06/06 14:07:11 by codespace        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,7 +74,7 @@ BASE			=	BaseHandler.cpp
 
 BASE_FILES		=	$(addprefix $(BASE_PATH), $(BASE))
 
-PARSING			=	ParsingCgi.cpp      ParsingGlobal.cpp   ParsingLocation.cpp ParsingElement.cpp    ParsingServer.cpp    Parsing.cpp parseListen.cpp	Path.cpp
+PARSING			=	ParsingCgi.cpp      ParsingGlobal.cpp   ParsingLocation.cpp ParsingElement.cpp    ParsingServer.cpp    Parsing.cpp 	Path.cpp
 
 PARSING_FILES		=	$(addprefix $(PARSING_PATH), $(PARSING))
 

@@ -46,6 +46,7 @@ class Client : public BaseHandler
         const std::string&              getURL() const;
         const std::string&              getMethod() const;
         const std::string&              getHost() const;
+    
 
     
         ObjectTypes                     getResponseType() const;
@@ -54,7 +55,6 @@ class Client : public BaseHandler
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
  
-
         class clientException;
 
 

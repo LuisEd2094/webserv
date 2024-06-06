@@ -103,6 +103,22 @@ void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 	}
 }
 
+bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
+{
+	std::list<std::string>::iterator server_name;
+	
+	server_name = std::find(this->serverNames.begin(), this->serverNames.end(), client.getHost());
+	if (server_name == this->serverNames.end())
+		return (false);
+	std::list<ConfigLocation>::iterator location;
+	for(location = this->locations.begin(); location != this->locations.end(); location++)
+	{
+		if (location->prepareClient4ResponseGeneration(client))
+			break ;
+	}
+	return (true);
+}
+
 std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj)
 {
 	os << "::: VirtualServer ::: " << std::endl;

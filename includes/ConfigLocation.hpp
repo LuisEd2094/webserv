@@ -1,13 +1,17 @@
 
 # ifndef CONFIG_LOCATION_HPP
 # define CONFIG_LOCATION_HPP
-
+class ConfigLocation;
 # include "ConfigElement.hpp"
 # include "ParsingServer.hpp"
 # include "Parsing.hpp"
 # include <string>
 # include "ConfigCgi.hpp"
 # include "Path.hpp"
+
+
+# include "Client.hpp"
+
 
 class ConfigLocation: public ConfigElement
 {
@@ -47,18 +51,6 @@ class ConfigLocation: public ConfigElement
 		void							setIndex(std::string index);//
 		void							setCgis(std::string cgis);//*
 
-/*
-		template <typename DataContainer, typename ElementType>
-		void appendNestedElements(DataContainer elementsList)
-		{
-			for (typename DataContainer::iterator element = elementsList.begin();
-				element != elementsList.end();
-				element++)
-			{
-				this->_locations.push_back(ElementType(*element));
-			}
-		}
-*/
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;
@@ -67,6 +59,9 @@ class ConfigLocation: public ConfigElement
 		std::list<std::string>			getIndex(void) const;
 		std::list<ConfigCgi>			getCgis(void) const;//*
 		std::list<ConfigLocation>		getLocations(void) const;
+		// int								getUriPuntuation(void);
+
+		bool 							prepareClient4ResponseGeneration(Client& client);
 
 		void							recursivePrint(int recursiveLvl);
 };

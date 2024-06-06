@@ -1,7 +1,8 @@
 #ifndef  CONFIG_ELEMENT_HPP
 # define CONFIG_ELEMENT_HPP
-
+class ConfigElement;
 # include "ParsingGlobal.hpp"
+
 
 class ConfigElement
 {

@@ -44,21 +44,6 @@ bool ParsingElement::isEndOfStatement(char target)
 
 }
 
-/*
-std::string::iterator ParsingElement::findEndOfStatement()
-{
-	std::string::iterator end;
-	end = this->statementBegin;
-	end++;
-	while (end != this->eof && !ParsingElement::isEndOfStatement(*end))
-	{
-		end++;
-	}
-	std::cout << "exiting" << std::endl;
-	return (end); 
-}
-*/
-
 std::string::iterator ParsingElement::findEndOfStatement()
 {
 	while (this->statementEnd != this->eof && !ParsingElement::isEndOfStatement(*this->statementEnd))

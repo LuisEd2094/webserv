@@ -2,11 +2,15 @@
 # ifndef CONFIG_VIRTUAL_SERVER_HPP
 # define CONFIG_VIRTUAL_SERVER_HPP
 
+class ConfigVirtualServer;
+
 # include "ConfigElement.hpp"
 # include "ConfigLocation.hpp"
 # include "ParsingServer.hpp"
 # include "Parsing.hpp"
 # include <string>
+
+# include "Client.hpp"
 
 class ConfigVirtualServer: public ConfigElement
 {
@@ -31,6 +35,8 @@ class ConfigVirtualServer: public ConfigElement
 
 		void recursivePrint(void);
 		void recursivePrint(int recursiveLvl);
+
+		bool prepareClient4ResponseGeneration(Client& client);
 
 		void parseKeyVal(std::string key, std::string val);
 		ConfigVirtualServer(void): errorPage(""), maxClientBodySize(30000){};

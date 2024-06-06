@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/30 12:02:31 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/06/06 14:05:23 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,8 +242,3 @@ std::list<std::string> ft_split(const std::string& str, char delimiter)
         list.push_back(word);
     return (list);
 }
-
-// const t_request	*Parsing::getRequest(void) const 
-// {
-// 	return (&(this->_method));
-// }

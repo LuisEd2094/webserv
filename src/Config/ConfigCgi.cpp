@@ -27,11 +27,10 @@ void ConfigCgi::recursivePrint(int recursiveLvl)
 
 }
 
+bool ConfigCgi::prepareClient4ResponseGeneration(Client& client)
+{
 
-
-
-
-
+}
 
 void ConfigCgi::parseKeyVal(std::string key, std::string val)
 {

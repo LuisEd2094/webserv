@@ -97,6 +97,15 @@ bool Server::validateAction(Client& client)
     }
 }
 
+bool Server::prepareClient4ResponseGeneration(Client& client)
+{
+    std::list<ConfigVirtualServer>::iterator server;
+    for (server = this->virtualServers.begin(); server != this->virtualServers.end(); server++)
+    {
+        if (server->prepareClient4ResponseGeneration(client))
+            break ;
+    }
+}
 
 void Server::getResponse(Client & client)
 {

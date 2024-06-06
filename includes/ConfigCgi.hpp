@@ -1,11 +1,13 @@
 
 # ifndef CONFIG_CGI_HPP
 # define CONFIG_CGI_HPP
-
+class ConfigCgi;
 # include <string>
 # include "ConfigElement.hpp"
 # include "ParsingServer.hpp"
 # include "Parsing.hpp"
+
+# include "Client.hpp"
 
 class ConfigCgi: public ConfigElement
 {
@@ -25,6 +27,8 @@ class ConfigCgi: public ConfigElement
 		void set__elemArgument__(std::string v){this->__elemArgument__ = v;};
 		std::string get__elemType__(void) const {return this->__elemArgument__;};
 		std::string get__elemArgument__(void) const {return this->__elemArgument__;};
+
+		bool prepareClient4ResponseGeneration(Client& client);
 
 		void recursivePrint(int recursiveLvl);
 		void setDefaults();

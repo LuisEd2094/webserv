@@ -1,6 +1,6 @@
 #ifndef OVERSEER_HPP
 # define OVERSEER_HPP
-
+class Overseer;
 # include <map>
 # include <iostream>
 # include <Confi.hpp>
