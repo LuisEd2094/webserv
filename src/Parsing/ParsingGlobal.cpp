@@ -43,19 +43,15 @@ ParsingGlobal::ParsingGlobal(std::string::iterator &begin,
 				std::string::iterator &eof,
 				std::string::iterator &statementEnd) : ParsingElement(begin, eof, statementEnd)
 {
-	std::cout << "::::: ParsingGlobal constructor called :::::" << ">" << std::endl;
 }
 
 void	ParsingGlobal::createNestedElement(std::string param0, std::string param1)
 {
-
-	std::cout << "global nested: " << param0 << "  " << param1 << std::endl;
+	(void)param1;
 	if (param0 == "server")
 	{
 		ParsingServer element(this->statementBegin, this->eof, this->statementEnd);	
 		element.parse();
-		//element.insert(std::make_pair("__elemType__", param0));
-		//element.insert(std::make_pair("__elemArgument__", param1));
 		this->servers.push_back(element);
 	}
 	else

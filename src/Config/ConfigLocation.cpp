@@ -135,8 +135,6 @@ std::string	ConfigLocation::getErrorPage(void) const
 void ConfigLocation::setMethods(std::string inpMethods)
 {
 	_methods = ft_split(inpMethods, ' ');
-	for (std::list<std::string>::iterator iter = _methods.begin(); iter != _methods.end(); iter++)
-		std::cout << YELLOW << "word: " << END << *iter << std::endl;
 }
 
 std::list<std::string>	ConfigLocation::getMethods(void) const
@@ -182,7 +180,6 @@ void ConfigLocation::initializeRoot(Path root)
 	}
 	else	
 		_root = root;
-	std::cout << (std::string) _root << std::endl;
 	// TODO the file is correct
 }
 

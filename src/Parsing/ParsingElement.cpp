@@ -74,8 +74,6 @@ void ParsingElement::newNestedElement(void)
 	std::string::iterator endParam;
 	std::string param1;
 	std::string param2;
-
-	std::cout << " ::: NEW nested element :::" << std::endl;
 	
 	while (beginParam != this->eof && std::isspace(*beginParam) && beginParam != this->statementEnd)
 	{
@@ -109,22 +107,11 @@ void ParsingElement::newNestedElement(void)
 void ParsingElement::parse()
 {
 	std::string				statementStr;
-	//this->statementBegin = this->fileContent.begin();
-	std::cout << "FULL TEXT: >>" << dumbGenString(this->statementBegin) << "<< " << std::endl;
 	while(this->statementBegin != this->eof)
 	{
-	//	std::cout << "statementBegin ; statementEnd " << *this->statementBegin << " " <<  *this->statementEnd << std::endl;
-
-		//this->statementEnd = this->findEndOfStatement();
 		this->statementEnd = this->findEndOfStatement();
-		// std::cout << "statementBegin ; statementEnd " << *this->statementBegin << " ; " <<  *this->statementEnd << std::endl;
 		if (statementEnd == this->eof)
 			return ;
-
-		// std::cout << "STATEMENT: >>" << dumbGenString(this->statementBegin, this->statementEnd) << "<< " << std::endl;
-		// std::cout << "*this->statementBegin: >>" << *this->statementBegin << std::endl;
-		// std::cout << "statementBegin = statementEnd" << (this->statementBegin == this->statementEnd) << std::endl;
-		
 		if (*statementBegin == '{')
 		{
 			std::cout << "user is stupidd" << std::endl;
@@ -133,18 +120,12 @@ void ParsingElement::parse()
 		if (*statementBegin == '}')
 		{
 			this->statementBegin++;
-			std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
-			std::cout << "Exiting parse" << std::endl;
-			printMap(*this);
 			return;
 		}
 		else if (*statementEnd == '}')
 		{
 			this->statementBegin = statementEnd;
 			this->statementBegin++;
-			std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
-			std::cout << "Exiting parse" << std::endl;
-			printMap(*this);
 			return;
 		}
 		else if (this->statementEnd == this->eof || *this->statementEnd == ';')
@@ -153,20 +134,13 @@ void ParsingElement::parse()
 				this->statementBegin++;
 			statementStr = std::string(this->statementBegin, this->statementEnd);
 			std::string key = getKey(statementStr, ':'), value = getValue(statementStr, ':');
-			// std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
-			std::cout << BLUE << "type ip: " << parsingListen(value) << END << std::endl;
-			std::cout << YELLOW << getIp(value) << END << std::endl;
-			std::cout << TUR << getPort(value) << END << std::endl;
 			std::pair<iterator,bool> insertReturn;
 			insertReturn = std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
-			// std::cout << "first: " << (insertReturn.first == end()) << ", second: " << insertReturn.second <<std::endl;
 			if (!insertReturn.second)
 			{
 				std::cout << "user is stupid repited key parameter" << std::endl;
 				throw std::exception();
 			}
-			std::cout << "----------------------*********" << std::endl;
-			std::cout << this << std::endl;
 		}
 		else if (*this->statementEnd == '{')
 		{
@@ -176,8 +150,5 @@ void ParsingElement::parse()
 			this->statementEnd++;
 		while ( this->statementBegin != this->statementEnd)
 			this->statementBegin++;
-		std::cout << "- - - - - - - - - - - - - - - - " << std::endl;
 	}
-	std::cout << "Exiting parse" << std::endl;
-	printMap(*this);
 }
