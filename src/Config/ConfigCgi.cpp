@@ -35,13 +35,10 @@ void ConfigCgi::recursivePrint(int recursiveLvl)
 
 void ConfigCgi::parseKeyVal(std::string key, std::string val)
 {
-    std::cout << "key: " << key;
-    std::cout << "  val: " << val;
     if (key == "__elemType__")
         this->__elemType__ = val;
     else if (key == "__elemArgument__")
     {
-        std::cout << ":::::::::::::::::::::::::: sdaf" << std::endl;
         this->__elemArgument__ = val;
     }
     else if (key == "smth");

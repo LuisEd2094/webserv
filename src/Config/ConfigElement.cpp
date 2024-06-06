@@ -25,7 +25,7 @@ void ConfigElement::configure(ParsingGlobal parsedData)
     confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
     confi.hints.ai_flags = AI_PASSIVE;
     confi.backlog = 200;
-	std::cout << "Num of servers: " <<  parsedData.servers.size() << std::endl;
+	std::cout << BLUE << "Num of servers: " <<  END << parsedData.servers.size() << std::endl;
  
 	for (std::list<ParsingServer>::iterator i = parsedData.servers.begin(); i != parsedData.servers.end(); i++)
 	{
@@ -36,16 +36,13 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 		confi.hints.ai_flags = AI_PASSIVE;
 		confi.backlog = 200;
 		confi.ip = (*i)["host"];		//TODO checkear un poco
-		// std::cout << "host " << (*i)["host"] << " " << confi.ip << std::endl;
 		confi.port = (*i)["port"];		//TODO checkear un poco
 		std::string phisicServerId = confi.ip + confi.port;
 		serverIterator = servers.find(phisicServerId);
 		if (serverIterator == servers.end())
 		{
 			server = Overseer::saveServer(&confi);
-			std::cout << "*******-*-*-*-*************" << std::endl;
 			servers.insert(std::pair<std::string,Server*>(phisicServerId, server));
-			std::cout << "*******-*-*-*-*************" << std::endl;
 		}
 		else
 			server = serverIterator->second;

@@ -6,15 +6,12 @@ ParsingLocation::ParsingLocation(std::string::iterator &begin,
 				std::string::iterator &eof,
 				std::string::iterator &statementEnd) : ParsingElement(begin, eof, statementEnd)
 {
-	std::cout << "::::: ParsingLocation constructor called :::::" << std::endl;
 }
 
 void	ParsingLocation::createNestedElement(std::string param0, std::string param1)
 {
-	std::cout << "location nested: " << param0 << "  " << param1 << std::endl;
 	if (param0 == "location")
 	{
-		//put second parameter
 		ParsingLocation element(this->statementBegin, this->eof, this->statementEnd);	
 		element.parse();
 		element.insert(std::make_pair("__elemType__", param0));
@@ -50,5 +47,4 @@ void	ParsingLocation::recursivePrint(void)
 	{
 		i->recursivePrint();
 	}
-	std::cout << "-----------------------------------------" << std::endl;
 }

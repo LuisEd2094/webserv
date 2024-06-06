@@ -50,27 +50,6 @@ int                Server::Action(int event)
 }
 
 
-bool Server::validateAction(Client& client)
-{
-    // check method and url against config.
-    // GET es valido para esta URL
-    // POST valido para uRL etc 
-    const std::string& url = client.getURL();
-    const std::string& method = client.getMethod();
-    const std::string& host = client.getHost();
-
-    std::cout << method << std::endl;
-    std::cout << host << std::endl;
-    virtualServers.back().recursivePrint();
-
-    if (url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
-        return true;
-    else
-    {
-        client.addObject(BaseHandler::createObject(getErrorResponseObject(NOT_FOUND)));
-        return (false);
-    }
-}
 
 /*
 
@@ -94,13 +73,38 @@ normal file
  error page
 
 */
+
+bool Server::validateAction(Client& client)
+{
+    // check method and url against config.
+    // GET es valido para esta URL
+    // POST valido para uRL etc 
+    const std::string& url = client.getURL();
+    const std::string& method = client.getMethod();
+    const std::string& host = client.getHost();
+
+    std::cout << method << std::endl;
+    std::cout << host <<  RED << "**************" << END << std::endl;
+    virtualServers.back().recursivePrint();
+    std::cout << RED << "**************" << END << std::endl;
+
+    if (url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
+        return true;
+    else
+    {
+        client.addObject(BaseHandler::createObject(getErrorResponseObject(NOT_FOUND)));
+        return (false);
+    }
+}
+
+
 void Server::getResponse(Client & client)
 {
     //CGI?
     // We assume we called validateAction before reaching this point.
     const std::string & url = client.getURL();
     const std::string & hostHeader = client.getMapValue("Host");
-
+    // this->virtual
     std::cout << RED << "Host:" << END << hostHeader << std::endl;
     std::string serverName = getKey(hostHeader, ':');
     std::string port = getValue(hostHeader, ':');
