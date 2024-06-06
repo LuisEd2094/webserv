@@ -60,3 +60,4 @@ std::ostream &operator<<(std::ostream &os, const ConfigCgi &cgi)
     os << "CGI: " << cgi.get__elemArgument__() ;
     return (os);
 }
+

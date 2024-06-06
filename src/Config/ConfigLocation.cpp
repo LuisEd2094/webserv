@@ -248,7 +248,7 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 
 std::ostream &operator<<(std::ostream &os,  std::list<std::string> &listObj)
 {
-	for (typename std::list<std::string>::iterator elem = listObj.begin(); elem != listObj.end(); elem++)
+	for (std::list<std::string>::iterator elem = listObj.begin(); elem != listObj.end(); elem++)
 	{
 		os << *elem << " ";
 	}

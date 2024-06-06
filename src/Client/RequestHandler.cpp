@@ -111,7 +111,6 @@ RequestHandler::RequestHandler(const Client & client):
     _HTTP_response_len(0),
     _HTTP_bytes_sent(0),
     _C_type_HTTP(NULL),
-    _requested_response(false),
     _out_body(""),
     _body_response_len(0),
     _body_bytes_sent(0),

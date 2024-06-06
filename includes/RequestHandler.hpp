@@ -37,7 +37,6 @@ class RequestHandler
         std::size_t             _HTTP_bytes_sent;
         const char *            _C_type_HTTP;
 
-        bool                    _requested_response;
         std::string             _out_body;
         std::size_t             _body_response_len;
         std::size_t             _body_bytes_sent;
