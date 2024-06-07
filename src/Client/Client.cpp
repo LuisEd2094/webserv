@@ -93,7 +93,39 @@ void    Client::addClosingErrorObject(ErrorCodes error)
 
 void Client::readFromFD()
 {
-    _result = recv(_fd, _in_message, sizeof(_in_message), 0);
+    if (_action == POST)
+    {
+        std::size_t size_to_read;
+        if (_is_chunked)
+        {
+            /*
+                we read + 2 because _chunk_size doesn't include the new lines
+                new lines can be CRNL
+            */
+            if (_chunk_size == 0)
+            {
+                /*
+                    If chunk_size == 0 then we haven't read the first line of the chunk
+                    I don't Want to read 80k chars here, just in case there are a bunch of 
+                    HTTP requests after this body, that way this client doesn't take forever
+                */
+                size_to_read = RECV_SIZE;
+            }
+            else
+            {
+                size_to_read = std::min(_chunk_size - _chunk.length() + 2, (std::size_t)BUFFER_SIZE);
+            }
+        }
+        else
+        {
+            size_to_read = std::min(_content_length - _in_body.length(), (std::size_t)BUFFER_SIZE);
+        }
+        _result = recv(_fd, _in_message, size_to_read, 0);
+    }
+    else
+    {
+        _result = recv(_fd, _in_message, RECV_SIZE, 0);
+    }
 
     if (_result > 0)
     {
@@ -282,26 +314,33 @@ void Client::processChunk()
         std::size_t chunk_end_line = _in_container.find_first_of("\n\r");
         if (chunk_end_line != std::string::npos)
         {
-            _chunk_size = hexStringToSizeT(_in_container.substr(0, chunk_end_line));
+            _chunk_size = hexStringToSizeT(_in_container.substr(0, chunk_end_line + 1));
             if (_chunk_size == 0)
             {
                 resetClient(true);
+                return;
             }
             _in_container.erase(0, _in_container.find_first_of('\n') + 1);
         }
    }
    if (_chunk_size) /*this is not an else since I want it to run on once it gets chunk size from the last line*/
    {
-        _size_to_append = std::min(_in_container.length(), _chunk_size - _in_body.length());
-        _in_body.append(_in_container, 0, _size_to_append);
-        std::size_t body_len = _in_body.length();
-        std::cout << body_len;
-        if (_in_body.length() == _chunk_size)
+        _size_to_append = std::min(_in_container.length(), _chunk_size - _chunk.length());
+        _chunk.append(_in_container, 0, _size_to_append);
+        std::size_t body_len = _chunk.length();
+        std::cout << body_len << std::endl;
+        if (_chunk.length() == _chunk_size)
         {
             /*if we get the full chunk size, we have to remove the last end, since 
                 the endl is not included in the size of the chunk
             */
-            _size_to_append += (_in_container[_size_to_append + 1] == '\r') ? 2 : 1;
+            _in_body += _chunk;
+            _chunk.clear();
+            _chunk_size = 0;
+            
+            /*Removes what ever we got from this chunked read + 2 for the CRNL*/
+            _in_container.erase(0, _size_to_append + 2);
+            _size_to_append = 0; 
         }
         else
         {

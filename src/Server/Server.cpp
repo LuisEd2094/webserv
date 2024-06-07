@@ -60,7 +60,7 @@ bool Server::validateAction(Client& client)
     const std::string& host = client.getHost();
     Actions client_action = client.getAction();
 
-    std::size_t max_body = 307775; /*This should come from the server*/
+    std::size_t max_body = 30777500; /*This should come from the server*/
 
     std::cout << method << std::endl;
     std::cout << host << std::endl;
@@ -129,7 +129,13 @@ void Server::getResponse(Client & client)
         }
         else if (url ==  "/post")
         {
-
+            std::ofstream outfile("output_file.jpeg", std::ios::binary);
+            if (outfile.is_open())
+            {
+                outfile.write(client._in_body.data(), client._in_body.size());
+                outfile.close();
+                std::cout << "Binary data written to file.\n";
+            } 
         }
         else if (url.find("/Cookies/") != std::string::npos)
         {

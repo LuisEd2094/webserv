@@ -56,7 +56,8 @@ class Client : public BaseHandler
         const std::string&              getPathFile() const;
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
- 
+        std::string             _in_body;
+
 
         class clientException;
 
@@ -69,15 +70,17 @@ class Client : public BaseHandler
         Actions                 _action;
         int                      _result;
         std::size_t             _size_to_append;
-        std::size_t             _chunk_size;
 
         bool                    _keep_alive;
 
-        char                    _in_message[RECV_SIZE];
+        char                    _in_message[BUFFER_SIZE];
 
         bool                    _pending_read;
         std::string             _in_container;
-        std::string             _in_body;
+
+        std::string             _chunk;
+        std::size_t             _chunk_size;
+
         std::size_t             _content_length;
         bool                    _is_chunked;
 
