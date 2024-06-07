@@ -58,10 +58,25 @@ bool Server::validateAction(Client& client)
     const std::string& url = client.getURL();
     const std::string& method = client.getMethod();
     const std::string& host = client.getHost();
+    Actions client_action = client.getAction();
+
+    std::size_t max_body = 307775; /*This should come from the server*/
 
     std::cout << method << std::endl;
     std::cout << host << std::endl;
     virtualServers.back().recursivePrint();
+
+    if (client_action == POST)
+    {
+        if (!client.getIsChunked())
+        {
+            if (client.getContentLenght() > max_body)
+            {
+                client.addClosingErrorObject(PAYLOAD);
+                return (false);
+            }
+        }
+    }
 
     if (url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
         return true;
@@ -115,7 +130,7 @@ void Server::getResponse(Client & client)
         }
         else if (url ==  "/post")
         {
-            
+
         }
         else if (url.find("/Cookies/") != std::string::npos)
         {

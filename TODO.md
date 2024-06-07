@@ -1,7 +1,7 @@
 # TODO LIST
 
 1. Parsear Body de entrada 
-- verificar tipo de envio de info, Content-len vs chuncked
+- verificar tipo de envio de info, Content-len vs chunked
 
 2. Parsear Header de entrada para controlar flujo contra la info del config file que ya tiene cada server fisico
 - Control de errores del HTTP de entrada, para controlar el flujo del FD del cliente

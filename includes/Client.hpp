@@ -30,6 +30,7 @@ class Client : public BaseHandler
         int                 Action(int event);
         bool                checkObjTimeOut();
         void                addObject(BaseHandler *);
+        void                addClosingErrorObject(ErrorCodes);
 
         // setters
         void                addHeader(const std::string &new_element);
@@ -46,7 +47,9 @@ class Client : public BaseHandler
         const std::string&              getURL() const;
         const std::string&              getMethod() const;
         const std::string&              getHost() const;
-
+        Actions                         getAction() const;
+        bool                            getIsChunked() const;
+        std::size_t                     getContentLenght() const;
     
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
@@ -75,6 +78,7 @@ class Client : public BaseHandler
         std::string             _in_container;
         std::string             _in_body;
         std::size_t             _content_length;
+        bool                    _is_chunked;
 
         void                    updateMethodAction();
         void                    parseForHttp();
@@ -86,7 +90,10 @@ class Client : public BaseHandler
         void                    addClosingError(ErrorCodes);
         void                    resetClient(bool);
         int                     sendResponse();
+
+        /*POST methods*/
         int                     saveInBodyAsFile();
+        bool                    checkPostHeaderInfo();
 
         void                    checkFirstQueue(RequestHandler *);
         void                    handleDirectObj(DirectResponse*, RequestHandler *);

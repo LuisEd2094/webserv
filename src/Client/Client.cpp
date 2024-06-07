@@ -35,6 +35,7 @@ Client::Client(Server *server) : BaseHandler()
     _size_to_append = 0;
     _can_read = true;
     _error = false;
+    _is_chunked = false;
 }
 
 Client::~Client() 
@@ -74,13 +75,20 @@ int Client::Action (int event)
 
 void    Client::addClosingError(ErrorCodes error)
 {
-
+    /*This functions adds the error object to the queue and sets the client to a state
+        where it'd close the connection after finishing ending the queue */
     addObject(BaseHandler::createObject(_server->getErrorResponseObject(error)));
     _error = true;
     _can_read = false;
     _pending_read = false;
     Overseer::setListenAction(_fd, JUST_OUT);
 }
+
+void    Client::addClosingErrorObject(ErrorCodes error)
+{
+    addClosingError(error);
+}
+
 
 void Client::readFromFD()
 {
@@ -224,10 +232,39 @@ void Client::handleDirectObj(DirectResponse* direct_object, RequestHandler *new_
     delete direct_object; // I delete this since it wont be going to the FD POLL
 }
 
+bool Client::checkPostHeaderInfo()
+{
+    /*Get post data from Header so we can check it on server to validate it.*/
+    const std::string& content_length = _parser_http.getMapValue("Content-Length");
+    const std::string& transfer_encoding = _parser_http.getMapValue("Transfer-Encoding");
+    if ((content_length != "not found" && transfer_encoding != "not found") || \
+        (content_length == "not found" && transfer_encoding == "not found" ))
+    {
+        /*Close connection since we can't have both content len and transfer enconding 
+        and we wont accept a connection without at least one of them */
+        addClosingError(LENGTH_REQUIRED); 
+        return false;
+    }
+    if (content_length != "not found")
+    {
+        _content_length = std::atoi(content_length.c_str());
+    }
+    else
+    {
+        _is_chunked = true;
+    }
+    return true;
+}
+
 void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
+        if (_action == POST)
+        {
+            if (!checkPostHeaderInfo())
+                return;
+        }
         if (!_server->validateAction(*this))
         {
             return;
@@ -241,11 +278,7 @@ void Client::parseForHttp()
         if(_action == POST)
         {
             /* this should check what type of post they are doing, could be a contentlen or a chunked sent */
-            std::string content_len = _parser_http.getMapValue("Content-Length");
-            if (content_len != "not found")
-            {
-                _content_length = std::atoi(content_len.c_str());
-            }
+
             _in_body.append(_in_container, 0, std::min(_content_length, _in_container.length()));
             if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
             {
@@ -254,7 +287,7 @@ void Client::parseForHttp()
             else
             {
                 /*  
-                    Clear _in_container if _in_body doesn't == content_lenght, since that means we are missing data
+                    Clear _in_container if _in_body doesn't == content_lengthght, since that means we are missing data
                     and we will be getting it next read.
                     If we get the full body in a single read, reset will remove body size from in container
                 */
@@ -379,9 +412,12 @@ void Client::resetClient(bool has_body)
     _http_addons.empty();
     _pending_read = false;
     _action = WAIT;
+    _content_length = 0;
     _response_type = NOT_SET;
     _size_to_append = 0;
+    _is_chunked = false;
     _parser_http.resetParsing();
+    
 
 }
 bool Client::checkObjTimeOut()

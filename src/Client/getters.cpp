@@ -55,3 +55,19 @@ const std::string& Client::getHost() const
 {
     return _parser_http.getMapValue("Host");
 }     
+
+Actions  Client::getAction() const
+{
+    return _action;
+}
+
+std::size_t Client::getContentLenght() const
+{
+    return _content_length;
+}
+
+bool Client::getIsChunked() const
+{
+    return _is_chunked;
+}
+
