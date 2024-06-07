@@ -61,7 +61,7 @@ Actions  Client::getAction() const
     return _action;
 }
 
-std::size_t Client::getContentLenght() const
+std::size_t Client::getContentLength() const
 {
     return _content_length;
 }

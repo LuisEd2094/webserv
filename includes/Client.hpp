@@ -49,7 +49,7 @@ class Client : public BaseHandler
         const std::string&              getHost() const;
         Actions                         getAction() const;
         bool                            getIsChunked() const;
-        std::size_t                     getContentLenght() const;
+        std::size_t                     getContentLength() const;
     
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
@@ -69,6 +69,7 @@ class Client : public BaseHandler
         Actions                 _action;
         int                      _result;
         std::size_t             _size_to_append;
+        std::size_t             _chunk_size;
 
         bool                    _keep_alive;
 
@@ -87,6 +88,7 @@ class Client : public BaseHandler
         bool                    _can_read;
         bool                    _error;
         void                    readFromFD();
+        void                    processChunk();
         void                    addClosingError(ErrorCodes);
         void                    resetClient(bool);
         int                     sendResponse();

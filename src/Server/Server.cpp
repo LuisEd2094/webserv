@@ -70,14 +70,13 @@ bool Server::validateAction(Client& client)
     {
         if (!client.getIsChunked())
         {
-            if (client.getContentLenght() > max_body)
+            if (client.getContentLength() > max_body)
             {
                 client.addClosingErrorObject(PAYLOAD);
                 return (false);
             }
         }
     }
-
     if (url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
         return true;
     else

@@ -36,6 +36,7 @@ Client::Client(Server *server) : BaseHandler()
     _can_read = true;
     _error = false;
     _is_chunked = false;
+    _chunk_size = 0;
 }
 
 Client::~Client() 
@@ -100,8 +101,6 @@ void Client::readFromFD()
         // Http todavia _parse_http me indica si no termina.
         // post/get/delete > _in_container, hasta que terminas
         // post > in_body, parseeer URl, METHod, Client dame el body
-
-
         if (!_parser_http.getEndRead()) // and nott MAX HEADER SIZE?
         {
             _in_container.append((const char *)_in_message, _result);
@@ -162,11 +161,24 @@ void Client::readFromFD()
         }
         else if (_action == POST)
         {
-            _size_to_append = std::min(_result, static_cast<int>(_content_length - _in_body.length()));
-            _in_body.append((const char *)_in_message, _size_to_append);
-            if (_in_body.length() == _content_length ) // we done with body || if chunked, if read size is 0
-            {  
-                resetClient(true);
+            /*if it's chunked I want to handle everything directly on _in_container
+                as I might have a few chunks ready on the first read, and after I finish with the chunk
+                I might have a new request after the last chunk, so at any giving point I might have to
+                work directly on _in container
+            */
+            if (_is_chunked)
+            {
+                _in_container.append((const char *)_in_message, _result);
+                processChunk();
+            }
+            else
+            {
+                _size_to_append = std::min(_result, static_cast<int>(_content_length - _in_body.length()));
+                _in_body.append((const char *)_in_message, _size_to_append);
+                if (_in_body.length() == _content_length ) // we done with body || if chunked, if read size is 0
+                {  
+                    resetClient(true);
+                }
             }
 
 
@@ -256,6 +268,52 @@ bool Client::checkPostHeaderInfo()
     return true;
 }
 
+void Client::processChunk()
+{
+    /*it'd allway have the chunk in _in_container
+        we need the chunck size (we can find the first r or n) in hexa
+        read the chunk size from in_container(it does not include the new line size)
+    */
+   if (!_chunk_size)
+   {
+    /*If not chunk_size then we haven't process this chunk yet.
+        get chunk size and remove the first line from in_container.
+    */
+        std::size_t chunk_end_line = _in_container.find_first_of("\n\r");
+        if (chunk_end_line != std::string::npos)
+        {
+            _chunk_size = hexStringToSizeT(_in_container.substr(0, chunk_end_line));
+            if (_chunk_size == 0)
+            {
+                resetClient(true);
+            }
+            _in_container.erase(0, _in_container.find_first_of('\n') + 1);
+        }
+   }
+   if (_chunk_size) /*this is not an else since I want it to run on once it gets chunk size from the last line*/
+   {
+        _size_to_append = std::min(_in_container.length(), _chunk_size - _in_body.length());
+        _in_body.append(_in_container, 0, _size_to_append);
+        std::size_t body_len = _in_body.length();
+        std::cout << body_len;
+        if (_in_body.length() == _chunk_size)
+        {
+            /*if we get the full chunk size, we have to remove the last end, since 
+                the endl is not included in the size of the chunk
+            */
+            _size_to_append += (_in_container[_size_to_append + 1] == '\r') ? 2 : 1;
+        }
+        else
+        {
+            _in_container.clear();
+
+        }
+   }
+
+
+
+}
+
 void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
@@ -279,20 +337,28 @@ void Client::parseForHttp()
         {
             /* this should check what type of post they are doing, could be a contentlen or a chunked sent */
 
-            _in_body.append(_in_container, 0, std::min(_content_length, _in_container.length()));
-            if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
+            if (_is_chunked)
             {
-                resetClient(true);
+                processChunk();
             }
             else
             {
-                /*  
-                    Clear _in_container if _in_body doesn't == content_lengthght, since that means we are missing data
-                    and we will be getting it next read.
-                    If we get the full body in a single read, reset will remove body size from in container
-                */
-                _in_container.clear();
+                _in_body.append(_in_container, 0, std::min(_content_length, _in_container.length()));
+                if (_in_body.size() == _content_length ) // we done with body || if chunked, if read size is 0
+                {
+                    resetClient(true);
+                }
+                else
+                {
+                    /*  
+                        Clear _in_container if _in_body doesn't == content_lengthght, since that means we are missing data
+                        and we will be getting it next read.
+                        If we get the full body in a single read, reset will remove body size from in container
+                    */
+                    _in_container.clear();
+                }
             }
+            
         }
         else 
         {
@@ -397,7 +463,17 @@ void Client::resetClient(bool has_body)
         /*If _size_to_append == 0 it means we got the full body in the first read with HTTP*/
         if (_size_to_append == 0)
         {
-            _in_container.erase(0, _in_body.length());
+            /* If it's chunked we will remove all chuncks inside _in_container before getting here
+                so if if it gets here (because we got all chuncks in the first read of the request)
+                _in_container will NOT have any chuncked data in it. 
+                So we only remove _in_body.length from _in_container when we get here in the first read 
+                and we are NOT chuncked
+            */
+            if (!_is_chunked)
+            {
+                 _in_container.erase(0, _in_body.length());
+            }
+
         }
         else if (static_cast<int>(_size_to_append) != _result)
         {
@@ -417,6 +493,7 @@ void Client::resetClient(bool has_body)
     _size_to_append = 0;
     _is_chunked = false;
     _parser_http.resetParsing();
+    _chunk_size = 0;
     
 
 }
