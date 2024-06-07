@@ -27,6 +27,7 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigCgi>		_cgis;
 		std::list<ConfigLocation>	_locations;
 		bool						_inheriting;
+		Path						_path;
 		//Add list configureLocation 
 
 	public:
@@ -51,6 +52,7 @@ class ConfigLocation: public ConfigElement
 		void							setIndex(std::string index);//
 		void							setCgis(std::string cgis);//*
 
+		Path							getPath(void) const {return this->_path;};
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;

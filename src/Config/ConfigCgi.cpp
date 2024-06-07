@@ -28,8 +28,9 @@ void ConfigCgi::recursivePrint(int recursiveLvl)
 }
 
 bool ConfigCgi::prepareClient4ResponseGeneration(Client& client)
-{
-
+{   
+	std::cout << "Preparing client on request" << client.getURL() << std::endl;	
+    return true;
 }
 
 void ConfigCgi::parseKeyVal(std::string key, std::string val)

@@ -215,7 +215,7 @@ class Parsing
 	bool getEndRead() const;
 	/*
 	 * Exception Classes
-	*/
+	 */
 };
 
 std::list<std::string> ft_split(const std::string& str, char delimiter);

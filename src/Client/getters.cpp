@@ -1,11 +1,9 @@
 #include <Client.hpp>
 
-
 int Client::getFD() const
 {
     return _fd;
 }
-
 
 const std::string& Client::getURL() const
 {
@@ -16,7 +14,6 @@ ObjectTypes Client::getResponseType() const
 {
     return _response_type;
 }
-
 
 const std::string& Client::getBody() const
 {

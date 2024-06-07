@@ -26,6 +26,26 @@ Path &Path::operator=(const Path &orig)
     this->directories = orig.directories;
     return *this;
 }
+void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
+{
+    std::list<std::string>::iterator del = currFile--; 
+    this->directories.erase(del);
+}
+
+Path::operator std::string()
+{
+    std::list<std::string>::iterator dir;
+    std::string result;
+
+    if (!this->isRelative)
+        result += "/";
+    for (dir = this->directories.begin(); dir != this->directories.end(); dir++)
+    {
+        result += *dir;
+        result += "/";
+    }
+    return (result);
+}
 
 void Path::append(Path tail)
 {
@@ -66,26 +86,28 @@ int Path::normalize(void)
     return modified;
 }
 
-void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
+bool Path::includes(const Path &compPath) const
 {
-    std::list<std::string>::iterator del = currFile--; 
-    this->directories.erase(del);
+       return compPath.included(*this);
 }
 
-Path::operator std::string()
-{
-    std::list<std::string>::iterator dir;
-    std::string result;
 
-    if (!this->isRelative)
-        result += "/";
-    for (dir = this->directories.begin(); dir != this->directories.end(); dir++)
+bool Path::included(const Path &compPath) const
+{
+    std::list<std::string>::const_iterator included, includer;
+
+    included =  this->directories.begin();
+    includer =  compPath.directories.begin();
+
+    while (included != this->directories.end() && includer != compPath.directories.end())
     {
-        result += *dir;
-        result += "/";
+        if (*included != *includer)
+            return (false);
+        included++ ; includer++;
     }
-    return (result);
+    return (included == this->directories.end());
 }
+
 
 std::ostream &operator<<(std::ostream &os, const Path &obj)
 {

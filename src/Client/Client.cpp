@@ -253,11 +253,11 @@ void Client::parseForHttp()
             }
             else
             {
-                /*  
+                /*    
                     Clear _in_container if _in_body doesn't == content_lenght, since that means we are missing data
                     and we will be getting it next read.
                     If we get the full body in a single read, reset will remove body size from in container
-                */
+                */    
                 _in_container.clear();
             }
         }

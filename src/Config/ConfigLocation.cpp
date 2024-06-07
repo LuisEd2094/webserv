@@ -285,7 +285,14 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 
 bool ConfigLocation::prepareClient4ResponseGeneration(Client& client)
 {
-	
+//	std::string url = client.getURL() ;
+	Path sdaf;
+	std::cout << "yok " << std::endl;
+	sdaf = this->getPath() ;
+	std::cout << "koy " << std::endl;
+	std::cout << "::: ConfigLocation::prepareClient4ResponseGeneration: " << this->getPath() << std::endl;	
+	std::cout << client.getURL() << std::endl;
+	return true;
 }
 
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)

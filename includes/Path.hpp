@@ -22,11 +22,15 @@ class Path
 		Path &operator=(const Path &orig);
 		operator std::string();
 		~Path();	
-		int normalize(void);
-		void append(Path tail);
 
-		void setIsRelative(bool v) { isRelative = v; };
-		bool getIsRelative(void) const { return isRelative; };
+		int		size() { return directories.size(); };	
+		void	setIsRelative(bool v) { isRelative = v; };
+		bool	getIsRelative(void) const { return isRelative; };
+
+		void	append(Path tail);
+		int		normalize(void);
+		bool	includes(const Path &compPath) const;
+		bool	included(const Path &compPath) const;
 
 	class InvalidPathException: public std::exception
 	{

@@ -105,18 +105,36 @@ void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 
 bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 {
+	std::cout << "::: ConfigVIrtualServer::prepareClient4ResponseGeneration" << std::endl;
+	std::cout << "::: " << client.getHost() << std::endl;
+	std::cout << "::: " << client.getMapValue("Host") << std::endl;
 	std::list<std::string>::iterator server_name;
-	
+
 	server_name = std::find(this->serverNames.begin(), this->serverNames.end(), client.getHost());
 	if (server_name == this->serverNames.end())
 		return (false);
+	
 	std::list<ConfigLocation>::iterator location;
+	std::list<std::string>				locMethods ;
+	std::list<ConfigLocation>::iterator	bestLocation;
+	Path								requestedURL = client.getURL();
+	int									maxDirMatches = 0;
+	std::cout << "Request for url: " << client.getURL() << std::endl;
 	for(location = this->locations.begin(); location != this->locations.end(); location++)
 	{
-		if (location->prepareClient4ResponseGeneration(client))
-			break ;
+		locMethods = location->getMethods();
+		std::cout << "Location" << location->getPath() << std::endl;
+		if (location->getPath().includes(requestedURL)
+			&& std::find(locMethods.begin(), locMethods.end(), client.getMethod()) != locMethods.end()
+			&& location->getPath().size() > maxDirMatches) 	
+		{
+			maxDirMatches = location->getPath().size();
+			bestLocation = location;
+			std::cout << "BestLocation" << location->getPath() << std::endl;
+		}
 	}
-	return (true);
+	std::cout << "Returning" << std::endl;
+	return (bestLocation->prepareClient4ResponseGeneration(client));
 }
 
 std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj)
