@@ -63,7 +63,7 @@ bool Server::validateAction(Client& client)
     std::cout << host << std::endl;
     virtualServers.back().recursivePrint();
 
-    if (url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
+    if (url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
         return true;
     else
     {
@@ -112,6 +112,10 @@ void Server::getResponse(Client & client)
         if (url == "/")
         {
             client.setResponseType(DIRECT_OBJ);
+        }
+        else if (url ==  "/post")
+        {
+            
         }
         else if (url.find("/Cookies/") != std::string::npos)
         {

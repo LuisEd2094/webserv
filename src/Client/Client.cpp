@@ -72,6 +72,15 @@ int Client::Action (int event)
     return _result;
 }
 
+void    Client::addClosingError(ErrorCodes error)
+{
+
+    addObject(BaseHandler::createObject(_server->getErrorResponseObject(error)));
+    _error = true;
+    _can_read = false;
+    _pending_read = false;
+    Overseer::setListenAction(_fd, JUST_OUT);
+}
 
 void Client::readFromFD()
 {
@@ -111,22 +120,17 @@ void Client::readFromFD()
                         {
                             if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
                             {
-                                addObject(BaseHandler::createObject(_server->getErrorResponseObject(BAD_REQUEST)));
+                                addClosingError(BAD_REQUEST);
                             }
                             else if (parser_method == ERROR_METHOD)
                             {
-                                addObject(BaseHandler::createObject(_server->getErrorResponseObject(NOT_IMPLEMENTED)));
+                                addClosingError(NOT_IMPLEMENTED);
                             }
                             else if (parser_method == ERROR_VERSION)
                             {
-                                addObject(BaseHandler::createObject(_server->getErrorResponseObject(VERSION_NOT_SUPPORTED)));
+                                addClosingError(VERSION_NOT_SUPPORTED);
                             }
-                            _error = true;
-                            _can_read = false;
-                            _pending_read = false;
-                            Overseer::setListenAction(_fd, JUST_OUT);
                         }
-                        
                         break;
                     }
                 }
@@ -140,12 +144,8 @@ void Client::readFromFD()
                     {
                             if (parsingMessage == ERROR_FORMAT)
                             {
-                                addObject(BaseHandler::createObject(_server->getErrorResponseObject(BAD_REQUEST)));
+                                addClosingError(BAD_REQUEST);
                             }
-                            _error = true;
-                            _can_read = false;
-                            _pending_read = false;
-                            Overseer::setListenAction(_fd, JUST_OUT);
                             break;
                     } 
                     parseForHttp();

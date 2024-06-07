@@ -83,6 +83,7 @@ class Client : public BaseHandler
         bool                    _can_read;
         bool                    _error;
         void                    readFromFD();
+        void                    addClosingError(ErrorCodes);
         void                    resetClient(bool);
         int                     sendResponse();
         int                     saveInBodyAsFile();
