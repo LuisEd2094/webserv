@@ -123,7 +123,9 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 		this->locations.end());
 	if (bestLocation == this->getLocations().end())
 		return (false);
-	return (bestLocation->prepareClient4ResponseGeneration(client, Path()));//recordar que no es asi
+	Path nextURL(client.getURL());
+	nextURL.popBegin(bestLocation->size());
+	return (bestLocation->prepareClient4ResponseGeneration(client, nextURL));//recordar que no es asi
 	// return (true);
 
 	// if (false)

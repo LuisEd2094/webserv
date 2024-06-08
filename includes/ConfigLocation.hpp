@@ -54,6 +54,7 @@ class ConfigLocation: public ConfigElement
 		void							setPath(Path &path) { this->_path = path; };//*
 
 //		Path							getPath(void) const { std::cout << "returning: " << _path << std::endl; return this->_path;};
+		int								size() { return this->_path.size(); };
 		Path							getPath(void) const { return this->_path;};
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
@@ -63,7 +64,6 @@ class ConfigLocation: public ConfigElement
 		std::list<std::string>			getIndex(void) const;
 		std::list<ConfigCgi>			getCgis(void) const;//*
 		std::list<ConfigLocation>		getLocations(void) const;
-		// int								getUriPuntuation(void);
 		bool 							prepareClient4ResponseGeneration(Client& client, Path trequestedURL);
 		void							recursivePrint(int recursiveLvl);
 
