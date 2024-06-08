@@ -135,7 +135,7 @@ bool Server::validateAction(Client& client)
             }
         }
     }
-    if (url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
+    if (url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html" or url == "/testError.html")
         return true;
     else
     {
@@ -143,13 +143,6 @@ bool Server::validateAction(Client& client)
         return (false);
     }
 
-    if (url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html" or "/Hellow/World")
-        return true;
-    else
-    {
-        client.addObject(BaseHandler::createObject(getErrorResponseObject(NOT_FOUND)));
-        return (false);
-    }
 }
 
 bool Server::prepareClient4ResponseGeneration(Client& client)
@@ -185,6 +178,14 @@ void Server::getResponse(Client & client)
         if (url == "/")
         {
             client.setResponseType(DIRECT_OBJ);
+        }
+        else if (url == "/testError.html")
+        {
+            std::cout << "-------------" << std::endl;
+            client.setPathFile("/home/luis/proyects/webserv/html/testError.html");
+            client.setDefaultHttpResponse(Response::getHttpFirtsLine(BAD_REQUEST));
+            client.setResponseType(FILE_OBJ);
+
         }
         else if (url ==  "/post")
         {

@@ -48,7 +48,7 @@ FileReader::FileReader(Client& client) : _client_fd(client.getFD()), _defaultHtt
     if (_fd == -1)
     {
         throw FileReaderException(strerror(errno));
-    }   
+    }
 }
 
 
@@ -103,8 +103,8 @@ int FileReader::Action(int event)
             if (result ==  0)
             {
                 /*I should be setting this with setdefaultResponse*/
-                std::string http = setContentType(std::string(HTTP_OK));
-                client->setHTTPResponse(setContentLenHTTP(http, _buffer) , this); 
+                _defaultHttp = setContentType(_defaultHttp);
+                client->setHTTPResponse(setContentLenHTTP(_defaultHttp, _buffer) , this); 
                 client->setBodyResponse(_buffer, this); 
             }
             else

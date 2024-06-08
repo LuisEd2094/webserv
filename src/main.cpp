@@ -30,6 +30,7 @@ int main()
     t_confi confi;
     FileReader::initTypeMaps();
     Response::initDefaultMap();
+    Response::initErrorsHttp();
     // all this info should come from the confi file
     /*
     std::memset(&(confi.hints), 0, sizeof(confi.hints));
@@ -42,7 +43,6 @@ int main()
     signal(SIGPIPE, SIG_IGN);
     signal(SIGINT, Overseer::cleanOverseer);
     // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;
-
     try
     {
         ParsingGlobal parser = ParsingGlobal::parseFromFile("./src/Parsing/config_file.conf");

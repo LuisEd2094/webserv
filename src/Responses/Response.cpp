@@ -1,8 +1,8 @@
 #include <ProgramConfigs.hpp>
+
 responsesMap Response::defaults;
 defaultResponsesMap Response::defaultResponses;
-
-
+std::vector<std::string> Response::_vectorError;
 
 
 const defaultResponse& Response::getDefault(ErrorCodes code)
@@ -30,7 +30,7 @@ Responses::Responses(const std::string& http, const std::string& title, const st
     _title(title),
     _body(body)
 {
-
+    _http.append("Content-Type: text/html\r\n");
 }
 
 void Response::createDefaultResponses()
@@ -43,6 +43,7 @@ void Response::createDefaultResponses()
     }
 
 }
+
 
 void    Response::initDefaultMap()
 {
@@ -74,3 +75,34 @@ void    Response::initDefaultMap()
     createDefaultResponses();
     defaults.clear();
 }
+
+
+void    Response::initErrorsHttp(void)
+{
+    _vectorError.push_back(HTTP_OK);
+    _vectorError.push_back(BAD_REQUEST_HTTP);
+    _vectorError.push_back(FORBIDDEN_HTTP);
+    _vectorError.push_back(NOT_FOUND_HTTP);
+    _vectorError.push_back(METHOD_HTTP);
+    _vectorError.push_back(NOT_ACCEPTABLE_HTTP);
+    _vectorError.push_back(TIMEOUT_HTTP);
+    _vectorError.push_back(CONFLICT_HTTP);
+    _vectorError.push_back(GONE_HTTP);
+    _vectorError.push_back(LENGTH_HTTP);
+    _vectorError.push_back(PAYLOAD_HTTP);
+    _vectorError.push_back(URI_TOO_LONG_HTTP);
+    _vectorError.push_back(MEDIA_HTTP);
+    _vectorError.push_back(EXPECT_HTTP);
+    _vectorError.push_back(UPGRADE_HTTP);
+    _vectorError.push_back(INTERNAL_ERROR_HTTP);
+    _vectorError.push_back(NOT_IMPLEMENTED_HTTP);
+    _vectorError.push_back(GATEWAY_TIMEOUT_HTTP);
+    _vectorError.push_back(VERSION_NOT_SUPPORTED_HTTP);
+    _vectorError.push_back(BAD_GATEWAY_HTTP);
+}
+
+ const std::string& Response::getHttpFirtsLine(ErrorCodes code)
+ {
+    std::cout << _vectorError[code];
+    return (_vectorError[code]);
+ }
