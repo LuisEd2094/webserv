@@ -32,7 +32,7 @@ CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDe
     {
         //signal(SIGINT, SIG_DFL);
         //signal(SIGQUIT, SIG_DFL);
-        const std::string cgi_path = "/home/luis/proyects/webserv/CGI" + client.getURL();
+        const std::string cgi_path = "/workspaces/webserv/CGI" + client.getURL();
         char* argv[3];
         argv[0] = const_cast<char*>("/usr/bin/python3");
         argv[1] = const_cast<char*>(client.getPathFile().c_str()); // Convert const char* to char*
