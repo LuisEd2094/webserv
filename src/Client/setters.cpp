@@ -1,6 +1,11 @@
 #include <Client.hpp>
 
 
+void Client::setHttpAnswerDirectory(std::string value)
+{
+    this->_httpAnswerDirectory = value;
+}
+
 void    Client::addHeader(const std::string &new_element)
 {
     _http_addons.push(new_element);

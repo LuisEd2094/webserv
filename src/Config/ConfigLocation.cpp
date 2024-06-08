@@ -18,7 +18,7 @@ ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 	this->_cgis = obj.getCgis();
 	this->_locations = obj.getLocations();
 	this->_cgis = obj.getCgis();
-//	this->_path = obj.getPath();
+	this->_path = obj.getPath();
 }
 
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
@@ -73,6 +73,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj)
 	}
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
+	this->_path = Path(this->__elemArgument__);
 	this->_inheriting = false;
 	if (obj.find("root") == obj.end())
 		this->_root.append(obj.find("__elemArgument__")->second);
@@ -102,7 +103,6 @@ void ConfigLocation::setDefaults()
 	this->setErrorPage("");	
 	this->setRedirection("");	
 	this->setDirListing(true);	
-	//this->setPath(Path(""));
 	this->_path = Path();
 }
 
@@ -286,16 +286,50 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 	// TODO copy code above for cgis instead of locations
 }
 
-bool ConfigLocation::prepareClient4ResponseGeneration(Client& client)
+bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
+	Path requestedURL
+)
 {
+	(void)requestedURL;
 	std::string url = client.getURL() ;
-	std::cout << "location: " << this->getPath() << std::endl;
+	std::cout << "ConfigLocation::prepareClient4ResponseGeneration " << this->getPath() << std::endl;
 	return true;
+}
+
+std::list<ConfigLocation>::iterator ConfigLocation::getBestLocation(Path requestedURL,
+	std::string requestMethod,
+	std::list<ConfigLocation>::iterator beginLocation,
+	std::list<ConfigLocation>::iterator endLocation
+)
+{
+	std::list<ConfigLocation>::iterator location;
+	std::list<std::string>				locMethods ;
+	std::list<ConfigLocation>::iterator	bestLocation = endLocation;
+	int									maxDirMatches = 0;
+	while (beginLocation != endLocation)
+	{
+		locMethods = beginLocation->getMethods();
+		if (locMethods.size() == 0)
+		{
+			beginLocation++ ;
+			continue;
+		}
+		if (beginLocation->getPath().included(requestedURL)
+			&& std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()
+			&& beginLocation->getPath().size() > maxDirMatches) 	
+		{
+			maxDirMatches = beginLocation->getPath().size();
+			bestLocation = beginLocation;
+		}
+		beginLocation++ ;
+	}
+	return bestLocation;
+
 }
 
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)
 {
-	os << "ConfigLocation: " << std::endl;
+	os << "ConfigLocation (" << obj.getPath() << "): " << std::endl;
 	os << "  errorPage: " << obj.getErrorPage() << std::endl;
 	return os;
 }

@@ -53,7 +53,8 @@ class ConfigLocation: public ConfigElement
 		void							setCgis(std::string cgis);//*
 		void							setPath(Path &path) { this->_path = path; };//*
 
-		Path							getPath(void) const { std::cout << "returning: " << _path << std::endl; return this->_path;};
+//		Path							getPath(void) const { std::cout << "returning: " << _path << std::endl; return this->_path;};
+		Path							getPath(void) const { return this->_path;};
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;
@@ -63,10 +64,14 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigCgi>			getCgis(void) const;//*
 		std::list<ConfigLocation>		getLocations(void) const;
 		// int								getUriPuntuation(void);
-
-		bool 							prepareClient4ResponseGeneration(Client& client);
-
+		bool 							prepareClient4ResponseGeneration(Client& client, Path trequestedURL);
 		void							recursivePrint(int recursiveLvl);
+
+		static std::list<ConfigLocation>::iterator getBestLocation(Path requestedURL,
+			std::string							method,
+			std::list<ConfigLocation>::iterator firstLocation,
+			std::list<ConfigLocation>::iterator lastLocation);
+
 };
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj);
 

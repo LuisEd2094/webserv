@@ -41,6 +41,7 @@ class Client : public BaseHandler
         void                addHeader(const std::queue<std::string> &);
         void                addURLRedirection(const std::string&);
 
+        void                setHttpAnswerDirectory(std::string value);
         void                setdefaultResponse(const defaultResponse& response, BaseHandler*);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
@@ -49,6 +50,7 @@ class Client : public BaseHandler
         void                setDefaultHttpResponse(ErrorCodes);
 
         //getters
+        std::string                     getHttpAnswerDirectory() const;
         Server *                        getServer() const;
         int                             getFD() const;
         const std::string&              getURL() const;
@@ -125,6 +127,7 @@ class Client : public BaseHandler
 
         std::string             _path_to_file;
         std::string             _defaultHttp;
+        std::string             _httpAnswerDirectory;
 
 
 

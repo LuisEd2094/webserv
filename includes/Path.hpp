@@ -11,6 +11,7 @@ class Path
 	private:
 		void deleteAndBack(std::list<std::string>::iterator &curFile);
 		bool isRelative;
+		void popBegin(int ammount);
 //		void normalize2dot(std::list<std::string>::iterator &curFile);
 
 		std::list<std::string> directories;

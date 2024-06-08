@@ -5,6 +5,11 @@ int Client::getFD() const
     return _fd;
 }
 
+std::string Client::getHttpAnswerDirectory() const
+{
+    return this->_httpAnswerDirectory;
+}
+
 const std::string& Client::getURL() const
 {
     return  _parser_http.getRequested();

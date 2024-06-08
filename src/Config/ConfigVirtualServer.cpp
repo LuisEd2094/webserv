@@ -112,36 +112,45 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 
 	server_name = std::find(this->serverNames.begin(), this->serverNames.end(), client.getHost());
 	if (server_name == this->serverNames.end())
-		return (false);
-	
-	std::list<ConfigLocation>::iterator location;
-	std::list<std::string>				locMethods ;
-	std::list<ConfigLocation>::iterator	bestLocation = this->locations.end();
-	Path								requestedURL = client.getURL();
-	int									maxDirMatches = 0;
-	std::cout << "wololoooo" << std::endl;
-	for(location = this->locations.begin(); location != this->locations.end(); location++)
 	{
-		std::cout << GREEN << "another location " << END << std::endl;
-		std::cout << GREEN << "  "<< location->getPath() << END << *location << std::endl;
-		std::cout << (location->getPath().included(requestedURL)) << std::endl;
-		std::cout << (std::find(locMethods.begin(), locMethods.end(), client.getMethod()) != locMethods.end()) << std::endl;
-		std::cout << (location->getPath().size() > maxDirMatches) << std::endl;
-		locMethods = location->getMethods();
-		if (location->getPath().included(requestedURL)
-			&& std::find(locMethods.begin(), locMethods.end(), client.getMethod()) != locMethods.end()
-			&& location->getPath().size() > maxDirMatches) 	
-		{
-			maxDirMatches = location->getPath().size();
-			bestLocation = location;
-		}
-	}
-	if (bestLocation == this->locations.end())
-	{
-		std::cout << "Resource not found :(" << std::endl;
+		std::cout << "client name should be " << client.getHost() << std::endl;
 		return (false);
 	}
-	return (bestLocation->prepareClient4ResponseGeneration(client));
+
+	std::list<ConfigLocation>::iterator bestLocation;
+	bestLocation = ConfigLocation::getBestLocation(client.getURL(), client.getMethod(), 
+		this->locations.begin(),
+		this->locations.end());
+	if (bestLocation == this->getLocations().end())
+		return (false);
+	return (bestLocation->prepareClient4ResponseGeneration(client, Path()));//recordar que no es asi
+	// return (true);
+
+	// if (false)
+	// {
+	// 	std::list<ConfigLocation>::iterator location;
+	// 	std::list<std::string>				locMethods ;
+	// 	std::list<ConfigLocation>::iterator	bestLocation = this->locations.end();
+	// 	Path								requestedURL = client.getURL();
+	// 	int									maxDirMatches = 0;
+	// 	for(location = this->locations.begin(); location != this->locations.end(); location++)
+	// 	{
+	// 		locMethods = location->getMethods();
+	// 		if (locMethods.size() == 0)
+	// 			continue;
+	// 		if (location->getPath().included(requestedURL)
+	// 			&& std::find(locMethods.begin(), locMethods.end(), client.getMethod()) != locMethods.end()
+	// 			&& location->getPath().size() > maxDirMatches) 	
+	// 		{
+	// 			maxDirMatches = location->getPath().size();
+	// 			bestLocation = location;
+	// 		}
+	// 	}
+	// 	if (bestLocation == this->locations.end())
+	// 		return (false);
+	// 	return (bestLocation->prepareClient4ResponseGeneration(client));
+	// }
+	// return (true);
 }
 
 std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj)
