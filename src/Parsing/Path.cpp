@@ -6,19 +6,31 @@ Path::~Path()
 
 Path::Path()
 {
+        std::cout << "Path defaul constructor called" << std::endl;
+        //this->directories = std::list<std::string>();
+        this->isRelative = false;
+        std::cout << "Path defaul constructor finished" << std::endl;
 }
 
 Path::Path(std::string pathStr)
 {
-        this->isRelative = pathStr[0] == '/';
-        this->directories = ft_split(pathStr, '/');
-        while (this->normalize());
+    std::cout << "Path string constructor called" << std::endl;
+    this->isRelative = pathStr[0] == '/';
+    this->directories = ft_split(pathStr, '/');
+    while (this->normalize());
+    std::cout << "Path string constructor finished" << std::endl;
 }
 
 Path::Path(const Path &orig)
 {
+    std::cout << "Path copy constructor called" <<std::endl;
+    //orig.getIsRelative();
+    std::cout << "------------------->" << std::endl;
+    std::cout << *orig.directories.begin() << std::endl;
+    std::cout << "------------------->" << std::endl;
     this->directories = orig.directories;
     this->isRelative = orig.getIsRelative();
+    std::cout << "Path copy constructor finished" << std::endl;
 }
 
 Path &Path::operator=(const Path &orig)

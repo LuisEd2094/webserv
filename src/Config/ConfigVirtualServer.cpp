@@ -116,24 +116,31 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 	
 	std::list<ConfigLocation>::iterator location;
 	std::list<std::string>				locMethods ;
-	std::list<ConfigLocation>::iterator	bestLocation;
+	std::list<ConfigLocation>::iterator	bestLocation = this->locations.end();
 	Path								requestedURL = client.getURL();
 	int									maxDirMatches = 0;
-	std::cout << "Request for url: " << client.getURL() << std::endl;
+	std::cout << "wololoooo" << std::endl;
 	for(location = this->locations.begin(); location != this->locations.end(); location++)
 	{
+		std::cout << GREEN << "another location " << END << std::endl;
+		std::cout << GREEN << "  "<< location->getPath() << END << *location << std::endl;
+		std::cout << (location->getPath().included(requestedURL)) << std::endl;
+		std::cout << (std::find(locMethods.begin(), locMethods.end(), client.getMethod()) != locMethods.end()) << std::endl;
+		std::cout << (location->getPath().size() > maxDirMatches) << std::endl;
 		locMethods = location->getMethods();
-		std::cout << "Location" << location->getPath() << std::endl;
-		if (location->getPath().includes(requestedURL)
+		if (location->getPath().included(requestedURL)
 			&& std::find(locMethods.begin(), locMethods.end(), client.getMethod()) != locMethods.end()
 			&& location->getPath().size() > maxDirMatches) 	
 		{
 			maxDirMatches = location->getPath().size();
 			bestLocation = location;
-			std::cout << "BestLocation" << location->getPath() << std::endl;
 		}
 	}
-	std::cout << "Returning" << std::endl;
+	if (bestLocation == this->locations.end())
+	{
+		std::cout << "Resource not found :(" << std::endl;
+		return (false);
+	}
 	return (bestLocation->prepareClient4ResponseGeneration(client));
 }
 

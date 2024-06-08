@@ -18,6 +18,7 @@ ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 	this->_cgis = obj.getCgis();
 	this->_locations = obj.getLocations();
 	this->_cgis = obj.getCgis();
+//	this->_path = obj.getPath();
 }
 
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
@@ -101,6 +102,8 @@ void ConfigLocation::setDefaults()
 	this->setErrorPage("");	
 	this->setRedirection("");	
 	this->setDirListing(true);	
+	//this->setPath(Path(""));
+	this->_path = Path();
 }
 
 void ConfigLocation::parseKeyVal(std::string key, std::string val)
@@ -285,13 +288,8 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 
 bool ConfigLocation::prepareClient4ResponseGeneration(Client& client)
 {
-//	std::string url = client.getURL() ;
-	Path sdaf;
-	std::cout << "yok " << std::endl;
-	sdaf = this->getPath() ;
-	std::cout << "koy " << std::endl;
-	std::cout << "::: ConfigLocation::prepareClient4ResponseGeneration: " << this->getPath() << std::endl;	
-	std::cout << client.getURL() << std::endl;
+	std::string url = client.getURL() ;
+	std::cout << "location: " << this->getPath() << std::endl;
 	return true;
 }
 

@@ -51,8 +51,9 @@ class ConfigLocation: public ConfigElement
 		void							setDirListing(bool dirListing);
 		void							setIndex(std::string index);//
 		void							setCgis(std::string cgis);//*
+		void							setPath(Path &path) { this->_path = path; };//*
 
-		Path							getPath(void) const {return this->_path;};
+		Path							getPath(void) const { std::cout << "returning: " << _path << std::endl; return this->_path;};
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;
