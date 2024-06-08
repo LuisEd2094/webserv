@@ -30,6 +30,7 @@ class Client : public BaseHandler
         int                 Action(int event);
         bool                checkObjTimeOut();
         void                addObject(BaseHandler *);
+        void                addClosingErrorObject(ErrorCodes);
 
         // setters
         void                addHeader(const std::string &new_element);
@@ -46,15 +47,18 @@ class Client : public BaseHandler
         const std::string&              getURL() const;
         const std::string&              getMethod() const;
         const std::string&              getHost() const;
-    
-
+        Actions                         getAction() const;
+        bool                            getIsChunked() const;
+        std::size_t                     getContentLength() const;
     
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
         const std::string&              getPathFile() const;
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
- 
+        std::string             _in_body;
+
+
         class clientException;
 
 
@@ -69,12 +73,16 @@ class Client : public BaseHandler
 
         bool                    _keep_alive;
 
-        char                    _in_message[RECV_SIZE];
+        char                    _in_message[BUFFER_SIZE];
 
         bool                    _pending_read;
         std::string             _in_container;
-        std::string             _in_body;
+
+        std::string             _chunk;
+        std::size_t             _chunk_size;
+
         std::size_t             _content_length;
+        bool                    _is_chunked;
 
         void                    updateMethodAction();
         void                    parseForHttp();
@@ -83,9 +91,14 @@ class Client : public BaseHandler
         bool                    _can_read;
         bool                    _error;
         void                    readFromFD();
+        void                    processChunk();
+        void                    addClosingError(ErrorCodes);
         void                    resetClient(bool);
         int                     sendResponse();
+
+        /*POST methods*/
         int                     saveInBodyAsFile();
+        bool                    checkPostHeaderInfo();
 
         void                    checkFirstQueue(RequestHandler *);
         void                    handleDirectObj(DirectResponse*, RequestHandler *);

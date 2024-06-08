@@ -50,6 +50,41 @@ int                Server::Action(int event)
 }
 
 
+bool Server::validateAction(Client& client)
+{
+    // check method and url against config.
+    // GET es valido para esta URL
+    // POST valido para uRL etc 
+    const std::string& url = client.getURL();
+    const std::string& method = client.getMethod();
+    const std::string& host = client.getHost();
+    Actions client_action = client.getAction();
+
+    std::size_t max_body = 30777500; /*This should come from the server*/
+
+    std::cout << method << std::endl;
+    std::cout << host << std::endl;
+    virtualServers.back().recursivePrint();
+
+    if (client_action == POST)
+    {
+        if (!client.getIsChunked())
+        {
+            if (client.getContentLength() > max_body)
+            {
+                client.addClosingErrorObject(PAYLOAD);
+                return (false);
+            }
+        }
+    }
+    if (url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
+        return true;
+    else
+    {
+        client.addObject(BaseHandler::createObject(getErrorResponseObject(NOT_FOUND)));
+        return (false);
+    }
+}
 
 /*
 
@@ -129,6 +164,16 @@ void Server::getResponse(Client & client)
         if (url == "/")
         {
             client.setResponseType(DIRECT_OBJ);
+        }
+        else if (url ==  "/post")
+        {
+            std::ofstream outfile("output_file.jpeg", std::ios::binary);
+            if (outfile.is_open())
+            {
+                outfile.write(client._in_body.data(), client._in_body.size());
+                outfile.close();
+                std::cout << "Binary data written to file.\n";
+            } 
         }
         else if (url.find("/Cookies/") != std::string::npos)
         {

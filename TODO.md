@@ -1,7 +1,7 @@
 # TODO LIST
 
 1. Parsear Body de entrada 
-- verificar tipo de envio de info, Content-len vs chuncked
+- verificar tipo de envio de info, Content-len vs chunked
 
 2. Parsear Header de entrada para controlar flujo contra la info del config file que ya tiene cada server fisico
 - Control de errores del HTTP de entrada, para controlar el flujo del FD del cliente
@@ -78,7 +78,7 @@
 | 100  | Continue |  Client might send a big payload and wants to confirm server can handle  it | Client sends a Expect: 100-continue header action| Make sure we can serve the request| | ❌|
 | 101 | Switching Protocols|Upgrade  protocol version| When we consider is best?|||❌|
 |https://datatracker.ietf.org/doc/html/rfc7231#page-51|||||||
-| 200| OK |Request OKAY, provides a body with the requested response| Everything was OKAY with the response and we return a representation of the status| If: GET: Target Resource, IF: POST: Representation or result, IF DELETE: Status. **Requiers a BODY. If you dont want to send BODY then set Content-Lenght: 0 or USE 204 NO CONTENT**| | ❌|
+| 200| OK |Request OKAY, provides a body with the requested response| Everything was OKAY with the response and we return a representation of the status| If: GET: Target Resource, IF: POST: Representation or result, IF DELETE: Status. **Requiers a BODY. If you dont want to send BODY then set Content-Length: 0 or USE 204 NO CONTENT**| | ❌|
 | 201| Created |Request OKAY and wnat to link response| Request OKAY|Add Location field or add URL with location. Might want to return a HTML with a link to the resource created||❌|
 | 202 | Accepted |Accepted request, no response available at the moment| Requested resource takes too long and we dont want the client to wait, client will send requests in the future requiring confirmation| Handle future requests for this resource until a final response is generated||❌|
 | 203| Non-Authoritative Information |Successful but modified by proxy| Request was sent to proxy and proxy modified the OG response|||❌|
