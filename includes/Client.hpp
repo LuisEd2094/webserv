@@ -19,6 +19,7 @@
 # include <vector>
 # include <fstream>
 # include <poll.h>
+# include <stack>
 
 class Server;
 
@@ -32,15 +33,20 @@ class Client : public BaseHandler
         void                addObject(BaseHandler *);
         void                addClosingErrorObject(ErrorCodes);
 
+                                    
+
+
         // setters
         void                addHeader(const std::string &new_element);
         void                addHeader(const std::queue<std::string> &);
+        void                addURLRedirection(const std::string&);
+
         void                setdefaultResponse(const defaultResponse& response, BaseHandler*);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
         void                setResponseType(ObjectTypes );
         void                setPathFile(const std::string&);
-        void                setDefaultHttpResponse(const std::string &);
+        void                setDefaultHttpResponse(ErrorCodes);
 
         //getters
         Server *                        getServer() const;
@@ -51,15 +57,16 @@ class Client : public BaseHandler
         Actions                         getAction() const;
         bool                            getIsChunked() const;
         std::size_t                     getContentLength() const;
-    
+        bool                            getURLempty() const; 
+        std::string                     getNextURLRedirect();
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
         const std::string&              getPathFile() const;
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
         const std::string&              getDefaultHttpResponse(void) const;
+        ErrorCodes                      getErrorCode() const; 
 
-        std::string             _in_body;
 
 
         class clientException;
@@ -67,10 +74,13 @@ class Client : public BaseHandler
 
     private:
         std::queue< std::string>                    _http_addons;
+        std::stack< std::string>                    _redirection_urls;
         std::queue< RequestHandler *>               _response_objects_queue;
         std::map< BaseHandler *,  RequestHandler *> _response_objects_map;
         Parsing                 _parser_http;
         Actions                 _action;
+        ErrorCodes              _error_code;
+
         int                      _result;
         std::size_t             _size_to_append;
 
@@ -80,6 +90,8 @@ class Client : public BaseHandler
 
         bool                    _pending_read;
         std::string             _in_container;
+        std::string             _in_body;
+
 
         std::string             _chunk;
         std::size_t             _chunk_size;
@@ -98,6 +110,8 @@ class Client : public BaseHandler
         void                    addClosingError(ErrorCodes);
         void                    resetClient(bool);
         int                     sendResponse();
+        void                    handlerRecv();
+
 
         /*POST methods*/
         int                     saveInBodyAsFile();

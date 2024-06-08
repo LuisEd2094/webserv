@@ -74,3 +74,24 @@ const std::string& Client::getDefaultHttpResponse(void) const
 {
     return (this->_defaultHttp);
 }
+
+ErrorCodes                      Client::getErrorCode() const
+{
+    return _error_code;
+}
+
+
+bool Client::getURLempty() const
+{
+    return _redirection_urls.empty();
+}
+std::string              Client::getNextURLRedirect()
+{
+    if (!_redirection_urls.empty())
+    {
+        std::string res(_redirection_urls.top());
+        _redirection_urls.pop();
+        return res;
+    }
+    return "";
+}

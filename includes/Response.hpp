@@ -12,6 +12,9 @@
 enum ErrorCodes
 {
     OK,
+    /*3xx*/
+    MULTIPLE_REDIRECTS,
+    /*4xx*/
     BAD_REQUEST,
     FORBIDDEN,
     NOT_FOUND,
@@ -27,7 +30,7 @@ enum ErrorCodes
     EXPECTATION,
     UPGRADE,
 
-
+    /*5xx*/
     INTERNAL_SERVER_ERROR,
     NOT_IMPLEMENTED,
     GATEWAY_TIMEOUT, 
@@ -36,6 +39,10 @@ enum ErrorCodes
 };
 
 # define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\n"
+
+/* 3xx ERRORS*/
+
+# define MULTIPLE_REDIRECTS_HTTP "HTTP/1.1 300 Multiple Choices\r\nContent-Type: text/html\r\n"
 
 /*4xx ERRORS*/
 
@@ -130,7 +137,7 @@ enum ErrorCodes
 # define TEMPLATE "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<title></title>\n</head>\n<body>\n<p></p>\n</body>\n</html>\n"
 
 
-
+# define REDIRECT_TEMPLATE "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<title>\nRedirecting...</title>\n</head>\n<body></body></html>"
 
 
 typedef struct Responses

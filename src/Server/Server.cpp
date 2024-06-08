@@ -135,7 +135,7 @@ bool Server::validateAction(Client& client)
             }
         }
     }
-    if (url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html" or url == "/testError.html")
+    if (url == "/testMultipleRedirect.html" or url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html" or url == "/testError.html")
         return true;
     else
     {
@@ -179,11 +179,19 @@ void Server::getResponse(Client & client)
         {
             client.setResponseType(DIRECT_OBJ);
         }
+        else if (url == "/testMultipleRedirect.html")
+        {
+            /*if not set path file then it should use default*/
+            client.setDefaultHttpResponse(MULTIPLE_REDIRECTS);
+            client.setResponseType(DIRECT_OBJ);
+            client.addURLRedirection("/first/redirect");
+            client.addURLRedirection("/second/redirect");
+        }
         else if (url == "/testError.html")
         {
             std::cout << "-------------" << std::endl;
             client.setPathFile("/home/luis/proyects/webserv/html/testError.html");
-            client.setDefaultHttpResponse(Response::getHttpFirtsLine(BAD_REQUEST));
+            client.setDefaultHttpResponse(BAD_REQUEST);
             client.setResponseType(FILE_OBJ);
 
         }
@@ -192,10 +200,11 @@ void Server::getResponse(Client & client)
             std::ofstream outfile("output_file.jpeg", std::ios::binary);
             if (outfile.is_open())
             {
-                outfile.write(client._in_body.data(), client._in_body.size());
+                outfile.write(client.getBody().data(), client.getBody().size());
                 outfile.close();
                 std::cout << "Binary data written to file.\n";
-            } 
+            }
+            client.setResponseType(DIRECT_OBJ);
         }
         else if (url.find("/Cookies/") != std::string::npos)
         {

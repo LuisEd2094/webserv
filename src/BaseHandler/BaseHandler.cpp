@@ -31,6 +31,26 @@ BaseHandler* BaseHandler::createObject(Client& client)
                 return CGI::createNewCGI(client);
             else if (valid_objs[i] == DIRECT_OBJ)
             {
+                if (client.getErrorCode() >= MULTIPLE_REDIRECTS && client.getErrorCode() <= MULTIPLE_REDIRECTS)
+                {
+                    std::string body(REDIRECT_TEMPLATE);
+
+                    std::size_t body_pos(body.find("<body>"));
+
+                    while(!client.getURLempty())
+                    {
+                        std::string newUrl = client.getNextURLRedirect();
+                        std::string a = "<p><a href=\"";
+
+                        a.append(newUrl + "\">" + newUrl + "</a></p>\n");
+                        
+                        
+                        body.insert(body_pos + std::strlen("<body>"),a );
+                    }
+                    std::string listing = "THIS IS LISTING";
+                    return DirectResponse::createNewDirect(setContentLenHTTP(client.getDefaultHttpResponse(), body), body);
+
+                }
                 std::string listing = "THIS IS LISTING";
                 return DirectResponse::createNewDirect(setContentLenHTTP(HTTP_OK, listing), listing);
             }

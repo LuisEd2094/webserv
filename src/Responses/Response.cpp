@@ -80,6 +80,9 @@ void    Response::initDefaultMap()
 void    Response::initErrorsHttp(void)
 {
     _vectorError.push_back(HTTP_OK);
+    /*3xx ERRORS*/
+    _vectorError.push_back(MULTIPLE_REDIRECTS_HTTP);
+    /*4xx ERRORs*/
     _vectorError.push_back(BAD_REQUEST_HTTP);
     _vectorError.push_back(FORBIDDEN_HTTP);
     _vectorError.push_back(NOT_FOUND_HTTP);
@@ -94,6 +97,7 @@ void    Response::initErrorsHttp(void)
     _vectorError.push_back(MEDIA_HTTP);
     _vectorError.push_back(EXPECT_HTTP);
     _vectorError.push_back(UPGRADE_HTTP);
+    /*5xx errors*/
     _vectorError.push_back(INTERNAL_ERROR_HTTP);
     _vectorError.push_back(NOT_IMPLEMENTED_HTTP);
     _vectorError.push_back(GATEWAY_TIMEOUT_HTTP);

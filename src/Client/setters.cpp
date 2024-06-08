@@ -76,7 +76,13 @@ void Client::setPathFile(const std::string& path)
 }
 
 
-void Client::setDefaultHttpResponse(const std::string& str)
+void Client::setDefaultHttpResponse(ErrorCodes code)
 {
-    _defaultHttp = str;
+    _defaultHttp = Response::getHttpFirtsLine(code);
+    _error_code = code;
+}
+
+void Client::addURLRedirection(const std::string& url)
+{
+    _redirection_urls.push(url);
 }

@@ -93,6 +93,42 @@ void    Client::addClosingErrorObject(ErrorCodes error)
     addClosingError(error);
 }
 
+void Client::handlerRecv()
+{
+    if (_action == POST)
+    {
+        std::size_t size_to_read;
+        if (_is_chunked)
+        {
+            /*
+                we read + 2 because _chunk_size doesn't include the new lines
+                new lines can be CRNL
+            */
+            if (_chunk_size == 0)
+            {
+                /*
+                    If chunk_size == 0 then we haven't read the first line of the chunk
+                    I don't Want to read 80k chars here, just in case there are a bunch of 
+                    HTTP requests after this body, that way this client doesn't take forever
+                */
+                size_to_read = RECV_SIZE;
+            }
+            else
+            {
+                size_to_read = std::min(_chunk_size - _chunk.length() + 2, (std::size_t)BUFFER_SIZE);
+            }
+        }
+        else
+        {
+            size_to_read = std::min(_content_length - _in_body.length(), (std::size_t)BUFFER_SIZE);
+        }
+        _result = recv(_fd, _in_message, size_to_read, 0);
+    }
+    else
+    {
+        _result = recv(_fd, _in_message, RECV_SIZE, 0);
+    }
+}
 
 void Client::readFromFD()
 {
@@ -218,36 +254,6 @@ void Client::readFromFD()
 
 
         }
-       
-        // else if (_action == POST)
-        // {
-        //     _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
-        // }      
-        // if (!_pending_read)
-        // {
-        //     if (_action == WAIT)
-        //     {
-        //         if (!_parser_http.checkMethod(_in_container)) //check method returns 0 on success
-        //         {
-        //             if (!_server->validateAction(*this))
-        //             {
-        //                 _action = GET;
-        //                 return;
-        //             }
-        //             updateMethodAction();
-        //         }
-        //     }
-        //     if (_action != WAIT) 
-        //     {
-        //         _parser_http.parsingHeader(_in_container); // ParseingHeader should return true/false each time. Should return TRUE when all HTTP has been parseed "\r\n\r\n", false otherwise
-        //         parseForHttp();
-        //     }
-        // // }
-        // else if (_action == POST)
-        // {
-        //     _in_body.insert(_in_body.end(), _in_message, _in_message + _result);
-        // }
-
     }
     else
     {
@@ -527,7 +533,8 @@ void Client::resetClient(bool has_body)
         }
         _in_body.clear();
     }
-    _http_addons.empty();
+    while (!_http_addons.empty())
+        _http_addons.pop();
     _pending_read = false;
     _action = WAIT;
     _content_length = 0;
@@ -539,6 +546,8 @@ void Client::resetClient(bool has_body)
     _virtualServer = NULL;
     _path_to_file = "";
     _defaultHttp = "";
+    _error_code = OK;
+
 }
 bool Client::checkObjTimeOut()
 {
