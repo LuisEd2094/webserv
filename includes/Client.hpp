@@ -40,6 +40,7 @@ class Client : public BaseHandler
         void                setBodyResponse(const std::string &message, BaseHandler*);
         void                setResponseType(ObjectTypes );
         void                setPathFile(const std::string&);
+        void                setDefaultHttpResponse(const std::string &);
 
         //getters
         Server *                        getServer() const;
@@ -56,6 +57,8 @@ class Client : public BaseHandler
         const std::string&              getPathFile() const;
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
+        const std::string&              getDefaultHttpResponse(void) const;
+
         std::string             _in_body;
 
 
@@ -107,6 +110,7 @@ class Client : public BaseHandler
         ObjectTypes             _response_type;
 
         std::string             _path_to_file;
+        std::string             _defaultHttp;
 
 
 
@@ -114,6 +118,7 @@ class Client : public BaseHandler
         struct sockaddr_storage _remoteaddr; 
         socklen_t               _addrlen;
         Server *                _server;
+        ConfigVirtualServer*    _virtualServer;
         Client ();
         Client (const Client& rhs);
         Client& operator= (const Client& rhs);

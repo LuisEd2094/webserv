@@ -36,7 +36,7 @@ const std::string& FileReader::getMimeType(const std::string& to_find)
 }
 
 
-FileReader::FileReader(Client& client) : _client_fd(client.getFD())
+FileReader::FileReader(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDefaultHttpResponse())
 {
     _fd = open(client.getPathFile().c_str(), O_RDONLY);
     std::size_t start_ext = client.getURL().find_last_of(".");

@@ -171,6 +171,7 @@ void Server::getResponse(Client & client)
     const std::string & hostHeader = client.getMapValue("Host");
     // this->virtual
     std::cout << RED << "CALLGIN prepareClient4Response(): " << END << std::endl;
+    //hacer un try para settear los parametros settear el http de respuesta.
     this->prepareClient4ResponseGeneration(client);
     std::cout << RED << "**************CALLED***************" << END << std::endl;
     std::cout << RED << "Host:" << END << hostHeader << std::endl;

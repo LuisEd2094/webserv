@@ -37,6 +37,9 @@ Client::Client(Server *server) : BaseHandler()
     _error = false;
     _is_chunked = false;
     _chunk_size = 0;
+    _virtualServer = NULL;
+    _path_to_file = "";
+    _defaultHttp = "";
 }
 
 Client::~Client() 
@@ -533,8 +536,9 @@ void Client::resetClient(bool has_body)
     _is_chunked = false;
     _parser_http.resetParsing();
     _chunk_size = 0;
-    
-
+    _virtualServer = NULL;
+    _path_to_file = "";
+    _defaultHttp = "";
 }
 bool Client::checkObjTimeOut()
 {

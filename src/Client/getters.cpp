@@ -68,3 +68,9 @@ bool Client::getIsChunked() const
     return _is_chunked;
 }
 
+
+
+const std::string& Client::getDefaultHttpResponse(void) const
+{
+    return (this->_defaultHttp);
+}

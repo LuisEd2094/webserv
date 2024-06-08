@@ -76,4 +76,7 @@ void Client::setPathFile(const std::string& path)
 }
 
 
-
+void Client::setDefaultHttpResponse(const std::string& str)
+{
+    _defaultHttp = str;
+}

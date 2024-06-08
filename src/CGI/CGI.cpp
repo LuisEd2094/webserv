@@ -17,7 +17,7 @@ class CGI::CGIException : public std::exception
         }
 };
 
-CGI::CGI(Client& client) : _client_fd(client.getFD())
+CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDefaultHttpResponse())
 {
     if (pipe(_pipe))
     {

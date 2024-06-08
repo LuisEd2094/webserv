@@ -30,6 +30,8 @@ class FileReader : public BaseHandler
         int             _client_fd;
         std::string     _buffer;
         std::string     _file_type;
+        std::string     _defaultHttp;
+
 };
 
 

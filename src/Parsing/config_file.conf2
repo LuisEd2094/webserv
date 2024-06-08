@@ -1,0 +1,34 @@
+server
+{
+	port:8080;
+	host:localhost;
+	serverNames: lol.com;
+		location /l {
+		root: /lock/hello;
+		methods: GET POST DELEETE;
+			location /nested {
+				root: /lock/bye;
+			}
+			cgi patata {
+				smth: sdaf;
+			}
+		}
+		location /this_another {
+			root: /sdaf;
+		}
+}
+
+server
+{
+	port:8080;
+	host:localhost;
+	location /other {
+			root: /patata;
+	}
+}
+
+server
+{
+	port:8081;
+	host:localhost;
+}
