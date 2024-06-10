@@ -107,7 +107,6 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 {
 	std::cout << "::: ConfigVIrtualServer::prepareClient4ResponseGeneration" << std::endl;
 	std::cout << "::: " << client.getHost() << std::endl;
-	std::cout << "::: " << client.getMapValue("Host") << std::endl;
 	std::list<std::string>::iterator server_name;
 
 	server_name = std::find(this->serverNames.begin(), this->serverNames.end(), client.getHost());
@@ -117,6 +116,16 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 		return (false);
 	}
 
+ ////
+	//return  ConfigLocation::getBestLocation(client.getURL(), client.getMethod(), 
+	Path url(client.getURL());
+	return  ConfigLocation::getBestLocation(
+		client, Path(client.getURL()),
+//		client, url,
+		this->locations.begin(),
+		this->locations.end()
+	);
+/*
 	std::list<ConfigLocation>::iterator bestLocation;
 	bestLocation = ConfigLocation::getBestLocation(client.getURL(), client.getMethod(), 
 		this->locations.begin(),
@@ -125,7 +134,9 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 		return (false);
 	Path nextURL(client.getURL());
 	nextURL.popBegin(bestLocation->size());
-	return (bestLocation->prepareClient4ResponseGeneration(client, nextURL));//recordar que no es asi
+	bestLocation->prepareClient4ResponseGeneration(client, nextURL);
+	return (true);
+*/
 	// return (true);
 
 	// if (false)

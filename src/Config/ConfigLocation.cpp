@@ -36,6 +36,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	}
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
+	this->_path = Path(this->__elemArgument__);
 	this->_inheriting = false;
 	if (obj.find("root") == obj.end())
 		this->_root.append(obj.find("__elemArgument__")->second);
@@ -257,7 +258,7 @@ std::ostream &operator<<(std::ostream &os,  std::list<std::string> &listObj)
 
 void ConfigLocation::recursivePrint(int recursiveLvl)
 {
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->__elemArgument__ << ")" << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->_path << ")" << std::endl;
 	recursiveLvl++;
 
 	std::cout << ConfigElement::genSpace(recursiveLvl) ;
@@ -287,50 +288,82 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 }
 
 bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
-	Path requestedURL
+	Path &requestedURL
 )
 {
-	(void)requestedURL;
+	bool inBestLocation;
+
+	std::cout << "::: ConfigLocation::prepareClient4ResponseGeneration " << this->getPath() << std::endl;
 	std::string url = client.getURL() ;
-	std::cout << "ConfigLocation::prepareClient4ResponseGeneration " << this->getPath() << std::endl;
+
+	inBestLocation = ConfigLocation::getBestLocation( client, requestedURL,
+		this->_locations.begin(),
+		this->_locations.end()
+	);
+	if (inBestLocation)
+		std::cout << "      BINGO !!!" << std::endl;
 	return true;
 }
 
-std::list<ConfigLocation>::iterator ConfigLocation::getBestLocation(Path requestedURL,
-	std::string requestMethod,
+//std::list<ConfigLocation>::iterator ConfigLocation::getBestLocation(Path requestedURL,
+//bool ConfigLocation::getBestLocation(Path requestedURL,
+//bool getBestLocation( Client &client, Path requestedURL,
+	//std::list<ConfigLocation>::iterator beginLocation,
+	//std::list<ConfigLocation>::iterator endLocation
+//)
+bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 	std::list<ConfigLocation>::iterator beginLocation,
 	std::list<ConfigLocation>::iterator endLocation
 )
 {
-	std::list<ConfigLocation>::iterator location;
+//	std::string requestedURL = client.getURL();
+	std::string requestMethod = client.getMethod();
+//	std::list<ConfigLocation>::iterator location;
 	std::list<std::string>				locMethods ;
 	std::list<ConfigLocation>::iterator	bestLocation = endLocation;
 	int									maxDirMatches = 0;
+	std::cout << "··· getBestLocation " << requestedURL << std::endl;
 	while (beginLocation != endLocation)
 	{
 		locMethods = beginLocation->getMethods();
+		std::cout << "      Location " << *beginLocation ;
+		/*
 		if (locMethods.size() == 0)
 		{
 			beginLocation++ ;
 			continue;
 		}
-		if (beginLocation->getPath().included(requestedURL)
+		*/
+		if (locMethods.size() == 0)
+			;
+		else if (beginLocation->getPath().included(requestedURL)
 			&& std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()
 			&& beginLocation->getPath().size() > maxDirMatches) 	
 		{
 			maxDirMatches = beginLocation->getPath().size();
 			bestLocation = beginLocation;
+			std::cout << "  MATCHED" ;
 		}
+		std::cout << std::endl;
 		beginLocation++ ;
 	}
-	return bestLocation;
+	//return bestLocation;
+	if (bestLocation == endLocation)
+		return false;
 
+//	Path nextURL(client.getURL());
+	std::cout << "      Before pop: " << bestLocation->size() << " " << requestedURL << std::endl;
+	requestedURL.popBegin(bestLocation->size());
+	std::cout << "      After pop: " << requestedURL << std::endl;
+	std::cout << "      First nested location: " << *bestLocation->_locations.begin() << std::endl;
+	bestLocation->prepareClient4ResponseGeneration(client, requestedURL);
+	return (true);
 }
 
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)
 {
 	os << "ConfigLocation (" << obj.getPath() << "): " << std::endl;
-	os << "  errorPage: " << obj.getErrorPage() << std::endl;
+//	os << "  errorPage: " << obj.getErrorPage() << std::endl;
 	return os;
 }
 

@@ -135,10 +135,12 @@ bool Server::validateAction(Client& client)
             }
         }
     }
-    if (url == "/testMultipleRedirect.html" or url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html" or url == "/testError.html" or url=="/hellow/you/nice")
+    if (url == "/testMultipleRedirect.html" or url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html" or url == "/testError.html" or url=="/hellow/you/nice"
+    or url == "/hellow/you/nice/nested")
         return true;
     else
     {
+        std::cout << "url not allowed: " << url << std::endl;
         client.addObject(BaseHandler::createObject(getErrorResponseObject(NOT_FOUND)));
         return (false);
     }

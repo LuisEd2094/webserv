@@ -40,10 +40,13 @@ Path &Path::operator=(const Path &orig)
 }
 void Path::popBegin(int ammount)
 {
+    std::cout << "          POPING " << ammount << std::endl;
     while (ammount--)
     {
+        std::cout << "          pop " << ammount << std::endl;
         this->directories.erase(this->directories.begin());         
     }
+    std::cout << "          POPED " << ammount << std::endl;
 }
 void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
 {
