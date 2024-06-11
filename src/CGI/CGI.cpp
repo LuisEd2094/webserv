@@ -3,6 +3,22 @@
 #include <Client.hpp>
 
 
+void CGI::changeDir(const std::string& fileUrl)
+{
+    std::size_t pos = fileUrl.find_last_of("/");
+    std::string new_path;
+    /*If pos == 0 then path is in root, so we can't do a substr*/
+    if (pos != 0)
+    {
+        new_path = fileUrl.substr(0, pos);
+    }
+    else
+    {
+        new_path = "/";
+    }
+    chdir(new_path.c_str());
+}
+
 //Exception
 class CGI::CGIException : public std::exception
 {
@@ -17,6 +33,8 @@ class CGI::CGIException : public std::exception
         }
 };
 
+
+
 CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDefaultHttpResponse())
 {
     if (pipe(_pipe))
@@ -30,15 +48,22 @@ CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDe
     }
     if (_pid == 0)
     {
-        //signal(SIGINT, SIG_DFL);
-        //signal(SIGQUIT, SIG_DFL);
-        const std::string cgi_path = "/workspaces/webserv/CGI" + client.getURL();
+        std::size_t pos = client.getPathFile().find_last_of("/");
+        std::string new_path;
+        /*If pos == 0 then path is in root, so we can't do a substr*/
+        if (pos != 0)
+        {
+            new_path = client.getPathFile().substr(0, pos);
+        }
+        else
+        {
+            new_path = "/";
+        }
+        chdir(new_path.c_str());
         char* argv[3];
         argv[0] = const_cast<char*>("/usr/bin/python3");
-        argv[1] = const_cast<char*>(client.getPathFile().c_str()); // Convert const char* to char*
-        argv[2] = NULL; // Null-terminate the array
-        //close(_pipe[0]);
-        //dup2(_pipe[1], STDOUT_FILENO);
+        argv[1] = const_cast<char*>(client.getPathFile().c_str());
+        argv[2] = NULL;
 
 
 		close(_pipe[0]);
@@ -46,20 +71,7 @@ CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDe
         close(_pipe[1]);
 
         execve("/usr/bin/python3", argv, NULL);
-        std::cout << "HTTP/1.1 500 Internal Server Error\r\n" << std::endl;
         std::exit(-1);
-        // try
-        // {
-        //     execve("/usr/bin/python3", argv, NULL);
-        //     std::exit(0);
-        // }
-        // catch (const std::exception& e)
-        // {
-        //     throw CGIException(e.what() + std::string(strerror(errno)));
-        //     std::exit(-1);
-
-        // }
-
     }
 	close(_pipe[1]);
 }
@@ -71,7 +83,6 @@ CGI::~CGI()
 
     kill(_pid, SIGTERM);
     waitpid(_pid, &status, 0);
-    //_client_message.append(buff);
     close(_pipe[0]);
 }
 
@@ -79,7 +90,6 @@ CGI* CGI::createNewCGI(Client& client)
 {
     CGI *new_cgi = new CGI(client);
     Overseer::addToPfds(new_cgi);
-    //exit(0);
     return new_cgi;
 }
 

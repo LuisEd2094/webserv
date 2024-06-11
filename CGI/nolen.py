@@ -1,5 +1,7 @@
 import time
 
+import os
+cwd = os.getcwd()
 time.sleep(0)
 
 
@@ -14,6 +16,7 @@ print("""
     <title>CGI Test</title>
 </head>
 <body>
+      """ + cwd + """
     <h1>CGI Test Page</h1>
     <p>This is a simple CGI test.✊</p>
 </body>

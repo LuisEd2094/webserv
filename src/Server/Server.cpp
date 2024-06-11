@@ -136,7 +136,7 @@ bool Server::validateAction(Client& client)
         }
     }
     if (url == "/testMultipleRedirect.html" or url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html" or url == "/testError.html" or url=="/hellow/you/nice"
-    or url == "/hellow/you/nice/nested")
+    or url == "/hellow/you/nice/nested" or url == "/nolenroot.py")
         return true;
     else
     {
@@ -255,7 +255,13 @@ void Server::getResponse(Client & client)
         else if (url == "/nolen.py")
         {
             client.setDefaultHttpResponse(OK);
-            client.setPathFile("/workspaces/webserv/CGI/nolen.py");
+            client.setPathFile("/workspaces/webserv/CGI/noexiste.py");
+            client.setResponseType(CGI_OBJ);
+        }
+        else if (url == "/nolenroot.py")
+        {
+            client.setDefaultHttpResponse(OK);
+            client.setPathFile("/nolen.py");
             client.setResponseType(CGI_OBJ);
         }
         response = BaseHandler::createObject(client);

@@ -30,6 +30,8 @@ class CGI : public BaseHandler
         pid_t           _pid;
         std::string     _buffer;
         std::string     _defaultHttp;
+        void            changeDir(const std::string& fileUrl);
+
 
 };
 
