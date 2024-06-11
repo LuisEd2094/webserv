@@ -42,6 +42,7 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 		if (serverIterator == servers.end())
 		{
 			server = Overseer::saveServer(&confi);
+			std::cout << &server<< std::endl;
 			servers.insert(std::pair<std::string,Server*>(phisicServerId, server));
 		}
 		else

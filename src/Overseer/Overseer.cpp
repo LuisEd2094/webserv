@@ -19,7 +19,9 @@ void Overseer::cleanOverseer(int sig)
         delete it->second;
     }
     _pending_fds.clear();
-    std::exit(0);
+    if (sig == SIGINT)
+        std::exit(0);
+    std::exit(sig);
 }
 
 Overseer::Overseer()
@@ -87,7 +89,18 @@ void Overseer::addToPfds(int new_fd, int events, int revents)
 
 Server* Overseer::saveServer(t_confi* confi)
 {
-    Server * server = new Server(confi);
+    Server * server;
+    try
+    {
+        server = new Server(confi);
+    }
+    catch(const std::exception& e)
+    {
+        server = NULL;
+        std::cerr << e.what() << '\n';
+        throw e;
+    }
+    
     addToPfds(server);
     return server;
 }

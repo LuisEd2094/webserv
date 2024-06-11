@@ -67,6 +67,7 @@ int main()
     catch(const std::exception& e)
     {
         std::cerr << e.what() << '\n';
+        Overseer::cleanOverseer(-1);
     }
     
     return 0;

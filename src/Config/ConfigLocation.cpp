@@ -29,6 +29,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	this->_cgis.empty();
 	this->_inheriting = true;
 	this->nestedPrint = 0;
+	this->_dirListing = 0;
 
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
@@ -67,6 +68,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj)
 	this->_cgis.empty();
 	this->_inheriting = true;
 	this->nestedPrint = 0;
+	this->_dirListing = 0;
 
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{

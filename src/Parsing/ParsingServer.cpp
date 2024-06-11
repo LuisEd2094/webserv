@@ -27,7 +27,7 @@ void	ParsingServer::createNestedElement(std::string param0, std::string param1)
 	}
 	else
 	{
-		std::cout << "user is stupid" << std::endl;
+		std::cout << RED << "user is stupid" << END << std::endl;
 		throw std::exception();
 	}
 }

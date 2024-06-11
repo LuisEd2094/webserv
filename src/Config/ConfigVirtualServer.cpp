@@ -1,7 +1,9 @@
 #include "ConfigVirtualServer.hpp"
 #include "ConfigLocation.hpp"
 
-ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed)
+ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) : 
+	serverNames(), 
+	locations()
 {
 	this->nestedPrint = 0;
 	this->errorPage = "";

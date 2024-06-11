@@ -28,14 +28,14 @@ ParsingGlobal	ParsingGlobal::parseFromFile(std::string fileName)
 	end = fileStr.end();
 	aux = fileStr.begin();
 	ParsingGlobal 	parser(begin, end, aux);
-	try
-	{
+	// try
+	// {
 		parser.parse();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	// }
+	// catch(const std::exception& e)
+	// {
+	// 	std::cerr << e.what() << '\n';
+	// }
 	return (parser);
 }
 
