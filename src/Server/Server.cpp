@@ -124,6 +124,8 @@ bool Server::validateAction(Client& client)
    // virtualServers.back().recursivePrint();
    // std::cout << RED << "**************" << END << std::endl;
 
+   return true;
+
     if (client_action == POST)
     {
         if (!client.getIsChunked())
@@ -196,7 +198,7 @@ void Server::getResponse(Client & client)
         else if (url == "/testError.html")
         {
             std::cout << "-------------" << std::endl;
-            client.setPathFile("/home/luis/proyects/webserv/html/testError.html");
+            client.setPathFile("/home/luis/proyects/webserv/html/500.html");
             client.setDefaultHttpResponse(BAD_REQUEST);
             client.setResponseType(FILE_OBJ);
 

@@ -371,10 +371,6 @@ void Client::parseForHttp()
             if (!checkPostHeaderInfo())
                 return;
         }
-        if (!_server->validateAction(*this))
-        {
-            return;
-        }
         std::cout << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")

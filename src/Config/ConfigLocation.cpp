@@ -298,16 +298,41 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 	std::cout << "::: ConfigLocation::prepareClient4ResponseGeneration " << this->getPath() << std::endl;
 	std::string url = client.getURL() ;
 
-	inBestLocation = ConfigLocation::getBestLocation( client, requestedURL,
+	inBestLocation = !ConfigLocation::getBestLocation( client, requestedURL,
 		this->_locations.begin(),
 		this->_locations.end()
 	);
 	if (inBestLocation)
 	{
+		if (this->getPath().getIsFile())
+		{
+			client.setResponseType(FILE_OBJ);
+			client.setDefaultHttpResponse(OK);
+			client.setPathFile
+			(
+				static_cast<std::string>(this->_root) +
+				static_cast<std::string>(requestedURL)
+			);
+		}	
+		else
+		{
+			client.setResponseType(DIR_OBJ);
+			client.setDefaultHttpResponse(OK);
+			client.setPathFile
+			(
+				static_cast<std::string>(this->_root) +
+				static_cast<std::string>(requestedURL)
+			);
+
+		}
 		std::cout << "      BINGO !!!" << std::endl;
-		std:: cout << TUR << "bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
+		std::cout << TUR << "      Bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
+		std::cout << "      Response type: " << client.getResponseType();
+		std::cout << "      Default HTTP response: " << client.getResponseType();
+		std::cout << "      Path file: " << client.getPathFile();
+		std::cout << std::endl;
 	}
-	std:: cout << TUR << "bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
+	std:: cout << TUR << "bestlocation: " << END << this->getPath()<<  std::endl;
 	return true;
 }
 

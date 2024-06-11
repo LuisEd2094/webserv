@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/11 09:20:54 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/11 13:17:04 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # include <map> //map
 # include <sstream>
 # include <vector>
+# include <Response.hpp>
 
 /******************************************************************************/
 /*                            MACROS                                          */
@@ -194,28 +195,28 @@ class Parsing
 	 * Membert Funtions
 	*/
 	//utils
-	std::string readSocket(int fd);
-	const std::string& getMethod(void) const;
-	const std::string& getRequested(void) const;
+		std::string readSocket(int fd);
+		const std::string& getMethod(void) const;
+		const std::string& getRequested(void) const;
 
-	bool isEmptyLine(const std::string& line) const;
-	bool isMethods(const std::string& keyword) const;
-	bool isVersion(const std::string& version) const;
-	int  printStatus(const std::string& messages, short flag, int exitCode);
-	int	 checkMethod(const std::string& strRead);
-	int  parsingHeader(const std::string& strRead);
-	//getMethods
-	size_t								getPos(void);
-	size_t								getEndSize(void);
-	std::string							getTypeLine(const std::string& strFind);
-	const std::string&					getMapValue(const std::string& key) const;
-	std::map<std::string, std::string>	getMap(void);
-	// const t_request	*getRequest(void) const;
-	void resetParsing(void);
-	bool getEndRead() const;
+		bool isEmptyLine(const std::string& line) const;
+		bool isMethods(const std::string& keyword) const;
+		bool isVersion(const std::string& version) const;
+		int  printStatus(const std::string& messages, short flag, int exitCode);
+		int	 checkMethod(const std::string& strRead);
+		int  parsingHeader(const std::string& strRead);
+		//getMethods
+		size_t								getPos(void);
+		size_t								getEndSize(void);
+		std::string							getTypeLine(const std::string& strFind);
+		const std::string&					getMapValue(const std::string& key) const;
+		std::map<std::string, std::string>	getMap(void);
+		// const t_request	*getRequest(void) const;
+		void resetParsing(void);
+		bool getEndRead() const;
 	/*
-	 * Exception Classes
-	 */
+		* Exception Classes
+	*/
 };
 
 std::list<std::string> ft_split(const std::string& str, char delimiter);

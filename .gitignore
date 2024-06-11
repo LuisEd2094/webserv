@@ -11,3 +11,4 @@ obj
 responses/*
 responses
 output_file.jpeg
+valgrind-out.txt

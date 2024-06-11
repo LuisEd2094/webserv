@@ -9,6 +9,7 @@ Path::Path()
         //std::cout << "Path defaul constructor called" << std::endl;
         //this->directories = std::list<std::string>();
         this->isRelative = false;
+        this->isFile = false;
         //std::cout << "Path defaul constructor finished" << std::endl;
 }
 
@@ -16,6 +17,7 @@ Path::Path(std::string pathStr)
 {
     //std::cout << "Path string constructor called" << std::endl;
     this->isRelative = pathStr[0] == '/';
+    this->isFile = pathStr[pathStr.length()-1] == '/';
     this->directories = ft_split(pathStr, '/');
     while (this->normalize());
     //std::cout << "Path string constructor finished" << std::endl;
@@ -23,19 +25,16 @@ Path::Path(std::string pathStr)
 
 Path::Path(const Path &orig)
 {
-    //std::cout << "Path copy constructor called" <<std::endl;
-    //orig.getIsRelative();
-    //std::cout << "------------------->" << std::endl;
-    //std::cout << *orig.directories.begin() << std::endl;
-    //std::cout << "------------------->" << std::endl;
     this->directories = orig.directories;
     this->isRelative = orig.getIsRelative();
-    //std::cout << "Path copy constructor finished" << std::endl;
+    this->isFile = orig.getIsFile();
 }
 
 Path &Path::operator=(const Path &orig)
 {
     this->directories = orig.directories;
+    this->isRelative = orig.getIsRelative();
+    this->isFile = orig.getIsFile();
     return *this;
 }
 void Path::popBegin(int ammount)
@@ -63,14 +62,19 @@ Path::operator std::string()
         result += "/";
     for (dir = this->directories.begin(); dir != this->directories.end(); dir++)
     {
+        if (dir != this->directories.begin())
+            result += "/";
         result += *dir;
-        result += "/";
     }
+    if (!this->isFile)
+        result += "/";
     return (result);
 }
 
 void Path::append(Path tail)
 {
+    if (this->isFile)
+        return ;
     for (std::list<std::string>::iterator te = tail.directories.begin(); te != tail.directories.end(); te++)
             this->directories.push_back(*te);
 }

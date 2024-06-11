@@ -13,9 +13,11 @@
 # define    JUST_IN POLLIN | POLLHUP
 # define    JUST_OUT POLLOUT | POLLHUP
 # define    KEEP_ALIVE false
+# define    MAX_URI_OFFSET 100
 
 
-# define NUM_OBJ 4
+
+# define NUM_OBJ 5
 /* # define FILE_OBJ "file"
 # define DIRECT_OBJ "direct"
 # define CGI_OBJ "cgi" */
@@ -25,9 +27,25 @@ enum ObjectTypes
     NOT_SET,
     FILE_OBJ,
     DIRECT_OBJ,
-    CGI_OBJ
+    CGI_OBJ,
+    DIR_OBJ
 };
 
+static std::string sdafString[6] = {
+    "NOT_SET",
+    "FILE_OBJ",
+    "DIRECT_OBJ",
+    "CGI_OBJ",
+    "DIR_OBJ"
+};
+
+/*
+std::ostream& operator<<(std::ostream &os, ObjectTypes obj)
+{
+    os << sdafString[obj];
+    return (os);
+}
+*/
 #endif
 /* 
 GET /nolen.py HTTP/1.1
