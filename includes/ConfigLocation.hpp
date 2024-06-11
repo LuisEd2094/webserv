@@ -64,13 +64,17 @@ class ConfigLocation: public ConfigElement
 		std::list<std::string>			getIndex(void) const;
 		std::list<ConfigCgi>			getCgis(void) const;//*
 		std::list<ConfigLocation>		getLocations(void) const;
-		bool 							prepareClient4ResponseGeneration(Client& client, Path trequestedURL);
+		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);
 		void							recursivePrint(int recursiveLvl);
 
 		static std::list<ConfigLocation>::iterator getBestLocation(Path requestedURL,
 			std::string							method,
 			std::list<ConfigLocation>::iterator firstLocation,
 			std::list<ConfigLocation>::iterator lastLocation);
+
+		static bool getBestLocation( Client &client, Path requestedURL,
+			std::list<ConfigLocation>::iterator beginLocation,
+			std::list<ConfigLocation>::iterator endLocation);
 
 };
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj);
