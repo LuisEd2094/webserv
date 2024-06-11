@@ -206,6 +206,7 @@ void Server::getResponse(Client & client)
                 outfile.close();
                 std::cout << "Binary data written to file.\n";
             }
+            client.setDefaultHttpResponse(OK);
             client.setResponseType(DIRECT_OBJ);
         }
         else if (url.find("/Cookies/") != std::string::npos)
@@ -234,19 +235,22 @@ void Server::getResponse(Client & client)
             }
             else
             {
+                client.setDefaultHttpResponse(OK);
                 client.setPathFile("/workspaces/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
             }
             std::cout << client.getPathFile() << std::endl;
             //client.setPathFile("/workspaces/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
             client.setResponseType(FILE_OBJ);
         }
-        else if (url == "/index.html" or "/Hellow/World")
+        else if (url == "/index.html" or url == "/hellow/you/nice")
         {
+            client.setDefaultHttpResponse(OK);
             client.setPathFile("/workspaces/webserv/html/index.html");
             client.setResponseType(FILE_OBJ);
         }
         else if (url == "/nolen.py")
         {
+            client.setDefaultHttpResponse(OK);
             client.setPathFile("/workspaces/webserv/CGI/nolen.py");
             client.setResponseType(CGI_OBJ);
         }
