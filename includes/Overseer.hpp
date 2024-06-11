@@ -34,6 +34,7 @@ class Overseer
 
         static  bool    handleAction(BaseHandler * , int );
         static  void    mainLoop();
+        static  bool    canContinue;
         
 
     private:

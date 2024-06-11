@@ -183,6 +183,7 @@ void Server::getResponse(Client & client)
         if (url == "/")
         {
             client.setResponseType(DIRECT_OBJ);
+            client.setDefaultHttpResponse(OK);
         }
         else if (url == "/testMultipleRedirect.html")
         {

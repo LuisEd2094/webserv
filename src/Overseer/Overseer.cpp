@@ -3,6 +3,7 @@
 
 std::size_t Overseer::_i = 0;
 std::size_t Overseer::_fd_count = 0;
+bool Overseer::canContinue = true;
 std::map<int, BaseHandler *> Overseer::_pending_fds;
 
 struct pollfd  Overseer::_pfds[MAX_FDS];
@@ -19,9 +20,7 @@ void Overseer::cleanOverseer(int sig)
         delete it->second;
     }
     _pending_fds.clear();
-    if (sig == SIGINT)
-        std::exit(0);
-    std::exit(sig);
+    canContinue = false;
 }
 
 Overseer::Overseer()
