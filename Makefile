@@ -6,12 +6,12 @@
 #    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 10:55:00 by lsoto-do          #+#    #+#              #
-#    Updated: 2024/06/06 14:07:11 by codespace        ###   ########.fr        #
+#    Updated: 2024/06/11 09:14:04 by codespace        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME        = webserv
-CFLAGS      = -std=c++98 -pedantic -g -Wall -Wextra -Werror -fsanitize=address
+CFLAGS      = -std=c++98 -pedantic -g -Wall -Wextra -Werror #-fsanitize=address
 CC			= c++
 RM          = rm -f
 SRCS_PATH	= src/

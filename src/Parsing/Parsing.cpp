@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/06 14:05:23 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/11 09:30:31 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,9 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			{
 				return (_statusError = this->printStatus(_errors[3], ERROR, ERROR_FORMAT));
 			}
+			std::string tmp = _method.content["Host"];
+			_method.content["Host"] = ::getKey(tmp, ':');
+			_method.content["Port"] = ::getValue(tmp, ':');
 			return (_statusError = EXIT_SUCCESS);
 		}
 	}

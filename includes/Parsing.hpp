@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/05 14:50:45 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/11 09:20:54 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,11 +205,11 @@ class Parsing
 	int	 checkMethod(const std::string& strRead);
 	int  parsingHeader(const std::string& strRead);
 	//getMethods
-	std::string		getTypeLine(const std::string& strFind);
-	size_t		getPos(void);
-	const std::string& getMapValue(const std::string& key) const;
-	size_t	getEndSize(void);
-	std::map<std::string, std::string> getMap(void);
+	size_t								getPos(void);
+	size_t								getEndSize(void);
+	std::string							getTypeLine(const std::string& strFind);
+	const std::string&					getMapValue(const std::string& key) const;
+	std::map<std::string, std::string>	getMap(void);
 	// const t_request	*getRequest(void) const;
 	void resetParsing(void);
 	bool getEndRead() const;

@@ -167,7 +167,10 @@ void Server::getResponse(Client & client)
     // this->virtual
     std::cout << RED << "CALLGIN prepareClient4Response(): " << END << std::endl;
     //hacer un try para settear los parametros settear el http de respuesta.
-    this->prepareClient4ResponseGeneration(client);
+    if (this->prepareClient4ResponseGeneration(client))
+    {
+        std::cout << BLUE << "SOY UN SERVER :v" << END << std::endl;
+    }
     std::cout << RED << "**************CALLED***************" << END << std::endl;
     std::cout << RED << "Host:" << END << hostHeader << std::endl;
     std::string serverName = getKey(hostHeader, ':');

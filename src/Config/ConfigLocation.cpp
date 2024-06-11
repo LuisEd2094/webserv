@@ -301,7 +301,11 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		this->_locations.end()
 	);
 	if (inBestLocation)
+	{
 		std::cout << "      BINGO !!!" << std::endl;
+		std:: cout << TUR << "bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
+	}
+	std:: cout << TUR << "bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
 	return true;
 }
 

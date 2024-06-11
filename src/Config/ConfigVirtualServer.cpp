@@ -109,10 +109,13 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 	std::cout << "::: " << client.getHost() << std::endl;
 	std::list<std::string>::iterator server_name;
 
+	std::cout << RED << "client.getHost():" << END << client.getHost() << std::endl;
 	server_name = std::find(this->serverNames.begin(), this->serverNames.end(), client.getHost());
 	if (server_name == this->serverNames.end())
 	{
-		std::cout << "client name should be " << client.getHost() << std::endl;
+		std::cout << YELLOW << "client name should be " << END << client.getHost() << std::endl;
+		std::cout << TUR << *this->getLocations().begin() << std::endl;
+		
 		return (false);
 	}
 
