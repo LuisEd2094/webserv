@@ -1,9 +1,11 @@
-#include <string>
-#include <algorithm>
-#include <iostream>
-#include <list>
-#include <exception>
-#include "Parsing.hpp"
+#ifndef PATH_HPP
+# define PATH_HPP
+# include <string>
+# include <algorithm>
+# include <iostream>
+# include <list>
+# include <exception>
+# include "Parsing.hpp"
 
 
 class Path
@@ -48,3 +50,4 @@ class Path
 
 std::ostream &operator<<(std::ostream &os, const Path &obj);
 
+#endif

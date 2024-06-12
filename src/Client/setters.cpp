@@ -75,7 +75,7 @@ void  Client::setResponseType(ObjectTypes type )
     _response_type = type;
 }
 
-void Client::setPathFile(const std::string& path)
+void Client::setPathFile(const Path& path)
 {
     _path_to_file = path;
 }

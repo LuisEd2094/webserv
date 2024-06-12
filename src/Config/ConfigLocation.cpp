@@ -61,7 +61,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 }
 
 /**/
-ConfigLocation::ConfigLocation( ParsingLocation& obj)
+ConfigLocation::ConfigLocation(ParsingLocation& obj)
 {
 	// TODO erase the nested elements from the father
 	this->_locations.empty();

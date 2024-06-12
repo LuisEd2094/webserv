@@ -38,7 +38,7 @@ Client::Client(Server *server) : BaseHandler()
     _is_chunked = false;
     _chunk_size = 0;
     _virtualServer = NULL;
-    _path_to_file = "";
+    _path_to_file = Path("");
     _defaultHttp = "";
 }
 
@@ -540,7 +540,7 @@ void Client::resetClient(bool has_body)
     _parser_http.resetParsing();
     _chunk_size = 0;
     _virtualServer = NULL;
-    _path_to_file = "";
+    _path_to_file = Path("");
     _defaultHttp = "";
     _error_code = OK;
 
