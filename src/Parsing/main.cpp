@@ -16,6 +16,14 @@
 #include <iostream>
 #include <string>
 
+
+
+
+
+
+
+#include <Path.hpp>
+
 // std::list<std::string> split(const std::string& str, char delimiter)
 // {
 //     std::list<std::string> list;
@@ -85,7 +93,7 @@ void testPath(std::string test)
 	std::cout << "Testing:" << test << ":" << std::endl;
 	try {
 		Path path(test);
-		std::cout << GREEN << "Path: " << (std::string)path << END << std::endl << std::endl;
+		std::cout << GREEN << "Path: " << path << END << std::endl << std::endl;
 
 	} catch (Path::InvalidPathException &e) {
 		std::cout << e.what() << std::endl;
@@ -96,7 +104,11 @@ int  main(void)
 {
 	// fileConfig();
 	// testParseHtpp();
+	testPath("/absolute/hellow");
+	testPath("relative/hellow");
+	testPath("relative/hellow");
 	testPath("/queso/./Dirhola/../fkkkk");
+	testPath("/queso/./Dirhola/../fkkkk/");
 	testPath("////////");
 	testPath("././././.");
 	testPath("./");

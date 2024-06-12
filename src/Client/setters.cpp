@@ -78,6 +78,7 @@ void  Client::setResponseType(ObjectTypes type )
 void Client::setPathFile(const Path& path)
 {
     _path_to_file = path;
+    while (_path_to_file.normalize()) ;
 }
 
 

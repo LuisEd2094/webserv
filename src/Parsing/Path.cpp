@@ -16,8 +16,8 @@ Path::Path()
 Path::Path(std::string pathStr)
 {
     //std::cout << "Path string constructor called" << std::endl;
-    this->isRelative = pathStr[0] == '/';
-    this->isFile = pathStr[pathStr.length()-1] == '/';
+    this->isRelative = pathStr[0] != '/';
+    this->isFile = pathStr[pathStr.length()-1] != '/';
     this->directories = ft_split(pathStr, '/');
     while (this->normalize());
     //std::cout << "Path string constructor finished" << std::endl;

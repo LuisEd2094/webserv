@@ -304,30 +304,19 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 	);
 	if (inBestLocation)
 	{
-		if (this->getPath().getIsFile())
-		{
+		client.setPathFile
+		(
+			static_cast<std::string>(this->_root) +
+			static_cast<std::string>(requestedURL)
+		);
+		if (client.getPathFile().getIsFile())	
 			client.setResponseType(FILE_OBJ);
-			client.setDefaultHttpResponse(OK);
-			client.setPathFile
-			(
-				static_cast<std::string>(this->_root) +
-				static_cast<std::string>(requestedURL)
-			);
-		}	
 		else
-		{
 			client.setResponseType(DIR_OBJ);
-			client.setDefaultHttpResponse(OK);
-			client.setPathFile
-			(
-				static_cast<std::string>(this->_root) +
-				static_cast<std::string>(requestedURL)
-			);
-
-		}
+		client.setDefaultHttpResponse(OK);
 		std::cout << "      BINGO !!!" << std::endl;
 		std::cout << TUR << "      Bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
-		std::cout << "      Response type: " << client.getResponseType();
+		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()];
 		std::cout << "      Default HTTP response: " << client.getResponseType();
 		std::cout << "      Path file: " << client.getPathFile();
 		std::cout << std::endl;

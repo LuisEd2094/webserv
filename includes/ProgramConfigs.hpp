@@ -31,7 +31,7 @@ enum ObjectTypes
     DIR_OBJ
 };
 
-static std::string sdafString[6] = {
+static std::string ObjectTypesStrings[6] = {
     "NOT_SET",
     "FILE_OBJ",
     "DIRECT_OBJ",
