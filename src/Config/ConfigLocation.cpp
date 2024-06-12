@@ -161,11 +161,13 @@ std::string ConfigLocation::getRedirection(void) const
 void ConfigLocation::setRoot(std::string root)
 {
 	this->_root = Path(root);
+	this->_root.setIsFile(false);
 }
 
 void ConfigLocation::setRoot(Path root)
 {
 	this->_root = root;
+	this->_root.setIsFile(false);
 }
 
 void ConfigLocation::initializeRoot(std::string root)
@@ -309,13 +311,14 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			static_cast<std::string>(this->_root) +
 			static_cast<std::string>(requestedURL)
 		);
-		if (client.getPathFile().getIsFile())	
+		if (Path(client.getURL()).getIsFile())	
 			client.setResponseType(FILE_OBJ);
 		else
 			client.setResponseType(DIR_OBJ);
 		client.setDefaultHttpResponse(OK);
 		std::cout << "      BINGO !!!" << std::endl;
 		std::cout << TUR << "      Bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
+		std::cout << "      Cient  URL: " << client.getURL() << std::endl;
 		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()];
 		std::cout << "      Default HTTP response: " << client.getResponseType();
 		std::cout << "      Path file: " << client.getPathFile();
