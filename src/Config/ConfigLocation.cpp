@@ -79,7 +79,10 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	this->_path = Path(this->__elemArgument__);
 	this->_inheriting = false;
 	if (obj.find("root") == obj.end())
+	{
+		this->_root.setIsRelative(true);
 		this->_root.append(obj.find("__elemArgument__")->second);
+	}
 	std::list<ParsingLocation> locs = obj.getLocations(); 
 	for (std::list<ParsingLocation>::iterator location = locs.begin();
 		location != locs.end();
@@ -102,6 +105,7 @@ void ConfigLocation::setDefaults()
 {
 	this->setMethods("");	
 	this->setRoot("");	
+	this->_root.setIsRelative(true);	
 	this->setIndex("");
 	this->setErrorPage("");	
 	this->setRedirection("");	
@@ -426,11 +430,14 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 			continue;
 		}
 		*/
+		std::cout << beginLocation->getPath().included(requestedURL) << std::endl
+			<< (std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()) << std::endl
+			<< (beginLocation->getPath().size() > maxDirMatches) <<	std::endl;
 		if (locMethods.size() == 0)
-			;
+			std::cout << RED << "location with no methods" << std::endl;
 		else if (beginLocation->getPath().included(requestedURL)
 			&& std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()
-			&& beginLocation->getPath().size() > maxDirMatches) 	
+			&& beginLocation->getPath().size() >= maxDirMatches) 	
 		{
 			maxDirMatches = beginLocation->getPath().size();
 			bestLocation = beginLocation;

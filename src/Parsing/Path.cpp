@@ -37,6 +37,7 @@ Path &Path::operator=(const Path &orig)
     this->isFile = orig.getIsFile();
     return *this;
 }
+
 void Path::popBegin(int ammount)
 {
     std::cout << "          POPING " << ammount << std::endl;
@@ -58,7 +59,9 @@ Path::operator std::string()
     std::list<std::string>::iterator dir;
     std::string result;
 
-    if (!this->isRelative)
+    if (this->isRelative)
+        result += "./";
+    else
         result += "/";
     for (dir = this->directories.begin(); dir != this->directories.end(); dir++)
     {
@@ -73,7 +76,6 @@ Path::operator std::string()
 
 void Path::append(Path tail)
 {
-    std::cout << RED << "appending " << *this << " " << tail << END;
     if (this->isFile)
         {
         std::cout << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
@@ -98,8 +100,11 @@ int Path::normalize(void)
         }
         else if (*currFile == ".")
         {
-            this->deleteAndBack(currFile);
-            modified = true;
+            if (this->size() > 1)
+            {
+                this->deleteAndBack(currFile);
+                modified = true;
+            }
         }
         else if (*currFile == "..")
         {
@@ -143,10 +148,11 @@ bool Path::assertDirExists(void) const
 {
     std::cout << "Checking dir exists: " << *this << std::endl;
     struct stat info;
+    std::string relativePathStr = std::string("./") + PATH_TO_C_STR(*this); 
     //int result = stat(this->c_str(), &info);
 
-  
-    int result = stat(PATH_TO_C_STR(*this), &info);
+    
+    int result = stat(relativePathStr.c_str(), &info);
 
     if (result == -1)
     {
@@ -161,8 +167,9 @@ bool Path::assertFileExists(void) const
 {
     std::cout << GREEN;
     std::cout << "Checking file exists: " << *this << std::endl;
+    std::string relativePathStr = std::string("./") + PATH_TO_C_STR(*this); 
     struct stat info;
-    int result = stat(PATH_TO_C_STR(*this), &info);
+    int result = stat(relativePathStr.c_str(), &info);
     std::cout << "Result: " << result << std::endl;
     std::cout << END;
     if (result == -1)
