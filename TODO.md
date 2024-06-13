@@ -1,7 +1,7 @@
 # TODO LIST
 
-1. Parsear Body de entrada 
-- verificar tipo de envio de info, Content-len vs chunked
+1. ~~Parsear Body de entrada~~
+- ~~verificar tipo de envio de info, Content-len vs chunked~~
 
 2. Parsear Header de entrada para controlar flujo contra la info del config file que ya tiene cada server fisico
 - Control de errores del HTTP de entrada, para controlar el flujo del FD del cliente
@@ -37,16 +37,16 @@
    - Pasar estos headers a el CGI? O lo maneja directamente el server?
    - El JS puede tambien manejar los cookies con  document.cookie
 
-10. Listen en cada server, cada bloque de server puede usar el mismo Listen port
+10. ~~Listen en cada server, cada bloque de server puede usar el mismo Listen port~~
 - -  el IP de resolucion en socket siempre sera "", tambien conocido como localhost, o la misma maquina usada, solo cambiarian los puertos usados.
-- -  Si un server block usa el mismo listen port que otro server block, se considera un virtual server. NO se hace un nuevo binding, si no que todos quedan asignados al mismo
+- -  ~~Si un server block usa el mismo listen port que otro server block, se considera un virtual server. NO se hace un nuevo binding, si no que todos quedan asignados al mismo
       server object (mismo _fd, mismo puerto). Al recibir una conexion nueva, cada Server Obj chequea el campo Host: "domain name". y lo verifica con el server_names de cada
-      server block. SI tenemos un Server block SIN server_names y NO es el primero, es basicamente inutil. El perimer Server{} con la misma combinacion domain:port sera el default
-11. Handle Chunked Posts
+      server block. SI tenemos un Server block SIN server_names y NO es el primero, es basicamente inutil. El perimer Server{} con la misma combinacion domain:port sera el default~~
+11. ~~Handle Chunked Posts~~
 
-12. The CGI should be run in the correct directory for relative path file access.
+12. ~~The CGI should be run in the correct directory for relative path file access.~~
 
-13. Si server{} block no tiene serverName, entonces el serverName == Host
+13. ~~Si server{} block no tiene serverName, entonces el serverName == Host~~
 
 [CGI info](https://datatracker.ietf.org/doc/html/rfc3875#page-4)
 
