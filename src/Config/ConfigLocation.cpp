@@ -114,7 +114,10 @@ void ConfigLocation::parseKeyVal(std::string key, std::string val)
 	if (key == "__elemType__") ;
 	else if (key == "__elemArgument__") ;
 	else if (key == "errorPage")
-		this->setErrorPage(val);	
+	{
+		this->setErrorPage(val);
+		this->setErrorPages(val);
+	}
 	else if (key == "methods")
 		this->setMethods(val);	
 	else if (key == "redirection")
@@ -237,6 +240,39 @@ std::list<ConfigCgi> ConfigLocation::getCgis(void) const
 std::list<ConfigLocation> ConfigLocation::getLocations(void) const
 {
 	return (this->_locations);
+}
+
+void	ConfigLocation::setErrorPages(std::string errors)
+{
+	std::list<std::string> split = ft_split(errors, ' ');
+	for (std::list<std::string>::iterator i = split.begin(); i != split.end(); i++)
+	{
+		std::string ErrorKey = ::getKey(*i, '-');
+		std::string ErrorValue =  ::getValue(*i, '-');
+		bool isNum = true;
+		for (size_t i = 0; i < ErrorKey.length() && isNum; i++)
+			isNum = std::isdigit(ErrorKey[i]);
+		if (ErrorKey.length() != 3 or !isNum)
+			throw ParamError(std::string("Error: Syntax errorPage:")
+			+ std::string(ErrorKey.length() != 3 ? " invalid " : " it is not a number ") + ErrorKey);
+		int ErrorKeyNum = std::atoi(ErrorKey.c_str());
+		this->_errorPages[ErrorKeyNum] = ErrorValue;
+	}
+}
+
+std::map<int, Path> ConfigLocation::getMapErrorPages(void) const
+{
+	return (this->_errorPages);
+}
+
+Path const ConfigLocation::getErrorPages(const int searchError) const
+{
+	std::map<int, Path>::const_iterator it = this->_errorPages.find(searchError);
+	if (it == this->_errorPages.end())
+	{
+		return (Path(""));
+	}
+	return (it->second);
 }
 
 ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
