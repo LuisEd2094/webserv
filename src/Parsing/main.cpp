@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/13 12:40:42 by dacortes         ###   ########.fr       */
+/*   Updated: 2024/06/13 10:56:35 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void testPath(std::string test)
 
 void	testUri(std::string test)
 {
-//	std::cout << Uri::Parse(test).Host << std::endl;
+	std::cout << Uri::Parse(test) << std::endl;
 }
 
 int  main(void)
@@ -112,6 +112,6 @@ int  main(void)
 	//std::list<std::string> res = ft_split("GET POST DELEETE", ' ');
 	//for (std::list<std::string>::iterator iter = res.begin(); iter != res.end(); iter++)
 		//std::cout << YELLOW << "word: " << END << *iter << std::endl;
-	testUri("http://somehost.com/cgi-bin/somescript/this%2eis%2epath%3binfo");
+	testUri("http://somehost.com/cgi-bin/somescript/this?%2eis%2epath%3binfo");
 	return (0);
 }
