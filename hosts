@@ -6,3 +6,5 @@
 127.0.0.1       real.com:8080
 127.0.0.1       needstuff.com
 127.0.0.1       needstuff.com:8080
+127.0.0.1       locala
+127.0.0.1       locala.com:8080

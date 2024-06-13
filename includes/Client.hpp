@@ -49,6 +49,7 @@ class Client : public BaseHandler
         void                setResponseType(ObjectTypes );
         void                setPathFile(const Path&);
         void                setDefaultHttpResponse(ErrorCodes);
+        void                setLocation(ConfigLocation *);
 
         //getters
         std::string                     getHttpAnswerDirectory() const;
@@ -69,6 +70,7 @@ class Client : public BaseHandler
         const std::queue<std::string>&  getHTTPAddons() const;
         const std::string&              getDefaultHttpResponse(void) const;
         ErrorCodes                      getErrorCode() const; 
+        ConfigLocation *                getLocation() const;
 
 
 
@@ -76,6 +78,7 @@ class Client : public BaseHandler
 
 
     private:
+		ConfigLocation			    				*_location;
         std::queue< std::string>                    _http_addons;
         std::stack< std::string>                    _redirection_urls;
         std::queue< RequestHandler *>               _response_objects_queue;

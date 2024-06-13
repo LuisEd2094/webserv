@@ -353,7 +353,13 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			static_cast<std::string>(requestedURL)
 		);
 		std::cout << BLUE << std::endl;
+		client.setLocation(this);
 		client.setDefaultHttpResponse(OK);
+		if (this->getRedirection().size() > 0)
+		{
+			client.setResponseType(REDIRECT_OBJ);
+			return true;
+		}
 		if (false)
 			;
 		else if (Path(client.getURL()).getIsFile())	
@@ -375,15 +381,15 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			}
 		}
 		else if (this->_dirListing && client.getPathFile().assertDirExists())	
-			{
-				std::cout << "returning direcotry" << std::endl;
-				client.setResponseType(DIR_OBJ);
-			}
+		{
+			std::cout << "returning direcotry" << std::endl;
+			client.setResponseType(DIR_OBJ);
+		}
 		else 
-			{
-				std::cout << "unable to serve directory" << std::endl;
-				client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
-			}
+		{
+			std::cout << "unable to serve directory" << std::endl;
+			client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
+		}
 		std::cout << END << std::endl;
 
 
