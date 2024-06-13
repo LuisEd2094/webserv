@@ -2,6 +2,9 @@ import time
 
 import os
 cwd = os.getcwd()
+env = os.environ['HOME']
+path_info = os.environ['PATH_INFO']
+
 time.sleep(0)
 
 
@@ -16,7 +19,7 @@ print("""
     <title>CGI Test</title>
 </head>
 <body>
-      """ + cwd + """
+      """ + cwd + "ENV: " + env+ """
     <h1>CGI Test Page</h1>
     <p>This is a simple CGI test.✊</p>
 </body>

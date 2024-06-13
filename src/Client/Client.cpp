@@ -22,11 +22,29 @@ Client::Client(Server *server) : BaseHandler()
     if (!server)
         return;
     _addrlen = sizeof(_remoteaddr);
-    _fd = accept(server->getFD(), (struct sockaddr *)&_remoteaddr,&_addrlen);
+    _fd = accept(server->getFD(), (struct sockaddr *)&_remoteaddr, &_addrlen);
     if (_fd == -1) 
     {
         throw Client::clientException("accept" + static_cast<std::string>(strerror(errno)));
     }
+    struct sockaddr_in *sin = (struct sockaddr_in *)&_remoteaddr;
+    unsigned long ip = ntohl(sin->sin_addr.s_addr);
+    unsigned char bytes[4];
+
+    bytes[0] = ip & 0xFF;
+    bytes[1] = (ip >> 8) & 0xFF;
+    bytes[2] = (ip >> 16) & 0xFF;
+    bytes[3] = (ip >> 24) & 0xFF;
+
+    std::ostringstream ip_stream;
+    ip_stream << static_cast<int>(bytes[3]) << "."
+              << static_cast<int>(bytes[2]) << "."
+              << static_cast<int>(bytes[1]) << "."
+              << static_cast<int>(bytes[0]);
+
+    std::string ip_str = ip_stream.str();
+    std::cout << "Connected IP: " << ip_str << std::endl;
+
     _server = server;
     _response_type = NOT_SET;
     _action = WAIT;
@@ -271,18 +289,18 @@ void Client::checkFirstQueue(RequestHandler *obj)
     }
 }
 
-void Client::handleDirectObj(DirectResponse* direct_object, RequestHandler *new_handler)
+void Client::handleDirectObj(DirectResponse* NO_FD_OBJect, RequestHandler *new_handler)
 {
-    if (direct_object->has_http())
+    if (NO_FD_OBJect->has_http())
     {
-        new_handler->setHTTPResponse(direct_object->get_http());
+        new_handler->setHTTPResponse(NO_FD_OBJect->get_http());
     }
-    if (direct_object->has_body())
+    if (NO_FD_OBJect->has_body())
     {
-        new_handler->setBodyResponse(direct_object->get_body());
+        new_handler->setBodyResponse(NO_FD_OBJect->get_body());
     }
     checkFirstQueue(new_handler);
-    delete direct_object; // I delete this since it wont be going to the FD POLL
+    delete NO_FD_OBJect; // I delete this since it wont be going to the FD POLL
 }
 
 bool Client::checkPostHeaderInfo()

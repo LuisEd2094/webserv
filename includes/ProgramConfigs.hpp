@@ -19,14 +19,14 @@
 
 # define NUM_OBJ 5
 /* # define FILE_OBJ "file"
-# define DIRECT_OBJ "direct"
+# define NO_FD_OBJ "direct"
 # define CGI_OBJ "cgi" */
 
 enum ObjectTypes
 {
     NOT_SET,
     FILE_OBJ,
-    DIRECT_OBJ,
+    NO_FD_OBJ,
     CGI_OBJ,
     DIR_OBJ
 };
@@ -34,7 +34,7 @@ enum ObjectTypes
 static std::string sdafString[6] = {
     "NOT_SET",
     "FILE_OBJ",
-    "DIRECT_OBJ",
+    "NO_FD_OBJ",
     "CGI_OBJ",
     "DIR_OBJ"
 };

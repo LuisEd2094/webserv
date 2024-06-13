@@ -46,6 +46,8 @@
 
 12. The CGI should be run in the correct directory for relative path file access.
 
+13. Si server{} block no tiene serverName, entonces el serverName == Host
+
 | Cookies State                 | Acciones                                                     | Status |
 | ----------------------------- | ------------------------------------------------------------ | ------ |
 | First Connection              | Client no envia cookies en su HTTP. Se crea una session para el cliente, se debe de guardar el SESION ID para posteriores solicitudes. Key=Value pairs | ❌      |

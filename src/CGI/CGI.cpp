@@ -65,12 +65,17 @@ CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDe
         argv[1] = const_cast<char*>(client.getPathFile().c_str());
         argv[2] = NULL;
 
+        char *env[2];
+
+        env[0]= const_cast<char*>("HOME=/HOLA CARE DE PEROLA");
+        env[1] = NULL;
+
 
 		close(_pipe[0]);
 		dup2(_pipe[1], STDOUT_FILENO);
         close(_pipe[1]);
 
-        execve("/usr/bin/python3", argv, NULL);
+        execve("/usr/bin/python3", argv, env);
         std::exit(-1);
     }
 	close(_pipe[1]);

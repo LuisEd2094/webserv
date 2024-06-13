@@ -55,12 +55,12 @@ void    Client::addObject(BaseHandler * obj)
     if (obj)
     {
         RequestHandler* new_handler = new RequestHandler(*this);
-        DirectResponse* direct_object = dynamic_cast<DirectResponse *>(obj);
+        DirectResponse* NO_FD_OBJect = dynamic_cast<DirectResponse *>(obj);
         
         _response_objects_queue.push(new_handler);
-        if (direct_object)
+        if (NO_FD_OBJect)
         {
-            handleDirectObj(direct_object, new_handler);
+            handleDirectObj(NO_FD_OBJect, new_handler);
         }
         else
         {

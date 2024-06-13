@@ -6,7 +6,7 @@
 
 const ObjectTypes BaseHandler::valid_objs[NUM_OBJ] = {
     FILE_OBJ,
-    DIRECT_OBJ,
+    NO_FD_OBJ,
     CGI_OBJ,
  };
 
@@ -29,7 +29,7 @@ BaseHandler* BaseHandler::createObject(Client& client)
                 return FileReader::createNewFileReader(client);
             else if (valid_objs[i] == CGI_OBJ)
                 return CGI::createNewCGI(client);
-            else if (valid_objs[i] == DIRECT_OBJ)
+            else if (valid_objs[i] == NO_FD_OBJ)
             {
                 if (client.getErrorCode() >= MULTIPLE_REDIRECTS && client.getErrorCode() <= MULTIPLE_REDIRECTS)
                 {

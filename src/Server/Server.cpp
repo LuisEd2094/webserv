@@ -184,14 +184,14 @@ void Server::getResponse(Client & client)
     {
         if (url == "/")
         {
-            client.setResponseType(DIRECT_OBJ);
+            client.setResponseType(NO_FD_OBJ);
             client.setDefaultHttpResponse(OK);
         }
         else if (url == "/testMultipleRedirect.html")
         {
             /*if not set path file then it should use default*/
             client.setDefaultHttpResponse(MULTIPLE_REDIRECTS);
-            client.setResponseType(DIRECT_OBJ);
+            client.setResponseType(NO_FD_OBJ);
             client.addURLRedirection("/first/redirect");
             client.addURLRedirection("/second/redirect");
         }
@@ -213,7 +213,7 @@ void Server::getResponse(Client & client)
                 std::cout << "Binary data written to file.\n";
             }
             client.setDefaultHttpResponse(OK);
-            client.setResponseType(DIRECT_OBJ);
+            client.setResponseType(NO_FD_OBJ);
         }
         else if (url.find("/Cookies/") != std::string::npos)
         {
@@ -257,7 +257,7 @@ void Server::getResponse(Client & client)
         else if (url == "/nolen.py")
         {
             client.setDefaultHttpResponse(OK);
-            client.setPathFile("/workspaces/webserv/CGI/noexiste.py");
+            client.setPathFile("/workspaces/webserv/CGI/nolen.py");
             client.setResponseType(CGI_OBJ);
         }
         else if (url == "/nolenroot.py")
