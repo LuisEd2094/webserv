@@ -33,9 +33,10 @@ enum ErrorCodes
     /*5xx*/
     INTERNAL_SERVER_ERROR,
     NOT_IMPLEMENTED,
+    BAD_GATEWAY,
+    SERVICE_UNAVAILABLE,
     GATEWAY_TIMEOUT, 
-    VERSION_NOT_SUPPORTED,
-    BAD_GATEWAY
+    VERSION_NOT_SUPPORTED
 };
 
 # define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\n"
@@ -119,6 +120,15 @@ enum ErrorCodes
 # define NOT_IMPLEMENTED_TITLE  "501 Not Implemented"
 # define NOT_IMPLEMENTED_BODY   "The server does not support this method. 💀"
 
+# define BAD_GATEWAY_HTTP   "HTTP/1.1 502 Bad Gateway\r\n"
+# define BAD_GATEWAY_TITLE  "502 Bad Gateway"
+# define BAD_GATEWAY_BODY   "We encountered an error from the Gateway."
+
+# define SERVICE_UNAVAILABLE_HTTP   "HTTP/1.1 503 Service Unavailable\r\n"
+# define SERVICE_UNAVAILABLE_TITLE  "503 Bad Service Unavailable"
+# define SERVICE_UNAVAILABLE_BODY   "We are currently not available, try again later."
+
+
 # define GATEWAY_TIMEOUT_HTTP   "HTTP/1.1 504 Gateway Timeout\r\n"
 # define GATEWAY_TIMEOUT_TITLE  "504 Gateway Timeout"
 # define GATEWAY_TIMEOUT_BODY   "The server, acting as a gateway or proxy, did not receive a timely response from the upstream server. 💀"
@@ -128,9 +138,6 @@ enum ErrorCodes
 # define VERSION_NOT_SUPPORTED_BODY   "This server only supports HTTP 1.1, please make sure your request are in the correct version."
 
 
-# define BAD_GATEWAY_HTTP   "HTTP/1.1 502 Bad Gateway\r\n"
-# define BAD_GATEWAY_TITLE  "502 Bad Gateway"
-# define BAD_GATEWAY_BODY   "We encountered an error from the Gateway."
 
 
 

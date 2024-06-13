@@ -46,7 +46,6 @@ int                Server::Action(int event)
 
     Overseer::addToPfds(newClient);
     return (1);
-
 }
 
 

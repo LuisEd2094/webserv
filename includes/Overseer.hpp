@@ -19,7 +19,7 @@ class Overseer
     public:
         static  void     cleanOverseer(int);
 
-        static  void    addToPfds(BaseHandler *);
+        static  bool    addToPfds(BaseHandler *);
 
 
         static  void    setListenAction(int, int);
@@ -41,7 +41,7 @@ class Overseer
         Overseer();
         ~Overseer();
         
-        static  void    addToPfds(int new_fd, int events, int revents);
+        static  bool    addToPfds(int new_fd, int events, int revents);
 
         static  std::map<int, BaseHandler *> _pending_fds;
         //clients map

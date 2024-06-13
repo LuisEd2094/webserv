@@ -56,11 +56,13 @@ void Overseer::setListenAction(int fd, int action) // might need to change this 
     }
 }
 
-void    Overseer::addToPfds(BaseHandler * base)
+bool    Overseer::addToPfds(BaseHandler * base)
 {
     _pending_fds[base->getFD()] = base;
-    addToPfds(base->getFD(), JUST_IN, 0);
+    if (!addToPfds(base->getFD(), JUST_IN, 0))
+        return false;
     base->setTime();
+    return true;    
 }
 
 BaseHandler* Overseer::getObj(int fd)
@@ -75,15 +77,23 @@ BaseHandler* Overseer::getObj(int fd)
 
 
 
-void Overseer::addToPfds(int new_fd, int events, int revents)
+bool Overseer::addToPfds(int new_fd, int events, int revents)
 {
-    if (_fd_count != MAX_FDS )
+    _pfds[_fd_count].fd = new_fd;
+    _pfds[_fd_count].events = events;
+    _pfds[_fd_count].revents = revents;
+    _fd_count++;
+
+    return _fd_count >= MAX_FDS;
+/*     if (_fd_count != MAX_FDS )
     {
         _pfds[_fd_count].fd = new_fd;
         _pfds[_fd_count].events = events;
         _pfds[_fd_count].revents = revents;
         _fd_count++;
+        return true;
     }
+    return false; */
 }
 
 Server* Overseer::saveServer(t_confi* confi)

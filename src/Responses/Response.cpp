@@ -68,9 +68,11 @@ void    Response::initDefaultMap()
     /*5xx ERRORS*/
     defaults.insert(std::make_pair(INTERNAL_SERVER_ERROR, Responses(INTERNAL_ERROR_HTTP, INTERNAL_ERROR_TITLE, INTERNAL_ERROR_BODY)));
     defaults.insert(std::make_pair(NOT_IMPLEMENTED, Responses(NOT_IMPLEMENTED_HTTP, NOT_IMPLEMENTED_TITLE, NOT_IMPLEMENTED_BODY)));
+    defaults.insert(std::make_pair(BAD_GATEWAY, Responses(BAD_GATEWAY_HTTP, BAD_GATEWAY_TITLE, BAD_GATEWAY_BODY)));
+    defaults.insert(std::make_pair(SERVICE_UNAVAILABLE, Responses(SERVICE_UNAVAILABLE_HTTP, SERVICE_UNAVAILABLE_TITLE, SERVICE_UNAVAILABLE_BODY)));
+
     defaults.insert(std::make_pair(GATEWAY_TIMEOUT, Responses(GATEWAY_TIMEOUT_HTTP, GATEWAY_TIMEOUT_TITLE, GATEWAY_TIMEOUT_BODY)));
     defaults.insert(std::make_pair(VERSION_NOT_SUPPORTED, Responses(VERSION_NOT_SUPPORTED_HTTP, VERSION_NOT_SUPPORTED_TITLE, VERSION_NOT_SUPPORTED_BODY)));
-    defaults.insert(std::make_pair(BAD_GATEWAY, Responses(BAD_GATEWAY_HTTP, BAD_GATEWAY_TITLE, BAD_GATEWAY_BODY)));
 
     createDefaultResponses();
     defaults.clear();
@@ -100,9 +102,10 @@ void    Response::initErrorsHttp(void)
     /*5xx errors*/
     _vectorError.push_back(INTERNAL_ERROR_HTTP);
     _vectorError.push_back(NOT_IMPLEMENTED_HTTP);
+    _vectorError.push_back(BAD_GATEWAY_HTTP);
+    _vectorError.push_back(SERVICE_UNAVAILABLE_HTTP);
     _vectorError.push_back(GATEWAY_TIMEOUT_HTTP);
     _vectorError.push_back(VERSION_NOT_SUPPORTED_HTTP);
-    _vectorError.push_back(BAD_GATEWAY_HTTP);
 }
 
  const std::string& Response::getHttpFirtsLine(ErrorCodes code)

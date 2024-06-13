@@ -112,7 +112,7 @@
 | 204| No Content |Successful and NO BODY| Request processed and no body is to be sent| Similar to 200, but explicitly used for when no body is going to be sent ||❌|
 | 205| Reset Content |Successful and client must reset data fields| Client must reset data fields| Probably used by CGIS since server is unlikely to know if the fields must be reset||❌|
 |https://datatracker.ietf.org/doc/html/rfc7231#page-54|||||||
-|300 | Multiple Choices|Redirection with multiple choices| When we want to redirect to multiple places| Provide Location field if you have a preference with the corresponding URL. **HAS** to have body with some sorf of list with URLs (usually some predefine structure) | | ❌|
+|300 | Multiple Choices|Redirection with multiple choices| When we want to redirect to multiple places| Provide Location field if you have a preference with the corresponding URL. **HAS** to have body with some sorf of list with URLs (usually some predefine structure) | | ✅|
 | 301| Moved Permanently  | When URL has been moved permanently to another location| URL moved| **SHOULD** generate Location header, BODY contains HTML with hyperlink| | ❌|
 | 302 | Found | Temporary redirection| When the resource is temporary available in another URL, maintaince for example| **SHOULD** generate Location header, BODY contains HTML with hyperlink. Diff 302/307? 302 **DOES NOT** mandate client to keep same header and payload while 307 **DOES** ||❌|
 | 303| See other| Request OKAY and a representation of the request can be viewed in another URL| For some reason, we want to show the request's result in a different URL and want to **ENSURE** it's done via a GET request| **SHOULD** have location and hypertext||❌|
@@ -137,8 +137,8 @@
 |https://datatracker.ietf.org/doc/html/rfc7231#page-62|||||||
 |**5xx SHOULD send a representation of the error and if we know if it's permanent or not**        |                   | |||||
 | 500 | Internal Server Error | We ran into a problem runnig the request|Whenever we have an error on our side, related to exceptions or error when executing a sys call|||✅|
-| 501 | Not Implemented  |We do not support the requested Method| We do not reccognize the method request, and therfore can't serve it. We only support GET, POST and DELETE |||❌|
-| 502 | Bad Gateway  | When we encounter an error from a Upstream| We parsed a response or the upstream encountered an error| Maybe the upstream crashed, maybe it timedout, maybe we parse the info and is incorrect. Can be used with CGI, but probably best not ||❌|
-|503| Service Unavailable| Temporary overload or maintenance| Maybe we reached our limit of connections, or we are undergoing maintenance| **MAY** send Retry-After:. This does not mean we are OVERLOADED, just taht we refuse the connection ||❌|
-|504| Gateway Timeout  |  No response before time out| Since we handle CGIs, if the CGI times out this is the response.|||❌|
-| 505 |HTTP Version Not Supported  | We do not support the mayor version client is using| We are unable or unwilling to send a response using the same version.| **SHOULD** generate a representation indicating WHY and what protocols we DO support ||❌|
+| 501 | Not Implemented  |We do not support the requested Method| We do not reccognize the method request, and therfore can't serve it. We only support GET, POST and DELETE |||✅|
+| 502 | Bad Gateway  | When we encounter an error from a Upstream| We parsed a response or the upstream encountered an error| Maybe the upstream crashed, maybe it timedout, maybe we parse the info and is incorrect. Can be used with CGI, but probably best not ||✅|
+|503| Service Unavailable| Temporary overload or maintenance| Maybe we reached our limit of connections, or we are undergoing maintenance| **MAY** send Retry-After:. This does not mean we are OVERLOADED, just taht we refuse the connection ||✅|
+|504| Gateway Timeout  |  No response before time out| Since we handle CGIs, if the CGI times out this is the response.|||✅|
+| 505 |HTTP Version Not Supported  | We do not support the mayor version client is using| We are unable or unwilling to send a response using the same version.| **SHOULD** generate a representation indicating WHY and what protocols we DO support ||✅|
