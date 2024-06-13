@@ -48,12 +48,13 @@ CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDe
     }
     if (_pid == 0)
     {
-        std::size_t pos = client.getPathFile().find_last_of("/");
+        std::string pathFile = static_cast<std::string>(const_cast<Path&>(client.getPathFile()));
+        std::size_t pos = pathFile.find_last_of("/");
         std::string new_path;
         /*If pos == 0 then path is in root, so we can't do a substr*/
         if (pos != 0)
         {
-            new_path = client.getPathFile().substr(0, pos);
+            new_path = pathFile.substr(0, pos);
         }
         else
         {
@@ -62,7 +63,7 @@ CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDe
         chdir(new_path.c_str());
         char* argv[3];
         argv[0] = const_cast<char*>("/usr/bin/python3");
-        argv[1] = const_cast<char*>(client.getPathFile().c_str());
+        argv[1] = const_cast<char*>(pathFile.c_str());
         argv[2] = NULL;
 
         char *env[2];

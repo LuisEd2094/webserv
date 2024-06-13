@@ -8,6 +8,7 @@
 # include <RequestHandler.hpp>
 # include <DirectResponse.hpp>
 # include <ProgramConfigs.hpp>
+# include <Path.hpp>
 
 # include <queue>
 # include <cstring>
@@ -46,7 +47,7 @@ class Client : public BaseHandler
         void                setHTTPResponse(const std::string &message, BaseHandler*);
         void                setBodyResponse(const std::string &message, BaseHandler*);
         void                setResponseType(ObjectTypes );
-        void                setPathFile(const std::string&);
+        void                setPathFile(const Path&);
         void                setDefaultHttpResponse(ErrorCodes);
 
         //getters
@@ -63,7 +64,7 @@ class Client : public BaseHandler
         std::string                     getNextURLRedirect();
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
-        const std::string&              getPathFile() const;
+        const Path&                     getPathFile() const;
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
         const std::string&              getDefaultHttpResponse(void) const;
@@ -125,7 +126,8 @@ class Client : public BaseHandler
 
         ObjectTypes             _response_type;
 
-        std::string             _path_to_file;
+        Path             _path_to_file;
+        //std::string             _path_to_file;
         std::string             _defaultHttp;
         std::string             _httpAnswerDirectory;
 

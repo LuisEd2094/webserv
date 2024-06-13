@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/13 10:56:35 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/13 12:40:23 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,14 @@
 #include "../../includes/Uri.hpp"
 #include <iostream>
 #include <string>
+
+
+
+
+
+
+
+#include <Path.hpp>
 
 // std::list<std::string> split(const std::string& str, char delimiter)
 // {
@@ -85,7 +93,7 @@ void testPath(std::string test)
 	std::cout << "Testing:" << test << ":" << std::endl;
 	try {
 		Path path(test);
-		std::cout << GREEN << "Path: " << (std::string)path << END << std::endl << std::endl;
+		std::cout << GREEN << "Path: " << path << END << std::endl << std::endl;
 
 	} catch (Path::InvalidPathException &e) {
 		std::cout << e.what() << std::endl;
@@ -94,7 +102,7 @@ void testPath(std::string test)
 
 void	testUri(std::string test)
 {
-	std::cout << Uri::Parse(test) << std::endl;
+	Uri::Parse(test);
 }
 
 int  main(void)

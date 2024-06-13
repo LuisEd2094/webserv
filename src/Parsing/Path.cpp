@@ -16,8 +16,8 @@ Path::Path()
 Path::Path(std::string pathStr)
 {
     //std::cout << "Path string constructor called" << std::endl;
-    this->isRelative = pathStr[0] == '/';
-    this->isFile = pathStr[pathStr.length()-1] == '/';
+    this->isRelative = pathStr[0] != '/';
+    this->isFile = pathStr[pathStr.length()-1] != '/';
     this->directories = ft_split(pathStr, '/');
     while (this->normalize());
     //std::cout << "Path string constructor finished" << std::endl;
@@ -73,8 +73,13 @@ Path::operator std::string()
 
 void Path::append(Path tail)
 {
+    std::cout << RED << "appending " << *this << " " << tail << END;
     if (this->isFile)
+        {
+        std::cout << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
         return ;
+
+        }
     for (std::list<std::string>::iterator te = tail.directories.begin(); te != tail.directories.end(); te++)
             this->directories.push_back(*te);
 }
