@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/11 13:17:04 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/13 11:08:20 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@
 # include <sstream>
 # include <vector>
 # include <Response.hpp>
+# include <Uri.hpp>
 
 /******************************************************************************/
 /*                            MACROS                                          */

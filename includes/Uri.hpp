@@ -57,11 +57,13 @@ struct Uri
 	    return (result);
 		}
 	};
-std::ostream &operator<<(std::ostream &os, const Uri &obj)
-{
-	os << "QueryString: " <<  obj.QueryString << std::endl;
-	os << "Path: " <<  obj.Path << std::endl;
-	os << "Protocol: " <<  obj.Protocol << std::endl;
-	os << "Host: " <<  obj.Host << std::endl;
-	os << "Port: " <<  obj.Port << std::endl;
-}
+
+// std::ostream &operator<<(std::ostream &os, const Uri &obj)
+// {
+// 	os  << "QueryString: " << obj.QueryString << std::endl;
+// 	os  <<  "Path: " << obj.Path << std::endl;
+// 	os  <<  "Protocol: " << obj.Protocol << std::endl;
+// 	os  <<  "Host: " << obj.Host << std::endl;
+// 	os  <<  "Port: " << obj.Port << std::endl;
+// 	return (os);
+// }

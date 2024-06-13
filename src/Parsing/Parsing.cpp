@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/11 09:30:31 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/13 11:17:40 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,8 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			std::string tmp = _method.content["Host"];
 			_method.content["Host"] = ::getKey(tmp, ':');
 			_method.content["Port"] = ::getValue(tmp, ':');
+			_method.content["__Query__"] = Uri::Parse(_method.requested).QueryString;
+			_method.content["__Path__"] = Uri::Parse(_method.requested).Path;
 			return (_statusError = EXIT_SUCCESS);
 		}
 	}
