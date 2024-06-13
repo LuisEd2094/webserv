@@ -139,6 +139,36 @@ bool Path::included(const Path &compPath) const
     return (included == this->directories.end());
 }
 
+bool Path::assertDirExists(void) const
+{
+    std::cout << "Checking dir exists: " << *this << std::endl;
+    struct stat info;
+    //int result = stat(this->c_str(), &info);
+
+  
+    int result = stat(PATH_TO_C_STR(*this), &info);
+
+    if (result == -1)
+    {
+        std::cout << "ERRRORRR" << std::endl;
+        return (false);
+    }
+        std::cout << "OKKKK" << std::endl;
+    return (S_ISDIR(info.st_mode));
+}
+
+bool Path::assertFileExists(void) const
+{
+    std::cout << GREEN;
+    std::cout << "Checking file exists: " << *this << std::endl;
+    struct stat info;
+    int result = stat(PATH_TO_C_STR(*this), &info);
+    std::cout << "Result: " << result << std::endl;
+    std::cout << END;
+    if (result == -1)
+        return (false);
+    return (S_ISREG(info.st_mode));
+}
 
 std::ostream &operator<<(std::ostream &os, const Path &obj)
 {

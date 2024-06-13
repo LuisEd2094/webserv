@@ -312,16 +312,48 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			static_cast<std::string>(this->_root) +
 			static_cast<std::string>(requestedURL)
 		);
-		if (Path(client.getURL()).getIsFile())	
-			client.setResponseType(FILE_OBJ);
-		else
-			client.setResponseType(DIR_OBJ);
+		std::cout << BLUE << std::endl;
 		client.setDefaultHttpResponse(OK);
+		if (false)
+			;
+		else if (Path(client.getURL()).getIsFile())	
+		{
+			if (client.getPathFile().assertFileExists())
+			{
+				std::cout << "return file" << std::endl;
+				client.setResponseType(FILE_OBJ);
+			}
+			else if (this->_dirListing && client.getPathFile().assertDirExists())
+			{
+				std::cout << "should be file return file" << std::endl;
+				client.setResponseType(DIR_OBJ);
+			}
+			else
+			{
+				std::cout << "unable to serve file" << std::endl;
+				client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
+			}
+		}
+		else if (this->_dirListing && client.getPathFile().assertDirExists())	
+			{
+				std::cout << "returning direcotry" << std::endl;
+				client.setResponseType(DIR_OBJ);
+			}
+		else 
+			{
+				std::cout << "unable to serve directory" << std::endl;
+				client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
+			}
+		std::cout << END << std::endl;
+
+
+		
 		std::cout << "      BINGO !!!" << std::endl;
+		std::cout << "RENSPONSES: NO_FOUND=" << NOT_FOUND << " OK=" << OK << std::endl;
 		std::cout << TUR << "      Bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
 		std::cout << "      Cient  URL: " << client.getURL() << std::endl;
 		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()];
-		std::cout << "      Default HTTP response: " << client.getResponseType();
+		std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse();
 		std::cout << "      Path file: " << client.getPathFile();
 		std::cout << std::endl;
 	}
@@ -390,4 +422,3 @@ std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)
 //	os << "  errorPage: " << obj.getErrorPage() << std::endl;
 	return os;
 }
-

@@ -6,7 +6,9 @@
 # include <list>
 # include <exception>
 # include "Parsing.hpp"
+#include <sys/stat.h>
 
+# define PATH_TO_C_STR(path) ((std::string) (const_cast<Path &>((path)))).c_str()
 
 class Path
 {
@@ -37,6 +39,9 @@ class Path
 		int		normalize(void);
 		bool	includes(const Path &compPath) const;
 		bool	included(const Path &compPath) const;
+
+		bool	assertFileExists(void) const;
+		bool	assertDirExists(void) const;
 
 	class InvalidPathException: public std::exception
 	{
