@@ -28,6 +28,8 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigLocation>	_locations;
 		bool						_inheriting;
 		Path						_path;
+		//Add map <int error, Path pathError>;
+		std::map<int, Path>			_errorPages;
 		//Add list configureLocation 
 
 	public:
