@@ -1,6 +1,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <Parsing.hpp>
 
 struct Uri
 {
@@ -59,9 +60,11 @@ struct Uri
 	};
 std::ostream &operator<<(std::ostream &os, const Uri &obj)
 {
-	os << "QueryString: " <<  obj.QueryString << std::endl;
-	os << "Path: " <<  obj.Path << std::endl;
-	os << "Protocol: " <<  obj.Protocol << std::endl;
-	os << "Host: " <<  obj.Host << std::endl;
-	os << "Port: " <<  obj.Port << std::endl;
+	os << ORANGE << "QueryString: " << END << obj.QueryString << std::endl;
+	os << ORANGE <<  "Path: " <<  END << obj.Path << std::endl;
+	os << ORANGE <<  "Protocol: " << END << obj.Protocol << std::endl;
+	os << ORANGE <<  "Host: " <<  END << obj.Host << std::endl;
+	os << ORANGE <<  "Port: " << END << obj.Port << std::endl;
+	return (os);
 }
+

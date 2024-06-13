@@ -100,3 +100,4 @@ std::string              Client::getNextURLRedirect()
     }
     return "";
 }
+
