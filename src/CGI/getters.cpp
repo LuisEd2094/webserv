@@ -3,5 +3,5 @@
 
 int CGI::getFD() const
 {
-    return _pipe[0];
+    return _out_pipe[0];
 }

@@ -34,6 +34,13 @@ Overseer::~Overseer()
 
 }
 
+void Overseer::removeInCGIPipe(int fd)
+{
+    _pfds[_i] = _pfds[_fd_count - 1];
+    _fd_count--;
+    _i--;
+    _pending_fds.erase(fd);
+}
 
 void Overseer::removeFromPFDS(BaseHandler *obj)
 {
@@ -55,6 +62,15 @@ void Overseer::setListenAction(int fd, int action) // might need to change this 
         } 
     }
 }
+
+bool    Overseer::addCGIInPipe(BaseHandler * base, int fd)
+{
+    _pending_fds[fd] = base;
+    bool status = addToPfds(fd, JUST_OUT, 0);
+    base->setTime();
+    return status;    
+}
+
 
 bool    Overseer::addToPfds(BaseHandler * base)
 {

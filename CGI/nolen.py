@@ -1,18 +1,29 @@
 import time
+import sys
 
 import os
 cwd = os.getcwd()
 env = os.environ['HOME']
-path_info = os.environ['PATH_INFO']
+len = ""
 
-time.sleep(0)
+try:
+    len = os.environ['CONTENT_LENGTH']    
+except:
+    len = ""
 
+#input_data = sys.stdin.read()
+if len != "":
+    input_data = sys.stdin.read()
+else:
+    input_data = ""
 
 print("HTTP/1.1 200 OK")
 print("Content-Type: text/html; charset=utf-8")
 
+
 # HTML content to be displayed in the browser
-print("""
+print(
+len + """
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,4 +36,7 @@ print("""
 </body>
 </html>
 """)
+
+if input_data != "":
+    print("this is input: " + input_data)
 

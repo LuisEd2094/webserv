@@ -20,6 +20,8 @@ class Overseer
         static  void     cleanOverseer(int);
 
         static  bool    addToPfds(BaseHandler *);
+        static  bool    addCGIInPipe(BaseHandler *, int);
+        static  void    removeInCGIPipe(int fd);
 
 
         static  void    setListenAction(int, int);

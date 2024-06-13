@@ -35,12 +35,24 @@ class CGI::CGIException : public std::exception
 
 
 
-CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDefaultHttpResponse())
+CGI::CGI(Client& client) :  _client_fd(client.getFD()), 
+                            _defaultHttp(client.getDefaultHttpResponse()),
+                            _body(client.getBody()),
+                            _len(client.getContentLength()),
+                            _sent(0)
 {
-    if (pipe(_pipe))
+    if (pipe(_out_pipe))
     {
         throw CGIException(strerror(errno));
     }
+    if (!_body.empty() && pipe(_in_pipe))
+    {
+        close(_out_pipe[0]);
+        close(_out_pipe[1]);
+        throw CGIException(strerror(errno));
+    }
+    //std::string len = std::string("CONTENT_LENGTH=" + toString(client.getContentLength())).c_str();
+
     _pid = fork();
     if (_pid == -1)
     {
@@ -48,6 +60,13 @@ CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDe
     }
     if (_pid == 0)
     {
+		close(_out_pipe[0]);
+		dup2(_out_pipe[1], STDOUT_FILENO);
+        if (!_body.empty())
+        {
+            close(_in_pipe[1]);
+		    dup2(_in_pipe[0], STDIN_FILENO);
+        }
         std::string pathFile = static_cast<std::string>(const_cast<Path&>(client.getPathFile()));
         std::size_t pos = pathFile.find_last_of("/");
         std::string new_path;
@@ -66,20 +85,28 @@ CGI::CGI(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDe
         argv[1] = const_cast<char*>(pathFile.c_str());
         argv[2] = NULL;
 
-        char *env[2];
+        char *env[3];
 
-        env[0]= const_cast<char*>("HOME=/HOLA CARE DE PEROLA");
-        env[1] = NULL;
-
-
-		close(_pipe[0]);
-		dup2(_pipe[1], STDOUT_FILENO);
-        close(_pipe[1]);
-
+        env[0] = const_cast<char*>("HOME=/HOLA CARE DE PEROLA U GET");
+        std::string len;
+        if (!_body.empty())
+        {
+            /*I don't understand why I can't do this in a single line*/
+            len = std::string("CONTENT_LENGTH=" + toString(client.getContentLength())).c_str();
+            env[1] = const_cast<char*>(len.c_str());
+        }
+        else
+            env[1] = NULL;
+        env[2] = NULL;
         execve("/usr/bin/python3", argv, env);
         std::exit(-1);
     }
-	close(_pipe[1]);
+	close(_out_pipe[1]);
+    if (!_body.empty())
+    {
+        close(_in_pipe[0]);
+        Overseer::addCGIInPipe(this, _in_pipe[1]);
+    }
 }
 
 
@@ -89,7 +116,7 @@ CGI::~CGI()
 
     kill(_pid, SIGTERM);
     waitpid(_pid, &status, 0);
-    close(_pipe[0]);
+    close(_out_pipe[0]);
 }
 
 CGI* CGI::createNewCGI(Client& client)
@@ -119,47 +146,72 @@ bool    CGI::checkObjTimeOut()
 
 int CGI::Action(int event)
 {
-    char buff[RECV_SIZE];
-    int  result = read(_pipe[0], buff, sizeof(buff)); 
-    (void)event;
-    if (result > 0)
+    if (event & POLLIN)
     {
-        _buffer.append(buff, result);
-        return (1);
-    }
-    else if (result <= 0)
-    {
-        Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
-        if (client)
+        char buff[RECV_SIZE];
+        int  result = read(_out_pipe[0], buff, sizeof(buff)); 
+        (void)event;
+        if (result > 0)
         {
-            if (result ==  0)
+            _buffer.append(buff, result);
+            return (1);
+        }
+        else if (result <= 0)
+        {
+            Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
+            if (client)
             {
-                std::string http_response(_buffer.substr(0, _buffer.find("\n\n") + 2));
-                if (http_response.empty())
+                if (result ==  0)
                 {
-                    client->setdefaultResponse(client->getServer()->getErrorResponseObject(BAD_GATEWAY), this);
+                    std::string http_response(_buffer.substr(0, _buffer.find("\n\n") + 2));
+                    if (http_response.empty())
+                    {
+                        client->setdefaultResponse(client->getServer()->getErrorResponseObject(BAD_GATEWAY), this);
+                    }
+                    else
+                    {
+                        client->setHTTPResponse(http_response, this);
+                        std::string body_resposne(_buffer.substr(_buffer.find("\n\n") + 2));
+                        if (!body_resposne.empty())
+                        {
+                            client->setBodyResponse(body_resposne, this); 
+                        }
+                    }
                 }
                 else
                 {
-                    client->setHTTPResponse(http_response, this);
-                    std::string body_resposne(_buffer.substr(_buffer.find("\n\n") + 2));
-                    if (!body_resposne.empty())
-                    {
-                        client->setBodyResponse(body_resposne, this); 
-                    }
+                    client->setdefaultResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
                 }
+                return (0);
+
+            }
+            else 
+            {
+                return (0);
+            }
+        }
+    }
+    else if (event & POLLOUT)
+    {
+        int chunk_to_send = std::min(SEND_SIZE,(int)(_len - _sent));
+        int result = write(_in_pipe[1], _body.c_str() + chunk_to_send, SEND_SIZE);
+        if (result <= 0)
+        {
+            /*Not sure what to do if the write failes*/
+            if (result < 0)
+            {
+                Overseer::removeInCGIPipe(_in_pipe[1]);
+                close(_in_pipe[1]);
+                return (-1);
             }
             else
             {
-                client->setdefaultResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
+                Overseer::removeInCGIPipe(_in_pipe[1]);
+                close(_in_pipe[1]);
             }
-            return (0);
-
         }
-        else 
-        {
-            return (0);
-        }
+        _sent += result;
     }
+    
     return (1);
 }

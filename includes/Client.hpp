@@ -55,6 +55,7 @@ class Client : public BaseHandler
         Server *                        getServer() const;
         int                             getFD() const;
         const std::string&              getURL() const;
+        
         const std::string&              getMethod() const;
         const std::string&              getHost() const;
         Actions                         getAction() const;

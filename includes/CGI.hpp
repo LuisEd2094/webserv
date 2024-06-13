@@ -25,11 +25,16 @@ class CGI : public BaseHandler
         class CGIException;
 
     private:
-        int             _pipe[2];
+        int             _out_pipe[2];
+        int             _in_pipe[2];
+
         int             _client_fd;
         pid_t           _pid;
         std::string     _buffer;
         std::string     _defaultHttp;
+        std::string     _body;
+        std::size_t     _len;
+        std::size_t     _sent;
         void            changeDir(const std::string& fileUrl);
 
 

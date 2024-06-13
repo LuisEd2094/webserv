@@ -563,6 +563,7 @@ void Client::resetClient(bool has_body)
     _error_code = OK;
 
 }
+
 bool Client::checkObjTimeOut()
 {
     /* Should have a different time out setting for open connections that are not being used*/
