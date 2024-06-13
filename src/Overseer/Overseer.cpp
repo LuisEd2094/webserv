@@ -59,10 +59,9 @@ void Overseer::setListenAction(int fd, int action) // might need to change this 
 bool    Overseer::addToPfds(BaseHandler * base)
 {
     _pending_fds[base->getFD()] = base;
-    if (!addToPfds(base->getFD(), JUST_IN, 0))
-        return false;
+    bool status = addToPfds(base->getFD(), JUST_IN, 0);
     base->setTime();
-    return true;    
+    return status;    
 }
 
 BaseHandler* Overseer::getObj(int fd)

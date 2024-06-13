@@ -44,7 +44,8 @@ int                Server::Action(int event)
     (void)event;
     Client *newClient = new Client(this);
 
-    Overseer::addToPfds(newClient);
+    if (Overseer::addToPfds(newClient))
+        newClient->addClosingErrorObject(SERVICE_UNAVAILABLE);
     return (1);
 }
 

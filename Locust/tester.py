@@ -6,7 +6,7 @@ from locust import HttpUser, TaskSet, task, between
 class UserBehavior(TaskSet):
     @task
     def get_root(self):
-        self.client.get("/")
+        self.client.get("")
 
 class WebsiteUser(HttpUser):
     tasks = [UserBehavior]
