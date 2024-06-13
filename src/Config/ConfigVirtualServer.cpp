@@ -124,6 +124,7 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
  ////
 	//return  ConfigLocation::getBestLocation(client.getURL(), client.getMethod(), 
 	Path url(client.getURL());
+	std::cout << "len locations" << this->locations.size() << std::endl;
 	return  ConfigLocation::getBestLocation(
 		client, Path(client.getURL()),
 //		client, url,

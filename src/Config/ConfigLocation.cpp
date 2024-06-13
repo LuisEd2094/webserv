@@ -188,6 +188,7 @@ void ConfigLocation::initializeRoot(Path root)
 	}
 	else	
 		_root = root;
+	_root.setIsFile(false);
 	// TODO the file is correct
 }
 
@@ -348,8 +349,8 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 	std::cout << "··· getBestLocation " << requestedURL << std::endl;
 	while (beginLocation != endLocation)
 	{
-		locMethods = beginLocation->getMethods();
 		std::cout << "      Location " << *beginLocation ;
+		locMethods = beginLocation->getMethods();
 		/*
 		if (locMethods.size() == 0)
 		{
