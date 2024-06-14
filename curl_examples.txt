@@ -5,3 +5,5 @@ curl -F "./images/image.jpg" localhost -v #sends image as webbrowser displayable
 
 curl -X POST --data-binary @./images/image.jpeg  localhost -v
 curl -H "Transfer-Encoding: chunked" --data-binary @./images/image.jpeg localhost:8080/post -v
+
+curl locala.com:8081/locationa/sdaf
