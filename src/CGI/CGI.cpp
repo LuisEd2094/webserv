@@ -85,10 +85,11 @@ CGI::CGI(Client& client) :  _client_fd(client.getFD()),
         argv[0] = const_cast<char*>("/usr/bin/python3");
         argv[1] = const_cast<char*>(pathFile.c_str());
         argv[2] = NULL;
+        /*should be a vector?*/
 
+        std::string query = "QUERY_STRING=" + client.getMapValue("__Query__");
         char *env[3];
-
-        env[0] = const_cast<char*>("HOME=/HOLA CARE DE PEROLA U GET");
+        env[0] = const_cast<char*>(query.c_str());
         std::string len;
         if (!_body.empty())
         {

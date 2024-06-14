@@ -3,7 +3,7 @@ import sys
 
 import os
 cwd = os.getcwd()
-env = os.environ['HOME']
+query = os.environ['QUERY_STRING']
 len = ""
 
 try:
@@ -21,7 +21,6 @@ print("")
 input_data = ""
 #input_data = sys.stdin.read()
 if len != "":
-    print("LEEN", file=log)
     for line in sys.stdin:
         print(line, file=log)
         input_data += line
@@ -37,7 +36,7 @@ len + """
     <title>CGI Test</title>
 </head>
 <body>
-      """ + cwd + "ENV: " + env+ """
+      """ + cwd + "ENV: " + query + """
     <h1>CGI Test Page</h1>
     <p>This is a simple CGI test.✊</p>
 </body>

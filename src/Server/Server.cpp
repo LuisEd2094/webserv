@@ -254,7 +254,7 @@ void Server::getResponse(Client & client)
             client.setPathFile(Path("/workspaces/webserv/html/index.html"));
             client.setResponseType(FILE_OBJ);
         }
-        else if (url == "/nolen.py")
+        else if (url == "/nolen.py" or !client.getMapValue("__Query__").empty())
         {
             client.setDefaultHttpResponse(OK);
             client.setPathFile(Path("/workspaces/webserv/CGI/nolen.py"));
