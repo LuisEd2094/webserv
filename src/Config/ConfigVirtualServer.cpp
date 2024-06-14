@@ -32,10 +32,12 @@ void ConfigVirtualServer::parseKeyVal(std::string key, std::string val)
 		throw ParamError(std::string("Error: server config key not found.") + std::string(" key:") + key);
 }
 
-ConfigVirtualServer &ConfigVirtualServer::operator=(ConfigVirtualServer& obj)
+ConfigVirtualServer &ConfigVirtualServer::operator=(const ConfigVirtualServer& obj)
 {
 	this->setMaxClientBodySize(obj.getMaxClientBodySize());
 	this->setErrorPage(obj.getErrorPage());
+	this->serverNames = obj.serverNames;
+	this->locations = obj.locations;	
 	return (*this);
 }
 

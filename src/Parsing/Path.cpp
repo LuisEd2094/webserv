@@ -25,9 +25,7 @@ Path::Path(std::string pathStr)
 
 Path::Path(const Path &orig)
 {
-    this->directories = orig.directories;
-    this->isRelative = orig.getIsRelative();
-    this->isFile = orig.getIsFile();
+    *this = orig;
 }
 
 Path &Path::operator=(const Path &orig)
@@ -57,8 +55,10 @@ void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
 Path::operator std::string()
 {
     std::list<std::string>::iterator dir;
-    std::string result;
-
+    std::string result("");
+    std::cout << "converting to string" << std::endl;
+    std::cout << this->isRelative;
+    std::cout << "sdaf" << std::endl;
     if (this->isRelative)
         result += "./";
     else
@@ -71,6 +71,7 @@ Path::operator std::string()
     }
     if (!this->isFile)
         result += "/";
+    std::cout << "converted to string" << std::endl;
     return (result);
 }
 

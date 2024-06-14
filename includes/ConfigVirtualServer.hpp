@@ -40,8 +40,9 @@ class ConfigVirtualServer: public ConfigElement
 
 		void parseKeyVal(std::string key, std::string val);
 		ConfigVirtualServer(void): errorPage(""), maxClientBodySize(30000){};
+		ConfigVirtualServer(const ConfigVirtualServer& obj) {*this = obj;};
 		ConfigVirtualServer(ParsingServer& obj);
-		ConfigVirtualServer &operator=( ConfigVirtualServer& obj);
+		ConfigVirtualServer &operator=(const ConfigVirtualServer& obj);
 		~ConfigVirtualServer(){};
 };
 std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj);

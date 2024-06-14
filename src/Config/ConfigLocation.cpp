@@ -7,18 +7,7 @@ ConfigLocation::ConfigLocation(void)
 
 ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 {
-	this->__elemArgument__ = obj.__elemArgument__;
-	this->__elemType__ = obj.__elemType__;
-	this->_errorPage = obj.getErrorPage();
-	this->_methods = obj.getMethods();
-	this->_redirection = obj.getRedirection();
-	this->_root = obj.getRoot();
-	this->_dirListing = obj.getDirListing();
-	this->_index = obj.getIndex();
-	this->_cgis = obj.getCgis();
-	this->_locations = obj.getLocations();
-	this->_cgis = obj.getCgis();
-	this->_path = obj.getPath();
+	*this = obj;
 }
 
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
@@ -281,6 +270,8 @@ Path const ConfigLocation::getErrorPages(const int searchError) const
 
 ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 {
+	this->__elemArgument__ = obj.__elemArgument__;
+	this->__elemType__ = obj.__elemType__;
 	this->_errorPage = obj.getErrorPage();
 	this->_methods = obj.getMethods();
 	this->_redirection = obj.getRedirection();
@@ -288,6 +279,9 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	this->_dirListing = obj.getDirListing();
 	this->_index = obj.getIndex();
 	this->_cgis = obj.getCgis();
+	this->_locations = obj.getLocations();
+	this->_cgis = obj.getCgis();
+	this->_path = obj.getPath();
 
 	return (*this);
 }
@@ -396,7 +390,7 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		
 		std::cout << "      BINGO !!!" << std::endl;
 		std::cout << "RENSPONSES: NO_FOUND=" << NOT_FOUND << " OK=" << OK << std::endl;
-		std::cout << TUR << "      Bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
+		std::cout << TUR << "      Bestlocation: " << END << this->_locations.begin()->getPath()<<  std::endl;
 		std::cout << "      Cient  URL: " << client.getURL() << std::endl;
 		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()];
 		std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse();
@@ -436,16 +430,17 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 			continue;
 		}
 		*/
-		std::cout << beginLocation->getPath().included(requestedURL) << std::endl
+		Path temp = beginLocation->getPath();
+		std::cout << temp.included(requestedURL) << std::endl
 			<< (std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()) << std::endl
-			<< (beginLocation->getPath().size() > maxDirMatches) <<	std::endl;
+			<< (temp.size() > maxDirMatches) <<	std::endl;
 		if (locMethods.size() == 0)
 			std::cout << RED << "location with no methods" << std::endl;
-		else if (beginLocation->getPath().included(requestedURL)
+		else if (temp.included(requestedURL)
 			&& std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()
-			&& beginLocation->getPath().size() >= maxDirMatches) 	
+			&& temp.size() >= maxDirMatches) 	
 		{
-			maxDirMatches = beginLocation->getPath().size();
+			maxDirMatches = temp.size();
 			bestLocation = beginLocation;
 			std::cout << "  MATCHED" ;
 		}
@@ -459,8 +454,8 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 //	Path nextURL(client.getURL());
 	std::cout << "      Before pop: " << bestLocation->size() << " " << requestedURL << std::endl;
 	requestedURL.popBegin(bestLocation->size());
-	std::cout << "      After pop: " << requestedURL << std::endl;
-	std::cout << "      First nested location: " << *bestLocation->_locations.begin() << std::endl;
+/* 	std::cout << "      After pop: " << requestedURL << std::endl;
+	std::cout << "      First nested location: " << *bestLocation->_locations.begin() << std::endl; */
 	bestLocation->prepareClient4ResponseGeneration(client, requestedURL);
 	return (true);
 }
