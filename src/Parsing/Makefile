@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+         #
+#    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/06 08:47:28 by dacortes          #+#    #+#              #
-#    Updated: 2024/05/25 16:56:55 by dacortes         ###   ########.fr        #
+#    Updated: 2024/06/13 15:01:24 by codespace        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@
 NAME = Parsing
 CPP = c++
 FLAGS = -Wall -Werror -Wextra -g -pedantic -std=c++98 \
-	#-fsanitize=address
+	-fsanitize=address
 RM = rm -rf
 
 ################################################################################
