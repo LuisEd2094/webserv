@@ -368,6 +368,7 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			}
 			else
 			{
+				/*This doesn't get here if I do index and it doesnt find it?*/
 				std::cout << "unable to serve file" << std::endl;
 				client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
 			}

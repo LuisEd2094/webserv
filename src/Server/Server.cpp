@@ -123,6 +123,7 @@ bool Server::validateAction(Client& client)
    // std::cout << host <<  RED << "**************" << END << std::endl;
    // virtualServers.back().recursivePrint();
    // std::cout << RED << "**************" << END << std::endl;
+    return this->prepareClient4ResponseGeneration(client);
 
    return true;
 
@@ -157,133 +158,7 @@ bool Server::prepareClient4ResponseGeneration(Client& client)
         if (server->prepareClient4ResponseGeneration(client))
             break ;
     }
-    return (true);
-}
-
-void Server::getResponse(Client & client)
-{
-    //CGI?
-    // We assume we called validateAction before reaching this point.
-    const std::string & url = client.getURL();
-    const std::string & hostHeader = client.getMapValue("Host");
-    // this->virtual
-    std::cout << RED << "CALLGIN prepareClient4Response(): " << END << std::endl;
-    //hacer un try para settear los parametros settear el http de respuesta.
-    if (this->prepareClient4ResponseGeneration(client))
-    {
-        std::cout << BLUE << "SOY UN SERVER :v" << END << std::endl;
-    }
-    std::cout << RED << "**************CALLED***************" << END << std::endl;
-    std::cout << RED << "Host:" << END << hostHeader << std::endl;
-    std::string serverName = getKey(hostHeader, ':');
-    std::string port = getValue(hostHeader, ':');
-    std::cout << YELLOW << "serverName: " << END << serverName << YELLOW << " port: " << END << port << std::endl;
-
-    BaseHandler * response;
-    try
-    {
-        if (url == "/")
-        {
-            client.setResponseType(NO_FD_OBJ);
-            client.setDefaultHttpResponse(OK);
-        }
-        else if (url == "/testMultipleRedirect.html")
-        {
-            /*if not set path file then it should use default*/
-            client.setDefaultHttpResponse(MULTIPLE_REDIRECTS);
-            client.setResponseType(NO_FD_OBJ);
-            client.addURLRedirection("/first/redirect");
-            client.addURLRedirection("/second/redirect");
-        }
-        else if (url == "/testError.html")
-        {
-            std::cout << "-------------" << std::endl;
-            client.setPathFile(Path("/home/luis/proyects/webserv/html/500.html"));
-            client.setDefaultHttpResponse(BAD_REQUEST);
-            client.setResponseType(FILE_OBJ);
-
-        }
-        else if (url ==  "/post")
-        {
-            std::ofstream outfile("output_file.jpeg", std::ios::binary);
-            if (outfile.is_open())
-            {
-                outfile.write(client.getBody().data(), client.getBody().size());
-                outfile.close();
-                std::cout << "Binary data written to file.\n";
-            }
-            client.setDefaultHttpResponse(OK);
-            client.setResponseType(NO_FD_OBJ);
-        }
-        else if (url.find("/Cookies/") != std::string::npos)
-        {
-            const std::string& cookie = client.getMapValue("Cookie");
-
-            std::cout << cookie << std::endl;
-            if (cookie != "not found")
-            {
-                std::stringstream   iss(cookie);
-                std::string         parser;
-                while (getline(iss, parser, ';'))
-                {
-                    std::cout << &parser[parser.find_first_not_of(' ')] << std::endl;
-                    if (parser.find("lang=") != std::string::npos)
-                    {
-                        if (parser.find("en-US", parser.find("lang=") + std::strlen("lang=")) != std::string::npos)
-                        {
-                            client.setPathFile(Path("/workspaces/webserv/html/CookiesHTTPEng.html"));
-                        }
-                        else
-                            client.setPathFile(Path("/workspaces/webserv/html/CookiesHTTPEsp.html"));
-                    }
-
-                }
-            }
-            else
-            {
-                client.setDefaultHttpResponse(OK);
-                client.setPathFile(Path("/workspaces/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/"))));
-            }
-            std::cout << client.getPathFile() << std::endl;
-            //client.setPathFile("/workspaces/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
-            client.setResponseType(FILE_OBJ);
-        }
-        else if (url == "/index.html" or url == "/hellow/you/nice")
-        {
-            client.setDefaultHttpResponse(OK);
-            client.setPathFile(Path("/workspaces/webserv/html/index.html"));
-            client.setResponseType(FILE_OBJ);
-        }
-        else if (url == "/nolen.py")
-        {
-            client.setDefaultHttpResponse(OK);
-            client.setPathFile(Path("/workspaces/webserv/CGI/noexiste.py"));
-            client.setResponseType(CGI_OBJ);
-        }
-        else if (url == "/nolenroot.py")
-        {
-            client.setDefaultHttpResponse(OK);
-            client.setPathFile(Path("/nolen.py"));
-            client.setResponseType(CGI_OBJ);
-        }
-        response = BaseHandler::createObject(client);
-
-
-    }
-    catch(const std::exception& e)
-    {
-        std::cout << "queso----------------<" << std::endl;
-        response = BaseHandler::createObject(getErrorResponseObject(INTERNAL_SERVER_ERROR));
-    }
-    std::queue<std::string> queue;
-    queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10") + CRNL);
-
-    client.addHeader(queue);   
-    client.addHeader(std::string("Connection: keep-alive") + CRNL); 
-    client.addObject(response);
-    /*
-        Check here to add Redirect headers and other HTTPS?
-    */
+    return (server != this->virtualServers.end());
 
 }
 

@@ -384,12 +384,17 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
+        if (!_server->validateAction(*this))
+        {            
+            std::cout << "server told me it was a bad action" << std::endl;
+            addClosingErrorObject(METHOD_NOT_ALLOWED);
+            return;
+        }
         if (_action == POST)
         {
             if (!checkPostHeaderInfo())
                 return;
         }
-        std::cout << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")
         {
@@ -515,10 +520,41 @@ int Client::sendResponse()
     return (1);
 }
 
+
+void Client::makeChildrenToRespond()
+{
+    BaseHandler *response;
+    try
+    {
+        /*prepareClient4ResponseGeneration doesn't set if no file is found*/
+        /*getErrorResponseObject is on server as of right now, but client has a pointer to location
+            location should have info about errors
+        */
+        if (_response_type == NOT_SET)
+            response =  BaseHandler::createObject(_server->getErrorResponseObject(NOT_FOUND));
+        else
+            response = BaseHandler::createObject(*this);
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << "queso----------------<" << std::endl;
+        response = BaseHandler::createObject(_server->getErrorResponseObject(INTERNAL_SERVER_ERROR));
+    }
+    std::queue<std::string> queue;
+    queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10") + CRNL);
+
+    addHeader(queue);   
+    addHeader(std::string("Connection: keep-alive") + CRNL); 
+    addObject(response);
+    /*
+        Check here to add Redirect headers and other HTTPS?
+    */
+
+}
+
 void Client::resetClient(bool has_body)
 {
-    _server->getResponse(*this);
-
+    makeChildrenToRespond();
     if (has_body)
     {
         /* gives seg fault*/
@@ -533,7 +569,7 @@ void Client::resetClient(bool has_body)
             */
             if (!_is_chunked)
             {
-                 _in_container.erase(0, _in_body.length());
+                _in_container.erase(0, _in_body.length());
             }
 
         }

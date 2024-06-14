@@ -31,8 +31,7 @@ class Client : public BaseHandler
         ~Client();
         int                 Action(int event);
         bool                checkObjTimeOut();
-        void                addObject(BaseHandler *);
-        void                addClosingErrorObject(ErrorCodes);
+
 
                                     
 
@@ -41,6 +40,8 @@ class Client : public BaseHandler
         void                addHeader(const std::string &new_element);
         void                addHeader(const std::queue<std::string> &);
         void                addURLRedirection(const std::string&);
+        void                addObject(BaseHandler *);
+        void                addClosingErrorObject(ErrorCodes);
 
         void                setHttpAnswerDirectory(std::string value);
         void                setdefaultResponse(const defaultResponse& response, BaseHandler*);
@@ -117,6 +118,8 @@ class Client : public BaseHandler
         void                    resetClient(bool);
         int                     sendResponse();
         void                    handlerRecv();
+        void                    makeChildrenToRespond();
+
 
 
         /*POST methods*/
@@ -129,7 +132,7 @@ class Client : public BaseHandler
 
         ObjectTypes             _response_type;
 
-        Path             _path_to_file;
+        Path                    _path_to_file;
         //std::string             _path_to_file;
         std::string             _defaultHttp;
         std::string             _httpAnswerDirectory;
