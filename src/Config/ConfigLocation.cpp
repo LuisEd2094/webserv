@@ -55,9 +55,9 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	// TODO erase the nested elements from the father
 	this->_locations.empty();
 	this->_cgis.empty();
-	this->_inheriting = true;
-	this->nestedPrint = 0;
+	this->_inheriting = false;
 	this->_dirListing = 0;
+	this->nestedPrint = 0;
 
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
@@ -66,11 +66,11 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_path = Path(this->__elemArgument__);
-	this->_inheriting = false;
 	if (obj.find("root") == obj.end())
 	{
+		this->_root.append(obj.find("__elemArgument__")->second); 
 		this->_root.setIsRelative(true);
-		this->_root.append(obj.find("__elemArgument__")->second);
+		this->_root.setIsFile(false);
 	}
 	std::list<ParsingLocation> locs = obj.getLocations(); 
 	for (std::list<ParsingLocation>::iterator location = locs.begin();
@@ -93,8 +93,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 void ConfigLocation::setDefaults()
 {
 	this->setMethods("");	
-	this->setRoot("");	
-	this->_root.setIsRelative(true);	
+	this->setRoot("./");	
 	this->setIndex("");
 	this->setErrorPage("");	
 	this->setRedirection("");	
@@ -176,7 +175,6 @@ void ConfigLocation::initializeRoot(Path root)
 	if (!_inheriting)
 	{
 		_root = root;
-		return ;
 	}	
 	else if (root.getIsRelative())
 	{
