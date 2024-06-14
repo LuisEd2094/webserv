@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/13 11:17:40 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/14 09:14:39 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,6 @@ Parsing::~Parsing( void )
 /*
  * Membert Funtions
 */
-std::string Parsing::readSocket(int fd)
-{
-	char buffRead[BUFFER_READ + 1];
-	if (fd == -1)
-		std::cout << "Error: open" << std::endl;
-	int	bytes = 1;
-	while (bytes > 0)
-	{
-		bytes = read(fd, buffRead, BUFFER_READ);
-		if (bytes < 0)
-			break ;
-		buffRead[bytes] = '\0';
-		_read += buffRead;
-	}
-	return (_read);
-}
 
 bool Parsing::isEmptyLine(const std::string& line) const
 {
@@ -116,17 +100,6 @@ int Parsing::checkMethod(const std::string& strIn)
 	return (_statusError = EXIT_SUCCESS);
 }
 
-
-const std::string& Parsing::getMethod(void) const
-{
-	return (_method.method);
-}
-
-const std::string& Parsing::getRequested(void) const
-{
-	return (_method.requested);
-}
-
 int	Parsing::printStatus(const std::string& messages, short flag, int exitCode)
 {
 	std::cout << (flag == -1 ? ERROR_STATUS : WARNING_StATUS)
@@ -178,7 +151,7 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			std::string tmp = _method.content["Host"];
 			_method.content["Host"] = ::getKey(tmp, ':');
 			_method.content["Port"] = ::getValue(tmp, ':');
-			_method.content["__Query__"] = Uri::Parse(_method.requested).QueryString;
+			_method.content["__Query__"] = Uri::Parse(_method.requested).QueryString.erase(0, 1);
 			_method.content["__Path__"] = Uri::Parse(_method.requested).Path;
 			return (_statusError = EXIT_SUCCESS);
 		}
@@ -220,6 +193,21 @@ const std::string& Parsing::getMapValue(const std::string& key) const
 size_t Parsing::getEndSize(void)
 {
 	return (this->_typeLine.length());
+}
+
+const std::string& Parsing::getVersion(void) const
+{
+	return (_method.version);
+}
+
+const std::string& Parsing::getMethod(void) const
+{
+	return (_method.method);
+}
+
+const std::string& Parsing::getRequested(void) const
+{
+	return (_method.requested);
 }
 
 bool Parsing::getEndRead() const
