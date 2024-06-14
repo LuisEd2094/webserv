@@ -39,6 +39,7 @@ void Overseer::removeInCGIPipe(int fd)
     _pfds[_i] = _pfds[_fd_count - 1];
     _fd_count--;
     _i--;
+    (void)fd;
     _pending_fds.erase(fd);
 }
 

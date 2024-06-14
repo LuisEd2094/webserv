@@ -62,6 +62,7 @@ CGI::CGI(Client& client) :  _client_fd(client.getFD()),
     {
 		close(_out_pipe[0]);
 		dup2(_out_pipe[1], STDOUT_FILENO);
+
         if (!_body.empty())
         {
             close(_in_pipe[1]);
@@ -146,7 +147,7 @@ bool    CGI::checkObjTimeOut()
 
 int CGI::Action(int event)
 {
-    if (event & POLLIN)
+    if (event & POLLIN || event & POLLHUP)
     {
         char buff[RECV_SIZE];
         int  result = read(_out_pipe[0], buff, sizeof(buff)); 
@@ -194,20 +195,19 @@ int CGI::Action(int event)
     else if (event & POLLOUT)
     {
         int chunk_to_send = std::min(SEND_SIZE,(int)(_len - _sent));
-        int result = write(_in_pipe[1], _body.c_str() + chunk_to_send, SEND_SIZE);
+        int result = write(_in_pipe[1], _body.c_str() + _sent, chunk_to_send);
         if (result <= 0)
         {
+            Overseer::removeInCGIPipe(_in_pipe[1]);
+            close(_in_pipe[1]);
             /*Not sure what to do if the write failes*/
             if (result < 0)
             {
-                Overseer::removeInCGIPipe(_in_pipe[1]);
-                close(_in_pipe[1]);
                 return (-1);
             }
             else
             {
-                Overseer::removeInCGIPipe(_in_pipe[1]);
-                close(_in_pipe[1]);
+                return (1);
             }
         }
         _sent += result;

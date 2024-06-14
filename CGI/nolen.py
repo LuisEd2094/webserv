@@ -11,15 +11,22 @@ try:
 except:
     len = ""
 
-#input_data = sys.stdin.read()
-if len != "":
-    input_data = sys.stdin.read()
-else:
-    input_data = ""
+
+log = open("log.log", "w" )
 
 print("HTTP/1.1 200 OK")
 print("Content-Type: text/html; charset=utf-8")
+print("")
 
+input_data = ""
+#input_data = sys.stdin.read()
+if len != "":
+    print("LEEN", file=log)
+    for line in sys.stdin:
+        print(line, file=log)
+        input_data += line
+else:
+    input_data = ""
 
 # HTML content to be displayed in the browser
 print(

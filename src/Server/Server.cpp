@@ -198,7 +198,7 @@ void Server::getResponse(Client & client)
         else if (url == "/testError.html")
         {
             std::cout << "-------------" << std::endl;
-            client.setPathFile(Path("/home/luis/proyects/webserv/html/500.html"));
+            client.setPathFile(Path("/workspaces/webserv/html/500.html"));
             client.setDefaultHttpResponse(BAD_REQUEST);
             client.setResponseType(FILE_OBJ);
 
@@ -231,10 +231,10 @@ void Server::getResponse(Client & client)
                     {
                         if (parser.find("en-US", parser.find("lang=") + std::strlen("lang=")) != std::string::npos)
                         {
-                            client.setPathFile(Path("/home/luis/proyects/webserv/html/CookiesHTTPEng.html"));
+                            client.setPathFile(Path("/workspaces/webserv/html/CookiesHTTPEng.html"));
                         }
                         else
-                            client.setPathFile(Path("/home/luis/proyects/webserv/html/CookiesHTTPEsp.html"));
+                            client.setPathFile(Path("/workspaces/webserv/html/CookiesHTTPEsp.html"));
                     }
 
                 }
@@ -242,22 +242,22 @@ void Server::getResponse(Client & client)
             else
             {
                 client.setDefaultHttpResponse(OK);
-                client.setPathFile(Path("/home/luis/proyects/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/"))));
+                client.setPathFile(Path("/workspaces/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/"))));
             }
             std::cout << client.getPathFile() << std::endl;
-            //client.setPathFile("/home/luis/proyects/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
+            //client.setPathFile("/workspaces/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
             client.setResponseType(FILE_OBJ);
         }
         else if (url == "/index.html" or url == "/hellow/you/nice")
         {
             client.setDefaultHttpResponse(OK);
-            client.setPathFile(Path("/home/luis/proyects/webserv/html/index.html"));
+            client.setPathFile(Path("/workspaces/webserv/html/index.html"));
             client.setResponseType(FILE_OBJ);
         }
         else if (url == "/nolen.py")
         {
             client.setDefaultHttpResponse(OK);
-            client.setPathFile(Path("/home/luis/proyects/webserv/CGI/nolen.py"));
+            client.setPathFile(Path("/workspaces/webserv/CGI/nolen.py"));
             client.setResponseType(CGI_OBJ);
         }
         else if (url == "/nolenroot.py")

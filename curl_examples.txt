@@ -5,3 +5,6 @@ curl -F "./images/image.jpg" localhost -v #sends image as webbrowser displayable
 
 curl -X POST --data-binary @./images/image.jpeg  localhost -v
 curl -H "Transfer-Encoding: chunked" --data-binary @./images/image.jpeg localhost:8080/post -v
+
+
+curl -X POST  localhost:8080/nolen.py -H 'Content-Type: application/json' -d '{"login":"my_login","password":"my_password"}' -v
