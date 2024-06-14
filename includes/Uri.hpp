@@ -1,3 +1,6 @@
+#ifndef URI_HPP
+#define URI_HPP
+
 #include <string>
 #include <algorithm>
 #include <iostream>
@@ -67,3 +70,4 @@ struct Uri
 // 	os  <<  "Port: " << obj.Port << std::endl;
 // 	return (os);
 // }
+#endif

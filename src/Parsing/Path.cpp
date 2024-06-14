@@ -56,9 +56,6 @@ Path::operator std::string()
 {
     std::list<std::string>::iterator dir;
     std::string result("");
-    std::cout << "converting to string" << std::endl;
-    std::cout << this->isRelative;
-    std::cout << "sdaf" << std::endl;
     if (this->isRelative)
         result += "./";
     else
@@ -69,22 +66,22 @@ Path::operator std::string()
             result += "/";
         result += *dir;
     }
-    if (!this->isFile)
+    if (!this->isFile && this->directories.size() > 0)
         result += "/";
-    std::cout << "converted to string" << std::endl;
     return (result);
 }
 
 void Path::append(Path tail)
 {
-    if (this->isFile)
-        {
-        std::cout << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
-        return ;
+    // if (this->isFile)
+    //     {
+    //     std::cout << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
+    //     return ;
 
-        }
+    //     }
     for (std::list<std::string>::iterator te = tail.directories.begin(); te != tail.directories.end(); te++)
             this->directories.push_back(*te);
+    this->setIsFile(tail.getIsFile());
 }
 
 int Path::normalize(void)
@@ -101,11 +98,14 @@ int Path::normalize(void)
         }
         else if (*currFile == ".")
         {
-            if (this->size() > 1)
-            {
-                this->deleteAndBack(currFile);
-                modified = true;
-            }
+
+            this->deleteAndBack(currFile);
+            modified = true;
+            // if (this->size() > 1)
+            // {
+            //     this->deleteAndBack(currFile);
+            //     modified = true;
+            // }
         }
         else if (*currFile == "..")
         {
