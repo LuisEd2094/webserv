@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/15 08:22:45 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/15 10:27:27 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,7 @@ class Parsing
 		int		printStatus(const std::string& messages, short flag, int exitCode);
 		int		checkMethod(const std::string& strRead);
 		int 	parsingHeader(const std::string& strRead);
+		int		normalizeError(int	error);
 		void	resetParsing(void);
 	/*
 	 * Get Methods

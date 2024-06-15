@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/15 10:17:16 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/15 11:01:53 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ int Parsing::isVersion(const std::string& version) const
 
 int Parsing::checkMethod(const std::string& strIn)
 {
-	std::cout << YELLOW << "Estoy aqui++++++++" << END << std::endl;
 	size_t	word = 0;
 	size_t	space = 0;
 	size_t	tmp = 0;
@@ -103,8 +102,8 @@ int Parsing::checkMethod(const std::string& strIn)
 			word += (::isblank(strRead[i]) and (strRead[i + 1]
 				and !::isblank(strRead[i + 1])) ? 1 : 0);
 			space += (::isblank(strRead[i]) ? 1 : 0);
-			if (space > 2) // Error de sintaxis
-				return (_statusError = this->printStatus(_errors[0], ERROR, ERROR_FORMAT));
+			if (space > 2)
+				return (_statusError = this->printStatus(_errors[0], ERROR, this->normalizeError(ERROR_FORMAT)));
 			space = (tmp != word ? 0 : space);
 		}
 	}
@@ -112,11 +111,7 @@ int Parsing::checkMethod(const std::string& strIn)
 	{
 		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method) == 1) \
 			? ERROR_METHOD : ERROR_VERSION);
-		//BAD_REQUEST = 2;
-		// NOT_IMPLEMENTED = 17;
-		// VERSION_NOT_SUPPORTED = 19;
-		std::cout << RED << "Error Version: " << END << isVersion(_method.version) << std::endl;
-		return (_statusError = this->printStatus(_errors[error], ERROR, error));
+		return (_statusError = this->printStatus(_errors[error], ERROR, this->normalizeError(error)));
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
 	_findNewline = end;
@@ -159,7 +154,7 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			if (key == "ERROR" or value == "ERROR" or ::checkSpace(value, 2))
 			{
 				short error = (key == "ERROR") + ((value == "ERROR") * 2);
-				return (_statusError = this->printStatus(_errors[error], ERROR, ERROR_FORMAT));
+				return (_statusError = this->printStatus(_errors[error], ERROR, this->normalizeError(ERROR_FORMAT)));
 			}
 			_method.content.insert(std::pair<std::string,std::string>(key, value));
 		}
@@ -170,7 +165,7 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			_endRead = (emptyLine == 1);
 			if (getMapValue("Host") == "not found")
 			{
-				return (_statusError = this->printStatus(_errors[3], ERROR, ERROR_FORMAT));
+				return (_statusError = this->printStatus(_errors[3], ERROR, this->normalizeError(ERROR_FORMAT)));
 			}
 			std::string tmp = _method.content["Host"];
 			_method.content["Host"] = ::getKey(tmp, ':');
@@ -238,6 +233,17 @@ const std::string& Parsing::getRequested(void) const
 bool Parsing::getEndRead() const
 {
 	return (_endRead);
+}
+
+int	Parsing::normalizeError(int error)
+{
+	if (error == ERROR_FORMAT or error == ERROR_HEADER)
+		error = BAD_REQUEST;
+	else if (error == ERROR_METHOD)
+		error = NOT_IMPLEMENTED;
+	else if (error == ERROR_VERSION)
+		error = VERSION_NOT_SUPPORTED;
+	return (error);
 }
 
 void Parsing::resetParsing( void)
