@@ -80,7 +80,7 @@ std::string  FileReader::setContentType(std::string http)
 {
     if (!_file_type.empty())
     {
-        http.append("pe: " + _file_type  + CRNL); // needs charset = utf-8 to be able to decode // but it's enough if it's on the html itself. Should parse maybe?
+        http.append("Content-Type: " + _file_type  + CRNL); // needs charset = utf-8 to be able to decode // but it's enough if it's on the html itself. Should parse maybe?
     }
     return (http);
 }

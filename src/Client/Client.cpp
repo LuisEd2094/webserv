@@ -58,6 +58,7 @@ Client::Client(Server *server) : BaseHandler()
     _virtualServer = NULL;
     _path_to_file = Path("");
     _defaultHttp = "";
+    _was_zero = false;
 }
 
 Client::~Client() 
@@ -71,7 +72,13 @@ Client::~Client()
 }
 
 
-int Client::Action (int event)
+void  Client::setTime()
+{
+    if (!_was_zero)
+        BaseHandler::setTime();
+}
+
+int Client::Action(int event)
 {
     if (event & POLLIN)
     {
@@ -193,7 +200,7 @@ void Client::readFromFD()
         if (!_parser_http.getEndRead()) // and nott MAX HEADER SIZE?
         {
             _in_container.append((const char *)_in_message, _result);
-            while (_parser_http.getPos()  != _in_container.length())
+            while (_keep_alive && _parser_http.getPos() != _in_container.length())
             {
                 if (!_pending_read)
                     _pending_read = true;
@@ -275,8 +282,12 @@ void Client::readFromFD()
     }
     else
     {
-        if (_result == 0)
-            _result = _keep_alive;
+         if (_result == 0)
+         {
+            _was_zero = true;
+            _result = !checkTimeOut();
+            /*Returns 0 when NOT time out returns 1 when timeout*/
+         }
     }
 }
 
@@ -289,18 +300,18 @@ void Client::checkFirstQueue(RequestHandler *obj)
     }
 }
 
-void Client::handleDirectObj(DirectResponse* NO_FD_OBJect, RequestHandler *new_handler)
+void Client::handleDirectObj(DirectResponse* NO_FD_OBJ, RequestHandler *new_handler)
 {
-    if (NO_FD_OBJect->has_http())
+    if (NO_FD_OBJ->has_http())
     {
-        new_handler->setHTTPResponse(NO_FD_OBJect->get_http());
+        new_handler->setHTTPResponse(NO_FD_OBJ->get_http());
     }
-    if (NO_FD_OBJect->has_body())
+    if (NO_FD_OBJ->has_body())
     {
-        new_handler->setBodyResponse(NO_FD_OBJect->get_body());
+        new_handler->setBodyResponse(NO_FD_OBJ->get_body());
     }
     checkFirstQueue(new_handler);
-    delete NO_FD_OBJect; // I delete this since it wont be going to the FD POLL
+    delete NO_FD_OBJ; // I delete this since it wont be going to the FD POLL
 }
 
 bool Client::checkPostHeaderInfo()
@@ -354,8 +365,6 @@ void Client::processChunk()
    {
         _size_to_append = std::min(_in_container.length(), _chunk_size - _chunk.length());
         _chunk.append(_in_container, 0, _size_to_append);
-        std::size_t body_len = _chunk.length();
-        std::cout << body_len << std::endl;
         if (_chunk.length() == _chunk_size)
         {
             /*if we get the full chunk size, we have to remove the last end, since 
@@ -388,12 +397,27 @@ void Client::parseForHttp()
         {
             if (!checkPostHeaderInfo())
                 return;
+            if (_parser_http.getMapValue("Expect") == "100-continue")
+            {
+                addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
+            }
+
         }
-        std::cout << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")
         {
-            _keep_alive = true;
+            if (_keep_alive)
+                _keep_alive = true;
+        }
+        else if (_parser_http.getMapValue("Connection") == "close")
+        {
+            _keep_alive = false;
+        }
+        if (!_server->validateAction(*this))
+        {            
+            std::cout << "server told me it was a bad action" << std::endl;
+            addClosingErrorObject(METHOD_NOT_ALLOWED);
+            return;
         }
         if(_action == POST)
         {
@@ -515,10 +539,41 @@ int Client::sendResponse()
     return (1);
 }
 
+
+void Client::makeChildrenToRespond()
+{
+    BaseHandler *response;
+    try
+    {
+        /*prepareClient4ResponseGeneration doesn't set if no file is found*/
+        /*getErrorResponseObject is on server as of right now, but client has a pointer to location
+            location should have info about errors
+        */
+        if (_response_type == NOT_SET)
+            response =  BaseHandler::createObject(_server->getErrorResponseObject(NOT_FOUND));
+        else
+            response = BaseHandler::createObject(*this);
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << "queso----------------<" << std::endl;
+        response = BaseHandler::createObject(_server->getErrorResponseObject(INTERNAL_SERVER_ERROR));
+    }
+    std::queue<std::string> queue;
+    queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10") + CRNL);
+
+    addHeader(queue);   
+    addHeader(std::string("Connection: keep-alive") + CRNL); 
+    addObject(response);
+    /*
+        Check here to add Redirect headers and other HTTPS?
+    */
+
+}
+
 void Client::resetClient(bool has_body)
 {
-    _server->getResponse(*this);
-
+    makeChildrenToRespond();
     if (has_body)
     {
         /* gives seg fault*/
@@ -533,7 +588,7 @@ void Client::resetClient(bool has_body)
             */
             if (!_is_chunked)
             {
-                 _in_container.erase(0, _in_body.length());
+                _in_container.erase(0, _in_body.length());
             }
 
         }
@@ -561,14 +616,14 @@ void Client::resetClient(bool has_body)
     _path_to_file = Path("");
     _defaultHttp = "";
     _error_code = OK;
-
+    _was_zero = false;
 }
 
 bool Client::checkObjTimeOut()
 {
     /* Should have a different time out setting for open connections that are not being used*/
-/*     char *error_buffer[1];
- */    if((_pending_read || _error) && checkTimeOut())
+/*     char *error_buffer[1];*/
+    if((_pending_read || _error) && checkTimeOut())
     {
         //When time out, client will stop listening for incoming messages, will send everything it has
         // in queue and thenn close connection.
@@ -579,16 +634,13 @@ bool Client::checkObjTimeOut()
         }
         else
         {
+            /*This returns true because if _error then we are in the middle of sending an error and we dont want to close connection*/
             return true;
         }
         _keep_alive = false;
         return false;
     }
-/*     else if (!checkTimeOut() && !_pending_read && recv(_fd, error_buffer, sizeof(error_buffer), MSG_DONTWAIT) == -1)
-    {
-        return true;   
-    } */
-    return false;
+    return checkTimeOut();
 }
 
 //private:

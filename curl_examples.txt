@@ -8,3 +8,5 @@ curl -H "Transfer-Encoding: chunked" --data-binary @./images/image.jpeg localhos
 
 
 curl -X POST  localhost:8080/nolen.py -H 'Content-Type: application/json' -d '{"login":"my_login","password":"my_password"}' -v
+
+curl locala.com:8081/locationa/sdaf

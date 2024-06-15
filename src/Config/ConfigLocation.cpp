@@ -7,18 +7,7 @@ ConfigLocation::ConfigLocation(void)
 
 ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 {
-	this->__elemArgument__ = obj.__elemArgument__;
-	this->__elemType__ = obj.__elemType__;
-	this->_errorPage = obj.getErrorPage();
-	this->_methods = obj.getMethods();
-	this->_redirection = obj.getRedirection();
-	this->_root = obj.getRoot();
-	this->_dirListing = obj.getDirListing();
-	this->_index = obj.getIndex();
-	this->_cgis = obj.getCgis();
-	this->_locations = obj.getLocations();
-	this->_cgis = obj.getCgis();
-	this->_path = obj.getPath();
+	*this = obj;
 }
 
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
@@ -66,9 +55,9 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	// TODO erase the nested elements from the father
 	this->_locations.empty();
 	this->_cgis.empty();
-	this->_inheriting = true;
-	this->nestedPrint = 0;
+	this->_inheriting = false;
 	this->_dirListing = 0;
+	this->nestedPrint = 0;
 
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
@@ -77,9 +66,12 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_path = Path(this->__elemArgument__);
-	this->_inheriting = false;
 	if (obj.find("root") == obj.end())
-		this->_root.append(obj.find("__elemArgument__")->second);
+	{
+		this->_root.append(obj.find("__elemArgument__")->second); 
+		this->_root.setIsRelative(true);
+		this->_root.setIsFile(false);
+	}
 	std::list<ParsingLocation> locs = obj.getLocations(); 
 	for (std::list<ParsingLocation>::iterator location = locs.begin();
 		location != locs.end();
@@ -101,7 +93,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 void ConfigLocation::setDefaults()
 {
 	this->setMethods("");	
-	this->setRoot("");	
+	this->setRoot("./");	
 	this->setIndex("");
 	this->setErrorPage("");	
 	this->setRedirection("");	
@@ -183,7 +175,6 @@ void ConfigLocation::initializeRoot(Path root)
 	if (!_inheriting)
 	{
 		_root = root;
-		return ;
 	}	
 	else if (root.getIsRelative())
 	{
@@ -277,6 +268,8 @@ Path const ConfigLocation::getErrorPages(const int searchError) const
 
 ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 {
+	this->__elemArgument__ = obj.__elemArgument__;
+	this->__elemType__ = obj.__elemType__;
 	this->_errorPage = obj.getErrorPage();
 	this->_methods = obj.getMethods();
 	this->_redirection = obj.getRedirection();
@@ -284,6 +277,9 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	this->_dirListing = obj.getDirListing();
 	this->_index = obj.getIndex();
 	this->_cgis = obj.getCgis();
+	this->_locations = obj.getLocations();
+	this->_cgis = obj.getCgis();
+	this->_path = obj.getPath();
 
 	return (*this);
 }
@@ -348,16 +344,55 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			static_cast<std::string>(this->_root) +
 			static_cast<std::string>(requestedURL)
 		);
-		if (Path(client.getURL()).getIsFile())	
-			client.setResponseType(FILE_OBJ);
-		else
-			client.setResponseType(DIR_OBJ);
+		std::cout << BLUE << std::endl;
+		client.setLocation(this);
 		client.setDefaultHttpResponse(OK);
+		if (this->getRedirection().size() > 0)
+		{
+			client.setResponseType(REDIRECT_OBJ);
+			return true;
+		}
+		if (false)
+			;
+		else if (Path(client.getURL()).getIsFile())	
+		{
+			if (client.getPathFile().assertFileExists())
+			{
+				std::cout << "return file" << std::endl;
+				client.setResponseType(FILE_OBJ);
+			}
+			else if (this->_dirListing && client.getPathFile().assertDirExists())
+			{
+				std::cout << "should be file return file" << std::endl;
+				client.setResponseType(DIR_OBJ);
+			}
+			else
+			{
+				/*This doesn't get here if I do index and it doesnt find it?*/
+				std::cout << "unable to serve file" << std::endl;
+				client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
+			}
+		}
+		else if (this->_dirListing && client.getPathFile().assertDirExists())	
+		{
+			std::cout << "returning direcotry" << std::endl;
+			client.setResponseType(DIR_OBJ);
+		}
+		else 
+		{
+			std::cout << "unable to serve directory" << std::endl;
+			client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
+		}
+		std::cout << END << std::endl;
+
+
+		
 		std::cout << "      BINGO !!!" << std::endl;
-		std::cout << TUR << "      Bestlocation: " << END << (std::string)this->_locations.begin()->getPath()<<  std::endl;
+		std::cout << "RENSPONSES: NO_FOUND=" << NOT_FOUND << " OK=" << OK << std::endl;
+		std::cout << TUR << "      Bestlocation: " << END << this->_locations.begin()->getPath()<<  std::endl;
 		std::cout << "      Cient  URL: " << client.getURL() << std::endl;
 		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()];
-		std::cout << "      Default HTTP response: " << client.getResponseType();
+		std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse();
 		std::cout << "      Path file: " << client.getPathFile();
 		std::cout << std::endl;
 	}
@@ -394,13 +429,17 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 			continue;
 		}
 		*/
+		Path temp = beginLocation->getPath();
+		std::cout << temp.included(requestedURL) << std::endl
+			<< (std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()) << std::endl
+			<< (temp.size() > maxDirMatches) <<	std::endl;
 		if (locMethods.size() == 0)
-			;
-		else if (beginLocation->getPath().included(requestedURL)
+			std::cout << RED << "location with no methods" << std::endl;
+		else if (temp.included(requestedURL)
 			&& std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()
-			&& beginLocation->getPath().size() > maxDirMatches) 	
+			&& temp.size() >= maxDirMatches) 	
 		{
-			maxDirMatches = beginLocation->getPath().size();
+			maxDirMatches = temp.size();
 			bestLocation = beginLocation;
 			std::cout << "  MATCHED" ;
 		}
@@ -414,8 +453,8 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 //	Path nextURL(client.getURL());
 	std::cout << "      Before pop: " << bestLocation->size() << " " << requestedURL << std::endl;
 	requestedURL.popBegin(bestLocation->size());
-	std::cout << "      After pop: " << requestedURL << std::endl;
-	std::cout << "      First nested location: " << *bestLocation->_locations.begin() << std::endl;
+/* 	std::cout << "      After pop: " << requestedURL << std::endl;
+	std::cout << "      First nested location: " << *bestLocation->_locations.begin() << std::endl; */
 	bestLocation->prepareClient4ResponseGeneration(client, requestedURL);
 	return (true);
 }
@@ -426,4 +465,3 @@ std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)
 //	os << "  errorPage: " << obj.getErrorPage() << std::endl;
 	return os;
 }
-

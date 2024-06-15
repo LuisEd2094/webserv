@@ -34,7 +34,6 @@ class Server : public BaseHandler
         int getFD() const;
 
         bool validateAction(Client& client);
-        void getResponse(Client& client);
         bool prepareClient4ResponseGeneration(Client& client);
         bool checkObjTimeOut();
         const defaultResponse& getErrorResponseObject(ErrorCodes);

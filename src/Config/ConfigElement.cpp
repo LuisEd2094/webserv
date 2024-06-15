@@ -48,6 +48,7 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 		else
 			server = serverIterator->second;
 		server->virtualServers.push_back(ConfigVirtualServer(*i));
+
 		//TODO delete print
 		for (
 			std::list<ConfigVirtualServer>::iterator serv = server->virtualServers.begin();

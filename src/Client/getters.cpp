@@ -85,6 +85,12 @@ ErrorCodes                      Client::getErrorCode() const
     return _error_code;
 }
 
+//std::map<int, Path> * CLient::getErrorPages(void) const
+ConfigLocation *           Client::getLocation(void) const
+{
+    return this->_location;
+}
+
 
 bool Client::getURLempty() const
 {

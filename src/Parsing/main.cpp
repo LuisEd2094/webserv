@@ -6,13 +6,12 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 10:56:11 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/13 12:40:23 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/14 16:28:49 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fstream>
 #include "../../includes/ParsingGlobal.hpp"
-#include "../../includes/Uri.hpp"
 #include <iostream>
 #include <string>
 
@@ -86,7 +85,6 @@
 // 	std::cout << TUR << "test: " << ((int)test.getTypeLine("hola\n")[0]) << END << std::endl;
 // 	return (0);
 // }
-# include "Path.hpp"
 
 void testPath(std::string test)
 {
@@ -94,6 +92,22 @@ void testPath(std::string test)
 	try {
 		Path path(test);
 		std::cout << GREEN << "Path: " << path << END << std::endl << std::endl;
+
+	} catch (Path::InvalidPathException &e) {
+		std::cout << e.what() << std::endl;
+	}
+}
+
+void testPath(std::string str1, std::string str2)
+{
+	std::cout << "Testing:" << str1 << " + "  << str2 << std::endl;
+	try 
+	{
+		Path path1(str1);
+		Path path2(str2);
+		path1.append(path2);
+		path1.normalize();
+		std::cout << GREEN << "Path: " << END << path1 << std::endl << std::endl;
 
 	} catch (Path::InvalidPathException &e) {
 		std::cout << e.what() << std::endl;
@@ -120,6 +134,24 @@ int  main(void)
 	//std::list<std::string> res = ft_split("GET POST DELEETE", ' ');
 	//for (std::list<std::string>::iterator iter = res.begin(); iter != res.end(); iter++)
 		//std::cout << YELLOW << "word: " << END << *iter << std::endl;
-	testUri("http://somehost.com/cgi-bin/somescript/this?%2eis%2epath%3binfo");
+	// testUri("http://somehost.com/cgi-bin/somescript/this?%2eis%2epath%3binfo");
+	/*
+		path0/path1
+	*/
+	testPath("/");
+	testPath("./");
+	testPath("path0/path1");
+	testPath("/path0/path1");
+	testPath("path0/path1", "path2/");
+	testPath("/path0/path1/", "path2/");
+	testPath("path0/path1/", "/path2/");
+	testPath("/path0/path1/", "/path2/");
+	testPath("/", "/");
+	testPath("/fkd/..//////////////////////////////sdaf/.//////////a/./");
+	testPath("/path0", "sdaf/");
+	Path sdaf = Path("/sdaf");
+	sdaf.append(Path("/"));
+	std::cout << "Is file: " << sdaf.getIsFile();
+	std::cout << "  sdaf: " << sdaf  << std::endl;
 	return (0);
 }

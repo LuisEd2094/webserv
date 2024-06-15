@@ -45,7 +45,6 @@ void Overseer::removeInCGIPipe(int fd)
 
 void Overseer::removeFromPFDS(BaseHandler *obj)
 {
-
     _pfds[_i] = _pfds[_fd_count - 1];
     _fd_count--;
     _i--;

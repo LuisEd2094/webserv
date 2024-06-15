@@ -13,7 +13,7 @@ const defaultResponse& Response::getDefault(ErrorCodes code)
 }
 
 
-defaultResponse::defaultResponse(const Responses& obj) : _body(obj._title.empty() ? "" : TEMPLATE)
+defaultResponse::defaultResponse(const Responses& obj) : _http(obj._http), _body(obj._title.empty() ? "" : TEMPLATE)
 {
         //defaultResponse*res = new defaultResponse();
         if (!obj._title.empty())
@@ -21,7 +21,8 @@ defaultResponse::defaultResponse(const Responses& obj) : _body(obj._title.empty(
             _body.insert(_body.find("<title>") + std::strlen("<title>"), obj._title);
             _body.insert(_body.find("<p>") + std::strlen("<p>"), obj._body);
         }
-        _http = setContentLenHTTP(obj._http, _body);
+        if (!_body.empty())
+            _http = setContentLenHTTP(obj._http, _body);
 }
 
 
@@ -30,7 +31,8 @@ Responses::Responses(const std::string& http, const std::string& title, const st
     _title(title),
     _body(body)
 {
-    _http.append("Content-Type: text/html\r\n");
+    if (!_body.empty())
+        _http.append("Content-Type: text/html\r\n");
 }
 
 void Response::createDefaultResponses()
@@ -47,7 +49,17 @@ void Response::createDefaultResponses()
 
 void    Response::initDefaultMap()
 {
+
+    /*1xx*/
+    defaults.insert(std::make_pair(CONTINUE, Responses(CONTINUE_HTTP, "", "")));
+
+    /*2xx*/
     defaults.insert(std::make_pair(OK, Responses(HTTP_OK, "", "")));
+    
+    /*3xx*/
+    defaults.insert(std::make_pair(MULTIPLE_REDIRECTS, Responses(MULTIPLE_REDIRECTS_HTTP, "", "")));
+    
+    
     /*4xx errors*/
     defaults.insert(std::make_pair(BAD_REQUEST, Responses(BAD_REQUEST_HTTP, BAD_REQUEST_TITLE, BAD_REQUEST_BODY)));
     defaults.insert(std::make_pair(FORBIDDEN, Responses(FORBIDDEN_HTTP, FORBIDDEN_TITLE, FORBIDDEN_BODY)));
@@ -81,8 +93,11 @@ void    Response::initDefaultMap()
 
 void    Response::initErrorsHttp(void)
 {
+    /*1xx Others*/
+    _vectorError.push_back(CONTINUE_HTTP);
+    /*2xx OK*/
     _vectorError.push_back(HTTP_OK);
-    /*3xx ERRORS*/
+    /*3xx Redirects*/
     _vectorError.push_back(MULTIPLE_REDIRECTS_HTTP);
     /*4xx ERRORs*/
     _vectorError.push_back(BAD_REQUEST_HTTP);

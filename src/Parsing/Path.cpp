@@ -25,9 +25,7 @@ Path::Path(std::string pathStr)
 
 Path::Path(const Path &orig)
 {
-    this->directories = orig.directories;
-    this->isRelative = orig.getIsRelative();
-    this->isFile = orig.getIsFile();
+    *this = orig;
 }
 
 Path &Path::operator=(const Path &orig)
@@ -37,6 +35,7 @@ Path &Path::operator=(const Path &orig)
     this->isFile = orig.getIsFile();
     return *this;
 }
+
 void Path::popBegin(int ammount)
 {
     std::cout << "          POPING " << ammount << std::endl;
@@ -56,9 +55,10 @@ void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
 Path::operator std::string()
 {
     std::list<std::string>::iterator dir;
-    std::string result;
-
-    if (!this->isRelative)
+    std::string result("");
+    if (this->isRelative)
+        result += "./";
+    else
         result += "/";
     for (dir = this->directories.begin(); dir != this->directories.end(); dir++)
     {
@@ -66,22 +66,22 @@ Path::operator std::string()
             result += "/";
         result += *dir;
     }
-    if (!this->isFile)
+    if (!this->isFile && this->directories.size() > 0)
         result += "/";
     return (result);
 }
 
 void Path::append(Path tail)
 {
-    std::cout << RED << "appending " << *this << " " << tail << END;
-    if (this->isFile)
-        {
-        std::cout << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
-        return ;
+    // if (this->isFile)
+    //     {
+    //     std::cout << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
+    //     return ;
 
-        }
+    //     }
     for (std::list<std::string>::iterator te = tail.directories.begin(); te != tail.directories.end(); te++)
             this->directories.push_back(*te);
+    this->setIsFile(tail.getIsFile());
 }
 
 int Path::normalize(void)
@@ -98,8 +98,14 @@ int Path::normalize(void)
         }
         else if (*currFile == ".")
         {
+
             this->deleteAndBack(currFile);
             modified = true;
+            // if (this->size() > 1)
+            // {
+            //     this->deleteAndBack(currFile);
+            //     modified = true;
+            // }
         }
         else if (*currFile == "..")
         {
@@ -139,6 +145,38 @@ bool Path::included(const Path &compPath) const
     return (included == this->directories.end());
 }
 
+bool Path::assertDirExists(void) const
+{
+    std::cout << "Checking dir exists: " << *this << std::endl;
+    struct stat info;
+    std::string relativePathStr = std::string("./") + PATH_TO_C_STR(*this); 
+    //int result = stat(this->c_str(), &info);
+
+    
+    int result = stat(relativePathStr.c_str(), &info);
+
+    if (result == -1)
+    {
+        std::cout << "ERRRORRR" << std::endl;
+        return (false);
+    }
+        std::cout << "OKKKK" << std::endl;
+    return (S_ISDIR(info.st_mode));
+}
+
+bool Path::assertFileExists(void) const
+{
+    std::cout << GREEN;
+    std::cout << "Checking file exists: " << *this << std::endl;
+    std::string relativePathStr = std::string("./") + PATH_TO_C_STR(*this); 
+    struct stat info;
+    int result = stat(relativePathStr.c_str(), &info);
+    std::cout << "Result: " << result << std::endl;
+    std::cout << END;
+    if (result == -1)
+        return (false);
+    return (S_ISREG(info.st_mode));
+}
 
 std::ostream &operator<<(std::ostream &os, const Path &obj)
 {

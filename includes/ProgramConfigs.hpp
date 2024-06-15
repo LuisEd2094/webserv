@@ -12,12 +12,12 @@
 # define    IN_AND_OUT POLLIN | POLLOUT | POLLHUP
 # define    JUST_IN POLLIN | POLLHUP
 # define    JUST_OUT POLLOUT | POLLHUP
-# define    KEEP_ALIVE false
+# define    KEEP_ALIVE true
 # define    MAX_URI_OFFSET 100
 
 
 
-# define NUM_OBJ 5
+# define NUM_OBJ 6
 /* # define FILE_OBJ "file"
 # define NO_FD_OBJ "direct"
 # define CGI_OBJ "cgi" */
@@ -28,7 +28,8 @@ enum ObjectTypes
     FILE_OBJ,
     NO_FD_OBJ,
     CGI_OBJ,
-    DIR_OBJ
+    DIR_OBJ,
+    REDIRECT_OBJ
 };
 
 static std::string ObjectTypesStrings[6] = {
@@ -36,7 +37,8 @@ static std::string ObjectTypesStrings[6] = {
     "FILE_OBJ",
     "NO_FD_OBJ",
     "CGI_OBJ",
-    "DIR_OBJ"
+    "DIR_OBJ",
+    "REDIRECT_OBJ"
 };
 
 /*
