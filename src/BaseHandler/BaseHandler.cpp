@@ -78,5 +78,5 @@ bool    BaseHandler::checkTimeOut()
     return (TIME_OUT_POLL > 0 && seconds >= TIME_OUT_PROCESS);
 }
 
-BaseHandler::BaseHandler(){}
+BaseHandler::BaseHandler(){ setTime(); }
 BaseHandler::~BaseHandler() {}

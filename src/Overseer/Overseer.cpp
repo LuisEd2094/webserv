@@ -41,6 +41,7 @@ void Overseer::removeFromPFDS(BaseHandler *obj)
     _fd_count--;
     _i--;
     _pending_fds.erase(obj->getFD());
+    std::cout << " I KILLED SOMEON " << std::endl;
     delete obj;
 }
 

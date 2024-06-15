@@ -31,6 +31,7 @@ class Client : public BaseHandler
         ~Client();
         int                 Action(int event);
         bool                checkObjTimeOut();
+        void                setTime();
 
 
                                     
@@ -88,7 +89,8 @@ class Client : public BaseHandler
         Actions                 _action;
         ErrorCodes              _error_code;
 
-        int                      _result;
+        int                         _result;
+        bool                        _was_zero;
         std::size_t             _size_to_append;
 
         bool                    _keep_alive;

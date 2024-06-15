@@ -7,12 +7,12 @@
 # define    TIME_OUT_POLL 500
 # define    TIME_OUT_PROCESS 1500
 # define    SEND_SIZE 8000
-# define    RECV_SIZE 1
+# define    RECV_SIZE 8000
 # define    BUFFER_SIZE RECV_SIZE * 10
 # define    IN_AND_OUT POLLIN | POLLOUT | POLLHUP
 # define    JUST_IN POLLIN | POLLHUP
 # define    JUST_OUT POLLOUT | POLLHUP
-# define    KEEP_ALIVE false
+# define    KEEP_ALIVE true
 # define    MAX_URI_OFFSET 100
 
 

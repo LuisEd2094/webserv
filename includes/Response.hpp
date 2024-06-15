@@ -11,6 +11,9 @@
 
 enum ErrorCodes
 {
+    /*1xx*/
+    CONTINUE,
+    /*2xx*/
     OK,
     /*3xx*/
     MULTIPLE_REDIRECTS,
@@ -38,7 +41,14 @@ enum ErrorCodes
     BAD_GATEWAY
 };
 
-# define HTTP_OK        "HTTP/1.1 200 HTTP_OK\r\n"
+/* 1xx Others*/
+
+# define CONTINUE_HTTP        "HTTP/1.1 100 Continue\r\n\r\n"
+
+
+/* 2xx OK*/
+
+# define HTTP_OK               "HTTP/1.1 200 OK\r\n"
 
 /* 3xx ERRORS*/
 

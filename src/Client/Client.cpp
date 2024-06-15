@@ -58,6 +58,7 @@ Client::Client(Server *server) : BaseHandler()
     _virtualServer = NULL;
     _path_to_file = Path("");
     _defaultHttp = "";
+    _was_zero = false;
 }
 
 Client::~Client() 
@@ -71,7 +72,13 @@ Client::~Client()
 }
 
 
-int Client::Action (int event)
+void  Client::setTime()
+{
+    if (!_was_zero)
+        BaseHandler::setTime();
+}
+
+int Client::Action(int event)
 {
     if (event & POLLIN)
     {
@@ -275,8 +282,12 @@ void Client::readFromFD()
     }
     else
     {
-        if (_result == 0)
-            _result = _keep_alive;
+         if (_result == 0)
+         {
+            _was_zero = true;
+            _result = !checkTimeOut();
+            /*Returns 0 when NOT time out returns 1 when timeout*/
+         }
     }
 }
 
@@ -289,18 +300,18 @@ void Client::checkFirstQueue(RequestHandler *obj)
     }
 }
 
-void Client::handleDirectObj(DirectResponse* NO_FD_OBJect, RequestHandler *new_handler)
+void Client::handleDirectObj(DirectResponse* NO_FD_OBJ, RequestHandler *new_handler)
 {
-    if (NO_FD_OBJect->has_http())
+    if (NO_FD_OBJ->has_http())
     {
-        new_handler->setHTTPResponse(NO_FD_OBJect->get_http());
+        new_handler->setHTTPResponse(NO_FD_OBJ->get_http());
     }
-    if (NO_FD_OBJect->has_body())
+    if (NO_FD_OBJ->has_body())
     {
-        new_handler->setBodyResponse(NO_FD_OBJect->get_body());
+        new_handler->setBodyResponse(NO_FD_OBJ->get_body());
     }
     checkFirstQueue(new_handler);
-    delete NO_FD_OBJect; // I delete this since it wont be going to the FD POLL
+    delete NO_FD_OBJ; // I delete this since it wont be going to the FD POLL
 }
 
 bool Client::checkPostHeaderInfo()
@@ -354,8 +365,6 @@ void Client::processChunk()
    {
         _size_to_append = std::min(_in_container.length(), _chunk_size - _chunk.length());
         _chunk.append(_in_container, 0, _size_to_append);
-        std::size_t body_len = _chunk.length();
-        std::cout << body_len << std::endl;
         if (_chunk.length() == _chunk_size)
         {
             /*if we get the full chunk size, we have to remove the last end, since 
@@ -394,6 +403,11 @@ void Client::parseForHttp()
         {
             if (!checkPostHeaderInfo())
                 return;
+            if (_parser_http.getMapValue("Expect") == "100-continue")
+            {
+                addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
+            }
+
         }
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")
@@ -597,13 +611,13 @@ void Client::resetClient(bool has_body)
     _path_to_file = Path("");
     _defaultHttp = "";
     _error_code = OK;
-
+    _was_zero = false;
 }
 bool Client::checkObjTimeOut()
 {
     /* Should have a different time out setting for open connections that are not being used*/
-/*     char *error_buffer[1];
- */    if((_pending_read || _error) && checkTimeOut())
+/*     char *error_buffer[1];*/
+    if((_pending_read || _error) && checkTimeOut())
     {
         //When time out, client will stop listening for incoming messages, will send everything it has
         // in queue and thenn close connection.
@@ -614,16 +628,13 @@ bool Client::checkObjTimeOut()
         }
         else
         {
+            /*This returns true because if _error then we are in the middle of sending an error and we dont want to close connection*/
             return true;
         }
         _keep_alive = false;
         return false;
     }
-/*     else if (!checkTimeOut() && !_pending_read && recv(_fd, error_buffer, sizeof(error_buffer), MSG_DONTWAIT) == -1)
-    {
-        return true;   
-    } */
-    return false;
+    return checkTimeOut();
 }
 
 //private:
