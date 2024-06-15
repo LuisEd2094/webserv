@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/15 11:01:53 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/15 11:14:24 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,9 @@ int Parsing::checkMethod(const std::string& strIn)
 	}
 	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))//error sintax or metodo or version
 	{
-		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method) == 1) \
+		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method)) \
 			? ERROR_METHOD : ERROR_VERSION);
+		std::cout << YELLOW << "error: " << END <<  error << std::endl;
 		return (_statusError = this->printStatus(_errors[error], ERROR, this->normalizeError(error)));
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);

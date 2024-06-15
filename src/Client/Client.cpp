@@ -214,18 +214,21 @@ void Client::readFromFD()
                         */
                         if (parser_method != WARNING)
                         {
-                            if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
-                            {
-                                addClosingError(BAD_REQUEST);
-                            }
-                            else if (parser_method == ERROR_METHOD)
-                            {
-                                addClosingError(NOT_IMPLEMENTED);
-                            }
-                            else if (parser_method == ERROR_VERSION)
-                            {
-                                addClosingError(VERSION_NOT_SUPPORTED);
-                            }
+                            std::cout << "Estoy aquiiiiiiiiiiiiiiiiiiiii" << std::endl;
+                            std::cout <<  RED << "ERROR: " << ErrorCodes(parser_method) << END << std::endl;
+                            addClosingError(ErrorCodes(parser_method));
+                            // if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
+                            // {
+                            //     addClosingError(BAD_REQUEST);
+                            // }
+                            // else if (parser_method == ERROR_METHOD)
+                            // {
+                            //     addClosingError(NOT_IMPLEMENTED);
+                            // }
+                            // else if (parser_method == ERROR_VERSION)
+                            // {
+                            //     addClosingError(VERSION_NOT_SUPPORTED);
+                            // }
                         }
                         break;
                     }
@@ -238,6 +241,9 @@ void Client::readFromFD()
                         break;
                     else if (parsingMessage) // parsingHeader returns something different to warning when error
                     {
+
+                        addClosingError(ErrorCodes(parsingMessage));
+                        break ;
                             if (parsingMessage == ERROR_FORMAT)
                             {
                                 addClosingError(BAD_REQUEST);
