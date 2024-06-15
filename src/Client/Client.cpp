@@ -200,7 +200,7 @@ void Client::readFromFD()
         if (!_parser_http.getEndRead()) // and nott MAX HEADER SIZE?
         {
             _in_container.append((const char *)_in_message, _result);
-            while (_parser_http.getPos()  != _in_container.length())
+            while (_keep_alive && _parser_http.getPos() != _in_container.length())
             {
                 if (!_pending_read)
                     _pending_read = true;
@@ -393,12 +393,6 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
-        if (!_server->validateAction(*this))
-        {            
-            std::cout << "server told me it was a bad action" << std::endl;
-            addClosingErrorObject(METHOD_NOT_ALLOWED);
-            return;
-        }
         if (_action == POST)
         {
             if (!checkPostHeaderInfo())
@@ -412,7 +406,18 @@ void Client::parseForHttp()
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")
         {
-            _keep_alive = true;
+            if (_keep_alive)
+                _keep_alive = true;
+        }
+        else if (_parser_http.getMapValue("Connection") == "close")
+        {
+            _keep_alive = false;
+        }
+        if (!_server->validateAction(*this))
+        {            
+            std::cout << "server told me it was a bad action" << std::endl;
+            addClosingErrorObject(METHOD_NOT_ALLOWED);
+            return;
         }
         if(_action == POST)
         {

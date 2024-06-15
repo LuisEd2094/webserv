@@ -1,10 +1,11 @@
-GET /index.html HTTP/1.1
+POST /post/index.html HTTP/1.1
 Host: localhost
 User-Agent: curl/7.64.1
 Accept: */*
-Connection: Keep-Alive
+Connection: close
+Content-Length: 2
 
-GET /index.html HTTP/1.1
+2 GET /index.html HTTP/1.1
 Host: localhost
 User-Agent: curl/7.64.1
 Accept: */*
