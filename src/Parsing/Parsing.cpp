@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/14 09:14:39 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/15 10:17:16 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,19 +43,39 @@ bool Parsing::isEmptyLine(const std::string& line) const
 		or line[0] == '\n');
 }
 
-bool Parsing::isMethods(const std::string& keyword) const
+int Parsing::isMethods(const std::string& keyword) const
 {
 	return ((std::find(_methods.begin(), _methods.end(), keyword)
-	== _methods.end()) ? EXIT_FAILURE : EXIT_SUCCESS);
+	== _methods.end()) ? NOT_IMPLEMENTED : EXIT_SUCCESS);
 }
 
-bool Parsing::isVersion(const std::string& version) const
+int Parsing::isVersion(const std::string& version) const
 {
-	return (version != "HTTP/1.1");
+	if (version.size() != 8)
+		return (BAD_REQUEST);
+	size_t i = 0;
+	for (; VERSION_HTTP[i] == version[i] and version[i] != '/'; i++)
+		;
+	if ("HTTP" != std::string(version.begin(), version.begin() + i))
+		return (BAD_REQUEST);
+	size_t find = version.find("/");
+	if (find == std::string::npos)
+		return (BAD_REQUEST);
+	find += 1;
+	if (version[find] != '1')
+		return (!std::isdigit(version[find]) ? BAD_REQUEST : VERSION_NOT_SUPPORTED);
+	find += 1;
+	if (version[find] != '.')
+		return (BAD_REQUEST);
+	find += 1;
+	if (version[find] < '0' or version[find] > '1')
+		return (!std::isdigit(version[find]) ? BAD_REQUEST : VERSION_NOT_SUPPORTED);
+	return (EXIT_SUCCESS);
 }
 
 int Parsing::checkMethod(const std::string& strIn)
 {
+	std::cout << YELLOW << "Estoy aqui++++++++" << END << std::endl;
 	size_t	word = 0;
 	size_t	space = 0;
 	size_t	tmp = 0;
@@ -83,15 +103,19 @@ int Parsing::checkMethod(const std::string& strIn)
 			word += (::isblank(strRead[i]) and (strRead[i + 1]
 				and !::isblank(strRead[i + 1])) ? 1 : 0);
 			space += (::isblank(strRead[i]) ? 1 : 0);
-			if (space > 2)
+			if (space > 2) // Error de sintaxis
 				return (_statusError = this->printStatus(_errors[0], ERROR, ERROR_FORMAT));
 			space = (tmp != word ? 0 : space);
 		}
 	}
-	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))
+	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))//error sintax or metodo or version
 	{
 		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method) == 1) \
 			? ERROR_METHOD : ERROR_VERSION);
+		//BAD_REQUEST = 2;
+		// NOT_IMPLEMENTED = 17;
+		// VERSION_NOT_SUPPORTED = 19;
+		std::cout << RED << "Error Version: " << END << isVersion(_method.version) << std::endl;
 		return (_statusError = this->printStatus(_errors[error], ERROR, error));
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
@@ -153,12 +177,13 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			_method.content["Port"] = ::getValue(tmp, ':');
 			_method.content["__Query__"] = Uri::Parse(_method.requested).QueryString.erase(0, 1);
 			_method.content["__Path__"] = Uri::Parse(_method.requested).Path;
+			//if isMethod == GET and conten-lent or isMethod == GET and Transfer-Encoding  return BAD_REQUEST
 			return (_statusError = EXIT_SUCCESS);
 		}
 	}
 	return (_statusError = EXIT_SUCCESS);
 }
-std::string	Parsing::getTypeLine(const std::string& strFind)
+const std::string	Parsing::getTypeLine(const std::string& strFind) const
 {
 	short	flag = 0;
 	flag += (strFind.find("\r\n") != std::string::npos ? 2 : 0);

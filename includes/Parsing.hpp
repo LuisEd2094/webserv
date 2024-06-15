@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/14 09:12:30 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/15 08:22:45 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@
 # define ERROR_VERSION	5
 # define ERROR_STATUS "\033[1m\033[1;31m[ Error ]\033[m"
 # define WARNING_StATUS "\033[1m\033[1;33m[ Warning ]\033[m"
+# define VERSION_HTTP "HTTP/1.1"
 # define IS_IN_ROOT(c) ((c) == '/')
 
 /******************************************************************************/
@@ -160,7 +161,6 @@ size_t wordCounter(const S& str)
 	return (word);
 }
 
-//agregar atributo que indique si es de tipo RN o solo ON(only line)
 typedef struct s_request
 {
 	std::string	method;
@@ -176,46 +176,40 @@ class Parsing
 		std::list<std::string>		_methods;
 		std::vector<std::string>	_errors;
 		std::string	_read;
-		t_request	_method;
 		std::string	_typeLine;
+		t_request	_method;
 		size_t		_findNewline;
 		size_t		_begin;
 		bool		_endRead;
 		int			_statusError;
-
-
 
 		std::string _not_found;
 	public:
 		Parsing(void);
 		~Parsing(void);
 	/*
-	 * Get Methods
-	*/
-	/*
 	 * Membert Funtions
 	*/
 		//utils
-		bool isEmptyLine(const std::string& line) const;
-		bool isMethods(const std::string& keyword) const;
-		bool isVersion(const std::string& version) const;
-		int  printStatus(const std::string& messages, short flag, int exitCode);
-		int	 checkMethod(const std::string& strRead);
-		int  parsingHeader(const std::string& strRead);
-		void resetParsing(void);
-		//getMethods
+		bool	isEmptyLine(const std::string& line) const;
+		int		isMethods(const std::string& keyword) const;
+		int		isVersion(const std::string& version) const;
+		int		printStatus(const std::string& messages, short flag, int exitCode);
+		int		checkMethod(const std::string& strRead);
+		int 	parsingHeader(const std::string& strRead);
+		void	resetParsing(void);
+	/*
+	 * Get Methods
+	*/
 		size_t								getPos(void);
 		size_t								getEndSize(void);
 		const std::string&					getVersion(void) const;
 		const std::string& 					getMethod(void) const;
 		const std::string& 					getRequested(void) const;
-		std::string							getTypeLine(const std::string& strFind);
 		const std::string&					getMapValue(const std::string& key) const;
+		const std::string					getTypeLine(const std::string& strFind) const;
 		std::map<std::string, std::string>	getMap(void);
 		bool 								getEndRead() const;
-	/*
-		* Exception Classes
-	*/
 };
 
 std::list<std::string> ft_split(const std::string& str, char delimiter);
