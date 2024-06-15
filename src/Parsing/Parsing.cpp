@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/13 11:17:40 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/15 11:14:24 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,6 @@ Parsing::~Parsing( void )
 /*
  * Membert Funtions
 */
-std::string Parsing::readSocket(int fd)
-{
-	char buffRead[BUFFER_READ + 1];
-	if (fd == -1)
-		std::cout << "Error: open" << std::endl;
-	int	bytes = 1;
-	while (bytes > 0)
-	{
-		bytes = read(fd, buffRead, BUFFER_READ);
-		if (bytes < 0)
-			break ;
-		buffRead[bytes] = '\0';
-		_read += buffRead;
-	}
-	return (_read);
-}
 
 bool Parsing::isEmptyLine(const std::string& line) const
 {
@@ -59,15 +43,34 @@ bool Parsing::isEmptyLine(const std::string& line) const
 		or line[0] == '\n');
 }
 
-bool Parsing::isMethods(const std::string& keyword) const
+int Parsing::isMethods(const std::string& keyword) const
 {
 	return ((std::find(_methods.begin(), _methods.end(), keyword)
-	== _methods.end()) ? EXIT_FAILURE : EXIT_SUCCESS);
+	== _methods.end()) ? NOT_IMPLEMENTED : EXIT_SUCCESS);
 }
 
-bool Parsing::isVersion(const std::string& version) const
+int Parsing::isVersion(const std::string& version) const
 {
-	return (version != "HTTP/1.1");
+	if (version.size() != 8)
+		return (BAD_REQUEST);
+	size_t i = 0;
+	for (; VERSION_HTTP[i] == version[i] and version[i] != '/'; i++)
+		;
+	if ("HTTP" != std::string(version.begin(), version.begin() + i))
+		return (BAD_REQUEST);
+	size_t find = version.find("/");
+	if (find == std::string::npos)
+		return (BAD_REQUEST);
+	find += 1;
+	if (version[find] != '1')
+		return (!std::isdigit(version[find]) ? BAD_REQUEST : VERSION_NOT_SUPPORTED);
+	find += 1;
+	if (version[find] != '.')
+		return (BAD_REQUEST);
+	find += 1;
+	if (version[find] < '0' or version[find] > '1')
+		return (!std::isdigit(version[find]) ? BAD_REQUEST : VERSION_NOT_SUPPORTED);
+	return (EXIT_SUCCESS);
 }
 
 int Parsing::checkMethod(const std::string& strIn)
@@ -100,31 +103,21 @@ int Parsing::checkMethod(const std::string& strIn)
 				and !::isblank(strRead[i + 1])) ? 1 : 0);
 			space += (::isblank(strRead[i]) ? 1 : 0);
 			if (space > 2)
-				return (_statusError = this->printStatus(_errors[0], ERROR, ERROR_FORMAT));
+				return (_statusError = this->printStatus(_errors[0], ERROR, this->normalizeError(ERROR_FORMAT)));
 			space = (tmp != word ? 0 : space);
 		}
 	}
-	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))
+	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))//error sintax or metodo or version
 	{
-		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method) == 1) \
+		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method)) \
 			? ERROR_METHOD : ERROR_VERSION);
-		return (_statusError = this->printStatus(_errors[error], ERROR, error));
+		std::cout << YELLOW << "error: " << END <<  error << std::endl;
+		return (_statusError = this->printStatus(_errors[error], ERROR, this->normalizeError(error)));
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
 	_findNewline = end;
 
 	return (_statusError = EXIT_SUCCESS);
-}
-
-
-const std::string& Parsing::getMethod(void) const
-{
-	return (_method.method);
-}
-
-const std::string& Parsing::getRequested(void) const
-{
-	return (_method.requested);
 }
 
 int	Parsing::printStatus(const std::string& messages, short flag, int exitCode)
@@ -162,7 +155,7 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			if (key == "ERROR" or value == "ERROR" or ::checkSpace(value, 2))
 			{
 				short error = (key == "ERROR") + ((value == "ERROR") * 2);
-				return (_statusError = this->printStatus(_errors[error], ERROR, ERROR_FORMAT));
+				return (_statusError = this->printStatus(_errors[error], ERROR, this->normalizeError(ERROR_FORMAT)));
 			}
 			_method.content.insert(std::pair<std::string,std::string>(key, value));
 		}
@@ -173,19 +166,20 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			_endRead = (emptyLine == 1);
 			if (getMapValue("Host") == "not found")
 			{
-				return (_statusError = this->printStatus(_errors[3], ERROR, ERROR_FORMAT));
+				return (_statusError = this->printStatus(_errors[3], ERROR, this->normalizeError(ERROR_FORMAT)));
 			}
 			std::string tmp = _method.content["Host"];
 			_method.content["Host"] = ::getKey(tmp, ':');
 			_method.content["Port"] = ::getValue(tmp, ':');
-			_method.content["__Query__"] = Uri::Parse(_method.requested).QueryString;
+			_method.content["__Query__"] = Uri::Parse(_method.requested).QueryString.erase(0, 1);
 			_method.content["__Path__"] = Uri::Parse(_method.requested).Path;
+			//if isMethod == GET and conten-lent or isMethod == GET and Transfer-Encoding  return BAD_REQUEST
 			return (_statusError = EXIT_SUCCESS);
 		}
 	}
 	return (_statusError = EXIT_SUCCESS);
 }
-std::string	Parsing::getTypeLine(const std::string& strFind)
+const std::string	Parsing::getTypeLine(const std::string& strFind) const
 {
 	short	flag = 0;
 	flag += (strFind.find("\r\n") != std::string::npos ? 2 : 0);
@@ -222,9 +216,35 @@ size_t Parsing::getEndSize(void)
 	return (this->_typeLine.length());
 }
 
+const std::string& Parsing::getVersion(void) const
+{
+	return (_method.version);
+}
+
+const std::string& Parsing::getMethod(void) const
+{
+	return (_method.method);
+}
+
+const std::string& Parsing::getRequested(void) const
+{
+	return (_method.requested);
+}
+
 bool Parsing::getEndRead() const
 {
 	return (_endRead);
+}
+
+int	Parsing::normalizeError(int error)
+{
+	if (error == ERROR_FORMAT or error == ERROR_HEADER)
+		error = BAD_REQUEST;
+	else if (error == ERROR_METHOD)
+		error = NOT_IMPLEMENTED;
+	else if (error == ERROR_VERSION)
+		error = VERSION_NOT_SUPPORTED;
+	return (error);
 }
 
 void Parsing::resetParsing( void)
