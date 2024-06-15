@@ -19,6 +19,7 @@ ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 	this->_locations = obj.getLocations();
 	this->_cgis = obj.getCgis();
 	this->_path = obj.getPath();
+	this->_errorPages = obj.getMapErrorPages();
 }
 
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
@@ -284,6 +285,7 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	this->_dirListing = obj.getDirListing();
 	this->_index = obj.getIndex();
 	this->_cgis = obj.getCgis();
+	this->_errorPages = obj.getMapErrorPages();
 
 	return (*this);
 }
