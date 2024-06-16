@@ -107,11 +107,10 @@ int Parsing::checkMethod(const std::string& strIn)
 			space = (tmp != word ? 0 : space);
 		}
 	}
-	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))//error sintax or metodo or version
+	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))
 	{
 		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method)) \
 			? ERROR_METHOD : ERROR_VERSION);
-		std::cout << YELLOW << "error: " << END <<  error << std::endl;
 		return (_statusError = this->printStatus(_errors[error], ERROR, this->normalizeError(error)));
 	}
 	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
@@ -161,7 +160,7 @@ int	Parsing::parsingHeader(const std::string& strRead)
 		}
 		start = end;
 		_findNewline = start;
-		if (emptyLine == 1) // This is when we get the double new line, end of HTTP
+		if (emptyLine == 1)
 		{
 			_endRead = (emptyLine == 1);
 			if (getMapValue("Host") == "not found")
@@ -173,7 +172,12 @@ int	Parsing::parsingHeader(const std::string& strRead)
 			_method.content["Port"] = ::getValue(tmp, ':');
 			_method.content["__Query__"] = Uri::Parse(_method.requested).QueryString.erase(0, 1);
 			_method.content["__Path__"] = Uri::Parse(_method.requested).Path;
-			//if isMethod == GET and conten-lent or isMethod == GET and Transfer-Encoding  return BAD_REQUEST
+			if (this->getMethod() == "GET")
+			{
+				if (this->getMapValue("Content-Length") != _not_found
+					or this->getMapValue("Transfer-Encoding") != _not_found)
+					return (_statusError = this->printStatus(_errors[3], ERROR, this->normalizeError(ERROR_FORMAT)));
+			}
 			return (_statusError = EXIT_SUCCESS);
 		}
 	}
