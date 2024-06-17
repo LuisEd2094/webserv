@@ -1,3 +1,7 @@
+------WebKitFormBoundarycIkw1ulJuZvvxng5
+Content-Disposition: form-data; name="file"; filename="TODO.md"
+Content-Type: text/markdown
+
 
 # TODO LIST
 
@@ -143,3 +147,5 @@
 |503| Service Unavailable| Temporary overload or maintenance| Maybe we reached our limit of connections, or we are undergoing maintenance| **MAY** send Retry-After:. This does not mean we are OVERLOADED, just taht we refuse the connection ||✅|
 |504| Gateway Timeout  |  No response before time out| Since we handle CGIs, if the CGI times out this is the response.|||✅|
 | 505 |HTTP Version Not Supported  | We do not support the mayor version client is using| We are unable or unwilling to send a response using the same version.| **SHOULD** generate a representation indicating WHY and what protocols we DO support ||✅|
+
+------WebKitFormBoundarycIkw1ulJuZvvxng5--

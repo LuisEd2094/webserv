@@ -30,6 +30,12 @@ Server* Client::getServer() const
     return _server;
 }
 
+
+const std::string&  Client::getPathFileString() const
+{
+    return _path_to_file_str;
+}
+
 const Path&  Client::getPathFile() const
 {
     return _path_to_file;

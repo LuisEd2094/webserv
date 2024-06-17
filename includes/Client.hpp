@@ -68,7 +68,10 @@ class Client : public BaseHandler
         std::string                     getNextURLRedirect();
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
+
         const Path&                     getPathFile() const;
+        const std::string&              getPathFileString() const; 
+
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
         const std::string&              getDefaultHttpResponse(void) const;
@@ -136,6 +139,7 @@ class Client : public BaseHandler
         ObjectTypes             _response_type;
 
         Path                    _path_to_file;
+        std::string             _path_to_file_str;
         //std::string             _path_to_file;
         std::string             _defaultHttp;
         std::string             _httpAnswerDirectory;

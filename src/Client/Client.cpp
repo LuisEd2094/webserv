@@ -409,6 +409,7 @@ void Client::parseForHttp()
             }
 
         }
+        std::cout << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")
         {
@@ -452,6 +453,10 @@ void Client::parseForHttp()
             }
             
         }
+        else if (_action == DELETE)
+        {
+            
+        }
         else 
         {
             resetClient(false);
@@ -482,7 +487,7 @@ int Client::saveInBodyAsFile()
 {
     if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
     {
-        std::ofstream outfile("output_file.jpeg", std::ios::binary);
+        std::ofstream outfile("./files/output_file.md", std::ios::binary);
         if (outfile.is_open())
         {
             outfile.write(_in_body.data(), _in_body.size());
@@ -580,8 +585,10 @@ void Client::makeChildrenToRespond()
 void Client::resetClient(bool has_body)
 {
     makeChildrenToRespond();
+    std::cout << _in_container << std::endl;
     if (has_body)
     {
+        saveInBodyAsFile();
         /* gives seg fault*/
         /*If _size_to_append == 0 it means we got the full body in the first read with HTTP*/
         if (_size_to_append == 0)

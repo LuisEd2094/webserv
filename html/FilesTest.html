@@ -21,17 +21,21 @@
         // Function to fetch and display the list of files
         async function fetchFiles() {
             const response = await fetch('/files');
-            const files = await response.json();
+            const html = await response.text();
             const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-
-            files.forEach(file => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <a href="/download/${file}" target="_blank">${file}</a>
-                    <button onclick="deleteFile('${file}')">Delete</button>
-                `;
-                fileList.appendChild(listItem);
+            fileList.innerHTML = html;
+            
+            // Add delete buttons to each file list item
+            const listItems = fileList.querySelectorAll('li');
+            listItems.forEach(item => {
+                const fileName = item.querySelector('a').textContent;
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.setAttribute('data-filename', fileName);
+                deleteButton.addEventListener('click', async function() {
+                    await deleteFile(fileName);
+                });
+                item.appendChild(deleteButton);
             });
         }
 

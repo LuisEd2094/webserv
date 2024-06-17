@@ -8,6 +8,7 @@ const ObjectTypes BaseHandler::valid_objs[NUM_OBJ] = {
     FILE_OBJ,
     NO_FD_OBJ,
     CGI_OBJ,
+    DIR_OBJ,
  };
 
 
@@ -16,6 +17,30 @@ void    BaseHandler::setTime()
     std::time(&_last_time);
     // should return error if clock fails
 
+}
+
+const std::string dirList(const std::string& dir_str)
+{
+	DIR				*dir;
+	struct dirent	*file;
+	std::string		html("");
+	//chdir(directory.c_str()); //TODO try catch
+	dir = opendir(dir_str.c_str()); //TODO try catch
+	file = readdir(dir);
+
+	html = html + "<html><head></head><body>";	
+	html = html + "<h1>Directory listing for " + dir_str + "</h1><hr>";	
+	html = html + "<ul>";	
+	while (file)
+	{
+		if (std::string(file->d_name) != "." && std::string(file->d_name) != "..")
+			html = html + "<li><a href=" + dir_str + file->d_name + ">" + file->d_name + "</a></li>";
+		file = readdir(dir);
+	}
+	html += "</ul><hr></body></html>";
+
+	closedir(dir);
+	return html;
 }
 
 BaseHandler* BaseHandler::createObject(Client& client)
@@ -29,6 +54,11 @@ BaseHandler* BaseHandler::createObject(Client& client)
                 return FileReader::createNewFileReader(client);
             else if (valid_objs[i] == CGI_OBJ)
                 return CGI::createNewCGI(client);
+            else if (valid_objs[i] == DIR_OBJ)
+            {
+                std::string listing = dirList(client.getPathFileString());
+                return DirectResponse::createNewDirect(setContentLenHTTP(HTTP_OK, listing), listing);
+            }
             else if (valid_objs[i] == NO_FD_OBJ)
             {
                 if (client.getErrorCode() >= MULTIPLE_REDIRECTS && client.getErrorCode() <= MULTIPLE_REDIRECTS)
@@ -55,10 +85,10 @@ BaseHandler* BaseHandler::createObject(Client& client)
                 return DirectResponse::createNewDirect(setContentLenHTTP(HTTP_OK, listing), listing);
             }
             else
-                return NULL;
+                return BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));
         }
     }
-    return NULL;
+    return BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));
 }
 BaseHandler* BaseHandler::createObject(const defaultResponse & obj)
 {
