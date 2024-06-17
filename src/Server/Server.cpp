@@ -130,14 +130,6 @@ bool Server::validateAction(Client& client)
         }
     }
     return status;
-
-/*     else
-    {
-        std::cout << "url not allowed: " << url << std::endl;
-        client.addObject(BaseHandler::createObject(getErrorResponseObject(NOT_FOUND)));
-        return (false);
-    }
- */
 }
 
 bool Server::prepareClient4ResponseGeneration(Client& client)

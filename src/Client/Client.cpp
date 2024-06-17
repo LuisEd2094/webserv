@@ -399,6 +399,14 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
+        std::cout << _in_container << std::endl;
+
+        if (!_server->validateAction(*this))
+        {            
+            std::cout << "server told me it was a bad action" << std::endl;
+            addClosingErrorObject(METHOD_NOT_ALLOWED);
+            return;
+        }
         if (_action == POST)
         {
             if (!checkPostHeaderInfo())
@@ -407,7 +415,6 @@ void Client::parseForHttp()
             {
                 addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
             }
-
         }
         std::cout << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
@@ -419,12 +426,6 @@ void Client::parseForHttp()
         else if (_parser_http.getMapValue("Connection") == "close")
         {
             _keep_alive = false;
-        }
-        if (!_server->validateAction(*this))
-        {            
-            std::cout << "server told me it was a bad action" << std::endl;
-            addClosingErrorObject(METHOD_NOT_ALLOWED);
-            return;
         }
         if(_action == POST)
         {
