@@ -26,17 +26,20 @@ RESPONSE_PATH = Responses/
 CGI_PATH 	= CGI/
 FILE_READ_PATH = FileReader/
 COOKIES_PATH = Cookies/
+DELETED_PATH = DeletedFiles/
+
 OBJS_PATH	= obj/
 DEPS_PATH	= deps/
 
 MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH)\
 								$(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH)\
 								$(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)\
-								$(RESPONSE_PATH) $(COOKIES_PATH) )  \
+								$(RESPONSE_PATH) $(COOKIES_PATH) $(DELETED_PATH) )  \
+								\
 					$(addprefix $(DEPS_PATH), $(AUX_PATH) $(SERVER_PATH)\
 								$(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH)\
 								$(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)\
-								$(RESPONSE_PATH) $(COOKIES_PATH))  
+								$(RESPONSE_PATH) $(COOKIES_PATH) $(DELETED_PATH))  
 INCS        = -I./includes
 
 
@@ -103,9 +106,14 @@ COOKIES			=	Cookies.cpp
 COOKIES_FILES		=	$(addprefix $(COOKIES_PATH), $(COOKIES))
 
 
+DELETED			=	DeletedFiles.cpp
+
+DELETED_FILES		=	$(addprefix $(DELETED_PATH), $(DELETED))
+
+
 SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) \
 					$(PARSING_FILES) $(CGI_FILES) $(BASE_FILES) $(FILE_READ_FILES) \
-					$(CONF_FILES) $(RESPONSE_FILES) $(COOKIES_FILES)
+					$(CONF_FILES) $(RESPONSE_FILES) $(COOKIES_FILES) $(DELETED_FILES)
 				
 DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d))
 

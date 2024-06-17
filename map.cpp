@@ -1,58 +1,99 @@
 #include <iostream>
 #include <map>
-#include <list>
 #include <sstream>
 #include <sys/stat.h>
 
-std::list<std::string> ft_split(const std::string& str, char delimiter)
-{
-    std::list<std::string> list;
-    std::istringstream input(str);
-    std::string word;
-    
-    while (std::getline(input, word, delimiter))
-    {
-        if (!word.empty())
-            list.push_back(word);
-    }
-    return (list);
-}
-
-typedef struct deleted_files
+typedef struct deletedFiles
 {
     bool is_dir;
-    std::map<std::string, deleted_files> files;
-    void add_to_delete(const std::string&);
-}   deleted_files;
+    std::map<std::string, deletedFiles> files;
+    void addToDelete(const std::string&);
+    void removeFromDeleted(const std::string&);
+    bool checkIfDeleted(const std::string&);
+    deletedFiles();
+}   deletedFiles;
 
-void deleted_files::add_to_delete(const std::string& path)
+
+deletedFiles::deletedFiles() : is_dir(0) {}
+
+void deletedFiles::removeFromDeleted(const std::string& path)
+{
+    deletedFiles *temp = this;
+    deletedFiles *last_found;
+    std::string     last_word;
+    std::istringstream input(path);
+    std::string word; 
+
+
+    while (std::getline(input, word, '/'))
+    {
+        /*getLine doesn't skip the first word if the string starts with /*/
+        if (word.empty())
+            continue;
+        if (temp->files.find(word) == temp->files.end())
+            return;
+        last_found = temp;
+        last_word = word;
+        temp = &(temp->files[word]);
+    }
+    if (last_found->files[last_word].files.empty())
+    {
+        last_found->files.erase(last_word);
+    }
+    else
+    {
+        last_found->files[last_word].is_dir = false;
+    }
+
+}
+
+bool deletedFiles::checkIfDeleted(const std::string& path)
+{
+    deletedFiles *temp = this;
+    std::istringstream input(path);
+    std::string word; 
+
+    while (std::getline(input, word, '/'))
+    {
+        /*getLine doesn't skip the first word if the string starts with /*/
+        if (word.empty())
+            continue;
+        if (temp->files.find(word) == temp->files.end())
+            return (temp->is_dir);
+        temp = &(temp->files[word]);
+    }
+    return temp->is_dir || temp->files.empty();
+}
+
+void deletedFiles::addToDelete(const std::string& path)
 {    
-    std::list<std::string> split = ft_split(path, '/');
-    std::list<std::string>::iterator it = split.begin();
-    deleted_files *temp = this; 
+    deletedFiles *temp = this; 
     struct stat info;
     int result = stat(path.c_str(), &info);
 
+    std::istringstream input(path);
+    std::string word;
 
-    for (; it != split.end(); it++)
+
+    while (std::getline(input, word, '/'))
     {
-        if (temp->files.find(*it) == temp->files.end()) {
+        if (word.empty())
+            continue;
+        if (temp->files.find(word) == temp->files.end()) {
             // Create a new entry if it doesn't exist
-            temp->files[*it] = deleted_files();
+            temp->files[word] = deletedFiles();
         }
         // Move to the next level in the hierarchy
-        temp = &(temp->files[*it]);
-        std::cout << *it << std::endl;
+        temp = &(temp->files[word]);
+        std::cout << word << std::endl;
     }
     (*temp).is_dir = S_ISDIR(info.st_mode);
-
-    std::cout<< (*temp).is_dir << std::endl;
 }
 
 int main( int argc, char * argv[])
 {
     std::string path;
-    deleted_files deleted;
+    deletedFiles deleted;
     if (argc > 1)
     {
         path = argv[1];
@@ -61,20 +102,29 @@ int main( int argc, char * argv[])
     {
         path = "/home/luis/proyects/webserv/";
     }
-    struct stat info;
-    int result = stat(path.c_str(), &info);
-    std::list<std::string> split = ft_split(path, '/');
 
-    std::list<std::string>::iterator it = split.begin();
-    for (; it != split.end(); it++)
-    {
-        std::cout << *it << std::endl;
-    }
-    deleted.add_to_delete(path);
-    deleted.add_to_delete(path);
-    deleted.add_to_delete(path + "TODO.md");
-    deleted.add_to_delete(path + "Another.md");
-    deleted.add_to_delete("home/bin/Another.md");
+    deleted.addToDelete(path);
+    deleted.addToDelete(path);
+    deleted.addToDelete(path + "TODO.md");
+    deleted.addToDelete(path + "Another.md");
+    deleted.addToDelete("home/bin/Another.md");
+
+    std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 1 " << std::endl;
+    std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 1 "  << std::endl;
+    std::cout << deleted.checkIfDeleted(path + "notdeletedbutparentwas")<< " SHOULD BE 1 " << std::endl;
+    std::cout << deleted.checkIfDeleted(std::string("/this/is/anew/path")) << " SHOULD BE 0 " << std::endl;
+    std::cout << deleted.checkIfDeleted(std::string("home/is/anew/path")) << " SHOULD BE 0 " << std::endl;
+
+    std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 1 " << std::endl;
+    deleted.removeFromDeleted(path);
+    deleted.removeFromDeleted("/this/was/never/deleted");
+
+    std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 0 " << std::endl;
+    std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 1 "  << std::endl;
+    deleted.removeFromDeleted(path + "TODO.md");
+    std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 0 "  << std::endl;
+
+    std::cout << deleted.checkIfDeleted(path + "notdeletedbutparentwas")<< " SHOULD BE 0 " << std::endl;
 
     std::cout << path << std::endl;
 }

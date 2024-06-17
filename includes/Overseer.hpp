@@ -7,6 +7,7 @@ class Overseer;
 # include <cerrno>
 # include "Server.hpp"
 # include <poll.h>
+# include <DeletedFiles.hpp>
 
 
 # include <BaseHandler.hpp>
@@ -37,8 +38,8 @@ class Overseer
         static  bool    handleAction(BaseHandler * , int );
         static  void    mainLoop();
         static  bool    canContinue;
-        
 
+        static  deletedFiles files; 
     private:
         Overseer();
         ~Overseer();

@@ -1,3 +1,4 @@
+valgrind-out.txt
 obj/*
 deps/*
 webserv
