@@ -25,7 +25,10 @@ void ConfigVirtualServer::parseKeyVal(std::string key, std::string val)
 		this->setErrorPage(val);	
 	else if (key == "maxClientBodySize")
 		this->setMaxClientBodySize(val);
-	else if (key == "host" || key == "port");
+	else if (key == "port")
+		this->setPort(val);
+	else if (key == "host")
+		this->setHost(val);
 	else if (key == "serverNames")
 		this->setServerNames(val);
 	else
@@ -39,6 +42,17 @@ ConfigVirtualServer &ConfigVirtualServer::operator=(const ConfigVirtualServer& o
 	this->serverNames = obj.serverNames;
 	this->locations = obj.locations;	
 	return (*this);
+}
+
+void ConfigVirtualServer::setHost(const std::string &host)
+{
+	this->host = host;
+	this->setServerNames(this->host);
+}
+
+void ConfigVirtualServer::setPort(const std::string &port)
+{
+	this->port = port;
 }
 
 void ConfigVirtualServer::setErrorPage(std::string error)
@@ -77,14 +91,28 @@ int ConfigVirtualServer::getMaxClientBodySize(void) const
 	return (this->maxClientBodySize);
 }
 
-void	ConfigVirtualServer::setServerNames(std::string serverName)
+void	ConfigVirtualServer::setServerNames(std::string &serverName)
 {
-	this->serverNames = ft_split(serverName, ' ');
+    std::istringstream input(serverName);
+    std::string word;
+    
+    while (std::getline(input, word, ' '))
+        this->serverNames.push_back(word);
 }
 
 std::list<std::string> ConfigVirtualServer::getServerNames(void)
 {
 	return (this->serverNames);
+}
+
+std::string ConfigVirtualServer::getPort(void) const
+{
+	return (this->port);
+}
+
+std::string ConfigVirtualServer::getHost(void) const
+{
+	return (this->host);
 }
 
 //std::ostream &operator<<(std::ostream &os, ConfigVirtualServer &obj)
