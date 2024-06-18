@@ -81,8 +81,7 @@ BaseHandler* BaseHandler::createObject(Client& client)
                     return DirectResponse::createNewDirect(setContentLenHTTP(client.getDefaultHttpResponse(), body), body);
 
                 }
-                std::string listing = "THIS IS LISTING";
-                return DirectResponse::createNewDirect(setContentLenHTTP(HTTP_OK, listing), listing);
+                return DirectResponse::createNewDirect(setContentLenHTTP(client.getDefaultHttpResponse(), client.getBody() ), client.getBody());
             }
             else
                 return BaseHandler::createObject(Response::getDefault(INTERNAL_SERVER_ERROR));

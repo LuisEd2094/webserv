@@ -457,6 +457,7 @@ void Client::parseForHttp()
         else if (_action == DELETE)
         {
             Overseer::addToDeleted(getPathFileString());
+            _response_type = NO_FD_OBJ;
             resetClient(false);
         }
         else 
@@ -489,14 +490,18 @@ int Client::saveInBodyAsFile()
 {
     if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
     {
+        if (Overseer::checkIfDeleted("./files/output_file.md"))
+        {
+            Overseer::removeFromDeleted("./files/output_file.md");
+        }
         std::ofstream outfile("./files/output_file.md", std::ios::binary);
         if (outfile.is_open())
         {
             outfile.write(_in_body.data(), _in_body.size());
             outfile.close();
             std::cout << "Binary data written to file.\n";
-            _action = GET;
-            return sendResponse();
+            _response_type = NO_FD_OBJ;
+            //return sendResponse();
         } 
         else
         {
@@ -562,7 +567,7 @@ void Client::makeChildrenToRespond()
         /*getErrorResponseObject is on server as of right now, but client has a pointer to location
             location should have info about errors
         */
-        if (_response_type == NOT_SET)
+        if (_response_type == NOT_SET || (_action != DELETE && Overseer::checkIfDeleted(getPathFileString())))
             response =  BaseHandler::createObject(_server->getErrorResponseObject(NOT_FOUND));
         else
             response = BaseHandler::createObject(*this);
@@ -586,11 +591,11 @@ void Client::makeChildrenToRespond()
 
 void Client::resetClient(bool has_body)
 {
-    makeChildrenToRespond();
     std::cout << _in_container << std::endl;
     if (has_body)
     {
         saveInBodyAsFile();
+        setDefaultHttpResponse(OK);
         /* gives seg fault*/
         /*If _size_to_append == 0 it means we got the full body in the first read with HTTP*/
         if (_size_to_append == 0)
@@ -617,6 +622,7 @@ void Client::resetClient(bool has_body)
         }
         _in_body.clear();
     }
+    makeChildrenToRespond();
     while (!_http_addons.empty())
         _http_addons.pop();
     _pending_read = false;

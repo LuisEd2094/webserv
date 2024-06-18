@@ -5,29 +5,34 @@ deletedFiles::deletedFiles() : is_dir(0) {}
 bool deletedFiles::removeFromDeleted(const std::string& path)
 {
     deletedFiles *temp = this;
-    deletedFiles *last_found;
-    std::string     last_word;
+    deletedFiles *last_found = temp;
+    std::string     last_word("");
     std::istringstream input(path);
     std::string word; 
 
     while (std::getline(input, word, '/'))
     {
+        if (last_word.empty())
+            last_word = word;
         /*getLine doesn't skip the first word if the string starts with /*/
         if (word.empty())
             continue;
         if (temp->files.find(word) == temp->files.end())
             return false;
-        last_found = temp;
-        last_word = word;
+        if (temp->files.size() > 1)
+        {
+            last_found = temp;
+            last_word = word;
+        }
         temp = &(temp->files[word]);
     }
-    if (last_found->files[last_word].files.empty())
+    if (last_found->files[last_word].is_dir)
     {
-        last_found->files.erase(last_word);
+        last_found->files[last_word].is_dir = false;
     }
     else
     {
-        last_found->files[last_word].is_dir = false;
+        last_found->files.erase(last_word);
     }
     return true;
 

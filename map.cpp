@@ -19,7 +19,7 @@ deletedFiles::deletedFiles() : is_dir(0) {}
 void deletedFiles::removeFromDeleted(const std::string& path)
 {
     deletedFiles *temp = this;
-    deletedFiles *last_found;
+    deletedFiles *last_found = temp;
     std::string     last_word;
     std::istringstream input(path);
     std::string word; 
@@ -32,17 +32,20 @@ void deletedFiles::removeFromDeleted(const std::string& path)
             continue;
         if (temp->files.find(word) == temp->files.end())
             return;
-        last_found = temp;
-        last_word = word;
+        if (temp->files.size() > 1)
+        {
+            last_found = temp;
+            last_word = word;
+        }
         temp = &(temp->files[word]);
     }
-    if (last_found->files[last_word].files.empty())
+    if (last_found->files[last_word].is_dir)
     {
-        last_found->files.erase(last_word);
+        last_found->files[last_word].is_dir = false;
     }
     else
     {
-        last_found->files[last_word].is_dir = false;
+        last_found->files.erase(last_word);
     }
 
 }
@@ -94,13 +97,13 @@ int main( int argc, char * argv[])
 {
     std::string path;
     deletedFiles deleted;
-    if (argc > 1)
+    if (argc > 2)
     {
         path = argv[1];
     }
     else
     {
-        path = "/home/luis/proyects/webserv/";
+        path = "/workspaces/webserv/";
     }
 
     deleted.addToDelete(path);
@@ -108,6 +111,27 @@ int main( int argc, char * argv[])
     deleted.addToDelete(path + "TODO.md");
     deleted.addToDelete(path + "Another.md");
     deleted.addToDelete("home/bin/Another.md");
+    deleted.addToDelete("home/bin/thisisAnother.md");
+    deleted.addToDelete("home/notbin/Another.md");
+
+
+    std::cout << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 1 " << std::endl;
+    std::cout << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 1 "  << std::endl;
+    std::cout << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
+
+    deleted.removeFromDeleted("home/bin/Another.md");
+
+    std::cout << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 0 " << std::endl;
+    std::cout << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 1 "  << std::endl;
+    std::cout << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
+
+    deleted.removeFromDeleted("home/bin/thisisAnother.md");
+
+    std::cout << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 0 " << std::endl;
+    std::cout << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 0 "  << std::endl;
+    std::cout << deleted.checkIfDeleted("home/bin/") << " SHOULD BE 0 "  << std::endl;
+
+    std::cout << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
 
     std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 1 " << std::endl;
     std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 1 "  << std::endl;
@@ -123,6 +147,10 @@ int main( int argc, char * argv[])
     std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 1 "  << std::endl;
     deleted.removeFromDeleted(path + "TODO.md");
     std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 0 "  << std::endl;
+    deleted.removeFromDeleted(path + "Another.md");
+    std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 0 "  << std::endl;
+    std::cout << deleted.checkIfDeleted(path + "Another.md") << " SHOULD BE 0 "  << std::endl;
+    std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 0 "  << std::endl;
 
     std::cout << deleted.checkIfDeleted(path + "notdeletedbutparentwas")<< " SHOULD BE 0 " << std::endl;
 
