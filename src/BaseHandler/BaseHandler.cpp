@@ -33,7 +33,7 @@ const std::string dirList(const std::string& dir_str)
 	html = html + "<ul>";	
 	while (file)
 	{
-		if (std::string(file->d_name) != "." && std::string(file->d_name) != "..")
+		if (!Overseer::checkIfDeleted(dir_str + (file->d_name)) && std::string(file->d_name) != "." && std::string(file->d_name) != "..")
 			html = html + "<li><a href=" + dir_str + file->d_name + ">" + file->d_name + "</a></li>";
 		file = readdir(dir);
 	}
