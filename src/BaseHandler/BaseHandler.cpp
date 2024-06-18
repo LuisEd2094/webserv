@@ -23,7 +23,7 @@ const std::string dirList(const std::string& dir_str)
 {
 	DIR				*dir;
 	struct dirent	*file;
-	std::string		html("");
+	std::string		html("<!DOCTYPE html>\n");
 	//chdir(directory.c_str()); //TODO try catch
 	dir = opendir(dir_str.c_str()); //TODO try catch
 	file = readdir(dir);
@@ -57,7 +57,7 @@ BaseHandler* BaseHandler::createObject(Client& client)
             else if (valid_objs[i] == DIR_OBJ)
             {
                 std::string listing = dirList(client.getPathFileString());
-                return DirectResponse::createNewDirect(setContentLenHTTP(HTTP_OK, listing), listing);
+                return DirectResponse::createNewDirect(setContentLenHTTP(std::string(HTTP_OK) + "Content-Type: text/html\r\n", listing), listing);
             }
             else if (valid_objs[i] == NO_FD_OBJ)
             {

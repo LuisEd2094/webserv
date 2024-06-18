@@ -17,6 +17,7 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 	{
 		this->locations.push_back(ConfigLocation(*location));
 	}
+	std::cout <<"d";
 }
 
 void ConfigVirtualServer::parseKeyVal(std::string key, std::string val)

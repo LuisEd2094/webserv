@@ -31,6 +31,8 @@ int main()
     FileReader::initTypeMaps();
     Response::initDefaultMap();
     Response::initErrorsHttp();
+    Response::initErrorsMap();
+
     // all this info should come from the confi file
     /*
     std::memset(&(confi.hints), 0, sizeof(confi.hints));

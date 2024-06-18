@@ -28,7 +28,7 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigLocation>	_locations;
 		bool						_inheriting;
 		Path						_path;
-		std::map<int, Path>			_errorPages;
+		std::map<ErrorCodes, Path>			_errorPages;
 		//Add list configureLocation 
 
 	public:
@@ -68,8 +68,8 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigLocation>		getLocations(void) const;
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);
 		void							recursivePrint(int recursiveLvl);
-		std::map<int, Path>				getMapErrorPages(void) const;
-		Path							const getErrorPages(const int searchError) const;
+		std::map<ErrorCodes, Path>				getMapErrorPages(void) const;
+		Path							const getErrorPages(ErrorCodes searchError) const;
 
 		static std::list<ConfigLocation>::iterator getBestLocation(Path requestedURL,
 			std::string							method,

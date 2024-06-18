@@ -576,10 +576,12 @@ void Client::makeChildrenToRespond()
         response = BaseHandler::createObject(_server->getErrorResponseObject(INTERNAL_SERVER_ERROR));
     }
     std::queue<std::string> queue;
-    queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10") + CRNL);
+    Path error =  _location->getErrorPages(NOT_FOUND);
+    queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10; Domain: ") + getHost()  + "Path: /" + CRNL);
 
-    addHeader(queue);   
-    addHeader(std::string("Connection: keep-alive") + CRNL); 
+    addHeader(queue);
+    if (_keep_alive)   
+        addHeader(std::string("Connection: keep-alive") + CRNL); 
     addObject(response);
     /*
         Check here to add Redirect headers and other HTTPS?

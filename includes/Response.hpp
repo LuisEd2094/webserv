@@ -11,6 +11,7 @@
 
 enum ErrorCodes
 {
+    INVALID_CODE,
     /*1xx*/
     CONTINUE,
     /*2xx*/
@@ -190,12 +191,16 @@ class Response
         static const defaultResponse& getDefault(ErrorCodes code);
         static const std::string& getHttpFirtsLine(ErrorCodes code);
         static void initErrorsHttp();
+        static void initErrorsMap();
+        static  ErrorCodes getErrorCodeFromInt(int);
 
     private:
         static void createDefaultResponses();
         static responsesMap defaults;
         static defaultResponsesMap defaultResponses;
         static std::vector<std::string>    _vectorError;
+        static std::map<int, ErrorCodes>    _mapError;
+
 };
 
 

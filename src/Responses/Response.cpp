@@ -3,6 +3,17 @@
 responsesMap Response::defaults;
 defaultResponsesMap Response::defaultResponses;
 std::vector<std::string> Response::_vectorError;
+std::map<int, ErrorCodes>    Response::_mapError;
+
+
+ErrorCodes Response::getErrorCodeFromInt(int num)
+{
+    std::map <int, ErrorCodes>::iterator it = _mapError.find(num);
+    if (it == _mapError.end())
+        return INVALID_CODE;
+    return it->second;
+
+}
 
 
 const defaultResponse& Response::getDefault(ErrorCodes code)
@@ -121,6 +132,39 @@ void    Response::initErrorsHttp(void)
     _vectorError.push_back(SERVICE_UNAVAILABLE_HTTP);
     _vectorError.push_back(GATEWAY_TIMEOUT_HTTP);
     _vectorError.push_back(VERSION_NOT_SUPPORTED_HTTP);
+}
+
+
+void Response::initErrorsMap()
+{
+    /*1xx Others*/
+    _mapError[100] = CONTINUE;
+    /*2xx OK*/
+    _mapError[200] = OK;
+    /*3xx Redirects*/
+    _mapError[300] = MULTIPLE_REDIRECTS;
+    /*4xx ERRORs*/
+    _mapError[400] = BAD_REQUEST;
+    _mapError[403] = FORBIDDEN;
+    _mapError[404] = NOT_FOUND;
+    _mapError[405] = METHOD_NOT_ALLOWED;
+    _mapError[406] = NOT_ACCEPTABLE;
+    _mapError[408] = REQUEST_TIMEOUT;
+    _mapError[409] = CONFLICT;
+    _mapError[410] = GONE;
+    _mapError[411] = LENGTH_REQUIRED;
+    _mapError[413] = PAYLOAD;
+    _mapError[414] = URI_TOO_LONG;
+    _mapError[415] = MEDIA_TYPE;
+    _mapError[417] = EXPECTATION;
+    _mapError[426] = UPGRADE;
+    /*5xx errors*/
+    _mapError[500] = INTERNAL_SERVER_ERROR;
+    _mapError[501] = NOT_IMPLEMENTED;
+    _mapError[502] = BAD_GATEWAY;
+    _mapError[503] = SERVICE_UNAVAILABLE;
+    _mapError[504] = GATEWAY_TIMEOUT;
+    _mapError[505] = VERSION_NOT_SUPPORTED;
 }
 
  const std::string& Response::getHttpFirtsLine(ErrorCodes code)

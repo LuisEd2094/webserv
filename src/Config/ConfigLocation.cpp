@@ -247,18 +247,22 @@ void	ConfigLocation::setErrorPages(std::string errors)
 			throw ParamError(std::string("Error: Syntax errorPage:")
 			+ std::string(ErrorKey.length() != 3 ? " invalid " : " it is not a number ") + ErrorKey);
 		int ErrorKeyNum = std::atoi(ErrorKey.c_str());
-		this->_errorPages[ErrorKeyNum] = ErrorValue;
+
+		ErrorCodes error = Response::getErrorCodeFromInt(ErrorKeyNum);
+		if (error == INVALID_CODE)
+			throw ParamError(std::string("Error: invalid Error page Code: " + ErrorKey + "."));
+		this->_errorPages[error] = ErrorValue;
 	}
 }
 
-std::map<int, Path> ConfigLocation::getMapErrorPages(void) const
+std::map<ErrorCodes, Path> ConfigLocation::getMapErrorPages(void) const
 {
 	return (this->_errorPages);
 }
 
-Path const ConfigLocation::getErrorPages(const int searchError) const
+Path const ConfigLocation::getErrorPages(ErrorCodes searchError) const
 {
-	std::map<int, Path>::const_iterator it = this->_errorPages.find(searchError);
+	std::map<ErrorCodes, Path>::const_iterator it = this->_errorPages.find(searchError);
 	if (it == this->_errorPages.end())
 	{
 		return (Path(""));
@@ -271,6 +275,7 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	this->__elemArgument__ = obj.__elemArgument__;
 	this->__elemType__ = obj.__elemType__;
 	this->_errorPage = obj.getErrorPage();
+	this->_errorPages = obj._errorPages;
 	this->_methods = obj.getMethods();
 	this->_redirection = obj.getRedirection();
 	this->_root = obj.getRoot();
