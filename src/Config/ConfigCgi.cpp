@@ -24,6 +24,8 @@ bool ConfigCgi::prepareClient4ResponseGeneration(Client& client, Path &requested
     if (requestedUrl.getExtension() != this->getExtension())
         return (false);
     client.setResponseType(CGI_OBJ);
+    client.setConfigElement(this);
+    client.setDefaultHttpResponse(OK);
     return true;
 }
 

@@ -45,7 +45,7 @@ std::string Path::getExtension(void)
     if (splited.size() == 2 && splited.front() == "") 
         return ("");
     else 
-        return (splited.back());
+        return ("." + splited.back());
 }
 
 void Path::popBegin(int ammount)

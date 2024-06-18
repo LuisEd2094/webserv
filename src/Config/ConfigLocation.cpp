@@ -387,17 +387,11 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
 		}
 		std::cout << END << std::endl;
-
-
-		
 		std::cout << "      BINGO !!!" << std::endl;
-		std::cout << "RENSPONSES: NO_FOUND=" << NOT_FOUND << " OK=" << OK << std::endl;
-		if (this->_locations.begin() != this->_locations.end())
-			std::cout << TUR << "      Bestlocation: " << END << this->_locations.begin()->getPath()<<  std::endl;
 		std::cout << "      Cient  URL: " << client.getURL() << std::endl;
-		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()];
-		std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse();
-		std::cout << "      Path file: " << client.getPathFile();
+		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
+		std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
+		std::cout << "      Path file: " << client.getPathFile()<< std::endl;;
 		std::cout << std::endl;
 	}
 	std:: cout << TUR << "bestlocation: " << END << this->getPath()<<  std::endl;
@@ -411,8 +405,15 @@ bool	ConfigLocation::checkCGI(Client &client, Path& requestedURL)
 	for(cgi = this->getCgis().begin(); cgi != this->getCgis().end(); cgi++)
 	{
 		if (cgi->prepareClient4ResponseGeneration(client, requestedURL))	
-			return (true);
+		{
+			std::cout << "Returning a CGI: " << std::endl;
+			std::cout << "      Cient  URL: " << client.getURL() << std::endl;
+			std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
+			std::cout << "      Path file: " << client.getPathFile() << std::endl;
+			std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
 
+			return (true);
+		}
 	}
 	return (false);
 }
