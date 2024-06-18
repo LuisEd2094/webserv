@@ -389,7 +389,8 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		
 		std::cout << "      BINGO !!!" << std::endl;
 		std::cout << "RENSPONSES: NO_FOUND=" << NOT_FOUND << " OK=" << OK << std::endl;
-		std::cout << TUR << "      Bestlocation: " << END << this->_locations.begin()->getPath()<<  std::endl;
+		if (this->_locations.begin() != this->_locations.end())
+			std::cout << TUR << "      Bestlocation: " << END << this->_locations.begin()->getPath()<<  std::endl;
 		std::cout << "      Cient  URL: " << client.getURL() << std::endl;
 		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()];
 		std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse();

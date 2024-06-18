@@ -221,8 +221,6 @@ void Client::readFromFD()
                         */
                         if (parser_method != WARNING)
                         {
-                            std::cout << "Estoy aquiiiiiiiiiiiiiiiiiiiii" << std::endl;
-                            std::cout <<  RED << "ERROR: " << ErrorCodes(parser_method) << END << std::endl;
                             addClosingError(ErrorCodes(parser_method));
                             // if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
                             // {

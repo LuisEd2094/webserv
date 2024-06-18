@@ -17,17 +17,23 @@ class ConfigVirtualServer: public ConfigElement
 	private:
 		std::string	errorPage;
 		int			maxClientBodySize;
+		std::string	host;
+		std::string port;
 		std::list<std::string> serverNames;
 		std::list<ConfigLocation> locations;
 
 	public:
 		//set
 		void setErrorPage(std::string error);
+		void setPort(const std::string &port);
+		void setHost(const std::string &host);
 		void setMaxClientBodySize(int bodySize);
 		void setMaxClientBodySize(std::string bodySize);
-		void setServerNames(std::string serverName);
+		void setServerNames(std::string &serverName);
 		void setLocations(std::list<ConfigLocation> inpLocations) {this->locations = inpLocations;};
 		//get
+		std::string	getPort(void) const;
+		std::string	getHost(void) const;
 		std::string getErrorPage(void)  const;
 		int getMaxClientBodySize(void)  const;
 		std::list<std::string> getServerNames(void);
