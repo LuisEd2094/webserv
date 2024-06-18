@@ -40,7 +40,7 @@ class ConfigCgi: public ConfigElement
 		Path		getExecute(void) const;
 		const std::map<std::string, std::string> &getMetaVar(void) const;
 
-		bool prepareClient4ResponseGeneration(Client& client);
+		bool prepareClient4ResponseGeneration(Client& client, Path &requestedUrl) const;
 
 		void recursivePrint(int recursiveLvl);
 		void setDefaults();

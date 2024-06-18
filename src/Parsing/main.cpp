@@ -119,6 +119,43 @@ void	testUri(std::string test)
 	Uri::Parse(test);
 }
 
+void pathTests(void)
+{
+	testPath("/");
+	testPath("./");
+	testPath("path0/path1");
+	testPath("/path0/path1");
+	testPath("path0/path1", "path2/");
+	testPath("/path0/path1/", "path2/");
+	testPath("path0/path1/", "/path2/");
+	testPath("/path0/path1/", "/path2/");
+	testPath("/", "/");
+	testPath("/fkd/..//////////////////////////////sdaf/.//////////a/./");
+	testPath("/path0", "sdaf/");
+}
+
+void testExtension(std::string inp)
+{
+	Path path = inp;
+	std::cout << "testing: " << path << std::endl;
+
+	std::cout << "extension: " << path.getExtension() << std::endl;
+	std::cout << std::endl;
+}
+
+void extensionTests(void)
+{
+	testExtension("hello/empty");
+	testExtension("hello/.empty");
+	testExtension("hello/.wololo.ext");
+	testExtension("hello/wololo.ext");
+	testExtension("hello/wololo.ext");
+
+	testExtension("asloEmpty/.wololo.ext.");
+	testExtension("asloEmpty/wololo.ext..");
+	testExtension("asloNOTEmpty/wololo..ext");
+}
+
 int  main(void)
 {
 	// fileConfig();
@@ -138,20 +175,14 @@ int  main(void)
 	/*
 		path0/path1
 	*/
-	testPath("/");
-	testPath("./");
-	testPath("path0/path1");
-	testPath("/path0/path1");
-	testPath("path0/path1", "path2/");
-	testPath("/path0/path1/", "path2/");
-	testPath("path0/path1/", "/path2/");
-	testPath("/path0/path1/", "/path2/");
-	testPath("/", "/");
-	testPath("/fkd/..//////////////////////////////sdaf/.//////////a/./");
-	testPath("/path0", "sdaf/");
+ 
+	extensionTests();
+	return 0;
+/*	
 	Path sdaf = Path("/sdaf");
 	sdaf.append(Path("/"));
 	std::cout << "Is file: " << sdaf.getIsFile();
 	std::cout << "  sdaf: " << sdaf  << std::endl;
 	return (0);
+	*/
 }

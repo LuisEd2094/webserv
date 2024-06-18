@@ -223,7 +223,7 @@ void ConfigLocation::setCgis(std::string cgis)
 	(void)cgis;
 }
 
-std::list<ConfigCgi> ConfigLocation::getCgis(void) const
+const std::list<ConfigCgi> &ConfigLocation::getCgis(void) const
 {
 	return (this->_cgis);
 }
@@ -337,15 +337,18 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		this->_locations.begin(),
 		this->_locations.end()
 	);
+
 	if (inBestLocation)
 	{
+		if (this->checkCGI(client, requestedURL))
+			return (true); 
 		client.setPathFile
 		(
 			static_cast<std::string>(this->_root) +
 			static_cast<std::string>(requestedURL)
 		);
 		std::cout << BLUE << std::endl;
-		client.setLocation(this);
+		client.setConfigElement(this);
 		client.setDefaultHttpResponse(OK);
 		if (this->getRedirection().size() > 0)
 		{
@@ -399,6 +402,19 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 	}
 	std:: cout << TUR << "bestlocation: " << END << this->getPath()<<  std::endl;
 	return true;
+}
+
+bool	ConfigLocation::checkCGI(Client &client, Path& requestedURL)
+{
+	std::list<ConfigCgi>::const_iterator cgi;
+
+	for(cgi = this->getCgis().begin(); cgi != this->getCgis().end(); cgi++)
+	{
+		if (cgi->prepareClient4ResponseGeneration(client, requestedURL))	
+			return (true);
+
+	}
+	return (false);
 }
 
 //std::list<ConfigLocation>::iterator ConfigLocation::getBestLocation(Path requestedURL,

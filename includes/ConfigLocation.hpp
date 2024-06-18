@@ -64,12 +64,14 @@ class ConfigLocation: public ConfigElement
 		Path							getRoot(void) const;
 		bool							getDirListing(void) const;
 		std::list<std::string>			getIndex(void) const;
-		std::list<ConfigCgi>			getCgis(void) const;//*
+		const std::list<ConfigCgi>			&getCgis(void) const;//*
 		std::list<ConfigLocation>		getLocations(void) const;
-		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);
-		void							recursivePrint(int recursiveLvl);
 		std::map<int, Path>				getMapErrorPages(void) const;
 		Path							const getErrorPages(const int searchError) const;
+
+		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);
+		bool							checkCGI(Client &client, Path& requestedURL);
+		void							recursivePrint(int recursiveLvl);
 
 		static std::list<ConfigLocation>::iterator getBestLocation(Path requestedURL,
 			std::string							method,

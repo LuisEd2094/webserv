@@ -19,9 +19,11 @@ ConfigCgi::ConfigCgi(const ConfigCgi& obj)
     *this = obj;
 }
 
-bool ConfigCgi::prepareClient4ResponseGeneration(Client& client)
+bool ConfigCgi::prepareClient4ResponseGeneration(Client& client, Path &requestedUrl) const
 {   
-	std::cout << "Preparing client on request" << client.getURL() << std::endl;	
+    if (requestedUrl.getExtension() != this->getExtension())
+        return (false);
+    client.setResponseType(CGI_OBJ);
     return true;
 }
 
