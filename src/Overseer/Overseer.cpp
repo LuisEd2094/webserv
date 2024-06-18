@@ -5,6 +5,7 @@ std::size_t Overseer::_i = 0;
 std::size_t Overseer::_fd_count = 0;
 bool Overseer::canContinue = true;
 std::map<int, BaseHandler *> Overseer::_pending_fds;
+deletedFiles Overseer::files; 
 
 struct pollfd  Overseer::_pfds[MAX_FDS];
 
@@ -146,4 +147,25 @@ bool Overseer::handleAction(BaseHandler *obj, int event)
     obj->setTime();
     return true;
 
+}
+
+
+void            Overseer::addToDeleted(const std::string& path)
+{
+    if (!files.addToDelete(path))
+    {
+        std::cerr << "Couldn't add to deleted files " + path + ". Path still available for use." << std::endl;
+    }
+}
+void            Overseer::removeFromDeleted(const std::string& path)
+{
+    if (!files.removeFromDeleted(path))
+    {
+        std::cerr << "File was not removed from deleted because it was not in list: " + path << std::endl;
+    }
+
+}
+bool            Overseer::checkIfDeleted(const std::string& path)
+{
+    return (files.checkIfDeleted(path));
 }

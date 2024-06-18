@@ -456,7 +456,8 @@ void Client::parseForHttp()
         }
         else if (_action == DELETE)
         {
-            
+            Overseer::addToDeleted(getPathFileString());
+            resetClient(false);
         }
         else 
         {

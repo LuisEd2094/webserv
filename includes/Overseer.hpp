@@ -24,6 +24,11 @@ class Overseer
         static  bool    addCGIInPipe(BaseHandler *, int);
         static  void    removeInCGIPipe(int fd);
 
+        static  void            addToDeleted(const std::string&);
+        static  void            removeFromDeleted(const std::string&);
+        static  bool            checkIfDeleted(const std::string&);
+        static  deletedFiles    files; 
+
 
         static  void    setListenAction(int, int);
 
@@ -39,7 +44,6 @@ class Overseer
         static  void    mainLoop();
         static  bool    canContinue;
 
-        static  deletedFiles files; 
     private:
         Overseer();
         ~Overseer();
