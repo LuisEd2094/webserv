@@ -92,9 +92,9 @@ ErrorCodes                      Client::getErrorCode() const
 }
 
 //std::map<int, Path> * CLient::getErrorPages(void) const
-ConfigLocation *           Client::getLocation(void) const
+const ConfigElement *           Client::getConfigElement(void) const
 {
-    return this->_location;
+    return this->_configElement;
 }
 
 

@@ -36,6 +36,18 @@ Path &Path::operator=(const Path &orig)
     return *this;
 }
 
+std::string Path::getExtension(void)
+{
+    std::string last = this->directories.back();
+    std::list<std::string>   splited = ft_split(last, '.');
+    if (splited.size() == 1)  // sdaf/fasd
+        return ("");
+    if (splited.size() == 2 && splited.front() == "") 
+        return ("");
+    else 
+        return ("." + splited.back());
+}
+
 void Path::popBegin(int ammount)
 {
     std::cout << "          POPING " << ammount << std::endl;

@@ -28,20 +28,21 @@ class Path
 		operator std::string();
 		~Path();	
 
-		int		size() { return directories.size(); };	
-		void	setIsRelative(bool v) { isRelative = v; };
-		void	setIsFile(bool v) { isFile = v; };
-		bool	getIsRelative(void) const { return isRelative; };
-		bool	getIsFile(void) const { return isFile; };
+		int				size() { return directories.size(); };	
+		void			setIsRelative(bool v) { isRelative = v; };
+		void			setIsFile(bool v) { isFile = v; };
+		bool			getIsRelative(void) const { return isRelative; };
+		bool			getIsFile(void) const { return isFile; };
+		std::string		getExtension(void);
 
-		void	popBegin(int ammount);
-		void	append(Path tail);
-		int		normalize(void);
-		bool	includes(const Path &compPath) const;
-		bool	included(const Path &compPath) const;
+		void			popBegin(int ammount);
+		void			append(Path tail);
+		int				normalize(void);
+		bool			includes(const Path &compPath) const;
+		bool			included(const Path &compPath) const;
 
-		bool	assertFileExists(void) const;
-		bool	assertDirExists(void) const;
+		bool			assertFileExists(void) const;
+		bool			assertDirExists(void) const;
 
 	class InvalidPathException: public std::exception
 	{

@@ -94,7 +94,7 @@ void Client::addURLRedirection(const std::string& url)
     _redirection_urls.push(url);
 }
 
-void Client::setLocation(ConfigLocation* location) 
+void Client::setConfigElement(const ConfigElement* configElement) 
 {
-    this->_location = location;
+    this->_configElement = configElement;
 }
