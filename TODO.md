@@ -31,7 +31,7 @@
 - Si es Max HTTP cerramos conexion
 - Else, damos respuesta con codigo de error, y la siguiente la tomamos como una petecion nueva, si nos mandaran el Body porque USER IS STUPID entonces parseer daria error.
 
-8. MaxHeaderSize o MaxBody error == 413 Payload TOO large
+8. MaxHeaderSize o MaxBody error == 413 Payload TOO large //jrenau
 9. BONUS COOKIES
    - En el config ponemos algo estilo if ($cookies) para identificar que el server debe de verificar el contenido de cookies en esta conexion. De esta forma podemos retornar diferentes htmls dependiendo de configuracion de lang
    - Se puede colocar una directiva de set_header Cookie + variable name? 
@@ -48,6 +48,10 @@
 12. ~~The CGI should be run in the correct directory for relative path file access.~~
 
 13. ~~Si server{} block no tiene serverName, entonces el serverName == Host~~
+
+14. Check Method and return correct error code //jrenau
+15. Url completo //jrenau
+
 
 [CGI info](https://datatracker.ietf.org/doc/html/rfc3875#page-4)
 
