@@ -7,9 +7,18 @@
 # include <Aux.hpp>
 # include <vector>
 
+enum RedirectionCodes
+{
+    /* 3xx */
+    MULTIPLE_CHOICES, //300
+    MOVED_PERMANENTLY,
+    FOUND,
+    SEE_OTHER,
+    USE_PROXY,
+    TEMPORARY_REDIRECT
+};
 
-
-enum ErrorCodes
+enum ResponseCodes
 {
     INVALID_CODE,
     /*1xx*/
@@ -168,7 +177,7 @@ typedef struct Responses
 } Responses;
 
 
-typedef std::map<ErrorCodes, Responses > responsesMap;
+typedef std::map<ResponseCodes, Responses > responsesMap;
 
 
 typedef struct defaultResponse
@@ -178,7 +187,7 @@ typedef struct defaultResponse
     defaultResponse(const Responses&);
 } defaultResponse;
 
-typedef std::map<ErrorCodes, defaultResponse > defaultResponsesMap; 
+typedef std::map<ResponseCodes, defaultResponse > defaultResponsesMap; 
 
 // One to create HTTP and add size from body
 // One to create both HTTP and BODY if none is provided in config
@@ -187,19 +196,19 @@ class Response
 {
     public:
         static void initDefaultMap();
-        static const defaultResponse& getDefault(ErrorCodes code, const std::string& body);
-        static const defaultResponse& getDefault(ErrorCodes code);
-        static const std::string& getHttpFirtsLine(ErrorCodes code);
+        static const defaultResponse& getDefault(ResponseCodes code, const std::string& body);
+        static const defaultResponse& getDefault(ResponseCodes code);
+        static const std::string& getHttpFirtsLine(ResponseCodes code);
         static void initErrorsHttp();
         static void initErrorsMap();
-        static  ErrorCodes getErrorCodeFromInt(int);
+        static  ResponseCodes getErrorCodeFromInt(int);
 
     private:
         static void createDefaultResponses();
         static responsesMap defaults;
         static defaultResponsesMap defaultResponses;
         static std::vector<std::string>    _vectorError;
-        static std::map<int, ErrorCodes>    _mapError;
+        static std::map<int, ResponseCodes>    _mapError;
 
 };
 

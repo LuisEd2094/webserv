@@ -42,7 +42,7 @@ class Client : public BaseHandler
         void                addHeader(const std::queue<std::string> &);
         void                addURLRedirection(const std::string&);
         void                addObject(BaseHandler *);
-        void                addClosingErrorObject(ErrorCodes);
+        void                addClosingErrorObject(ResponseCodes);
 
         void                setHttpAnswerDirectory(std::string value);
         void                setdefaultResponse(const defaultResponse& response, BaseHandler*);
@@ -50,7 +50,7 @@ class Client : public BaseHandler
         void                setBodyResponse(const std::string &message, BaseHandler*);
         void                setResponseType(ObjectTypes );
         void                setPathFile(const Path&);
-        void                setDefaultHttpResponse(ErrorCodes);
+        void                setDefaultHttpResponse(ResponseCodes);
         void                setConfigElement(const ConfigElement *);
         void                setExecute(const Path& execute);
 
@@ -77,7 +77,7 @@ class Client : public BaseHandler
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
         const std::string&              getDefaultHttpResponse(void) const;
-        ErrorCodes                      getErrorCode() const; 
+        ResponseCodes                      getErrorCode() const; 
         const ConfigElement *           getConfigElement() const;
         const Path&                     getExecute() const;
 
@@ -94,7 +94,7 @@ class Client : public BaseHandler
         std::map< BaseHandler *,  RequestHandler *> _response_objects_map;
         Parsing                 _parser_http;
         Actions                 _action;
-        ErrorCodes              _error_code;
+        ResponseCodes              _error_code;
         Path                    _execute;
 
         int                         _result;
@@ -124,7 +124,7 @@ class Client : public BaseHandler
         bool                    _error;
         void                    readFromFD();
         void                    processChunk();
-        void                    addClosingError(ErrorCodes);
+        void                    addClosingError(ResponseCodes);
         void                    resetClient(bool);
         int                     sendResponse();
         void                    handlerRecv();

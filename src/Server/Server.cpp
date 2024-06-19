@@ -145,7 +145,7 @@ bool Server::prepareClient4ResponseGeneration(Client& client)
 }
 
 
-const defaultResponse& Server::getErrorResponseObject(ErrorCodes code)
+const defaultResponse& Server::getErrorResponseObject(ResponseCodes code)
 {
     // check code against files in config
     // else returns default error

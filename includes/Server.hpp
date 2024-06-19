@@ -36,7 +36,7 @@ class Server : public BaseHandler
         bool validateAction(Client& client);
         bool prepareClient4ResponseGeneration(Client& client);
         bool checkObjTimeOut();
-        const defaultResponse& getErrorResponseObject(ErrorCodes);
+        const defaultResponse& getErrorResponseObject(ResponseCodes);
         std::list<ConfigVirtualServer>         virtualServers; // TODO wolud be nice if it was private
 
     private:

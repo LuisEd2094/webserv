@@ -102,7 +102,7 @@ int Client::Action(int event)
     return _result;
 }
 
-void    Client::addClosingError(ErrorCodes error)
+void    Client::addClosingError(ResponseCodes error)
 {
     /*This functions adds the error object to the queue and sets the client to a state
         where it'd close the connection after finishing ending the queue */
@@ -113,7 +113,7 @@ void    Client::addClosingError(ErrorCodes error)
     Overseer::setListenAction(_fd, JUST_OUT);
 }
 
-void    Client::addClosingErrorObject(ErrorCodes error)
+void    Client::addClosingErrorObject(ResponseCodes error)
 {
     addClosingError(error);
 }
@@ -221,7 +221,7 @@ void Client::readFromFD()
                         */
                         if (parser_method != WARNING)
                         {
-                            addClosingError(ErrorCodes(parser_method));
+                            addClosingError(ResponseCodes(parser_method));
                             // if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
                             // {
                             //     addClosingError(BAD_REQUEST);
@@ -247,7 +247,7 @@ void Client::readFromFD()
                     else if (parsingMessage) // parsingHeader returns something different to warning when error
                     {
 
-                        addClosingError(ErrorCodes(parsingMessage));
+                        addClosingError(ResponseCodes(parsingMessage));
                         break ;
                             if (parsingMessage == ERROR_FORMAT)
                             {

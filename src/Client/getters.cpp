@@ -86,7 +86,7 @@ const std::string& Client::getDefaultHttpResponse(void) const
     return (this->_defaultHttp);
 }
 
-ErrorCodes                      Client::getErrorCode() const
+ResponseCodes                      Client::getErrorCode() const
 {
     return _error_code;
 }

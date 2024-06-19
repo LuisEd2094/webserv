@@ -271,3 +271,14 @@ std::list<std::string> ft_split(const std::string& str, char delimiter)
         list.push_back(word);
     return (list);
 }
+
+std::list<Path> ft_splitPath(const std::string& str, char delimiter)
+{
+    std::list<Path> list;
+    std::istringstream input(str);
+    std::string word;
+    
+    while (std::getline(input, word, delimiter))
+        list.push_back(word);
+    return (list);
+}

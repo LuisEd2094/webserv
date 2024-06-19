@@ -46,6 +46,7 @@
 # include <vector>
 # include <Response.hpp>
 # include <Uri.hpp>
+# include <Path.hpp>
 
 /******************************************************************************/
 /*                            MACROS                                          */
@@ -214,4 +215,5 @@ class Parsing
 };
 
 std::list<std::string> ft_split(const std::string& str, char delimiter);
+std::list<Path> ft_splitPath(const std::string& str, char delimiter);//crear template
 #endif
