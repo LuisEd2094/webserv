@@ -35,7 +35,8 @@ class CGI::CGIException : public std::exception
 
 
 
-CGI::CGI(Client& client) :  _client_fd(client.getFD()), 
+CGI::CGI(Client& client) :  BaseHandler(client),
+                            _client_fd(client.getFD()), 
                             _defaultHttp(client.getDefaultHttpResponse()),
                             _body(client.getBody()),
                             _len(client.getContentLength()),

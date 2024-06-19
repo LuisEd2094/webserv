@@ -50,8 +50,6 @@ class Server : public BaseHandler
         */
         
         Server();      
-        Server(const Server& rhs );
-        Server& operator=(const Server& rhs);
 
         void    initSocket();
 

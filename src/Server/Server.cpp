@@ -218,5 +218,3 @@ std::ostream &operator<<(std::ostream &os,  Server &obj)
 //Private Methods
 
 Server::Server(){}      
-Server::Server(const Server& rhs ) { *this = rhs; }
-Server& Server::operator=(const Server& rhs) {(void)rhs; return *this;}

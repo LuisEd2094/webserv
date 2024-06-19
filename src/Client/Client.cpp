@@ -556,6 +556,28 @@ int Client::sendResponse()
 }
 
 
+
+
+BaseHandler* Client::getErrorResponse(ErrorCodes code)
+{
+    /*Every Error we send should pass through here, if anyone that's NOT the client calls this function
+    they should set _configElement to their respective configElement*/
+    const ConfigLocation* location = dynamic_cast<const ConfigLocation *>(_configElement);
+    const std::string& errr = location->getErrorPage(code);
+    if (!errr.empty())
+    {
+        _response_type = FILE_OBJ;
+        _defaultHttp = Response::getHttpFirtsLine(code);
+        _path_to_file_str = errr;
+        return BaseHandler::createObject(*this);
+    }
+    else
+    {
+        return BaseHandler::createObject(Response::getDefault(code));
+    }  
+}
+
+
 void Client::makeChildrenToRespond()
 {
     BaseHandler *response;
@@ -566,22 +588,23 @@ void Client::makeChildrenToRespond()
             location should have info about errors
         */
         if (_response_type == NOT_SET || (_action != DELETE && Overseer::checkIfDeleted(getPathFileString())))
-            response =  BaseHandler::createObject(_server->getErrorResponseObject(NOT_FOUND));
+        {
+
+            response = getErrorResponse(NOT_FOUND);
+/*          response =  BaseHandler::createObject(_server->getErrorResponseObject(NOT_FOUND));*/
+        }
         else
             response = BaseHandler::createObject(*this);
     }
     catch(const std::exception& e)
     {
-        std::cerr << "queso----------------<" << std::endl;
+        /*Leave this one as the the default answer, if file reader tries to open a file to give an answer
+            (INTERNAL_SERVER_ERROR) and it fails, then it should just go to the default
+            FD_READER throws exception in case OPEN fails
+        */
         response = BaseHandler::createObject(_server->getErrorResponseObject(INTERNAL_SERVER_ERROR));
     }
     std::queue<std::string> queue;
-/* 
-    const ConfigCgi* location = dynamic_cast<const ConfigCgi *>(_configElement);
-
-    (void)location;
- */
-    //Path error =  ->getErrorPages(NOT_FOUND);
     queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10; Domain: ") + getHost()  + "Path: /" + CRNL);
 
     addHeader(queue);
@@ -672,8 +695,6 @@ bool Client::checkObjTimeOut()
 
 //private:
 Client::Client () {}
-Client::Client (const Client& rhs) {*this = rhs;}
-Client& Client::operator= (const Client& rhs) {(void)rhs; return *this;}
 
 
 

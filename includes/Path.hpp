@@ -34,6 +34,7 @@ class Path
 		void			setIsFile(bool v) { isFile = v; };
 		bool			getIsRelative(void) const { return isRelative; };
 		bool			getIsFile(void) const { return isFile; };
+		const std::string &getErrorPage(void) const {return directories.front();};
 		std::string		getExtension(void);
 
 		void			popBegin(int ammount);

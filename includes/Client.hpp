@@ -44,6 +44,9 @@ class Client : public BaseHandler
         void                addObject(BaseHandler *);
         void                addClosingErrorObject(ErrorCodes);
 
+        BaseHandler*        getErrorResponse(ErrorCodes code);
+
+
         void                setHttpAnswerDirectory(std::string value);
         void                setdefaultResponse(const defaultResponse& response, BaseHandler*);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
@@ -87,7 +90,6 @@ class Client : public BaseHandler
 
 
     private:
-		const ConfigElement			    			*_configElement;
         std::queue< std::string>                    _http_addons;
         std::stack< std::string>                    _redirection_urls;
         std::queue< RequestHandler *>               _response_objects_queue;
@@ -156,8 +158,7 @@ class Client : public BaseHandler
         Server *                _server;
         ConfigVirtualServer*    _virtualServer;
         Client ();
-        Client (const Client& rhs);
-        Client& operator= (const Client& rhs);
+
 };
 
 

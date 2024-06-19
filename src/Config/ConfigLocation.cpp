@@ -242,6 +242,9 @@ void	ConfigLocation::setErrorPages(std::string errors)
 	{
 		std::string ErrorKey = ::getKey(*i, '-');
 		std::string ErrorValue =  ::getValue(*i, '-');
+
+		if (ErrorKey == "ERROR" or ErrorValue == "ERROR")
+			throw ParamError(std::string("Error: invalid Error page Code: all"));
 		bool isNum = true;
 		for (size_t i = 0; i < ErrorKey.length() && isNum; i++)
 			isNum = std::isdigit(ErrorKey[i]);
@@ -486,10 +489,24 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 	bestLocation->prepareClient4ResponseGeneration(client, requestedURL);
 	return (true);
 }
+const std::string ConfigLocation::getErrorPage(ErrorCodes err) const
+{
+	Path pathy_pathon;
 
+	try
+	{
+		pathy_pathon = _errorPages.at(err);
+	}
+	catch (...)
+	{
+		return (""); 
+	}
+	return (std::string)this->_root + ((std::string)pathy_pathon).erase(0, 1);
+}
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)
 {
 	os << "ConfigLocation (" << obj.getPath() << "): " << std::endl;
 //	os << "  errorPage: " << obj.getErrorPage() << std::endl;
 	return os;
 }
+

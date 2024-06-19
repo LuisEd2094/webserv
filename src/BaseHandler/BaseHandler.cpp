@@ -19,6 +19,11 @@ void    BaseHandler::setTime()
 
 }
 
+BaseHandler::BaseHandler(const BaseHandler& obj) : _configElement(obj._configElement)
+{
+
+}
+
 const std::string dirList(const std::string& dir_str)
 {
 	DIR				*dir;
@@ -94,6 +99,11 @@ BaseHandler* BaseHandler::createObject(const defaultResponse & obj)
     // it needs a HTTP and Body string to create it. 
     return DirectResponse::createNewDirect(obj._http, obj._body);
 
+}
+
+const ConfigElement* BaseHandler::getConfigElement()
+{
+    return _configElement;
 }
 
 bool    BaseHandler::checkTimeOut()

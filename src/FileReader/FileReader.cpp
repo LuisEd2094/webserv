@@ -36,14 +36,14 @@ const std::string& FileReader::getMimeType(const std::string& to_find)
 }
 
 
-FileReader::FileReader(Client& client) : _client_fd(client.getFD()), _defaultHttp(client.getDefaultHttpResponse())
+FileReader::FileReader(Client& client) : BaseHandler(client),  _client_fd(client.getFD()), _defaultHttp(client.getDefaultHttpResponse())
 {
-    _fd = open(static_cast<std::string>(const_cast<Path&>(client.getPathFile())).c_str(), O_RDONLY);
-    std::size_t start_ext = client.getURL().find_last_of(".");
+    _fd = open(client.getPathFileString().c_str(), O_RDONLY);
+    std::size_t start_ext = client.getPathFileString().find_last_of(".");
     
     if (start_ext != std::string::npos)
     {
-        _file_type = getMimeType(client.getURL().substr(start_ext + 1, client.getURL().length()));
+        _file_type = getMimeType(client.getPathFileString().substr(start_ext + 1, client.getPathFileString().length()));
     }
     if (_fd == -1)
     {
