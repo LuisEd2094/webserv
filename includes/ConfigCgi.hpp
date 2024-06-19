@@ -18,6 +18,7 @@ class ConfigCgi: public ConfigElement
 		std::string							extension;
 		std::map<std::string, std::string>	metaVar;
 		Path								execute;
+		Path								root;
 
 	public:
 
@@ -32,12 +33,15 @@ class ConfigCgi: public ConfigElement
 		void setExtension(std::string &extension);
 		void setMetaVar(std::string &metaVar);
 		void setExecute(std::string &execute);
+		void setRoot(Path &root) {this->root = root;};
 
 
 		std::string get__elemType__(void) const {return this->__elemArgument__;};
 		std::string get__elemArgument__(void) const {return this->__elemArgument__;};
 		std::string getExtension(void) const;
 		Path		getExecute(void) const;
+		const Path		&getRoot(void) const {return (this->root);};
+		const std::string getRootAsString(void) const { return((const std::string)this->root);};
 		const std::map<std::string, std::string> &getMetaVar(void) const;
 
 		bool prepareClient4ResponseGeneration(Client& client, Path &requestedUrl) const;

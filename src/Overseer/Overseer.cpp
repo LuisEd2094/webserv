@@ -50,7 +50,7 @@ void Overseer::removeFromPFDS(BaseHandler *obj)
     _fd_count--;
     _i--;
     _pending_fds.erase(obj->getFD());
-    std::cout << "I removed someone" << std::endl;
+    std::cerr << "I removed someone" << std::endl;
     delete obj;
 }
 
@@ -138,7 +138,7 @@ bool Overseer::handleAction(BaseHandler *obj, int event)
     if (status == 0 || status == -1)
     {
         if (status == 0)
-            std::cout << obj->getFD() << " closed connection" << std::endl;
+            std::cerr << obj->getFD() << " closed connection" << std::endl;
         else
             std::cerr << "error: " << static_cast<std::string>(strerror(errno)) << std::endl;
         removeFromPFDS(obj); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase

@@ -17,7 +17,7 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 	{
 		this->locations.push_back(ConfigLocation(*location));
 	}
-	std::cout <<"d";
+	std::cerr <<"d";
 }
 
 void ConfigVirtualServer::parseKeyVal(std::string key, std::string val)
@@ -124,12 +124,12 @@ void ConfigVirtualServer::recursivePrint()
 
 void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 {
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "::: VirtualServer ::: " << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "::: VirtualServer ::: " << std::endl;
 	recursiveLvl++;
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "ServerNames: " <<  containerToString(this->getServerNames()) << std::endl;
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "maxBodySize: " << this->getMaxClientBodySize() << std::endl;
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "errorPage: " << this->getErrorPage() << std::endl;
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "Locations(" << this->locations.size() << "):" << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "ServerNames: " <<  containerToString(this->getServerNames()) << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "maxBodySize: " << this->getMaxClientBodySize() << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "errorPage: " << this->getErrorPage() << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "Locations(" << this->locations.size() << "):" << std::endl;
 	for (std::list<ConfigLocation>::iterator loc = this->locations.begin(); loc != this->locations.end();loc++)
 	{
 		loc->recursivePrint(recursiveLvl);
@@ -138,16 +138,16 @@ void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 
 bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 {
-	std::cout << "::: ConfigVIrtualServer::prepareClient4ResponseGeneration" << std::endl;
-	std::cout << "::: " << client.getHost() << std::endl;
+	std::cerr << "::: ConfigVIrtualServer::prepareClient4ResponseGeneration" << std::endl;
+	std::cerr << "::: " << client.getHost() << std::endl;
 	std::list<std::string>::iterator server_name;
 
-	std::cout << RED << "client.getHost():" << END << client.getHost() << std::endl;
+	std::cerr << RED << "client.getHost():" << END << client.getHost() << std::endl;
 	server_name = std::find(this->serverNames.begin(), this->serverNames.end(), client.getHost());
 	if (server_name == this->serverNames.end())
 	{
-		std::cout << YELLOW << "client name should be " << END << client.getHost() << std::endl;
-		std::cout << TUR << *this->getLocations().begin() << std::endl;
+		std::cerr << YELLOW << "client name should be " << END << client.getHost() << std::endl;
+		std::cerr << TUR << *this->getLocations().begin() << std::endl;
 		
 		return (false);
 	}
@@ -155,7 +155,7 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
  ////
 	//return  ConfigLocation::getBestLocation(client.getURL(), client.getMethod(), 
 	Path url(client.getURL());
-	std::cout << "len locations" << this->locations.size() << std::endl;
+	std::cerr << "len locations" << this->locations.size() << std::endl;
 	return  ConfigLocation::getBestLocation(
 		client, Path(client.getURL()),
 //		client, url,

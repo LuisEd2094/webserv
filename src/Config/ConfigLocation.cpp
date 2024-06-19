@@ -46,6 +46,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	)
 	{
 		this->_cgis.push_back(ConfigCgi(*cgi));
+		this->_cgis.back().setRoot(this->_root);
 	}
 }
 
@@ -87,6 +88,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	)
 	{
 		this->_cgis.push_back(ConfigCgi(*cgi));
+		this->_cgis.back().setRoot(this->_root);
 	}
 }
 
@@ -300,28 +302,28 @@ std::ostream &operator<<(std::ostream &os,  std::list<std::string> &listObj)
 
 void ConfigLocation::recursivePrint(int recursiveLvl)
 {
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->_path << ")" << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->_path << ")" << std::endl;
 	recursiveLvl++;
 
-	std::cout << ConfigElement::genSpace(recursiveLvl) ;
-	std::cout << "Methods: " << this->_methods << std::endl;
-	std::cout << ConfigElement::genSpace(recursiveLvl) ;
-	std::cout << "Root: " << this->_root << std::endl;
-	std::cout << ConfigElement::genSpace(recursiveLvl) ;
-	std::cout << "Index: " << this->_index << std::endl;
-	std::cout << ConfigElement::genSpace(recursiveLvl) ;
-	std::cout << "Redirection: " << this->_redirection << std::endl;
-	std::cout << ConfigElement::genSpace(recursiveLvl) ;
-	std::cout << "Error page: " << this->_errorPage << std::endl;
-	std::cout << ConfigElement::genSpace(recursiveLvl) ;
-	std::cout << "Dir listing: " << this->_dirListing << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
+	std::cerr << "Methods: " << this->_methods << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
+	std::cerr << "Root: " << this->_root << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
+	std::cerr << "Index: " << this->_index << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
+	std::cerr << "Redirection: " << this->_redirection << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
+	std::cerr << "Error page: " << this->_errorPage << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
+	std::cerr << "Dir listing: " << this->_dirListing << std::endl;
 
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "Locations(" << this->_locations.size() << "):" << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "Locations(" << this->_locations.size() << "):" << std::endl;
 	for (std::list<ConfigLocation>::iterator loc = this->_locations.begin(); loc != this->_locations.end();loc++)
 	{
 		loc->recursivePrint(recursiveLvl);
 	}
-	std::cout << ConfigElement::genSpace(recursiveLvl) << "CGIS(" << this->_cgis.size() << "):" << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "CGIS(" << this->_cgis.size() << "):" << std::endl;
 	for (std::list<ConfigCgi>::iterator cgi = this->_cgis.begin(); cgi != this->_cgis.end();cgi++)
 	{
 		cgi->recursivePrint(recursiveLvl);
@@ -335,7 +337,7 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 {
 	bool inBestLocation;
 
-	std::cout << "::: ConfigLocation::prepareClient4ResponseGeneration " << this->getPath() << std::endl;
+	std::cerr << "::: ConfigLocation::prepareClient4ResponseGeneration " << this->getPath() << std::endl;
 	std::string url = client.getURL() ;
 
 	inBestLocation = !ConfigLocation::getBestLocation( client, requestedURL,
@@ -352,7 +354,7 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			static_cast<std::string>(this->_root) +
 			static_cast<std::string>(requestedURL)
 		);
-		std::cout << BLUE << std::endl;
+		std::cerr << BLUE << std::endl;
 		client.setConfigElement(this);
 		client.setDefaultHttpResponse(OK);
 		if (this->getRedirection().size() > 0)
@@ -366,40 +368,40 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		{
 			if (client.getPathFile().assertFileExists())
 			{
-				std::cout << "return file" << std::endl;
+				std::cerr << "return file" << std::endl;
 				client.setResponseType(FILE_OBJ);
 			}
 			else if (this->_dirListing && client.getPathFile().assertDirExists())
 			{
-				std::cout << "should be file return file" << std::endl;
+				std::cerr << "should be file return file" << std::endl;
 				client.setResponseType(DIR_OBJ);
 			}
 			else
 			{
 				/*This doesn't get here if I do index and it doesnt find it?*/
-				std::cout << "unable to serve file" << std::endl;
+				std::cerr << "unable to serve file" << std::endl;
 				client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
 			}
 		}
 		else if (this->_dirListing && client.getPathFile().assertDirExists())	
 		{
-			std::cout << "returning direcotry" << std::endl;
+			std::cerr << "returning direcotry" << std::endl;
 			client.setResponseType(DIR_OBJ);
 		}
 		else 
 		{
-			std::cout << "unable to serve directory" << std::endl;
+			std::cerr << "unable to serve directory" << std::endl;
 			client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
 		}
-		std::cout << END << std::endl;
-		std::cout << "      BINGO !!!" << std::endl;
-		std::cout << "      Cient  URL: " << client.getURL() << std::endl;
-		std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
-		std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
-		std::cout << "      Path file: " << client.getPathFile()<< std::endl;;
-		std::cout << std::endl;
+		std::cerr << END << std::endl;
+		std::cerr << "      BINGO !!!" << std::endl;
+		std::cerr << "      Cient  URL: " << client.getURL() << std::endl;
+		std::cerr << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
+		std::cerr << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
+		std::cerr << "      Path file: " << client.getPathFile()<< std::endl;;
+		std::cerr << std::endl;
 	}
-	std:: cout << TUR << "bestlocation: " << END << this->getPath()<<  std::endl;
+	std:: cerr << TUR << "bestlocation: " << END << this->getPath()<<  std::endl;
 	return true;
 }
 
@@ -411,11 +413,11 @@ bool	ConfigLocation::checkCGI(Client &client, Path& requestedURL)
 	{
 		if (cgi->prepareClient4ResponseGeneration(client, requestedURL))	
 		{
-			std::cout << "Returning a CGI: " << std::endl;
-			std::cout << "      Cient  URL: " << client.getURL() << std::endl;
-			std::cout << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
-			std::cout << "      Path file: " << client.getPathFile() << std::endl;
-			std::cout << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
+			std::cerr << "Returning a CGI: " << std::endl;
+			std::cerr << "      Cient  URL: " << client.getURL() << std::endl;
+			std::cerr << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
+			std::cerr << "      Path file: " << client.getPathFile() << std::endl;
+			std::cerr << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
 
 			return (true);
 		}
@@ -440,10 +442,10 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 	std::list<std::string>				locMethods ;
 	std::list<ConfigLocation>::iterator	bestLocation = endLocation;
 	int									maxDirMatches = 0;
-	std::cout << "··· getBestLocation " << requestedURL << std::endl;
+	std::cerr << "··· getBestLocation " << requestedURL << std::endl;
 	while (beginLocation != endLocation)
 	{
-		std::cout << "      Location " << *beginLocation ;
+		std::cerr << "      Location " << *beginLocation ;
 		locMethods = beginLocation->getMethods();
 		/*
 		if (locMethods.size() == 0)
@@ -453,20 +455,20 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 		}
 		*/
 		Path temp = beginLocation->getPath();
-		std::cout << temp.included(requestedURL) << std::endl
+		std::cerr << temp.included(requestedURL) << std::endl
 			<< (std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()) << std::endl
 			<< (temp.size() > maxDirMatches) <<	std::endl;
 		if (locMethods.size() == 0)
-			std::cout << RED << "location with no methods" << std::endl;
+			std::cerr << RED << "location with no methods" << std::endl;
 		else if (temp.included(requestedURL)
 			&& std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()
 			&& temp.size() >= maxDirMatches) 	
 		{
 			maxDirMatches = temp.size();
 			bestLocation = beginLocation;
-			std::cout << "  MATCHED" ;
+			std::cerr << "  MATCHED" ;
 		}
-		std::cout << std::endl;
+		std::cerr << std::endl;
 		beginLocation++ ;
 	}
 	//return bestLocation;
@@ -474,10 +476,10 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 		return false;
 
 //	Path nextURL(client.getURL());
-	std::cout << "      Before pop: " << bestLocation->size() << " " << requestedURL << std::endl;
+	std::cerr << "      Before pop: " << bestLocation->size() << " " << requestedURL << std::endl;
 	requestedURL.popBegin(bestLocation->size());
-/* 	std::cout << "      After pop: " << requestedURL << std::endl;
-	std::cout << "      First nested location: " << *bestLocation->_locations.begin() << std::endl; */
+/* 	std::cerr << "      After pop: " << requestedURL << std::endl;
+	std::cerr << "      First nested location: " << *bestLocation->_locations.begin() << std::endl; */
 	bestLocation->prepareClient4ResponseGeneration(client, requestedURL);
 	return (true);
 }

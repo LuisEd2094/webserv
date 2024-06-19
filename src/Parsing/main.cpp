@@ -154,6 +154,11 @@ void extensionTests(void)
 	testExtension("asloEmpty/.wololo.ext.");
 	testExtension("asloEmpty/wololo.ext..");
 	testExtension("asloNOTEmpty/wololo..ext");
+
+	std::cout << "testing with nothing" << std::endl;
+	testExtension("");
+	std::cout << "testing with /" << std::endl;
+	testExtension("/");
 }
 
 int  main(void)

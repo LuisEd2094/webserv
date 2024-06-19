@@ -51,8 +51,6 @@ CGI::CGI(Client& client) :  _client_fd(client.getFD()),
         close(_out_pipe[1]);
         throw CGIException(strerror(errno));
     }
-    //std::string len = std::string("CONTENT_LENGTH=" + toString(client.getContentLength())).c_str();
-
     _pid = fork();
     if (_pid == -1)
     {
@@ -60,32 +58,16 @@ CGI::CGI(Client& client) :  _client_fd(client.getFD()),
     }
     if (_pid == 0)
     {
-		close(_out_pipe[0]);
-		dup2(_out_pipe[1], STDOUT_FILENO);
-
-        if (!_body.empty())
-        {
-            close(_in_pipe[1]);
-		    dup2(_in_pipe[0], STDIN_FILENO);
-        }
-        std::string pathFile = static_cast<std::string>(const_cast<Path&>(client.getPathFile()));
-        std::size_t pos = pathFile.find_last_of("/");
-        std::string new_path;
-        /*If pos == 0 then path is in root, so we can't do a substr*/
-        if (pos != 0)
-        {
-            new_path = pathFile.substr(0, pos);
-        }
-        else
-        {
-            new_path = "/";
-        }
-        chdir(new_path.c_str());
+        std::string file = client.getPathFile().getFile();
+        std::string exec = client.getExecute();
+        std::string dir  = client.getPathFile().getDir();
+        chdir(dir.c_str());
         char* argv[3];
-        argv[0] = const_cast<char*>("/usr/bin/python3");
-        argv[1] = const_cast<char*>(pathFile.c_str());
+        argv[0] = const_cast<char*>(exec.c_str());
+        argv[1] = const_cast<char*>(file.c_str());
         argv[2] = NULL;
-        /*should be a vector?*/
+
+
 
         std::string query = "QUERY_STRING=" + client.getMapValue("__Query__");
         char *env[3];
@@ -100,7 +82,15 @@ CGI::CGI(Client& client) :  _client_fd(client.getFD()),
         else
             env[1] = NULL;
         env[2] = NULL;
-        execve("/usr/bin/python3", argv, env);
+
+		close(_out_pipe[0]);
+		dup2(_out_pipe[1], STDOUT_FILENO);
+        if (!_body.empty())
+        {
+            close(_in_pipe[1]);
+		    dup2(_in_pipe[0], STDIN_FILENO);
+        }
+        execve(exec.c_str(), argv, env);
         std::exit(-1);
     }
 	close(_out_pipe[1]);

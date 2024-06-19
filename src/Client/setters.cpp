@@ -98,3 +98,8 @@ void Client::setConfigElement(const ConfigElement* configElement)
 {
     this->_configElement = configElement;
 }
+
+void Client::setExecute(const Path& execute) 
+{
+    _execute = execute;
+}

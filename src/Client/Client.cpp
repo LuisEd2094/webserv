@@ -43,7 +43,7 @@ Client::Client(Server *server) : BaseHandler()
               << static_cast<int>(bytes[0]);
 
     std::string ip_str = ip_stream.str();
-    std::cout << "Connected IP: " << ip_str << std::endl;
+    std::cerr << "Connected IP: " << ip_str << std::endl;
 
     _server = server;
     _response_type = NOT_SET;
@@ -96,7 +96,7 @@ int Client::Action(int event)
     }
     if (event & POLLHUP)
     {
-        std::cout << "POLL HUP" << std::endl;
+        std::cerr << "POLL HUP" << std::endl;
         return 0;
     }
     return _result;
@@ -397,11 +397,11 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
-        std::cout << _in_container << std::endl;
+        std::cerr << _in_container << std::endl;
 
         if (!_server->validateAction(*this))
         {            
-            std::cout << "server told me it was a bad action" << std::endl;
+            std::cerr << "server told me it was a bad action" << std::endl;
             addClosingErrorObject(METHOD_NOT_ALLOWED);
             return;
         }
@@ -414,7 +414,7 @@ void Client::parseForHttp()
                 addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
             }
         }
-        std::cout << _in_container << std::endl;
+        std::cerr << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")
         {
@@ -497,7 +497,7 @@ int Client::saveInBodyAsFile()
         {
             outfile.write(_in_body.data(), _in_body.size());
             outfile.close();
-            std::cout << "Binary data written to file.\n";
+            std::cerr << "Binary data written to file.\n";
             _response_type = NO_FD_OBJ;
             //return sendResponse();
         } 
@@ -572,11 +572,16 @@ void Client::makeChildrenToRespond()
     }
     catch(const std::exception& e)
     {
-        std::cout << "queso----------------<" << std::endl;
+        std::cerr << "queso----------------<" << std::endl;
         response = BaseHandler::createObject(_server->getErrorResponseObject(INTERNAL_SERVER_ERROR));
     }
     std::queue<std::string> queue;
-    Path error =  _location->getErrorPages(NOT_FOUND);
+/* 
+    const ConfigCgi* location = dynamic_cast<const ConfigCgi *>(_configElement);
+
+    (void)location;
+ */
+    //Path error =  ->getErrorPages(NOT_FOUND);
     queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10; Domain: ") + getHost()  + "Path: /" + CRNL);
 
     addHeader(queue);
@@ -591,7 +596,7 @@ void Client::makeChildrenToRespond()
 
 void Client::resetClient(bool has_body)
 {
-    std::cout << _in_container << std::endl;
+    std::cerr << _in_container << std::endl;
     if (has_body)
     {
         saveInBodyAsFile();
@@ -643,7 +648,8 @@ void Client::resetClient(bool has_body)
 bool Client::checkObjTimeOut()
 {
     /* Should have a different time out setting for open connections that are not being used*/
-/*     char *error_buffer[1];*/
+/*     char *error_buffer[1];*/ 
+    // return false;
     if((_pending_read || _error) && checkTimeOut())
     {
         //When time out, client will stop listening for incoming messages, will send everything it has

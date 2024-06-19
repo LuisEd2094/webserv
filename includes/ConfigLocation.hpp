@@ -55,7 +55,7 @@ class ConfigLocation: public ConfigElement
 		void							setPath(Path &path) { this->_path = path; };//*
 		void							setErrorPages(std::string errors);
 
-//		Path							getPath(void) const { std::cout << "returning: " << _path << std::endl; return this->_path;};
+//		Path							getPath(void) const { std::cerr << "returning: " << _path << std::endl; return this->_path;};
 		int								size() { return this->_path.size(); };
 		const Path& 					getPath(void) const { return this->_path;};
 		std::string						getErrorPage(void) const;

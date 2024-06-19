@@ -88,7 +88,7 @@ void deletedFiles::addToDelete(const std::string& path)
         }
         // Move to the next level in the hierarchy
         temp = &(temp->files[word]);
-        std::cout << word << std::endl;
+        std::cerr << word << std::endl;
     }
     (*temp).is_dir = S_ISDIR(info.st_mode);
 }
@@ -115,44 +115,44 @@ int main( int argc, char * argv[])
     deleted.addToDelete("home/notbin/Another.md");
 
 
-    std::cout << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 1 " << std::endl;
-    std::cout << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 1 "  << std::endl;
-    std::cout << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 1 " << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 1 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
 
     deleted.removeFromDeleted("home/bin/Another.md");
 
-    std::cout << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 0 " << std::endl;
-    std::cout << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 1 "  << std::endl;
-    std::cout << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 0 " << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 1 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
 
     deleted.removeFromDeleted("home/bin/thisisAnother.md");
 
-    std::cout << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 0 " << std::endl;
-    std::cout << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 0 "  << std::endl;
-    std::cout << deleted.checkIfDeleted("home/bin/") << " SHOULD BE 0 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/bin/Another.md") << " SHOULD BE 0 " << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/bin/thisisAnother.md") << " SHOULD BE 0 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/bin/") << " SHOULD BE 0 "  << std::endl;
 
-    std::cout << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
+    std::cerr << deleted.checkIfDeleted("home/notbin/Another.md")<< " SHOULD BE 1 " << std::endl;
 
-    std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 1 " << std::endl;
-    std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 1 "  << std::endl;
-    std::cout << deleted.checkIfDeleted(path + "notdeletedbutparentwas")<< " SHOULD BE 1 " << std::endl;
-    std::cout << deleted.checkIfDeleted(std::string("/this/is/anew/path")) << " SHOULD BE 0 " << std::endl;
-    std::cout << deleted.checkIfDeleted(std::string("home/is/anew/path")) << " SHOULD BE 0 " << std::endl;
+    std::cerr << deleted.checkIfDeleted(path) << " SHOULD BE 1 " << std::endl;
+    std::cerr << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 1 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted(path + "notdeletedbutparentwas")<< " SHOULD BE 1 " << std::endl;
+    std::cerr << deleted.checkIfDeleted(std::string("/this/is/anew/path")) << " SHOULD BE 0 " << std::endl;
+    std::cerr << deleted.checkIfDeleted(std::string("home/is/anew/path")) << " SHOULD BE 0 " << std::endl;
 
-    std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 1 " << std::endl;
+    std::cerr << deleted.checkIfDeleted(path) << " SHOULD BE 1 " << std::endl;
     deleted.removeFromDeleted(path);
     deleted.removeFromDeleted("/this/was/never/deleted");
 
-    std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 0 " << std::endl;
-    std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 1 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted(path) << " SHOULD BE 0 " << std::endl;
+    std::cerr << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 1 "  << std::endl;
     deleted.removeFromDeleted(path + "TODO.md");
-    std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 0 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 0 "  << std::endl;
     deleted.removeFromDeleted(path + "Another.md");
-    std::cout << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 0 "  << std::endl;
-    std::cout << deleted.checkIfDeleted(path + "Another.md") << " SHOULD BE 0 "  << std::endl;
-    std::cout << deleted.checkIfDeleted(path) << " SHOULD BE 0 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted(path + "TODO.md") << " SHOULD BE 0 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted(path + "Another.md") << " SHOULD BE 0 "  << std::endl;
+    std::cerr << deleted.checkIfDeleted(path) << " SHOULD BE 0 "  << std::endl;
 
-    std::cout << deleted.checkIfDeleted(path + "notdeletedbutparentwas")<< " SHOULD BE 0 " << std::endl;
+    std::cerr << deleted.checkIfDeleted(path + "notdeletedbutparentwas")<< " SHOULD BE 0 " << std::endl;
 
-    std::cout << path << std::endl;
+    std::cerr << path << std::endl;
 }

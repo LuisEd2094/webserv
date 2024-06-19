@@ -6,21 +6,21 @@ Path::~Path()
 
 Path::Path()
 {
-        //std::cout << "Path defaul constructor called" << std::endl;
+        //std::cerr << "Path defaul constructor called" << std::endl;
         //this->directories = std::list<std::string>();
         this->isRelative = false;
         this->isFile = false;
-        //std::cout << "Path defaul constructor finished" << std::endl;
+        //std::cerr << "Path defaul constructor finished" << std::endl;
 }
 
 Path::Path(std::string pathStr)
 {
-    //std::cout << "Path string constructor called" << std::endl;
+    //std::cerr << "Path string constructor called" << std::endl;
     this->isRelative = pathStr[0] != '/';
     this->isFile = pathStr[pathStr.length()-1] != '/';
     this->directories = ft_split(pathStr, '/');
     while (this->normalize());
-    //std::cout << "Path string constructor finished" << std::endl;
+    //std::cerr << "Path string constructor finished" << std::endl;
 }
 
 Path::Path(const Path &orig)
@@ -38,6 +38,8 @@ Path &Path::operator=(const Path &orig)
 
 std::string Path::getExtension(void)
 {
+    if (this->size() == 0)
+        return ("");
     std::string last = this->directories.back();
     std::list<std::string>   splited = ft_split(last, '.');
     if (splited.size() == 1)  // sdaf/fasd
@@ -50,13 +52,24 @@ std::string Path::getExtension(void)
 
 void Path::popBegin(int ammount)
 {
-    std::cout << "          POPING " << ammount << std::endl;
-    while (ammount--)
+    std::cerr << "          POPING " << ammount << std::endl;
+    while (ammount-- && this->size())
     {
-        std::cout << "          pop " << ammount << std::endl;
+        std::cerr << "          pop " << ammount << std::endl;
         this->directories.erase(this->directories.begin());         
     }
-    std::cout << "          POPED " << ammount << std::endl;
+    std::cerr << "          POPED " << ammount << std::endl;
+}
+
+void Path::popBack(int ammount)
+{
+    std::cerr << "          POPINGB " << ammount << std::endl;
+    while (ammount-- && this->size())
+    {
+        std::cerr << "          popb " << ammount << std::endl;
+        this->directories.pop_back();         
+    }
+    std::cerr << "          POPEDB " << ammount << std::endl;
 }
 void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
 {
@@ -83,11 +96,16 @@ Path::operator std::string()
     return (result);
 }
 
+Path::operator std::string() const
+{
+    return ((std::string) Path(*this));
+}
+
 void Path::append(Path tail)
 {
     // if (this->isFile)
     //     {
-    //     std::cout << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
+    //     std::cerr << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
     //     return ;
 
     //     }
@@ -157,9 +175,24 @@ bool Path::included(const Path &compPath) const
     return (included == this->directories.end());
 }
 
+Path			Path::getFile(void) const
+{
+    if (this->size() == 0)
+        return Path("");
+    return this->directories.back();
+}
+Path			Path::getDir(void) const
+{
+    if (this->size() == 0)
+        return Path("");
+    Path ret(*this);
+    ret.popBack(1);
+    return (ret);
+}
+
 bool Path::assertDirExists(void) const
 {
-    std::cout << "Checking dir exists: " << *this << std::endl;
+    std::cerr << "Checking dir exists: " << *this << std::endl;
     struct stat info;
     std::string relativePathStr = std::string("./") + PATH_TO_C_STR(*this); 
     //int result = stat(this->c_str(), &info);
@@ -169,22 +202,22 @@ bool Path::assertDirExists(void) const
 
     if (result == -1)
     {
-        std::cout << "ERRRORRR" << std::endl;
+        std::cerr << "ERRRORRR" << std::endl;
         return (false);
     }
-        std::cout << "OKKKK" << std::endl;
+        std::cerr << "OKKKK" << std::endl;
     return (S_ISDIR(info.st_mode));
 }
 
 bool Path::assertFileExists(void) const
 {
-    std::cout << GREEN;
-    std::cout << "Checking file exists: " << *this << std::endl;
+    std::cerr << GREEN;
+    std::cerr << "Checking file exists: " << *this << std::endl;
     std::string relativePathStr = std::string("./") + PATH_TO_C_STR(*this); 
     struct stat info;
     int result = stat(relativePathStr.c_str(), &info);
-    std::cout << "Result: " << result << std::endl;
-    std::cout << END;
+    std::cerr << "Result: " << result << std::endl;
+    std::cerr << END;
     if (result == -1)
         return (false);
     return (S_ISREG(info.st_mode));

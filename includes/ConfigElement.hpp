@@ -12,6 +12,7 @@ class ConfigElement
 		int			nestedPrint;
 		static void configure(ParsingGlobal parsedData);
 		static std::string genSpace(int ammount);
+		virtual ~ConfigElement(void){};
 
 		class ParamError: public std::exception
 		{

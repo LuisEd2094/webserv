@@ -104,6 +104,8 @@ void    Response::initDefaultMap()
 
 void    Response::initErrorsHttp(void)
 {
+    /*First element has no HTTP, it's just to be able to return a error errorCode*/
+    _vectorError.push_back("");
     /*1xx Others*/
     _vectorError.push_back(CONTINUE_HTTP);
     /*2xx OK*/
@@ -169,6 +171,6 @@ void Response::initErrorsMap()
 
  const std::string& Response::getHttpFirtsLine(ErrorCodes code)
  {
-    std::cout << _vectorError[code];
+    std::cerr << _vectorError[code];
     return (_vectorError[code]);
  }

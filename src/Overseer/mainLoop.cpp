@@ -23,7 +23,7 @@ void printHostName()
 
     gethostname(hostname, size);
 
-    std::cout <<  "my domain: "<< hostname << std::endl;
+    std::cerr <<  "my domain: "<< hostname << std::endl;
 }
 
 
@@ -34,7 +34,7 @@ void Overseer::mainLoop()
     while(canContinue) 
     {
 
-        //std::cout << "Poll count " << _fd_count << std::endl;
+        //std::cerr << "Poll count " << _fd_count << std::endl;
         poll_connection = poll(_pfds, _fd_count, TIME_OUT_POLL);
         if (poll_connection == -1) 
         {

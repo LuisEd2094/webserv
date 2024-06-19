@@ -52,6 +52,8 @@ class Client : public BaseHandler
         void                setPathFile(const Path&);
         void                setDefaultHttpResponse(ErrorCodes);
         void                setConfigElement(const ConfigElement *);
+        void                setExecute(const Path& execute);
+
 
         //getters
         std::string                     getHttpAnswerDirectory() const;
@@ -77,6 +79,7 @@ class Client : public BaseHandler
         const std::string&              getDefaultHttpResponse(void) const;
         ErrorCodes                      getErrorCode() const; 
         const ConfigElement *           getConfigElement() const;
+        const Path&                     getExecute() const;
 
 
 
@@ -84,7 +87,7 @@ class Client : public BaseHandler
 
 
     private:
-		const ConfigElement			    				*_configElement;
+		const ConfigElement			    			*_configElement;
         std::queue< std::string>                    _http_addons;
         std::stack< std::string>                    _redirection_urls;
         std::queue< RequestHandler *>               _response_objects_queue;
@@ -92,6 +95,7 @@ class Client : public BaseHandler
         Parsing                 _parser_http;
         Actions                 _action;
         ErrorCodes              _error_code;
+        Path                    _execute;
 
         int                         _result;
         bool                        _was_zero;

@@ -62,8 +62,8 @@ int                Server::Action(int event)
 
     std::size_t max_body = 30777500;  should come from the server
 
-    std::cout << method << std::endl;
-    std::cout << host << std::endl;
+    std::cerr << method << std::endl;
+    std::cerr << host << std::endl;
     virtualServers.back().recursivePrint();
 
     if (client_action == POST)

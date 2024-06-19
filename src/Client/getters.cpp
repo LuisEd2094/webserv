@@ -113,3 +113,10 @@ std::string              Client::getNextURLRedirect()
     return "";
 }
 
+
+const Path&  Client::getExecute() const
+{
+    return _execute;
+}
+
+

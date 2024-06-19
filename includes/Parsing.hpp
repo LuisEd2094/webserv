@@ -73,7 +73,7 @@ void	printMap(const M& map)
 	typename M::const_iterator i;
 	for (i = map.begin(); i != map.end(); ++i)
 	{
-		std::cout << ORANGE << "Key: " << END << i->first << ORANGE
+		std::cerr << ORANGE << "Key: " << END << i->first << ORANGE
 			<< "\tValue: " << END << i->second << std::endl;
 	}
 }

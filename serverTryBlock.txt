@@ -14,7 +14,7 @@
         }
         else if (url == "/testError.html")
         {
-            std::cout << "-------------" << std::endl;
+            std::cerr << "-------------" << std::endl;
             client.setPathFile(Path("/home/luis/proyects/webserv/html/500.html"));
             client.setDefaultHttpResponse(BAD_REQUEST);
             client.setResponseType(FILE_OBJ);
@@ -27,7 +27,7 @@
             {
                 outfile.write(client.getBody().data(), client.getBody().size());
                 outfile.close();
-                std::cout << "Binary data written to file.\n";
+                std::cerr << "Binary data written to file.\n";
             }
             client.setDefaultHttpResponse(OK);
             client.setResponseType(NO_FD_OBJ);
@@ -36,14 +36,14 @@
         {
             const std::string& cookie = client.getMapValue("Cookie");
 
-            std::cout << cookie << std::endl;
+            std::cerr << cookie << std::endl;
             if (cookie != "not found")
             {
                 std::stringstream   iss(cookie);
                 std::string         parser;
                 while (getline(iss, parser, ';'))
                 {
-                    std::cout << &parser[parser.find_first_not_of(' ')] << std::endl;
+                    std::cerr << &parser[parser.find_first_not_of(' ')] << std::endl;
                     if (parser.find("lang=") != std::string::npos)
                     {
                         if (parser.find("en-US", parser.find("lang=") + std::strlen("lang=")) != std::string::npos)
@@ -61,7 +61,7 @@
                 client.setDefaultHttpResponse(OK);
                 client.setPathFile(Path("/workspaces/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/"))));
             }
-            std::cout << client.getPathFile() << std::endl;
+            std::cerr << client.getPathFile() << std::endl;
             //client.setPathFile("/workspaces/webserv/html" + client.getURL().substr(client.getURL().find_last_of("/")));
             client.setResponseType(FILE_OBJ);
         }

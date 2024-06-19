@@ -26,9 +26,10 @@ class Path
 		Path(const Path &orig);
 		Path &operator=(const Path &orig);
 		operator std::string();
+		operator std::string() const;
 		~Path();	
 
-		int				size() { return directories.size(); };	
+		int				size() const { return directories.size(); };	
 		void			setIsRelative(bool v) { isRelative = v; };
 		void			setIsFile(bool v) { isFile = v; };
 		bool			getIsRelative(void) const { return isRelative; };
@@ -36,10 +37,13 @@ class Path
 		std::string		getExtension(void);
 
 		void			popBegin(int ammount);
+		void		 	popBack(int ammount);
 		void			append(Path tail);
 		int				normalize(void);
 		bool			includes(const Path &compPath) const;
 		bool			included(const Path &compPath) const;
+		Path			getFile(void) const;
+		Path			getDir(void) const;
 
 		bool			assertFileExists(void) const;
 		bool			assertDirExists(void) const;
