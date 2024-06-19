@@ -1,5 +1,5 @@
 
-# ifndef CONFIG_VIRTUAL_SERVER_HPP
+#ifndef CONFIG_VIRTUAL_SERVER_HPP
 # define CONFIG_VIRTUAL_SERVER_HPP
 
 class ConfigVirtualServer;
@@ -16,7 +16,8 @@ class ConfigVirtualServer: public ConfigElement
 {
 	private:
 		std::string	errorPage;
-		int			maxClientBodySize;
+		unsigned int			maxClientBodySize;
+		urlSize					maxUrlLen;
 		std::string	host;
 		std::string port;
 		std::list<std::string> serverNames;
@@ -29,13 +30,16 @@ class ConfigVirtualServer: public ConfigElement
 		void setHost(const std::string &host);
 		void setMaxClientBodySize(int bodySize);
 		void setMaxClientBodySize(std::string bodySize);
+		void setMaxUrlLen(std::string len) { this->maxUrlLen = std::atoi(len.c_str()); };
+		void setMaxUrlLen(urlSize len) { this->maxUrlLen = len; };
 		void setServerNames(std::string &serverName);
 		void setLocations(std::list<ConfigLocation> inpLocations) {this->locations = inpLocations;};
 		//get
 		std::string	getPort(void) const;
 		std::string	getHost(void) const;
-		std::string getErrorPage(void)  const;
-		int getMaxClientBodySize(void)  const;
+		std::string getErrorPage(void) const;
+		int getMaxClientBodySize(void) const;
+		urlSize getMaxUrlLen(void) const { return this->maxUrlLen; };
 		std::list<std::string> getServerNames(void);
 		std::list<ConfigLocation> getLocations(void) {return this->locations;};
 
@@ -53,4 +57,4 @@ class ConfigVirtualServer: public ConfigElement
 };
 std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj);
 
-# endif
+#endif

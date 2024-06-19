@@ -64,9 +64,9 @@ void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
     this->directories.erase(del);
 }
 
-Path::operator std::string()
+Path::operator std::string() const
 {
-    std::list<std::string>::iterator dir;
+    std::list<std::string>::const_iterator dir;
     std::string result("");
     if (this->isRelative)
         result += "./";
@@ -83,7 +83,7 @@ Path::operator std::string()
     return (result);
 }
 
-void Path::append(Path tail)
+Path  &Path::append(Path tail)
 {
     // if (this->isFile)
     //     {
@@ -94,6 +94,7 @@ void Path::append(Path tail)
     for (std::list<std::string>::iterator te = tail.directories.begin(); te != tail.directories.end(); te++)
             this->directories.push_back(*te);
     this->setIsFile(tail.getIsFile());
+    return (*this);
 }
 
 int Path::normalize(void)

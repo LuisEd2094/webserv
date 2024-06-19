@@ -27,6 +27,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_path = Path(this->__elemArgument__);
+	this->_fullUrl.append(this->__elemArgument__);
 	this->_inheriting = false;
 	if (obj.find("root") == obj.end())
 		this->_root.append(obj.find("__elemArgument__")->second);
@@ -50,7 +51,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 }
 
 /**/
-ConfigLocation::ConfigLocation(ParsingLocation& obj)
+ConfigLocation::ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &server)
 {
 	// TODO erase the nested elements from the father
 	this->_locations.empty();
@@ -58,6 +59,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	this->_inheriting = false;
 	this->_dirListing = 0;
 	this->nestedPrint = 0;
+	this->_maxUrlLen = server.getMaxUrlLen();
 
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
@@ -66,6 +68,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_path = Path(this->__elemArgument__);
+	this->setFullUrl(Path(this->__elemArgument__));
 	if (obj.find("root") == obj.end())
 	{
 		this->_root.append(obj.find("__elemArgument__")->second); 
@@ -99,6 +102,7 @@ void ConfigLocation::setDefaults()
 	this->setRedirection("");	
 	this->setDirListing(true);	
 	this->_path = Path();
+	this->_fullUrl = Path();
 }
 
 void ConfigLocation::parseKeyVal(std::string key, std::string val)
@@ -233,6 +237,13 @@ std::list<ConfigLocation> ConfigLocation::getLocations(void) const
 	return (this->_locations);
 }
 
+void	ConfigLocation::setFullUrl(const Path &url)
+{
+	this->_fullUrl = url;
+	if (this->getFullUrl().toStr().size() > this->getMaxUrlLen())
+		throw ParamError("Location url is to large: " + this->getFullUrl().toStr());
+}
+
 void	ConfigLocation::setErrorPages(std::string errors)
 {
 	std::list<std::string> split = ft_split(errors, ' ');
@@ -280,6 +291,8 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	this->_locations = obj.getLocations();
 	this->_cgis = obj.getCgis();
 	this->_path = obj.getPath();
+	this->_fullUrl = obj.getFullUrl();
+	this->_maxUrlLen = obj.getMaxUrlLen();
 
 	return (*this);
 }
@@ -297,7 +310,10 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 {
 	std::cout << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->_path << ")" << std::endl;
 	recursiveLvl++;
-
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "FullUrl: " << this->_fullUrl << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "MaxUrlLen: " << this->_maxUrlLen << std::endl;
 	std::cout << ConfigElement::genSpace(recursiveLvl) ;
 	std::cout << "Methods: " << this->_methods << std::endl;
 	std::cout << ConfigElement::genSpace(recursiveLvl) ;

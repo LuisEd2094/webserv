@@ -8,6 +8,7 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 	this->nestedPrint = 0;
 	this->errorPage = "";
 	this->maxClientBodySize = 30000;//
+	this->maxUrlLen = 500;//
 	for (std::map<std::string, std::string>::iterator i = parsed.begin(); i != parsed.end(); i++)
 	{
 		this->parseKeyVal(i->first, i->second);
@@ -15,7 +16,7 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 	for (std::list<ParsingLocation>::iterator location = parsed.locations.begin();
 		location != parsed.locations.end(); location++)
 	{
-		this->locations.push_back(ConfigLocation(*location));
+		this->locations.push_back(ConfigLocation(*location, *this));
 	}
 }
 
@@ -31,6 +32,8 @@ void ConfigVirtualServer::parseKeyVal(std::string key, std::string val)
 		this->setHost(val);
 	else if (key == "serverNames")
 		this->setServerNames(val);
+	else if (key == "maxUrlLen")
+		this->setMaxUrlLen(val);
 	else
 		throw ParamError(std::string("Error: server config key not found.") + std::string(" key:") + key);
 }
@@ -41,6 +44,7 @@ ConfigVirtualServer &ConfigVirtualServer::operator=(const ConfigVirtualServer& o
 	this->setErrorPage(obj.getErrorPage());
 	this->serverNames = obj.serverNames;
 	this->locations = obj.locations;	
+	this->maxUrlLen = obj.maxUrlLen;	
 	return (*this);
 }
 
@@ -129,6 +133,7 @@ void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 	std::cout << ConfigElement::genSpace(recursiveLvl) << "maxBodySize: " << this->getMaxClientBodySize() << std::endl;
 	std::cout << ConfigElement::genSpace(recursiveLvl) << "errorPage: " << this->getErrorPage() << std::endl;
 	std::cout << ConfigElement::genSpace(recursiveLvl) << "Locations(" << this->locations.size() << "):" << std::endl;
+	std::cout << ConfigElement::genSpace(recursiveLvl) << "maxUrlLen(" << this->maxUrlLen << "):" << std::endl;
 	for (std::list<ConfigLocation>::iterator loc = this->locations.begin(); loc != this->locations.end();loc++)
 	{
 		loc->recursivePrint(recursiveLvl);

@@ -28,13 +28,15 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigLocation>	_locations;
 		bool						_inheriting;
 		Path						_path;
+		Path						_fullUrl;
+		int							_maxUrlLen;
 		std::map<int, Path>			_errorPages;
 		//Add list configureLocation 
 
 	public:
 		void parseKeyVal(std::string key, std::string val);
 		ConfigLocation(void);
-		ConfigLocation(ParsingLocation& obj);
+		ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &virtualServer);
 		ConfigLocation(const ConfigLocation& obj);
 		ConfigLocation( ParsingLocation& obj, ConfigLocation& father);
 		ConfigLocation &operator=( const ConfigLocation& obj);
@@ -53,11 +55,15 @@ class ConfigLocation: public ConfigElement
 		void							setIndex(std::string index);//
 		void							setCgis(std::string cgis);//*
 		void							setPath(Path &path) { this->_path = path; };//*
+		void							setFullUrl(const Path &path);//*
+		void							setMaxUrlLen(const urlSize max) { this->_maxUrlLen = max; };
 		void							setErrorPages(std::string errors);
 
 //		Path							getPath(void) const { std::cout << "returning: " << _path << std::endl; return this->_path;};
 		int								size() { return this->_path.size(); };
 		const Path& 					getPath(void) const { return this->_path;};
+		const Path& 					getFullUrl(void) const { return this->_fullUrl;};
+		urlSize							getMaxUrlLen(void) const { return this->_maxUrlLen;};
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;

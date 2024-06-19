@@ -4,6 +4,8 @@ class ConfigElement;
 # include "ParsingGlobal.hpp"
 
 
+typedef unsigned int urlSize;
+
 class ConfigElement
 {
 	private:
