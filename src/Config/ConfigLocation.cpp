@@ -360,10 +360,13 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		if (this->getRedirection().size() > 0)
 		{
 			client.setResponseType(REDIRECT_OBJ);
+			client.setDefaultHttpResponse(OK);
 			return true;
 		}
-		if (false)
-			;
+		else if (client.getAction() == POST ||client.getAction() == DELETE  )
+		{
+			return (true);
+		}
 		else if (Path(client.getURL()).getIsFile())	
 		{
 			if (client.getPathFile().assertFileExists())

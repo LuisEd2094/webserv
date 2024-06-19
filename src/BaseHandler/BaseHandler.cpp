@@ -77,7 +77,6 @@ BaseHandler* BaseHandler::createObject(Client& client)
                         
                         body.insert(body_pos + std::strlen("<body>"),a );
                     }
-                    std::string listing = "THIS IS LISTING";
                     return DirectResponse::createNewDirect(setContentLenHTTP(client.getDefaultHttpResponse(), body), body);
 
                 }
