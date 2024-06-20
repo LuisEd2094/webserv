@@ -1,2 +1,12 @@
 GET /lolcito/index.html HTTP/1.1
 Host: lol.com
+
+GET /lolcito/nolen.py HTTP/1.1
+Host: lol.com
+
+GET /lolcito/index.html HTTP/1.1
+Host: lol.com
+
+GET /lolcito/nolen.py HTTP/1.1
+Host: lol.com
+

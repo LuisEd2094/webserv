@@ -86,18 +86,6 @@ bool Server::prepareClient4ResponseGeneration(Client& client)
 }
 
 
-const defaultResponse& Server::getErrorResponseObject(ErrorCodes code)
-{
-    // check code against files in config
-    // else returns default error
-    // Server map con defaultResponseObjs. Full response objs. HTTP y el Contenido del FILE si es que fue indicado en el 
-    // confi 
-    // 
-
-    return Response::getDefault(code);
-
-}
-
 bool Server::checkObjTimeOut()
 {
     return false;

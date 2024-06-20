@@ -41,7 +41,6 @@ CGI::CGI(Client& client) :  BaseHandler(client),
                             _len(client.getContentLength()),
                             _sent(0)
 {
-    throw CGIException("This is a test");
     if (pipe(_out_pipe))
     {
         throw CGIException(strerror(errno));

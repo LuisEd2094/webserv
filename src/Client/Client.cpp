@@ -647,6 +647,8 @@ bool Client::checkObjTimeOut()
     /* Should have a different time out setting for open connections that are not being used*/
 /*     char *error_buffer[1];*/ 
     // return false;
+    if (!_response_objects_queue.empty())
+        return false;
     if((_pending_read || _error) && checkTimeOut())
     {
         //When time out, client will stop listening for incoming messages, will send everything it has
