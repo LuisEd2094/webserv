@@ -168,6 +168,7 @@ typedef struct s_request
 	std::string version;
 	bool		requestedIsInRoot;
 	std::map<std::string, std::string> content;
+	s_request() : method(""), requested(""), version("") {}
 } t_request;
 
 class Parsing

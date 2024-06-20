@@ -8,8 +8,3 @@ Host: real.com
 User-Agent: curl/7.64.1
 Accept: */*
 
-DELETE /wolo/index.html HTTP/1.1
-Host: real.com
-User-Agent: curl/7.64.1
-Accept: */*
-

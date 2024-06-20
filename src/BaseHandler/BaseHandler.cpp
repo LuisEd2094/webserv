@@ -19,12 +19,7 @@ void    BaseHandler::setTime()
 
 }
 
-BaseHandler::BaseHandler(const BaseHandler& obj) : 
-    _configElement(obj._configElement),
-    _client_fd(obj.getClientFD())
-{
-    setTime();
-}
+
 
 
 const std::string dirList(const std::string& dir_str)
@@ -174,5 +169,29 @@ BaseHandler* BaseHandler::getErrorResponse(ErrorCodes code)
     }  
 }
 
-BaseHandler::BaseHandler(){ setTime(); }
+BaseHandler::BaseHandler():
+    _configElement(NULL),
+    _response_type(NOT_SET),
+    _error_code(INVALID_CODE),
+    _defaultHttp(),
+    _path_to_file_str(),
+    _client_fd(0),
+    _fd(0)
+
+{
+    setTime();
+}
+
+
+BaseHandler::BaseHandler(const BaseHandler& obj) : 
+    _configElement(obj._configElement),
+    _response_type(obj._response_type),
+    _error_code(obj._error_code),
+    _defaultHttp(obj._defaultHttp),
+    _path_to_file_str(obj._path_to_file_str),
+    _client_fd(obj.getClientFD()),
+    _fd(0)
+{
+    setTime();
+}
 BaseHandler::~BaseHandler() {}

@@ -102,14 +102,29 @@ int Client::Action(int event)
     return _result;
 }
 
+bool    Client::verifyIfEnoughForLocation()
+{
+    std::string method, url, host;
+
+    method = _parser_http.getMethod();
+    url = _parser_http.getRequested();
+    host = _parser_http.getMapValue("Host");
+
+    return (!method.empty() && !url.empty() && host != "not found");
+}
+
 void    Client::addClosingError(ErrorCodes error)
 {
     /*This functions adds the error object to the queue and sets the client to a state
         where it'd close the connection after finishing ending the queue */
-    addObject(BaseHandler::createObject(_server->getErrorResponseObject(error)));
+    if (!_configElement && verifyIfEnoughForLocation())
+    {
+        _server->prepareClient4ResponseGeneration(*this);
+    }
+    addObject(getErrorResponse(error));
     _error = true;
     _can_read = false;
-    _pending_read = false;
+    _pending_read = false; _keep_alive = false;
     Overseer::setListenAction(_fd, JUST_OUT);
 }
 
@@ -234,14 +249,8 @@ void Client::readFromFD()
                         break;
                     else if (parsingMessage) // parsingHeader returns something different to warning when error
                     {
-
                         addClosingError(ErrorCodes(parsingMessage));
                         break ;
-                            if (parsingMessage == ERROR_FORMAT)
-                            {
-                                addClosingError(BAD_REQUEST);
-                            }
-                            break;
                     } 
                     parseForHttp();
                 }
@@ -559,7 +568,6 @@ void Client::makeChildrenToRespond()
         {
 
             response = getErrorResponse(NOT_FOUND);
-/*          response =  BaseHandler::createObject(_server->getErrorResponseObject(NOT_FOUND));*/
         }
         else
             response = BaseHandler::createObject(*this);
@@ -663,7 +671,7 @@ bool Client::checkObjTimeOut()
 }
 
 //private:
-Client::Client () {}
+Client::Client() {}
 
 
 

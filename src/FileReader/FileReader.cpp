@@ -108,7 +108,6 @@ int FileReader::Action(int event)
     char    buff[RECV_SIZE];
     int     result = read(_fd, buff, sizeof(buff)); //-1;//
     (void)event;
-    result = -1;
     if (result > 0)
     {
         _buffer.append(buff, result);
@@ -128,8 +127,10 @@ int FileReader::Action(int event)
             }
             else
             {
-                client->addErrorFileReaderToExistingRequest(this, getErrorResponse(INTERNAL_SERVER_ERROR));
-                //client->setdefaultResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
+                if (_error_code != INTERNAL_SERVER_ERROR)
+                    client->addErrorFileReaderToExistingRequest(this, getErrorResponse(INTERNAL_SERVER_ERROR));
+                else
+                    client->addErrorFileReaderToExistingRequest(this, BaseHandler::createObject(Response::getDefault(_error_code)));
             }
             return (0);
 

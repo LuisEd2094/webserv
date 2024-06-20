@@ -129,6 +129,7 @@ class Client : public BaseHandler
         int                     sendResponse();
         void                    handlerRecv();
         void                    makeChildrenToRespond();
+        bool                    verifyIfEnoughForLocation();
 
 
 
