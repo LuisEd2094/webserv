@@ -18,9 +18,9 @@ class CGI : public BaseHandler
 
         bool                checkObjTimeOut();
 
-        static CGI *        createNewCGI(Client& client);
-        int           getFD() const;
-        int                 readPipe();
+        static BaseHandler *    createNewCGI(Client& client);
+        int                     getFD() const;
+        int                     readPipe();
 
         class CGIException;
 
@@ -28,7 +28,6 @@ class CGI : public BaseHandler
         int             _out_pipe[2];
         int             _in_pipe[2];
 
-        int             _client_fd;
         pid_t           _pid;
         std::string     _buffer;
         std::string     _defaultHttp;

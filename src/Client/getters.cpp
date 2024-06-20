@@ -1,6 +1,14 @@
 #include <Client.hpp>
 
+
+/*They return the same because they are the same, but the FileReader and CGI will have their own FD and Client FD to later access the client*/
 int Client::getFD() const
+{
+    return _fd;
+}
+
+
+int Client::getClientFD() const
 {
     return _fd;
 }

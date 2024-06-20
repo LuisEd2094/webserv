@@ -36,14 +36,14 @@ const std::string& FileReader::getMimeType(const std::string& to_find)
 }
 
 
-FileReader::FileReader(Client& client) : BaseHandler(client),  _client_fd(client.getFD()), _defaultHttp(client.getDefaultHttpResponse())
+FileReader::FileReader(BaseHandler& obj) : BaseHandler(obj), _defaultHttp(obj.getDefaultHttpResponse())
 {
-    _fd = open(client.getPathFileString().c_str(), O_RDONLY);
-    std::size_t start_ext = client.getPathFileString().find_last_of(".");
+    _fd = open(obj.getPathFileString().c_str(), O_RDONLY);
+    std::size_t start_ext = obj.getPathFileString().find_last_of(".");
     
     if (start_ext != std::string::npos)
     {
-        _file_type = getMimeType(client.getPathFileString().substr(start_ext + 1, client.getPathFileString().length()));
+        _file_type = getMimeType(obj.getPathFileString().substr(start_ext + 1, obj.getPathFileString().length()));
     }
     if (_fd == -1)
     {
@@ -59,22 +59,22 @@ FileReader::~FileReader()
         close(_fd);
 }
 
-BaseHandler* FileReader::createNewFileReader(Client& client)
+BaseHandler* FileReader::createNewFileReader(BaseHandler& obj)
 {
     FileReader *new_FileReader;
     try
     {
-        new_FileReader = new FileReader(client);
+        new_FileReader = new FileReader(obj);
         Overseer::addToPfds(new_FileReader);
         return new_FileReader;
     }
     catch (...)
     {
         /*Check if this is a new File reader then update?*/
-        if (client.getErrorCode() == INTERNAL_SERVER_ERROR)
+        if (obj.getErrorCode() == INTERNAL_SERVER_ERROR)
         {
             /*Consume the exception?*/
-            return BaseHandler::createObject(Response::getDefault(client.getErrorCode()));
+            return BaseHandler::createObject(Response::getDefault(obj.getErrorCode()));
         }
         else
         {
@@ -106,8 +106,9 @@ std::string  FileReader::setContentType(std::string http)
 int FileReader::Action(int event)
 {
     char    buff[RECV_SIZE];
-    int     result = read(_fd, buff, sizeof(buff)); 
+    int     result = read(_fd, buff, sizeof(buff)); //-1;//
     (void)event;
+    result = -1;
     if (result > 0)
     {
         _buffer.append(buff, result);
@@ -127,7 +128,8 @@ int FileReader::Action(int event)
             }
             else
             {
-                client->setdefaultResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
+                client->addErrorFileReaderToExistingRequest(this, getErrorResponse(INTERNAL_SERVER_ERROR));
+                //client->setdefaultResponse(client->getServer()->getErrorResponseObject(INTERNAL_SERVER_ERROR), this);
             }
             return (0);
 

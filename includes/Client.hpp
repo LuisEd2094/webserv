@@ -45,9 +45,6 @@ class Client : public BaseHandler
         void                addObject(BaseHandler *);
         void                addClosingErrorObject(ErrorCodes);
 
-        BaseHandler*        getErrorResponse(ErrorCodes code);
-
-
         void                setHttpAnswerDirectory(std::string value);
         void                setdefaultResponse(const defaultResponse& response, BaseHandler*);
         void                setHTTPResponse(const std::string &message, BaseHandler*);
@@ -63,6 +60,7 @@ class Client : public BaseHandler
         std::string                     getHttpAnswerDirectory() const;
         Server *                        getServer() const;
         int                             getFD() const;
+        int                             getClientFD() const;
         const std::string&              getURL() const;
         
         const std::string&              getMethod() const;
@@ -97,7 +95,6 @@ class Client : public BaseHandler
         std::map< BaseHandler *,  RequestHandler *> _response_objects_map;
         Parsing                 _parser_http;
         Actions                 _action;
-        ErrorCodes              _error_code;
         Path                    _execute;
 
         int                         _result;
@@ -143,12 +140,8 @@ class Client : public BaseHandler
         void                    handleDirectObj(DirectResponse*, RequestHandler *);
         void                    removeFirstObj();
 
-        ObjectTypes             _response_type;
 
         Path                    _path_to_file;
-        std::string             _path_to_file_str;
-        //std::string             _path_to_file;
-        std::string             _defaultHttp;
         std::string             _httpAnswerDirectory;
 
 

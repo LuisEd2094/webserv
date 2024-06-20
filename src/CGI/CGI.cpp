@@ -36,12 +36,12 @@ class CGI::CGIException : public std::exception
 
 
 CGI::CGI(Client& client) :  BaseHandler(client),
-                            _client_fd(client.getFD()), 
                             _defaultHttp(client.getDefaultHttpResponse()),
                             _body(client.getBody()),
                             _len(client.getContentLength()),
                             _sent(0)
 {
+    throw CGIException("This is a test");
     if (pipe(_out_pipe))
     {
         throw CGIException(strerror(errno));
@@ -112,7 +112,7 @@ CGI::~CGI()
     close(_out_pipe[0]);
 }
 
-CGI* CGI::createNewCGI(Client& client)
+BaseHandler* CGI::createNewCGI(Client& client)
 {
     CGI *new_cgi = new CGI(client);
     Overseer::addToPfds(new_cgi);
