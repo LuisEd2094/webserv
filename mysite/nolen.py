@@ -18,6 +18,7 @@ except:
 
 log = open("log.log", "w" )
 
+print("ASDHAGDA")
 print("HTTP/1.1 200 OK")
 print("Content-Type: text/html; charset=utf-8")
 print("")

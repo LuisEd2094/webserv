@@ -561,9 +561,6 @@ void Client::makeChildrenToRespond()
     try
     {
         /*prepareClient4ResponseGeneration doesn't set if no file is found*/
-        /*getErrorResponseObject is on server as of right now, but client has a pointer to location
-            location should have info about errors
-        */
         if (_response_type == NOT_SET || (_action != DELETE && Overseer::checkIfDeleted(getPathFileString())))
         {
 
@@ -656,7 +653,7 @@ bool Client::checkObjTimeOut()
         // in queue and thenn close connection.
         if (_pending_read)
         {
-            addObject(BaseHandler::createObject(_server->getErrorResponseObject(REQUEST_TIMEOUT)));
+            addClosingError(REQUEST_TIMEOUT);
             Overseer::setListenAction(_fd, JUST_OUT);
         }
         else

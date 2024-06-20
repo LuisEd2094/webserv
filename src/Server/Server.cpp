@@ -50,65 +50,6 @@ int                Server::Action(int event)
 }
 
 
-/*bool Server::validateAction(Client& client)
-{
-    // check method and url against config.
-    // GET es valido para esta URL
-    // POST valido para uRL etc 
-    const std::string& url = client.getURL();
-    const std::string& method = client.getMethod();
-    const std::string& host = client.getHost();
-    Actions client_action = client.getAction();
-
-    std::size_t max_body = 30777500;  should come from the server
-
-    std::cerr << method << std::endl;
-    std::cerr << host << std::endl;
-    virtualServers.back().recursivePrint();
-
-    if (client_action == POST)
-    {
-        if (!client.getIsChunked())
-        {
-            if (client.getContentLength() > max_body)
-            {
-                client.addClosingErrorObject(PAYLOAD);
-                return (false);
-            }
-        }
-    }
-    if (url ==  "/post" or url == "/" or url.find("/Cookies/") != std::string::npos or url == "/nolen.py" or url == "/index.html")
-        return true;
-    else
-    {
-        client.addObject(BaseHandler::createObject(getErrorResponseObject(NOT_FOUND)));
-        return (false);
-    }
-}
- */
-/*
-
-Proceso de desicion :3
-
-inputs:serName peticion y metodo;
-
-host port for server (listen)
-
-server_name
-  default server
-  
-path
-valid methods 
-root
-index
-dirlisting
-normal file
- 
- 
- error page
-
-*/
-
 bool Server::validateAction(Client& client)
 {
     // check method and url against config.
