@@ -28,13 +28,15 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigLocation>	_locations;
 		bool						_inheriting;
 		Path						_path;
+		Path						_fullUrl;
 		std::map<ErrorCodes, Path>			_errorPages;
+		ConfigVirtualServer const	*_virtualServer;
 		//Add list configureLocation 
 
 	public:
 		void parseKeyVal(std::string key, std::string val);
 		ConfigLocation(void);
-		ConfigLocation(ParsingLocation& obj);
+		ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &virtualServer);
 		ConfigLocation(const ConfigLocation& obj);
 		ConfigLocation( ParsingLocation& obj, ConfigLocation& father);
 		ConfigLocation &operator=( const ConfigLocation& obj);
@@ -53,12 +55,15 @@ class ConfigLocation: public ConfigElement
 		void							setIndex(std::string index);//
 		void							setCgis(std::string cgis);//*
 		void							setPath(Path &path) { this->_path = path; };//*
+		void							setFullUrl(const Path &path);//*
 		void							setErrorPages(std::string errors);
+		void							setVirtualServer(const ConfigVirtualServer &server);
 
 //		Path							getPath(void) const { std::cerr << "returning: " << _path << std::endl; return this->_path;};
 		int								size() { return this->_path.size(); };
 		const std::string				getErrorPage(ErrorCodes err) const;
 		const Path& 					getPath(void) const { return this->_path;};
+		const Path& 					getFullUrl(void) const { return this->_fullUrl;};
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;
@@ -69,6 +74,7 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigLocation>		getLocations(void) const;
 		std::map<ErrorCodes, Path>				getMapErrorPages(void) const;
 		Path							const getErrorPages(ErrorCodes searchError) const;
+		const ConfigVirtualServer		&getVirtualServer(void) const ;
 
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);
 		bool							checkCGI(Client &client, Path& requestedURL);

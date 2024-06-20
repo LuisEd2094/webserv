@@ -27,7 +27,8 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_path = Path(this->__elemArgument__);
-	this->_inheriting = false;
+	this->_fullUrl.append(this->__elemArgument__);
+	this->_inheriting = false; //TODO delte?
 	if (obj.find("root") == obj.end())
 		this->_root.append(obj.find("__elemArgument__")->second);
 
@@ -45,13 +46,13 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 		cgi++
 	)
 	{
-		this->_cgis.push_back(ConfigCgi(*cgi));
+		this->_cgis.push_back(ConfigCgi(*cgi, *this));
 		this->_cgis.back().setRoot(this->_root);
 	}
 }
 
 /**/
-ConfigLocation::ConfigLocation(ParsingLocation& obj)
+ConfigLocation::ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &server)
 {
 	// TODO erase the nested elements from the father
 	this->_locations.empty();
@@ -59,6 +60,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	this->_inheriting = false;
 	this->_dirListing = 0;
 	this->nestedPrint = 0;
+	this->_virtualServer = &server;
 
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
@@ -67,6 +69,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 	this->__elemType__ = obj["__elemType__"]; 
 	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_path = Path(this->__elemArgument__);
+	this->setFullUrl(Path(this->__elemArgument__));
 	if (obj.find("root") == obj.end())
 	{
 		this->_root.append(obj.find("__elemArgument__")->second); 
@@ -87,7 +90,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj)
 		cgi++
 	)
 	{
-		this->_cgis.push_back(ConfigCgi(*cgi));
+		this->_cgis.push_back(ConfigCgi(*cgi, *this));
 		this->_cgis.back().setRoot(this->_root);
 	}
 }
@@ -101,6 +104,8 @@ void ConfigLocation::setDefaults()
 	this->setRedirection("");	
 	this->setDirListing(true);	
 	this->_path = Path();
+	this->_fullUrl = Path();
+	this->_virtualServer = NULL;
 }
 
 void ConfigLocation::parseKeyVal(std::string key, std::string val)
@@ -225,6 +230,14 @@ void ConfigLocation::setCgis(std::string cgis)
 	(void)cgis;
 }
 
+void	ConfigLocation::setVirtualServer(const ConfigVirtualServer &server){ this->_virtualServer = &server; } 
+const ConfigVirtualServer &ConfigLocation::getVirtualServer(void) const
+{
+	if (this->_virtualServer == NULL)
+		throw std::exception();
+	return *this->_virtualServer;
+}
+
 const std::list<ConfigCgi> &ConfigLocation::getCgis(void) const
 {
 	return (this->_cgis);
@@ -233,6 +246,13 @@ const std::list<ConfigCgi> &ConfigLocation::getCgis(void) const
 std::list<ConfigLocation> ConfigLocation::getLocations(void) const
 {
 	return (this->_locations);
+}
+
+void	ConfigLocation::setFullUrl(const Path &url)
+{
+	this->_fullUrl = url;
+	if (this->getFullUrl().toStr().size() > MAX_URL_SIZE)
+		throw ParamError("Location url is to large: " + this->getFullUrl().toStr());
 }
 
 void	ConfigLocation::setErrorPages(std::string errors)
@@ -290,6 +310,7 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	this->_locations = obj.getLocations();
 	this->_cgis = obj.getCgis();
 	this->_path = obj.getPath();
+	this->_fullUrl = obj.getFullUrl();
 
 	return (*this);
 }
@@ -307,7 +328,8 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 {
 	std::cerr << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->_path << ")" << std::endl;
 	recursiveLvl++;
-
+	std::cout << ConfigElement::genSpace(recursiveLvl) ;
+	std::cout << "FullUrl: " << this->_fullUrl << std::endl;
 	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
 	std::cerr << "Methods: " << this->_methods << std::endl;
 	std::cerr << ConfigElement::genSpace(recursiveLvl) ;

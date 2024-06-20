@@ -1,5 +1,5 @@
 
-# ifndef CONFIG_VIRTUAL_SERVER_HPP
+#ifndef CONFIG_VIRTUAL_SERVER_HPP
 # define CONFIG_VIRTUAL_SERVER_HPP
 
 class ConfigVirtualServer;
@@ -16,7 +16,7 @@ class ConfigVirtualServer: public ConfigElement
 {
 	private:
 		std::string	errorPage;
-		int			maxClientBodySize;
+		unsigned int			maxClientBodySize;
 		std::string	host;
 		std::string port;
 		std::list<std::string> serverNames;
@@ -34,8 +34,8 @@ class ConfigVirtualServer: public ConfigElement
 		//get
 		std::string	getPort(void) const;
 		std::string	getHost(void) const;
-		std::string getErrorPage(void)  const;
-		int getMaxClientBodySize(void)  const;
+		std::string getErrorPage(void) const;
+		int getMaxClientBodySize(void) const;
 		std::list<std::string> getServerNames(void);
 		std::list<ConfigLocation> getLocations(void) {return this->locations;};
 
@@ -53,4 +53,4 @@ class ConfigVirtualServer: public ConfigElement
 };
 std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj);
 
-# endif
+#endif

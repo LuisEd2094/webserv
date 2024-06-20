@@ -29,6 +29,7 @@ class Path
 		operator std::string() const;
 		~Path();	
 
+		std::string 	toStr(void) const { return *this; };
 		int				size() const { return directories.size(); };	
 		void			setIsRelative(bool v) { isRelative = v; };
 		void			setIsFile(bool v) { isFile = v; };
@@ -39,7 +40,7 @@ class Path
 
 		void			popBegin(int ammount);
 		void		 	popBack(int ammount);
-		void			append(Path tail);
+		Path			&append(Path tail);
 		int				normalize(void);
 		bool			includes(const Path &compPath) const;
 		bool			included(const Path &compPath) const;

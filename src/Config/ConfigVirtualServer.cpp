@@ -15,7 +15,7 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 	for (std::list<ParsingLocation>::iterator location = parsed.locations.begin();
 		location != parsed.locations.end(); location++)
 	{
-		this->locations.push_back(ConfigLocation(*location));
+		this->locations.push_back(ConfigLocation(*location, *this));
 	}
 	std::cerr <<"d";
 }

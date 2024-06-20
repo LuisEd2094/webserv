@@ -14,6 +14,7 @@
 # define    JUST_OUT POLLOUT | POLLHUP
 # define    KEEP_ALIVE true
 # define    MAX_URI_OFFSET 100
+# define    MAX_URL_SIZE 500
 
 
 

@@ -5,8 +5,9 @@ ConfigCgi::ConfigCgi(void)
     this->setDefaults();
 }
 
-ConfigCgi::ConfigCgi(ParsingCgi& obj)
+ConfigCgi::ConfigCgi(ParsingCgi& obj, ConfigLocation parent)
 {
+	this->location = &parent;
     for (ParsingCgi::iterator cgi = obj.begin(); cgi != obj.end(); cgi++)
     {
         this->parseKeyVal(cgi->first, cgi->second);
@@ -67,6 +68,7 @@ void ConfigCgi::setDefaults()
 {
     this->__elemType__ = "";
     this->__elemArgument__ = "";
+	this->location = NULL;
 }
 
 void ConfigCgi::setExtension(std::string &extension)
@@ -86,6 +88,11 @@ void ConfigCgi::setMetaVar(std::string &metaVar)
     }
 }
 
+void ConfigCgi::setLocation(const ConfigLocation &location)
+{
+	this->location = &location;
+}
+
 void ConfigCgi::setExecute(std::string &execute)
 {
     this->execute = execute;
@@ -96,14 +103,21 @@ std::string ConfigCgi::getExtension(void) const
     return (this->extension);
 }
 
-Path ConfigCgi::getExecute(void) const
-{
-    return (this->execute);
-}
 
 const std::map<std::string, std::string> &ConfigCgi::getMetaVar(void) const
 {
     return (this->metaVar);
+}
+const ConfigLocation &ConfigCgi::getLocation(void) const
+{
+	if (this->location == NULL)
+		throw std::exception();
+	return *this->location;
+}
+
+Path ConfigCgi::getExecute(void) const
+{
+    return (this->execute);
 }
 
 void ConfigCgi::recursivePrint(int recursiveLvl)
@@ -138,6 +152,7 @@ ConfigCgi &ConfigCgi::operator=( const ConfigCgi& obj)
     this->metaVar = obj.metaVar;
     this->execute = obj.execute;
     this->root = obj.root;
+    this->location = obj.location;
     return (*this);
 }
 
