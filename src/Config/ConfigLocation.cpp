@@ -483,18 +483,24 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 		}
 		*/
 		Path temp = beginLocation->getPath();
-		std::cerr << temp.included(requestedURL) << std::endl
-			<< (std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()) << std::endl
-			<< (temp.size() > maxDirMatches) <<	std::endl;
-		if (locMethods.size() == 0)
-			std::cerr << RED << "location with no methods" << std::endl;
-		else if (temp.included(requestedURL)
-			&& std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()
+		std::cerr << temp.included(requestedURL) << ", "
+			<< (temp.size() > maxDirMatches) << "; "
+			<< (std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()) <<	std::endl;
+		if (temp.included(requestedURL)
 			&& temp.size() >= maxDirMatches) 	
 		{
-			maxDirMatches = temp.size();
-			bestLocation = beginLocation;
-			std::cerr << "  MATCHED" ;
+			if (locMethods.size() == 0 || std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end())
+			{
+				maxDirMatches = temp.size();
+				bestLocation = beginLocation;
+				std::cerr << "  MATCHED" ;
+			}
+			else
+			{
+				client.setDefaultHttpResponse(METHOD_NOT_ALLOWED);
+			    client.setResponseType(FILE_OBJ);
+				client.setConfigElement(&(*beginLocation));
+			}
 		}
 		std::cerr << std::endl;
 		beginLocation++ ;

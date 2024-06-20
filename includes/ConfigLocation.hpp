@@ -29,7 +29,7 @@ class ConfigLocation: public ConfigElement
 		bool						_inheriting;
 		Path						_path;
 		Path						_fullUrl;
-		std::map<ErrorCodes, Path>			_errorPages;
+		std::map<ErrorCodes, Path>	_errorPages;
 		ConfigVirtualServer const	*_virtualServer;
 		//Add list configureLocation 
 

@@ -68,3 +68,20 @@ server
 			methods: GET POST DELETE;
 	}
 }
+
+
+
+
+
+GET /lolcito/index.html HTTP/1.1
+Host: lol.com
+
+GET /sdaf/noexiste HTTP/1.1
+Host: lol.com
+
+DELETE /lolcito/index.html HTTP/1.1
+Host: lol.com
+
+DELETE /nomethod/index.html HTTP/1.1
+Host: lol.com
+

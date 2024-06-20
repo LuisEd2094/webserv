@@ -76,6 +76,8 @@ bool Server::validateAction(Client& client)
 bool Server::prepareClient4ResponseGeneration(Client& client)
 {
     std::list<ConfigVirtualServer>::iterator server;
+    client.setDefaultHttpResponse(NOT_FOUND);
+    client.setResponseType(FILE_OBJ);
     for (server = this->virtualServers.begin(); server != this->virtualServers.end(); server++)
     {
         if (server->prepareClient4ResponseGeneration(client))

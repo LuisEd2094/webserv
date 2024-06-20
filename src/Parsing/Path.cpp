@@ -77,7 +77,7 @@ void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
     this->directories.erase(del);
 }
 
-Path::operator std::string() const
+Path::operator std::string()
 {
     std::list<std::string>::const_iterator dir;
     std::string result("");

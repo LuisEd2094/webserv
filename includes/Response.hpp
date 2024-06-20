@@ -43,6 +43,8 @@ enum ErrorCodes
     VERSION_NOT_SUPPORTED
 };
 
+# define IS_ERROR_CODE(code) code >= BAD_REQUEST && code <= VERSION_NOT_SUPPORTED
+
 /* 1xx Others*/
 
 # define CONTINUE_HTTP        "HTTP/1.1 100 Continue\r\n\r\n"

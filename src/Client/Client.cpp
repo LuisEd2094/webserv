@@ -399,8 +399,9 @@ void Client::parseForHttp()
         if (!_server->validateAction(*this))
         {            
             std::cerr << "server told me it was a bad action" << std::endl;
-            addClosingErrorObject(METHOD_NOT_ALLOWED);
-            return;
+            _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
+            resetClient(false);
+            return ;
         }
         if (_action == POST)
         {
@@ -561,7 +562,11 @@ void Client::makeChildrenToRespond()
     try
     {
         /*prepareClient4ResponseGeneration doesn't set if no file is found*/
-        if (_response_type == NOT_SET || (_action != DELETE && Overseer::checkIfDeleted(getPathFileString())))
+        if (IS_ERROR_CODE(_error_code))
+        {
+            response = getErrorResponse(_error_code);
+        }
+        else if (_response_type == NOT_SET || (_action != DELETE && Overseer::checkIfDeleted(getPathFileString())))
         {
 
             response = getErrorResponse(NOT_FOUND);
@@ -575,7 +580,7 @@ void Client::makeChildrenToRespond()
             (INTERNAL_SERVER_ERROR) and it fails, then it should just go to the default
             FD_READER throws exception in case OPEN fails
         */
-        response = getErrorResponse(INTERNAL_SERVER_ERROR);
+        response = getErrorResponse(_error_code);
     }
     std::queue<std::string> queue;
     queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10; Domain: ") + getHost()  + "Path: /" + CRNL);
@@ -592,10 +597,10 @@ void Client::makeChildrenToRespond()
 
 void Client::resetClient(bool has_body)
 {
-    std::cerr << _in_container << std::endl;
     if (has_body)
     {
         saveInBodyAsFile();
+
         setDefaultHttpResponse(OK);
         /* gives seg fault*/
         /*If _size_to_append == 0 it means we got the full body in the first read with HTTP*/
@@ -624,6 +629,7 @@ void Client::resetClient(bool has_body)
         _in_body.clear();
     }
     makeChildrenToRespond();
+    /* HTTP redirections por ejemplo, Location ...*/
     while (!_http_addons.empty())
         _http_addons.pop();
     _pending_read = false;
@@ -637,6 +643,7 @@ void Client::resetClient(bool has_body)
     _virtualServer = NULL;
     _configElement = NULL;
     _path_to_file = Path("");
+    _path_to_file_str = "";
     _defaultHttp = "";
     _error_code = OK;
     _was_zero = false;

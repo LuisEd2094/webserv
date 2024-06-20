@@ -145,13 +145,29 @@ BaseHandler* BaseHandler::getErrorResponse(ErrorCodes code)
 {
     /*Every Error we send should pass through here, if anyone that's NOT the client calls this function
     they should set _configElement to their respective configElement*/
-    const ConfigLocation* location = dynamic_cast<const ConfigLocation *>(_configElement);
+    const ConfigLocation* location = dynamic_cast<const ConfigLocation*>(_configElement);
     if (location == NULL)
     {
         /*If location == NULL it means we didn't go through server to get the location,
             for example, if HTTP fails, we can't use it to get the server info, so we just send a generic response
             Location is reset to NULL after sending an answer
-            */
+        */
+        const ConfigCgi* cgi = dynamic_cast<const ConfigCgi *>(_configElement);
+        if (cgi != NULL)
+        {
+            const ConfigLocation& location  = cgi->getLocation();
+            const std::string& errr = location.getErrorPage(code);
+
+            if (!errr.empty())
+            {
+                _response_type = FILE_OBJ;
+                _error_code = code;
+                _defaultHttp = Response::getHttpFirtsLine(code);
+                _path_to_file_str = errr;
+                return BaseHandler::createObject(*this);
+            }  
+        }
+
         return BaseHandler::createObject(Response::getDefault(code));
     }
     const std::string& errr = location->getErrorPage(code);

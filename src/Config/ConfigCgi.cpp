@@ -5,7 +5,7 @@ ConfigCgi::ConfigCgi(void)
     this->setDefaults();
 }
 
-ConfigCgi::ConfigCgi(ParsingCgi& obj, ConfigLocation parent)
+ConfigCgi::ConfigCgi(ParsingCgi& obj, const ConfigLocation &parent)
 {
 	this->location = &parent;
     for (ParsingCgi::iterator cgi = obj.begin(); cgi != obj.end(); cgi++)
@@ -112,7 +112,7 @@ const ConfigLocation &ConfigCgi::getLocation(void) const
 {
 	if (this->location == NULL)
 		throw std::exception();
-	return *this->location;
+	return *(this->location);
 }
 
 Path ConfigCgi::getExecute(void) const

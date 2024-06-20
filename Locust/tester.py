@@ -7,6 +7,7 @@ class UserBehavior(TaskSet):
     @task
     def get_root(self):
         self.client.get("test/FilesTest.html")
+        self.client.get("/")
 
 class WebsiteUser(HttpUser):
     tasks = [UserBehavior]

@@ -24,7 +24,7 @@ class ConfigCgi: public ConfigElement
 	public:
 
 		ConfigCgi(void); // TODO
-		ConfigCgi(ParsingCgi& obj, ConfigLocation parent);
+		ConfigCgi(ParsingCgi& obj, const ConfigLocation &parent);
 		ConfigCgi(const ConfigCgi& obj);
 		ConfigCgi &operator=( const ConfigCgi& obj);
 		~ConfigCgi(){};
@@ -41,7 +41,6 @@ class ConfigCgi: public ConfigElement
 		std::string get__elemType__(void) const {return this->__elemArgument__;};
 		std::string get__elemArgument__(void) const {return this->__elemArgument__;};
 		std::string getExtension(void) const;
-		Path		getExecute(void) const;
 		const Path		&getRoot(void) const {return (this->root);};
 		const std::string getRootAsString(void) const { return((const std::string)this->root);};
 		const std::map<std::string, std::string> &getMetaVar(void) const;
