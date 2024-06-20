@@ -17,12 +17,13 @@ class ConfigCgi: public ConfigElement
 		std::string							__elemArgument__;
 		std::string							extension;
 		std::map<std::string, std::string>	metaVar;
+		ConfigLocation const				*location;
 		Path								execute;
 
 	public:
 
 		ConfigCgi(void); // TODO
-		ConfigCgi(ParsingCgi& obj);
+		ConfigCgi(ParsingCgi& obj, ConfigLocation parent);
 		ConfigCgi(const ConfigCgi& obj);
 		ConfigCgi &operator=( const ConfigCgi& obj);
 		~ConfigCgi(){};
@@ -31,14 +32,16 @@ class ConfigCgi: public ConfigElement
 		void set__elemArgument__(std::string v){this->__elemArgument__ = v;};
 		void setExtension(std::string &extension);
 		void setMetaVar(std::string &metaVar);
+		void setLocation(const ConfigLocation &location);
 		void setExecute(std::string &execute);
 
 
 		std::string get__elemType__(void) const {return this->__elemArgument__;};
 		std::string get__elemArgument__(void) const {return this->__elemArgument__;};
 		std::string getExtension(void) const;
-		Path		getExecute(void) const;
 		const std::map<std::string, std::string> &getMetaVar(void) const;
+		const ConfigLocation	&getLocation(void) const;
+		Path		getExecute(void) const;
 
 		bool prepareClient4ResponseGeneration(Client& client, Path &requestedUrl) const;
 

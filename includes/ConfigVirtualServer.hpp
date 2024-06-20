@@ -17,7 +17,6 @@ class ConfigVirtualServer: public ConfigElement
 	private:
 		std::string	errorPage;
 		unsigned int			maxClientBodySize;
-		urlSize					maxUrlLen;
 		std::string	host;
 		std::string port;
 		std::list<std::string> serverNames;
@@ -30,8 +29,6 @@ class ConfigVirtualServer: public ConfigElement
 		void setHost(const std::string &host);
 		void setMaxClientBodySize(int bodySize);
 		void setMaxClientBodySize(std::string bodySize);
-		void setMaxUrlLen(std::string len) { this->maxUrlLen = std::atoi(len.c_str()); };
-		void setMaxUrlLen(urlSize len) { this->maxUrlLen = len; };
 		void setServerNames(std::string &serverName);
 		void setLocations(std::list<ConfigLocation> inpLocations) {this->locations = inpLocations;};
 		//get
@@ -39,7 +36,6 @@ class ConfigVirtualServer: public ConfigElement
 		std::string	getHost(void) const;
 		std::string getErrorPage(void) const;
 		int getMaxClientBodySize(void) const;
-		urlSize getMaxUrlLen(void) const { return this->maxUrlLen; };
 		std::list<std::string> getServerNames(void);
 		std::list<ConfigLocation> getLocations(void) {return this->locations;};
 

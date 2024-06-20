@@ -29,8 +29,8 @@ class ConfigLocation: public ConfigElement
 		bool						_inheriting;
 		Path						_path;
 		Path						_fullUrl;
-		int							_maxUrlLen;
 		std::map<int, Path>			_errorPages;
+		ConfigVirtualServer const	*_virtualServer;
 		//Add list configureLocation 
 
 	public:
@@ -56,14 +56,13 @@ class ConfigLocation: public ConfigElement
 		void							setCgis(std::string cgis);//*
 		void							setPath(Path &path) { this->_path = path; };//*
 		void							setFullUrl(const Path &path);//*
-		void							setMaxUrlLen(const urlSize max) { this->_maxUrlLen = max; };
 		void							setErrorPages(std::string errors);
+		void							setVirtualServer(const ConfigVirtualServer &server);
 
 //		Path							getPath(void) const { std::cout << "returning: " << _path << std::endl; return this->_path;};
 		int								size() { return this->_path.size(); };
 		const Path& 					getPath(void) const { return this->_path;};
 		const Path& 					getFullUrl(void) const { return this->_fullUrl;};
-		urlSize							getMaxUrlLen(void) const { return this->_maxUrlLen;};
 		std::string						getErrorPage(void) const;
 		std::list<std::string>			getMethods(void) const;
 		std::string						getRedirection(void) const;
@@ -74,6 +73,7 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigLocation>		getLocations(void) const;
 		std::map<int, Path>				getMapErrorPages(void) const;
 		Path							const getErrorPages(const int searchError) const;
+		const ConfigVirtualServer		&getVirtualServer(void) const ;
 
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);
 		bool							checkCGI(Client &client, Path& requestedURL);
