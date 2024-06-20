@@ -38,6 +38,7 @@ class Client : public BaseHandler
 
 
         // setters
+        void                addErrorFileReaderToExistingRequest(BaseHandler* old_requester, BaseHandler* new_requester);
         void                addHeader(const std::string &new_element);
         void                addHeader(const std::queue<std::string> &);
         void                addURLRedirection(const std::string&);

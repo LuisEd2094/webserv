@@ -222,18 +222,6 @@ void Client::readFromFD()
                         if (parser_method != WARNING)
                         {
                             addClosingError(ErrorCodes(parser_method));
-                            // if (parser_method == ERROR_FORMAT || parser_method ==  ERROR_HEADER)
-                            // {
-                            //     addClosingError(BAD_REQUEST);
-                            // }
-                            // else if (parser_method == ERROR_METHOD)
-                            // {
-                            //     addClosingError(NOT_IMPLEMENTED);
-                            // }
-                            // else if (parser_method == ERROR_VERSION)
-                            // {
-                            //     addClosingError(VERSION_NOT_SUPPORTED);
-                            // }
                         }
                         break;
                     }
@@ -563,10 +551,19 @@ BaseHandler* Client::getErrorResponse(ErrorCodes code)
     /*Every Error we send should pass through here, if anyone that's NOT the client calls this function
     they should set _configElement to their respective configElement*/
     const ConfigLocation* location = dynamic_cast<const ConfigLocation *>(_configElement);
+    if (location == NULL)
+    {
+        /*If location == NULL it means we didn't go through server to get the location,
+            for example, if HTTP fails, we can't use it to get the server info, so we just send a generic response
+            Location is reset to NULL after sending an answer
+            */
+        return BaseHandler::createObject(Response::getDefault(code));
+    }
     const std::string& errr = location->getErrorPage(code);
     if (!errr.empty())
     {
         _response_type = FILE_OBJ;
+        _error_code = code;
         _defaultHttp = Response::getHttpFirtsLine(code);
         _path_to_file_str = errr;
         return BaseHandler::createObject(*this);
@@ -602,7 +599,7 @@ void Client::makeChildrenToRespond()
             (INTERNAL_SERVER_ERROR) and it fails, then it should just go to the default
             FD_READER throws exception in case OPEN fails
         */
-        response = BaseHandler::createObject(_server->getErrorResponseObject(INTERNAL_SERVER_ERROR));
+        response = getErrorResponse(INTERNAL_SERVER_ERROR);
     }
     std::queue<std::string> queue;
     queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10; Domain: ") + getHost()  + "Path: /" + CRNL);
@@ -662,6 +659,7 @@ void Client::resetClient(bool has_body)
     _parser_http.resetParsing();
     _chunk_size = 0;
     _virtualServer = NULL;
+    _configElement = NULL;
     _path_to_file = Path("");
     _defaultHttp = "";
     _error_code = OK;

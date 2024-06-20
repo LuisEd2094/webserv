@@ -54,14 +54,33 @@ FileReader::FileReader(Client& client) : BaseHandler(client),  _client_fd(client
 
 FileReader::~FileReader()
 {
-    close(_fd);
+    /*If open fails, then we don't close it on destruction*/
+    if (_fd > -1)
+        close(_fd);
 }
 
-FileReader* FileReader::createNewFileReader(Client& client)
+BaseHandler* FileReader::createNewFileReader(Client& client)
 {
-    FileReader *new_FileReader = new FileReader(client);
-    Overseer::addToPfds(new_FileReader);
-    return new_FileReader;
+    FileReader *new_FileReader;
+    try
+    {
+        new_FileReader = new FileReader(client);
+        Overseer::addToPfds(new_FileReader);
+        return new_FileReader;
+    }
+    catch (...)
+    {
+        /*Check if this is a new File reader then update?*/
+        if (client.getErrorCode() == INTERNAL_SERVER_ERROR)
+        {
+            /*Consume the exception?*/
+            return BaseHandler::createObject(Response::getDefault(client.getErrorCode()));
+        }
+        else
+        {
+            throw FileReaderException(strerror(errno));
+        }
+    }
 }
 
 
@@ -73,7 +92,6 @@ int FileReader::getFD() const
 bool    FileReader::checkObjTimeOut()
 {
     return false;
-    
 }
 
 std::string  FileReader::setContentType(std::string http)

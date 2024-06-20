@@ -55,18 +55,25 @@ void    Client::addObject(BaseHandler * obj)
     if (obj)
     {
         RequestHandler* new_handler = new RequestHandler(*this);
-        DirectResponse* NO_FD_OBJect = dynamic_cast<DirectResponse *>(obj);
+        DirectResponse* no_fd_obj = dynamic_cast<DirectResponse *>(obj);
         
         _response_objects_queue.push(new_handler);
-        if (NO_FD_OBJect)
+        if (no_fd_obj)
         {
-            handleDirectObj(NO_FD_OBJect, new_handler);
+            handleDirectObj(no_fd_obj, new_handler);
         }
         else
         {
             _response_objects_map[obj] = new_handler;
         }
     }
+}
+
+void    Client::addErrorFileReaderToExistingRequest(BaseHandler* old_requester, BaseHandler* new_requester)
+{
+    RequestHandler* old_handler = _response_objects_map[old_requester];
+
+    _response_objects_map[new_requester] = old_handler;   
 }
 
 

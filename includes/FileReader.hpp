@@ -19,7 +19,7 @@ class FileReader : public BaseHandler
         std::string         setContentType(std::string);
         int           getFD() const;
 
-        static FileReader* createNewFileReader(Client& client);
+        static BaseHandler* createNewFileReader(Client& client);
         static const std::string& getContentType(const std::string&);
         static void initTypeMaps();
         static const std::string& getMimeType(const std::string&);

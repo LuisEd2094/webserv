@@ -48,6 +48,7 @@ void Overseer::mainLoop()
             {
                 // Check if someone's ready to read
                 std::map<int, BaseHandler *>::iterator it = _pending_fds.find(_pfds[_i].fd);
+                std::cerr << "Over seer has: " << _fd_count << " pending fds" << std::endl;
                 if (_pfds[_i].revents & (POLLIN | POLLOUT | POLLHUP))
                 {
                     if (_pfds[_i].revents & POLLHUP)
