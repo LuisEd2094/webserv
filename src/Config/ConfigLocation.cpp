@@ -140,7 +140,7 @@ std::string	ConfigLocation::getErrorPage(void) const
 
 void ConfigLocation::setMethods(std::string inpMethods)
 {
-	_methods = ft_split(inpMethods, ' ');
+	_methods = ft_split<std::list<std::string> >(inpMethods, ' ');
 }
 
 std::list<std::string>	ConfigLocation::getMethods(void) const
@@ -214,7 +214,7 @@ bool ConfigLocation::getDirListing(void) const
 
 void ConfigLocation::setIndex(std::string index)
 {
-	_index = ft_split(index, ' ');
+	_index = ft_split<std::list<std::string> >(index, ' ');
 }
 
 std::list<std::string> ConfigLocation::getIndex(void) const
@@ -224,7 +224,6 @@ std::list<std::string> ConfigLocation::getIndex(void) const
 
 void ConfigLocation::setCgis(std::string cgis)
 {
-	// _cgis = ft_split(cgis, ' ');
 	(void)cgis;
 }
 
@@ -240,7 +239,7 @@ std::list<ConfigLocation> ConfigLocation::getLocations(void) const
 
 void	ConfigLocation::setErrorPages(std::string errors)
 {
-	std::list<std::string> split = ft_split(errors, ' ');
+	std::list<std::string> split = ft_split<std::list<std::string> >(errors, ' ');
 	for (std::list<std::string>::iterator i = split.begin(); i != split.end(); i++)
 	{
 		std::string ErrorKey = ::getKey(*i, '-');
@@ -262,12 +261,11 @@ void	ConfigLocation::setErrorPages(std::string errors)
 
 void	ConfigLocation::setRedirections(const std::string &redirections)
 {
-	std::cout << ORANGE << redirections << END << std::endl;
-	std::list<std::string> code = ft_split(redirections, '-');
-	std::cout << ORANGE << "code: " << END << code.front() << std::endl;
-	std::cout << ORANGE << "redirection: " << END << code.back() << std::endl;
+	std::list<std::string> code = ft_split<std::list<std::string> >(redirections, '-');
 	if (code.size() != 2)
 		throw ParamError(std::string("Error: invalid redirection:"));
+	code.front() = ::cutSpace(code.front());
+	code.back() = ::cutSpace(code.back());
 	bool isNum = true;
 	for (size_t i = 0; i < code.front().length() && isNum; i++)
 		isNum = std::isdigit(code.front()[i]);
@@ -276,13 +274,12 @@ void	ConfigLocation::setRedirections(const std::string &redirections)
 		+ std::string(code.front().length() != 3 ? " invalid " : " it is not a number ") + code.front());
 	int codeNum = std::atoi(code.front().c_str());
 	ResponseCodes codeRedirection = Response::getErrorCodeFromInt(codeNum);
-	if (codeNum == INVALID_CODE)
-		throw ParamError(std::string("Error: invalid Error page Code: " + code.front() + "."));
-	//hacer split y validar si no es un 300 no dar una lista mayor
-	std::list<Path> split = ft_splitPath(code.back(), ' ');
+	if (codeRedirection == INVALID_CODE)
+		throw ParamError(std::string("Error: invalid: code not available " + code.front() + "."));
+	std::list<Path> split = ft_split<std::list<Path> >(code.back(), ' ');
 	if (codeNum != MULTIPLE_REDIRECTS and split.size() > 2)
 		throw ParamError(std::string("Error: invalid Error: no is Multiple redirects " + code.front() + "."));
-	this->_codeRedirections = codeNum;
+	this->_codeRedirections = codeRedirection;
 	this->_redirections = split;
 }
 
@@ -301,7 +298,7 @@ const Path ConfigLocation::getErrorPages(ResponseCodes searchError) const
 	return (it->second);
 }
 
-int ConfigLocation::getCodeRedirections(void) const
+ResponseCodes ConfigLocation::getCodeRedirections(void) const
 {
 	return (this->_codeRedirections);
 }

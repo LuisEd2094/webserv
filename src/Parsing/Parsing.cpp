@@ -260,25 +260,3 @@ void Parsing::resetParsing( void)
 	_endRead = false;
 	_findNewline = 0;
 }
-
-std::list<std::string> ft_split(const std::string& str, char delimiter)
-{
-    std::list<std::string> list;
-    std::istringstream input(str);
-    std::string word;
-    
-    while (std::getline(input, word, delimiter))
-        list.push_back(word);
-    return (list);
-}
-
-std::list<Path> ft_splitPath(const std::string& str, char delimiter)
-{
-    std::list<Path> list;
-    std::istringstream input(str);
-    std::string word;
-    
-    while (std::getline(input, word, delimiter))
-        list.push_back(word);
-    return (list);
-}

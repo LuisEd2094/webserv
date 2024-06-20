@@ -29,7 +29,7 @@ class ConfigLocation: public ConfigElement
 		bool								_inheriting;
 		Path								_path;
 		std::map<ResponseCodes, Path>		_errorPages;
-		int									_codeRedirections;
+		ResponseCodes						_codeRedirections;
 		std::list<Path>						_redirections;
 		//Add list configureLocation 
 
@@ -70,7 +70,7 @@ class ConfigLocation: public ConfigElement
 		std::list<ConfigLocation>		getLocations(void) const;
 		std::map<ResponseCodes, Path>	getMapErrorPages(void) const;
 		const Path						getErrorPages(ResponseCodes searchError) const;
-		int								getCodeRedirections(void) const;
+		ResponseCodes					getCodeRedirections(void) const;
 		const std::list<Path>			getRedirections(void) const;
 
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);

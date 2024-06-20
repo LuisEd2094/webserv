@@ -18,7 +18,7 @@ Path::Path(std::string pathStr)
     //std::cerr << "Path string constructor called" << std::endl;
     this->isRelative = pathStr[0] != '/';
     this->isFile = pathStr[pathStr.length()-1] != '/';
-    this->directories = ft_split(pathStr, '/');
+    this->directories = ft_split<std::list<std::string> >(pathStr, '/');
     while (this->normalize());
     //std::cerr << "Path string constructor finished" << std::endl;
 }
@@ -41,7 +41,7 @@ std::string Path::getExtension(void)
     if (this->size() == 0)
         return ("");
     std::string last = this->directories.back();
-    std::list<std::string>   splited = ft_split(last, '.');
+    std::list<std::string>   splited = ft_split<std::list<std::string> >(last, '.');
     if (splited.size() == 1)  // sdaf/fasd
         return ("");
     if (splited.size() == 2 && splited.front() == "") 
