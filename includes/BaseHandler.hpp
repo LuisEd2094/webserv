@@ -18,7 +18,7 @@ class BaseHandler
         virtual int                     Action( int ) = 0;
         virtual void                    setTime();
         virtual bool                    checkObjTimeOut() = 0;
-        virtual const ConfigElement*    getConfigElement();
+        virtual const ConfigElement*    getConfigElement() const;
         virtual BaseHandler *           getErrorResponse(ResponseCodes code); 
 
         virtual int                     getClientFD() const;

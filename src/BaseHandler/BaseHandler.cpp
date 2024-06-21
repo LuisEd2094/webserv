@@ -126,7 +126,7 @@ const std::string&  BaseHandler::getDefaultHttpResponse() const
 }
 
 
-const ConfigElement* BaseHandler::getConfigElement()
+const ConfigElement* BaseHandler::getConfigElement() const
 {
     return _configElement;
 }

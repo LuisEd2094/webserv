@@ -80,7 +80,7 @@ class Client : public BaseHandler
         const std::queue<std::string>&  getHTTPAddons() const;
         const std::string&              getDefaultHttpResponse(void) const;
         ResponseCodes                      getErrorCode() const; 
-        const ConfigElement *           getConfigElement() const;
+        const ConfigElement *           getConfigElement()  const;
         const Path&                     getExecute() const;
 
 
