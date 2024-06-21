@@ -113,7 +113,18 @@ bool    Client::verifyIfEnoughForLocation()
     return (!method.empty() && !url.empty() && host != "not found");
 }
 
-void    Client::addClosingError(ErrorCodes error)
+bool    Client::verifyIfEnoughForLocation()
+{
+    std::string method, url, host;
+
+    method = _parser_http.getMethod();
+    url = _parser_http.getRequested();
+    host = _parser_http.getMapValue("Host");
+
+    return (!method.empty() && !url.empty() && host != "not found");
+}
+
+void    Client::addClosingError(ResponseCodes error)
 {
     /*This functions adds the error object to the queue and sets the client to a state
         where it'd close the connection after finishing ending the queue */
@@ -128,7 +139,7 @@ void    Client::addClosingError(ErrorCodes error)
     Overseer::setListenAction(_fd, JUST_OUT);
 }
 
-void    Client::addClosingErrorObject(ErrorCodes error)
+void    Client::addClosingErrorObject(ResponseCodes error)
 {
     addClosingError(error);
 }
@@ -236,7 +247,7 @@ void Client::readFromFD()
                         */
                         if (parser_method != WARNING)
                         {
-                            addClosingError(ErrorCodes(parser_method));
+                            addClosingError(ResponseCodes(parser_method));
                         }
                         break;
                     }
@@ -249,7 +260,7 @@ void Client::readFromFD()
                         break;
                     else if (parsingMessage) // parsingHeader returns something different to warning when error
                     {
-                        addClosingError(ErrorCodes(parsingMessage));
+                        addClosingError(ResponseCodes(parsingMessage));
                         break ;
                     } 
                     parseForHttp();

@@ -46,6 +46,7 @@
 # include <vector>
 # include <Response.hpp>
 # include <Uri.hpp>
+# include <Path.hpp>
 
 /******************************************************************************/
 /*                            MACROS                                          */
@@ -66,6 +67,42 @@
 /******************************************************************************/
 /*                            CLASS                                           */
 /******************************************************************************/
+
+template<typename Container>
+Container ft_split(const std::string& str, char delimiter)
+{
+    Container list;
+    std::istringstream input(str);
+    std::string word;
+    
+    while (std::getline(input, word, delimiter))
+        list.push_back(word);
+    return list;
+}
+
+template<typename L>
+void	printList(const L& list)
+{
+	typename L::const_iterator i;
+	for (i = list.begin(); i != list.end(); i++)
+		std::cerr << ORANGE << "*" << END << *i 
+		<< ORANGE << "*" << END << std::endl;
+}
+
+template<typename S>
+std::string	cutSpace(const S& str)
+{
+	if (!str[0])
+		return ("");
+	typename S::const_iterator start = str.begin();
+	typename S::const_iterator end = str.end();
+	while (::isblank(*start) && start != end)
+		start++;
+	end--;
+	while (::isblank(*end) && start != start)
+		end--;
+	return (std::string(start, end));
+}
 
 template<typename M>
 void	printMap(const M& map)
@@ -214,5 +251,4 @@ class Parsing
 		bool 								getEndRead() const;
 };
 
-std::list<std::string> ft_split(const std::string& str, char delimiter);
 #endif

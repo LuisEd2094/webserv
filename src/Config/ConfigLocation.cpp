@@ -120,7 +120,10 @@ void ConfigLocation::parseKeyVal(std::string key, std::string val)
 	else if (key == "methods")
 		this->setMethods(val);	
 	else if (key == "redirection")
-		this->setRedirection(val);	
+	{
+		this->setRedirection(val);
+		this->setRedirections(val);
+	}
 	else if (key == "root") // if father root = /tmp/sdaf/; then for child root = wololo -> /tmp/sdaf, else for child root = /var -> /var
 		this->initializeRoot(val);	
 	else if (key == "dirListing")
@@ -142,7 +145,7 @@ std::string	ConfigLocation::getErrorPage(void) const
 
 void ConfigLocation::setMethods(std::string inpMethods)
 {
-	_methods = ft_split(inpMethods, ' ');
+	_methods = ft_split<std::list<std::string> >(inpMethods, ' ');
 }
 
 std::list<std::string>	ConfigLocation::getMethods(void) const
@@ -216,7 +219,7 @@ bool ConfigLocation::getDirListing(void) const
 
 void ConfigLocation::setIndex(std::string index)
 {
-	_index = ft_split(index, ' ');
+	_index = ft_split<std::list<std::string> >(index, ' ');
 }
 
 std::list<std::string> ConfigLocation::getIndex(void) const
@@ -226,7 +229,6 @@ std::list<std::string> ConfigLocation::getIndex(void) const
 
 void ConfigLocation::setCgis(std::string cgis)
 {
-	// _cgis = ft_split(cgis, ' ');
 	(void)cgis;
 }
 
@@ -257,7 +259,7 @@ void	ConfigLocation::setFullUrl(const Path &url)
 
 void	ConfigLocation::setErrorPages(std::string errors)
 {
-	std::list<std::string> split = ft_split(errors, ' ');
+	std::list<std::string> split = ft_split<std::list<std::string> >(errors, ' ');
 	for (std::list<std::string>::iterator i = split.begin(); i != split.end(); i++)
 	{
 		std::string ErrorKey = ::getKey(*i, '-');
@@ -273,26 +275,60 @@ void	ConfigLocation::setErrorPages(std::string errors)
 			+ std::string(ErrorKey.length() != 3 ? " invalid " : " it is not a number ") + ErrorKey);
 		int ErrorKeyNum = std::atoi(ErrorKey.c_str());
 
-		ErrorCodes error = Response::getErrorCodeFromInt(ErrorKeyNum);
+		ResponseCodes error = Response::getErrorCodeFromInt(ErrorKeyNum);
 		if (error == INVALID_CODE)
 			throw ParamError(std::string("Error: invalid Error page Code: " + ErrorKey + "."));
 		this->_errorPages[error] = ErrorValue;
 	}
 }
 
-std::map<ErrorCodes, Path> ConfigLocation::getMapErrorPages(void) const
+void	ConfigLocation::setRedirections(const std::string &redirections)
+{
+	std::list<std::string> code = ft_split<std::list<std::string> >(redirections, '-');
+	if (code.size() != 2)
+		throw ParamError(std::string("Error: invalid redirection:"));
+	code.front() = ::cutSpace(code.front());
+	code.back() = ::cutSpace(code.back());
+	bool isNum = true;
+	for (size_t i = 0; i < code.front().length() && isNum; i++)
+		isNum = std::isdigit(code.front()[i]);
+	if (code.front().length() != 3 or !isNum)
+		throw ParamError(std::string("Error: Syntax redirections:")
+		+ std::string(code.front().length() != 3 ? " invalid " : " it is not a number ") + code.front());
+	int codeNum = std::atoi(code.front().c_str());
+	ResponseCodes codeRedirection = Response::getErrorCodeFromInt(codeNum);
+	if (codeRedirection == INVALID_CODE)
+		throw ParamError(std::string("Error: invalid: code not available " + code.front() + "."));
+	std::list<Path> split = ft_split<std::list<Path> >(code.back(), ' ');
+	if (codeNum != MULTIPLE_REDIRECTS and split.size() > 2)
+		throw ParamError(std::string("Error: invalid Error: no is Multiple redirects " + code.front() + "."));
+	this->_codeRedirections = codeRedirection;
+	this->_redirections = split;
+}
+
+std::map<ResponseCodes, Path> ConfigLocation::getMapErrorPages(void) const
 {
 	return (this->_errorPages);
 }
 
-Path const ConfigLocation::getErrorPages(ErrorCodes searchError) const
+const Path ConfigLocation::getErrorPages(ResponseCodes searchError) const
 {
-	std::map<ErrorCodes, Path>::const_iterator it = this->_errorPages.find(searchError);
+	std::map<ResponseCodes, Path>::const_iterator it = this->_errorPages.find(searchError);
 	if (it == this->_errorPages.end())
 	{
 		return (Path(""));
 	}
 	return (it->second);
+}
+
+ResponseCodes ConfigLocation::getCodeRedirections(void) const
+{
+	return (this->_codeRedirections);
+}
+
+const std::list<Path> ConfigLocation::getRedirections(void) const
+{
+	return (this->_redirections);
 }
 
 ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
@@ -310,6 +346,8 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	this->_locations = obj.getLocations();
 	this->_cgis = obj.getCgis();
 	this->_path = obj.getPath();
+	this->_codeRedirections = obj.getCodeRedirections();
+	this->_redirections = obj.getRedirections();
 	this->_fullUrl = obj.getFullUrl();
 
 	return (*this);

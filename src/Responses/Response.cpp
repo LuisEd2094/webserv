@@ -3,12 +3,12 @@
 responsesMap Response::defaults;
 defaultResponsesMap Response::defaultResponses;
 std::vector<std::string> Response::_vectorError;
-std::map<int, ErrorCodes>    Response::_mapError;
+std::map<int, ResponseCodes>    Response::_mapError;
 
 
-ErrorCodes Response::getErrorCodeFromInt(int num)
+ResponseCodes Response::getErrorCodeFromInt(int num)
 {
-    std::map <int, ErrorCodes>::iterator it = _mapError.find(num);
+    std::map <int, ResponseCodes>::iterator it = _mapError.find(num);
     if (it == _mapError.end())
         return INVALID_CODE;
     return it->second;
@@ -16,7 +16,7 @@ ErrorCodes Response::getErrorCodeFromInt(int num)
 }
 
 
-const defaultResponse& Response::getDefault(ErrorCodes code)
+const defaultResponse& Response::getDefault(ResponseCodes code)
 {
     defaultResponsesMap::iterator it = defaultResponses.find(code);
 
@@ -169,7 +169,7 @@ void Response::initErrorsMap()
     _mapError[505] = VERSION_NOT_SUPPORTED;
 }
 
- const std::string& Response::getHttpFirtsLine(ErrorCodes code)
+ const std::string& Response::getHttpFirtsLine(ResponseCodes code)
  {
     std::cerr << _vectorError[code];
     return (_vectorError[code]);

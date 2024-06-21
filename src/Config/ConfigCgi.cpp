@@ -79,11 +79,11 @@ void ConfigCgi::setExtension(std::string &extension)
 
 void ConfigCgi::setMetaVar(std::string &metaVar)
 {
-    std::list<std::string> split = ft_split(metaVar, ' ');
+    std::list<std::string> split = ft_split<std::list<std::string> >(metaVar, ' ');
     std::list<std::string>::iterator line = split.begin();
     for (; line != split.end(); line++)
     {
-        std::list<std::string> tmp = ft_split(*line, '=');
+        std::list<std::string> tmp = ft_split<std::list<std::string> >(*line, '=');
         this->metaVar[tmp.front()] = tmp.back();
     }
 }

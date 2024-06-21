@@ -29,7 +29,7 @@ class ConfigLocation: public ConfigElement
 		bool						_inheriting;
 		Path						_path;
 		Path						_fullUrl;
-		std::map<ErrorCodes, Path>	_errorPages;
+		std::map<ResponseCodes, Path>	_errorPages;
 		ConfigVirtualServer const	*_virtualServer;
 		//Add list configureLocation 
 
@@ -43,25 +43,28 @@ class ConfigLocation: public ConfigElement
 		~ConfigLocation(){}
 
 		void							setDefaults();
-		void							setErrorPage(std::string inpErrorPage);//
-		void							setMethods(std::string methods);//
-		void							setRedirection(std::string redirection);//
+		void							setErrorPage(std::string inpErrorPage);
+		void							setMethods(std::string methods);
+		void							setRedirection(std::string redirection);
 		void							setRoot(std::string root);
 		void							setRoot(Path root);
 		void							initializeRoot(Path root);
 		void							initializeRoot(std::string root);
 		void							setDirListing(std::string dirListing);
 		void							setDirListing(bool dirListing);
+		void							setIndex(std::string index);
+		void							setCgis(std::string cgis);
+		void							setPath(Path &path) { this->_path = path; };
 		void							setIndex(std::string index);//
 		void							setCgis(std::string cgis);//*
 		void							setPath(Path &path) { this->_path = path; };//*
 		void							setFullUrl(const Path &path);//*
 		void							setErrorPages(std::string errors);
+		void							setRedirections(const std::string &redirections);
 		void							setVirtualServer(const ConfigVirtualServer &server);
 
-//		Path							getPath(void) const { std::cerr << "returning: " << _path << std::endl; return this->_path;};
 		int								size() { return this->_path.size(); };
-		const std::string				getErrorPage(ErrorCodes err) const;
+		const std::string				getErrorPage(ResponseCodes err) const;
 		const Path& 					getPath(void) const { return this->_path;};
 		const Path& 					getFullUrl(void) const { return this->_fullUrl;};
 		std::string						getErrorPage(void) const;
@@ -70,10 +73,12 @@ class ConfigLocation: public ConfigElement
 		Path							getRoot(void) const;
 		bool							getDirListing(void) const;
 		std::list<std::string>			getIndex(void) const;
-		const std::list<ConfigCgi>			&getCgis(void) const;//*
+		const std::list<ConfigCgi>		&getCgis(void) const;
 		std::list<ConfigLocation>		getLocations(void) const;
-		std::map<ErrorCodes, Path>				getMapErrorPages(void) const;
-		Path							const getErrorPages(ErrorCodes searchError) const;
+		std::map<ResponseCodes, Path>	getMapErrorPages(void) const;
+		const Path						getErrorPages(ResponseCodes searchError) const;
+		ResponseCodes					getCodeRedirections(void) const;
+		const std::list<Path>			getRedirections(void) const;
 		const ConfigVirtualServer		&getVirtualServer(void) const ;
 
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);

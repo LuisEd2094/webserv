@@ -99,7 +99,7 @@ void Client::setPathFile(const Path& path)
 }
 
 
-void Client::setDefaultHttpResponse(ErrorCodes code)
+void Client::setDefaultHttpResponse(ResponseCodes code)
 {
     _defaultHttp = Response::getHttpFirtsLine(code);
     _error_code = code;
