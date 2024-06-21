@@ -31,6 +31,8 @@ class ConfigLocation: public ConfigElement
 		Path						_fullUrl;
 		std::map<ResponseCodes, Path>	_errorPages;
 		ConfigVirtualServer const	*_virtualServer;
+		ResponseCodes						_codeRedirections;
+		std::list<Path>						_redirections;
 		//Add list configureLocation 
 
 	public:
@@ -55,9 +57,6 @@ class ConfigLocation: public ConfigElement
 		void							setIndex(std::string index);
 		void							setCgis(std::string cgis);
 		void							setPath(Path &path) { this->_path = path; };
-		void							setIndex(std::string index);//
-		void							setCgis(std::string cgis);//*
-		void							setPath(Path &path) { this->_path = path; };//*
 		void							setFullUrl(const Path &path);//*
 		void							setErrorPages(std::string errors);
 		void							setRedirections(const std::string &redirections);

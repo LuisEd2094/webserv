@@ -19,10 +19,10 @@ class BaseHandler
         virtual void                    setTime();
         virtual bool                    checkObjTimeOut() = 0;
         virtual const ConfigElement*    getConfigElement();
-        virtual BaseHandler *           getErrorResponse(ErrorCodes code); 
+        virtual BaseHandler *           getErrorResponse(ResponseCodes code); 
 
         virtual int                     getClientFD() const;
-        virtual ErrorCodes              getErrorCode() const;
+        virtual ResponseCodes              getErrorCode() const;
         virtual const std::string&      getPathFileString() const;
         virtual const std::string&      getDefaultHttpResponse() const;
 
@@ -35,7 +35,7 @@ class BaseHandler
     protected:
 		const   ConfigElement			    			*_configElement;
         ObjectTypes                                     _response_type;
-        ErrorCodes                                      _error_code;
+        ResponseCodes                                      _error_code;
         std::string                                     _defaultHttp;
         std::string                                     _path_to_file_str;
         int                                             _client_fd;

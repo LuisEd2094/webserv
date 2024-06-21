@@ -113,17 +113,6 @@ bool    Client::verifyIfEnoughForLocation()
     return (!method.empty() && !url.empty() && host != "not found");
 }
 
-bool    Client::verifyIfEnoughForLocation()
-{
-    std::string method, url, host;
-
-    method = _parser_http.getMethod();
-    url = _parser_http.getRequested();
-    host = _parser_http.getMapValue("Host");
-
-    return (!method.empty() && !url.empty() && host != "not found");
-}
-
 void    Client::addClosingError(ResponseCodes error)
 {
     /*This functions adds the error object to the queue and sets the client to a state

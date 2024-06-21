@@ -555,7 +555,7 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 	bestLocation->prepareClient4ResponseGeneration(client, requestedURL);
 	return (true);
 }
-const std::string ConfigLocation::getErrorPage(ErrorCodes err) const
+const std::string ConfigLocation::getErrorPage(ResponseCodes err) const
 {
 	Path pathy_pathon;
 

@@ -111,7 +111,7 @@ int BaseHandler::getClientFD() const
     return _client_fd;
 }
 
-ErrorCodes BaseHandler::getErrorCode() const
+ResponseCodes BaseHandler::getErrorCode() const
 {
     return _error_code;
 }
@@ -141,7 +141,7 @@ bool    BaseHandler::checkTimeOut()
     return (TIME_OUT_POLL > 0 && seconds >= TIME_OUT_PROCESS);
 }
 
-BaseHandler* BaseHandler::getErrorResponse(ErrorCodes code)
+BaseHandler* BaseHandler::getErrorResponse(ResponseCodes code)
 {
     /*Every Error we send should pass through here, if anyone that's NOT the client calls this function
     they should set _configElement to their respective configElement*/
