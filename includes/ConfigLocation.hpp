@@ -83,6 +83,7 @@ class ConfigLocation: public ConfigElement
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);
 		bool							checkCGI(Client &client, Path& requestedURL);
 		void							recursivePrint(int recursiveLvl);
+		
 
 		static std::list<ConfigLocation>::iterator getBestLocation(Path requestedURL,
 			std::string							method,

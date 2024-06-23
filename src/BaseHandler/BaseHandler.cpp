@@ -146,6 +146,10 @@ BaseHandler* BaseHandler::getErrorResponse(ResponseCodes code)
     /*Every Error we send should pass through here, if anyone that's NOT the client calls this function
     they should set _configElement to their respective configElement*/
     const ConfigLocation* location = dynamic_cast<const ConfigLocation*>(_configElement);
+    const ConfigLocation* test = dynamic_cast<const ConfigLocation*>(this->_configElement);
+    
+    (void)test;
+
     if (location == NULL)
     {
         /*If location == NULL it means we didn't go through server to get the location,
@@ -153,6 +157,7 @@ BaseHandler* BaseHandler::getErrorResponse(ResponseCodes code)
             Location is reset to NULL after sending an answer
         */
         const ConfigCgi* cgi = dynamic_cast<const ConfigCgi *>(_configElement);
+        (void)this->_configElement;
         if (cgi != NULL)
         {
             const ConfigLocation& location  = cgi->getLocation();

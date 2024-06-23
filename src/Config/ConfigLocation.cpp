@@ -77,12 +77,13 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &
 		this->_root.setIsFile(false);
 	}
 	std::list<ParsingLocation> locs = obj.getLocations(); 
-	for (std::list<ParsingLocation>::iterator location = locs.begin();
+	for (
+std::list<ParsingLocation>::iterator location = locs.begin();
 		location != locs.end();
-		location++
-	)
+		location++)
 	{
 		this->_locations.push_back(ConfigLocation(*location, *this));
+		// this->_locations
 	}
 	std::list<ParsingCgi> cgis = obj.getCgis(); 
 	for (std::list<ParsingCgi>::iterator cgi = cgis.begin();
@@ -484,7 +485,7 @@ bool	ConfigLocation::checkCGI(Client &client, Path& requestedURL)
 			std::cerr << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
 			std::cerr << "      Path file: " << client.getPathFile() << std::endl;
 			std::cerr << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
-
+			
 			return (true);
 		}
 	}
@@ -558,13 +559,16 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 const std::string ConfigLocation::getErrorPage(ResponseCodes err) const
 {
 	Path pathy_pathon;
-
+	
+	std::string val = this->_errorPage;
+	// this->setErrorPages(val);
 	try
 	{
 		pathy_pathon = _errorPages.at(err);
 	}
-	catch (...)
+	catch (std::out_of_range &e)
 	{
+		(void)e;//todo esta bien joan no te asustes :v (deja de poner catch de ... /lsoto)
 		return (""); 
 	}
 	return (std::string)this->_root + ((std::string)pathy_pathon).erase(0, 1);

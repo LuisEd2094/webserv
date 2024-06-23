@@ -16,6 +16,14 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 		location != parsed.locations.end(); location++)
 	{
 		this->locations.push_back(ConfigLocation(*location, *this));
+
+		// for (std::list<ConfigLocation>::iterator sdaf = locations.begin(); sdaf != locations.end(); sdaf++)
+		// {
+		// 	for (std::list<ConfigCgi>::const_iterator fasd = sdaf->getCgis().begin(); fasd != sdaf->getCgis().end(); fasd++)
+		// 	{
+		// 		const_cast<ConfigCgi*>(&*fasd)->setLocation(*sdaf);
+		// 	}
+		// }
 	}
 	std::cerr <<"d";
 }

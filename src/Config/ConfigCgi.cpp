@@ -26,7 +26,6 @@ bool ConfigCgi::prepareClient4ResponseGeneration(Client& client, Path &requested
   
     if (requestedUrl.getExtension() != this->getExtension())
     {
-        std::cerr << RED << "asdf" << std::endl;
         return (false);
     }
     std::cerr << "Appending root: " << this->getRootAsString() << std::endl;

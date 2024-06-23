@@ -7,17 +7,6 @@
 # include <Aux.hpp>
 # include <vector>
 
-enum RedirectionCodes
-{
-    /* 3xx */
-    MULTIPLE_CHOICES, //300
-    MOVED_PERMANENTLY,
-    FOUND,
-    SEE_OTHER,
-    USE_PROXY,
-    TEMPORARY_REDIRECT
-};
-
 enum ResponseCodes
 {
     INVALID_CODE,
@@ -27,6 +16,11 @@ enum ResponseCodes
     OK,
     /*3xx*/
     MULTIPLE_REDIRECTS,
+    MOVED_PERMANENTLY,
+    FOUND,
+    SEE_OTHER,
+    USE_PROXY,
+    TEMPORARY_REDIRECT,
     /*4xx*/
     BAD_REQUEST,
     FORBIDDEN,
@@ -66,9 +60,13 @@ enum ResponseCodes
 /* 3xx ERRORS*/
 
 # define MULTIPLE_REDIRECTS_HTTP "HTTP/1.1 300 Multiple Choices\r\nContent-Type: text/html\r\n"
+# define MOVED_PERMANENTLY_HTTP "HTTP/1.1 301 Moved Permanently\r\nContent-Type: text/html\r\n"
+# define FOUND_HTTP "HTTP/1.1 302 Found\r\nContent-Type: text/html\r\n"
+# define SEE_OTHER_HTTP "HTTP/1.1 303 See Other\r\nContent-Type: text/html\r\n"
+# define USE_PROXY_HTTP "HTTP/1.1 305 Use Proxy\r\nContent-Type: text/html\r\n"
+# define TEMPORARY_REDIRECT_HTTP "HTTP/1.1 307 Temporary Redirect\r\nContent-Type: text/html\r\n"
 
 /*4xx ERRORS*/
-
 
 # define BAD_REQUEST_HTTP   "HTTP/1.1 400 Bad Request\r\n"
 # define BAD_REQUEST_TITLE  "400 Bad Request"
