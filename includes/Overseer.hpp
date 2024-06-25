@@ -39,10 +39,12 @@ class Overseer
 
         static  BaseHandler* getObj(int);
 
-
+        static  void    printConfig(void);
         static  bool    handleAction(BaseHandler * , int );
         static  void    mainLoop();
         static  bool    canContinue;
+
+        static  std::list<Server *> servers;
 
     private:
         Overseer();

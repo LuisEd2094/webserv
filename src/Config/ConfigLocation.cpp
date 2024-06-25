@@ -78,7 +78,7 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &
 	}
 	std::list<ParsingLocation> locs = obj.getLocations(); 
 	for (
-std::list<ParsingLocation>::iterator location = locs.begin();
+		std::list<ParsingLocation>::iterator location = locs.begin();
 		location != locs.end();
 		location++)
 	{
@@ -307,7 +307,7 @@ void	ConfigLocation::setRedirections(const std::string &redirections)
 	this->_redirections = split;
 }
 
-std::map<ResponseCodes, Path> ConfigLocation::getMapErrorPages(void) const
+const std::map<ResponseCodes, Path> &ConfigLocation::getMapErrorPages(void) const
 {
 	return (this->_errorPages);
 }
@@ -350,6 +350,14 @@ ConfigLocation &ConfigLocation::operator=(const ConfigLocation& obj)
 	this->_codeRedirections = obj.getCodeRedirections();
 	this->_redirections = obj.getRedirections();
 	this->_fullUrl = obj.getFullUrl();
+	for (std::list<ConfigCgi>::iterator cgi = this->_cgis.begin();
+		cgi != this->_cgis.end();
+		cgi++
+	)
+	{
+		cgi->setLocation(*this);
+		std::cout << PURPLE << "This: " << this << " Cgi's: " << &cgi->getLocation() << END << std::endl;
+	}
 
 	return (*this);
 }
@@ -365,7 +373,7 @@ std::ostream &operator<<(std::ostream &os,  std::list<std::string> &listObj)
 
 void ConfigLocation::recursivePrint(int recursiveLvl)
 {
-	std::cerr << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->_path << ")" << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "- Location (" << this->_path << ") [" << this << "]" << std::endl;
 	recursiveLvl++;
 	std::cout << ConfigElement::genSpace(recursiveLvl) ;
 	std::cout << "FullUrl: " << this->_fullUrl << std::endl;
@@ -378,7 +386,8 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
 	std::cerr << "Redirection: " << this->_redirection << std::endl;
 	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
-	std::cerr << "Error page: " << this->_errorPage << std::endl;
+	std::cerr << "Error pages: " << std::endl;
+	printMap(this->_errorPages, recursiveLvl + 1);
 	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
 	std::cerr << "Dir listing: " << this->_dirListing << std::endl;
 
@@ -412,7 +421,10 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 	if (inBestLocation)
 	{
 		if (this->checkCGI(client, requestedURL))
+		{
+			std::cout << BLUE << "It's CGI" << END << std::endl;
 			return (true); 
+		}
 		client.setPathFile
 		(
 			static_cast<std::string>(this->_root) +
@@ -423,6 +435,7 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		client.setDefaultHttpResponse(OK);
 		if (this->getRedirection().size() > 0)
 		{
+			std::cerr << "It's redirection" << std::endl;
 			client.setResponseType(REDIRECT_OBJ);
 			client.setDefaultHttpResponse(OK);
 			return true;
@@ -433,6 +446,7 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		}
 		else if (Path(client.getURL()).getIsFile())	
 		{
+			std::cout << RED << client.getPathFile() << END << std::endl;
 			if (client.getPathFile().assertFileExists())
 			{
 				std::cerr << "return file" << std::endl;
@@ -466,9 +480,9 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 		std::cerr << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
 		std::cerr << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
 		std::cerr << "      Path file: " << client.getPathFile()<< std::endl;;
-		std::cerr << std::endl;
 	}
 	std:: cerr << TUR << "bestlocation: " << END << this->getPath()<<  std::endl;
+	std::cerr << std::endl;
 	return true;
 }
 
@@ -523,7 +537,7 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 		*/
 		Path temp = beginLocation->getPath();
 		std::cerr << temp.included(requestedURL) << ", "
-			<< (temp.size() > maxDirMatches) << "; "
+			<< (temp.size() >= maxDirMatches) << "; "
 			<< (std::find(locMethods.begin(), locMethods.end(), requestMethod) != locMethods.end()) <<	std::endl;
 		if (temp.included(requestedURL)
 			&& temp.size() >= maxDirMatches) 	

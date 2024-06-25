@@ -10,6 +10,7 @@ deletedFiles Overseer::files;
 struct pollfd  Overseer::_pfds[MAX_FDS];
 
 
+std::list<Server*> Overseer::servers = std::list<Server*>();
 //Public
 
 void Overseer::cleanOverseer(int sig)
@@ -116,6 +117,7 @@ bool Overseer::addToPfds(int new_fd, int events, int revents)
 Server* Overseer::saveServer(t_confi* confi)
 {
     Server * server;
+    std::cout << std::endl << PURPLE << "SAVING SERVER ::::" << END << std::endl;
     try
     {
         server = new Server(confi);
@@ -128,9 +130,27 @@ Server* Overseer::saveServer(t_confi* confi)
     }
     
     addToPfds(server);
+    Overseer::servers.push_back(server);
     return server;
 }
 
+
+void Overseer::printConfig()
+{
+    for (std::list<Server*>::iterator server = Overseer::servers.begin(); 
+        server != Overseer::servers.end();
+        server++)
+    {
+        std::cout << "- Server: " << (*server)->virtualServers.size() << std::endl;
+        for (std::list<ConfigVirtualServer>::iterator vServer = (*server)->virtualServers.begin(); 
+            vServer != (*server)->virtualServers.end();
+            vServer++)
+        {
+            vServer->recursivePrint(1);
+            std::cout << std::endl;
+        }
+    }
+}
 bool Overseer::handleAction(BaseHandler *obj, int event)
 {
     int status = obj->Action(event);

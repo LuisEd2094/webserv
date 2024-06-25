@@ -17,14 +17,20 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 	{
 		this->locations.push_back(ConfigLocation(*location, *this));
 
-		// for (std::list<ConfigLocation>::iterator sdaf = locations.begin(); sdaf != locations.end(); sdaf++)
-		// {
-		// 	for (std::list<ConfigCgi>::const_iterator fasd = sdaf->getCgis().begin(); fasd != sdaf->getCgis().end(); fasd++)
-		// 	{
-		// 		const_cast<ConfigCgi*>(&*fasd)->setLocation(*sdaf);
-		// 	}
-		// }
+/*
+		 for (std::list<ConfigLocation>::iterator sdaf = locations.begin(); sdaf != locations.end(); sdaf++)
+		 {
+		 	for (std::list<ConfigCgi>::const_iterator fasd = sdaf->getCgis().begin(); fasd != sdaf->getCgis().end(); fasd++)
+		 	{
+		 		const_cast<ConfigCgi*>(&*fasd)->setLocation(*sdaf);
+		 	}
+		 }
+	*/
 	}
+
+	std::cout << GREEN << "::::: AFTER COPY :::::" << END << std::endl;
+	this->recursivePrint();
+	std::cout << GREEN << "::::: ENDED :::::" << END << std::endl;
 	std::cerr <<"d";
 }
 
@@ -132,7 +138,7 @@ void ConfigVirtualServer::recursivePrint()
 
 void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 {
-	std::cerr << ConfigElement::genSpace(recursiveLvl) << "::: VirtualServer ::: " << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "- VirtualServer" << std::endl;
 	recursiveLvl++;
 	std::cerr << ConfigElement::genSpace(recursiveLvl) << "ServerNames: " <<  containerToString(this->getServerNames()) << std::endl;
 	std::cerr << ConfigElement::genSpace(recursiveLvl) << "maxBodySize: " << this->getMaxClientBodySize() << std::endl;

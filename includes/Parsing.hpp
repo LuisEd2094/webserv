@@ -47,6 +47,7 @@
 # include <Response.hpp>
 # include <Uri.hpp>
 # include <Path.hpp>
+# include <ConfigElement.hpp>
 
 /******************************************************************************/
 /*                            MACROS                                          */
@@ -107,9 +108,16 @@ std::string	cutSpace(const S& str)
 template<typename M>
 void	printMap(const M& map)
 {
+	printMap(map, 0);
+}
+
+template<typename M>
+void	printMap(const M& map, int padding)
+{
 	typename M::const_iterator i;
 	for (i = map.begin(); i != map.end(); ++i)
 	{
+		std::cerr << ConfigElement::genSpace(padding) ;
 		std::cerr << ORANGE << "Key: " << END << i->first << ORANGE
 			<< "\tValue: " << END << i->second << std::endl;
 	}

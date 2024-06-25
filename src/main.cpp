@@ -50,6 +50,9 @@ int main()
         ParsingGlobal parser = ParsingGlobal::parseFromFile("./src/Parsing/config_file.conf");
         //parser.recursivePrint();
         ConfigElement::configure(parser);
+        std::list<Server* > sdaf = Overseer::servers;
+        std::cout << GREEN << " ::::: CONFIGURED :::::" << Overseer::servers.size()  << END << std::endl;
+        Overseer::printConfig();
         Overseer::mainLoop();
         //overseer.file(argv[1]);
         // Should read from file or default info, internally call saveServer for each server

@@ -123,19 +123,25 @@ void ConfigCgi::recursivePrint(int recursiveLvl)
 {
 
 	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
-	std::cerr << "CGI (" << this->get__elemArgument__() << ")" << std::endl;
+	std::cerr << "CGI (" << this->get__elemArgument__() << ") [" << this << "]" << std::endl;
     recursiveLvl++;
+
+    std::cerr << ConfigElement::genSpace(recursiveLvl) ;
+	std::cerr << "parent: " << this->location << std::endl;
     std::cerr << ConfigElement::genSpace(recursiveLvl) ;
 	std::cerr << "extension: " << this->getExtension() << std::endl;
 
     std::cerr << ConfigElement::genSpace(recursiveLvl) ;
 	std::cerr << "execute: " << this->getExecute() << std::endl;
+    std::cerr << ConfigElement::genSpace(recursiveLvl) << "ErrorPages: " << std::endl;
+    recursiveLvl++;
+    printMap(this->location->getMapErrorPages(), recursiveLvl);
+    recursiveLvl--;
+
     std::cerr << ConfigElement::genSpace(recursiveLvl) ;
-    std::cerr << "metaVars:";
+    std::cerr << "metaVars(" << this->getMetaVar().size() << "):" << std::endl;
     recursiveLvl++;
     std::map<std::string, std::string>::const_iterator metaVar = this->getMetaVar().begin();
-
-    std::cerr << "len: " << this->getMetaVar().size()<< std::endl;
     for (; metaVar != this->getMetaVar().end(); metaVar++)
     {
         std::cerr << ConfigElement::genSpace(recursiveLvl) ;

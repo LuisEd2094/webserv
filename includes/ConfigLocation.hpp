@@ -74,7 +74,7 @@ class ConfigLocation: public ConfigElement
 		std::list<std::string>			getIndex(void) const;
 		const std::list<ConfigCgi>		&getCgis(void) const;
 		std::list<ConfigLocation>		getLocations(void) const;
-		std::map<ResponseCodes, Path>	getMapErrorPages(void) const;
+		const std::map<ResponseCodes, Path>	&getMapErrorPages(void) const;
 		const Path						getErrorPages(ResponseCodes searchError) const;
 		ResponseCodes					getCodeRedirections(void) const;
 		const std::list<Path>			getRedirections(void) const;
