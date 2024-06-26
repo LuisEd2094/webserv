@@ -186,12 +186,18 @@ int CGI::Action(int event)
                     }
                     else
                     {
-                        client->setHTTPResponse(http_response, this);
-                        std::string body_resposne(_buffer.substr(_buffer.find("\n\n") + 2));
-                        if (!body_resposne.empty())
+                        std::string body_response(_buffer.substr(_buffer.find("\n\n") + 2));
+                        if (!body_response.empty())
                         {
-                            client->setBodyResponse(body_resposne, this); 
+                            client->setBodyResponse(body_response, this); 
                         }
+                        if (!body_response.empty() && http_response.find("Content-Length") == std::string::npos)
+                        {
+                            http_response.insert(http_response.find("\n") + 1, CONTENTLENGTH + toString(body_response.length()) + CRNL);
+                        }
+                        client->setHTTPResponse(http_response, this);
+
+
                     }
                 }
                 else
