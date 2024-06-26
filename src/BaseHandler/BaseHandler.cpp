@@ -165,10 +165,8 @@ BaseHandler* BaseHandler::getErrorResponse(ResponseCodes code)
 
         if (cgi != NULL)
         {
-            //const ConfigLocation& location  = cgi->getLocation();
-
-            //const std::string& errr = //location.getErrorPage(code);
-            std::string errr ="";
+            const ConfigLocation& location  = cgi->getLocation();
+            const std::string& errr = location.getErrorPage(code);
             if (!errr.empty())
             {
                 _response_type = FILE_OBJ;

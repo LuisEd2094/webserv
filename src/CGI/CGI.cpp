@@ -208,8 +208,8 @@ int CGI::Action(int event)
     }
     else if (event & POLLOUT)
     {
-        //int chunk_to_send = std::min(SEND_SIZE,(int)(_len - _sent));
-        int result = -1;//write(_in_pipe[1], _body.c_str() + _sent, chunk_to_send);
+        int chunk_to_send = std::min(SEND_SIZE,(int)(_len - _sent));
+        int result = write(_in_pipe[1], _body.c_str() + _sent, chunk_to_send);
         if (result <= 0)
         {
             Overseer::removeInCGIPipe(_in_pipe[1]);

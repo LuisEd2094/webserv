@@ -37,8 +37,8 @@ def read_expected_content(file_path):
         logger.error(f"Error reading file: {e}")
         return None
     
-error404 = read_expected_content( "/workspaces/webserv/turnInPage/404.html" )
-index = read_expected_content( "/workspaces/webserv/turnInPage/index.html" )
+error404 = read_expected_content( "/home/codespace/recovery/turnInPage/404.html" )
+index = read_expected_content( "/home/codespace/recovery/turnInPage/index.html" )
 
 
 def check_file_body(expected, actual):
@@ -102,13 +102,13 @@ class UserBehavior(TaskSet):
 
         with self.client.post("/cgi/nolen.py", json=payload, catch_response=True) as response:
             response.encoding = 'utf-8'
-            if response.status_code == 500:
+            if response.status_code == 200:
                 response.success()
             elif response.status_code == 504:
                 logger.info(f"Response content for /: {response.text}")
                 response.failure()
             else:
-                response.failure(f"Expected 500 but got {response.status_code}")
+                response.failure(f"Expected 200 but got {response.status_code}")
                 logger.info(f"Response content for /cgi/nolen.py: {response.text}")
     
 
