@@ -536,10 +536,14 @@ void Client::makeChildrenToRespond()
         {
             response = getErrorResponse(_error_code);
         }
-        else if (_response_type == NOT_SET || (_action != DELETE && Overseer::checkIfDeleted(getPathFileString())))
+        else if (_response_type == NOT_SET)
         {
 
             response = getErrorResponse(NOT_FOUND);
+        }
+        else if (_action != DELETE && Overseer::checkIfDeleted(getPathFileString()))
+        {
+            response = getErrorResponse(GONE);
         }
         else
             response = BaseHandler::createObject(*this);

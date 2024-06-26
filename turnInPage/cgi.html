@@ -14,6 +14,7 @@
             form.method = method;
 
             if (method === 'POST') {
+                // Move POST data from textarea to form data
                 const postData = document.getElementById('postData').value;
                 const hiddenField = document.createElement('input');
                 hiddenField.type = 'hidden';
