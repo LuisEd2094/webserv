@@ -51,7 +51,7 @@ def check_file_body(expected, actual):
 
 class UserBehavior(TaskSet):
 
-    """    @task(1)
+    @task(1)
     def root(self):
         with self.client.get("", catch_response=True) as response:
             response.encoding = 'utf-8'
@@ -111,10 +111,10 @@ class UserBehavior(TaskSet):
                 response.failure()
             else:
                 response.failure(f"Expected 200 but got {response.status_code}")
-                logger.info(f"Response content for /cgi/nolen.py: {response.text}")"""
+                logger.info(f"Response content for /cgi/nolen.py: {response.text}")
     @task(6)
     def files_dir(self):
-        with self.client.get("/files/", catch_response=True) as response:
+        with self.client.get("/files", catch_response=True) as response:
             response.encoding = 'utf-8'
             if response.status_code == 200 and response.text == files_dir:
                 response.success()
