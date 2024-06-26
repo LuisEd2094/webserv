@@ -13,13 +13,20 @@ ConfigLocation::ConfigLocation(const ConfigLocation& obj)
 ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 {
 	*this = father;
-	// TODO erase the nested elements from the father
+	std::map<std::string, std::string>::iterator root;
+
 	this->_locations.empty();
 	this->_cgis.empty();
 	this->_inheriting = true;
 	this->nestedPrint = 0;
 	this->_dirListing = 0;
 
+	root = obj.find("root");
+	if (root == obj.end())
+		this->_root.append(obj.find("__elemArgument__")->second);
+	else 
+		this->initializeRoot(root->second);
+	
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
 		this->parseKeyVal(i->first, i->second);
@@ -29,9 +36,6 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 	this->_path = Path(this->__elemArgument__);
 	this->_fullUrl.append(this->__elemArgument__);
 	this->_inheriting = false; //TODO delte?
-	if (obj.find("root") == obj.end())
-		this->_root.append(obj.find("__elemArgument__")->second);
-
 	std::list<ParsingLocation> locs = obj.getLocations(); 
 	for (std::list<ParsingLocation>::iterator location = locs.begin();
 		location != locs.end();
@@ -55,6 +59,7 @@ ConfigLocation::ConfigLocation( ParsingLocation& obj, ConfigLocation& father)
 ConfigLocation::ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &server)
 {
 	// TODO erase the nested elements from the father
+	std::map<std::string, std::string>::iterator root;
 	this->_locations.empty();
 	this->_cgis.empty();
 	this->_inheriting = false;
@@ -62,6 +67,18 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &
 	this->nestedPrint = 0;
 	this->_virtualServer = &server;
 
+	root = obj.find("root");
+	if (root == obj.end())
+		this->_root.append(obj.find("__elemArgument__")->second);
+	else 
+		this->initializeRoot(root->second);
+
+	if (obj.find("root") == obj.end())
+	{
+		this->_root.append(obj.find("__elemArgument__")->second); 
+		this->_root.setIsRelative(true);
+		this->_root.setIsFile(false);
+	}
 	for (std::map<std::string, std::string>::iterator i = obj.begin(); i != obj.end(); i++)
 	{
 		this->parseKeyVal(i->first, i->second);
@@ -70,12 +87,6 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &
 	this->__elemArgument__ = obj["__elemArgument__"]; 
 	this->_path = Path(this->__elemArgument__);
 	this->setFullUrl(Path(this->__elemArgument__));
-	if (obj.find("root") == obj.end())
-	{
-		this->_root.append(obj.find("__elemArgument__")->second); 
-		this->_root.setIsRelative(true);
-		this->_root.setIsFile(false);
-	}
 	std::list<ParsingLocation> locs = obj.getLocations(); 
 	for (
 		std::list<ParsingLocation>::iterator location = locs.begin();
@@ -126,7 +137,7 @@ void ConfigLocation::parseKeyVal(std::string key, std::string val)
 		this->setRedirections(val);
 	}
 	else if (key == "root") // if father root = /tmp/sdaf/; then for child root = wololo -> /tmp/sdaf, else for child root = /var -> /var
-		this->initializeRoot(val);	
+		;	
 	else if (key == "dirListing")
 		this->setDirListing(val);	
 	else if (key == "index")
@@ -280,8 +291,12 @@ void	ConfigLocation::setErrorPages(std::string errors)
 		if (error == INVALID_CODE)
 			throw ParamError(std::string("Error: invalid Error page Code: " + ErrorKey + "."));
 		
-		this->_errorPages[error] = Path(_root).append(ErrorValue);
-	}
+		Path errorPath(ErrorValue);
+		if (errorPath.getIsRelative())
+			this->_errorPages[error] = Path(_root).append(errorPath);
+		else
+			this->_errorPages[error] = errorPath;
+	}	
 }
 
 void	ConfigLocation::setRedirections(const std::string &redirections)
