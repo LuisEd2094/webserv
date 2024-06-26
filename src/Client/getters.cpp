@@ -1,7 +1,7 @@
 #include <Client.hpp>
 
 
-/*They return the same because they are the same, but the FileReader and CGI will have their own FD and Client FD to later access the client*/
+/*They return the same because they are the same, but the FileHandler and CGI will have their own FD and Client FD to later access the client*/
 int Client::getFD() const
 {
     return _fd;
@@ -88,16 +88,6 @@ bool Client::getIsChunked() const
 }
 
 
-
-const std::string& Client::getDefaultHttpResponse(void) const
-{
-    return (this->_defaultHttp);
-}
-
-ResponseCodes                      Client::getErrorCode() const
-{
-    return _error_code;
-}
 
 //std::map<int, Path> * CLient::getErrorPages(void) const
 const ConfigElement *           Client::getConfigElement(void) const

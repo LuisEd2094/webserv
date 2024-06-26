@@ -84,9 +84,10 @@ template<typename L>
 void	printList(const L& list)
 {
 	typename L::const_iterator i;
-	for (i = list.begin(); i != list.end(); i++)
-		std::cerr << ORANGE << "*" << END << *i 
-		<< ORANGE << "*" << END << std::endl;
+	(void)list;
+/* 	for (i = list.begin(); i != list.end(); i++)
+		// << ORANGE << "*" << END << *i 
+		<< ORANGE << "*" << END << std::endl; */
 }
 
 template<typename S>
@@ -108,11 +109,12 @@ template<typename M>
 void	printMap(const M& map)
 {
 	typename M::const_iterator i;
-	for (i = map.begin(); i != map.end(); ++i)
+	(void)map;
+/* 	for (i = map.begin(); i != map.end(); ++i)
 	{
-		std::cerr << ORANGE << "Key: " << END << i->first << ORANGE
+		// << ORANGE << "Key: " << END << i->first << ORANGE
 			<< "\tValue: " << END << i->second << std::endl;
-	}
+	} */
 }
 
 template<typename LV>

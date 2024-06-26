@@ -43,7 +43,7 @@ Client::Client(Server *server) : BaseHandler()
               << static_cast<int>(bytes[0]);
 
     std::string ip_str = ip_stream.str();
-    std::cerr << "Connected IP: " << ip_str << std::endl;
+    // << "Connected IP: " << ip_str << std::endl;
 
     _server = server;
     _response_type = NOT_SET;
@@ -58,6 +58,7 @@ Client::Client(Server *server) : BaseHandler()
     _virtualServer = NULL;
     _path_to_file = Path("");
     _defaultHttp = "";
+    _content_length = 0;
     _was_zero = false;
 }
 
@@ -96,7 +97,7 @@ int Client::Action(int event)
     }
     if (event & POLLHUP)
     {
-        std::cerr << "POLL HUP" << std::endl;
+        // << "POLL HUP" << std::endl;
         return 0;
     }
     return _result;
@@ -172,40 +173,7 @@ void Client::handlerRecv()
 
 void Client::readFromFD()
 {
-    if (_action == POST)
-    {
-        std::size_t size_to_read;
-        if (_is_chunked)
-        {
-            /*
-                we read + 2 because _chunk_size doesn't include the new lines
-                new lines can be CRNL
-            */
-            if (_chunk_size == 0)
-            {
-                /*
-                    If chunk_size == 0 then we haven't read the first line of the chunk
-                    I don't Want to read 80k chars here, just in case there are a bunch of 
-                    HTTP requests after this body, that way this client doesn't take forever
-                */
-                size_to_read = RECV_SIZE;
-            }
-            else
-            {
-                size_to_read = std::min(_chunk_size - _chunk.length() + 2, (std::size_t)BUFFER_SIZE);
-            }
-        }
-        else
-        {
-            size_to_read = std::min(_content_length - _in_body.length(), (std::size_t)BUFFER_SIZE);
-        }
-        _result = recv(_fd, _in_message, size_to_read, 0);
-    }
-    else
-    {
-        _result = recv(_fd, _in_message, RECV_SIZE, 0);
-    }
-
+    handlerRecv();
     if (_result > 0)
     {
         //recv > 0
@@ -215,6 +183,7 @@ void Client::readFromFD()
         if (!_parser_http.getEndRead()) // and nott MAX HEADER SIZE?
         {
             _in_container.append((const char *)_in_message, _result);
+            // << _in_container << std::endl;
             while (_keep_alive && _parser_http.getPos() != _in_container.length())
             {
                 if (!_pending_read)
@@ -394,11 +363,9 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
-        std::cerr << _in_container << std::endl;
-
         if (!_server->validateAction(*this))
         {            
-            std::cerr << "server told me it was a bad action" << std::endl;
+            // << "server told me it was a bad action" << std::endl;
             _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
             resetClient(false);
             return ;
@@ -412,7 +379,8 @@ void Client::parseForHttp()
                 addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
             }
         }
-        std::cerr << _in_container << std::endl;
+        // << _result << ": read " << std::endl;
+        // << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")
         {
@@ -454,6 +422,7 @@ void Client::parseForHttp()
         {
             Overseer::addToDeleted(getPathFileString());
             _response_type = NO_FD_OBJ;
+            _error_code = OK;
             resetClient(false);
         }
         else 
@@ -484,7 +453,7 @@ void Client::updateMethodAction()
 /*This should also go to the server?*/
 int Client::saveInBodyAsFile()
 {
-    if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
+/*     if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
     {
         if (Overseer::checkIfDeleted("./files/output_file.md"))
         {
@@ -495,17 +464,17 @@ int Client::saveInBodyAsFile()
         {
             outfile.write(_in_body.data(), _in_body.size());
             outfile.close();
-            std::cerr << "Binary data written to file.\n";
+            // << "Binary data written to file.\n";
             _response_type = NO_FD_OBJ;
             //return sendResponse();
         } 
         else
         {
-            std::cerr << "Error opening file for writing.\n";
+            // << "Error opening file for writing.\n";
             return (-1);
         }
-    }
-    return (1);
+    }*/
+    return (1); 
 }
 
 void Client::removeFirstObj()
@@ -537,6 +506,7 @@ int Client::sendResponse()
     RequestHandler * request = _response_objects_queue.front();
     if (request && request->pendingSend())
     {
+        //// << request->getToSend() << std::endl;
         if ((_result = send(_fd, request->getToSend(), request->getChunkSize(), 0) ) == -1)
             return (-1);
         request->updateBytesSent(_result);
@@ -574,12 +544,19 @@ void Client::makeChildrenToRespond()
         else
             response = BaseHandler::createObject(*this);
     }
+    catch (const Path::InvalidPathException & err)
+    {
+        std::cerr << err.what() << std::endl;
+        _error_code = BAD_REQUEST;
+        response = getErrorResponse(_error_code);
+    }
     catch(const std::exception& e)
     {
         /*Leave this one as the the default answer, if file reader tries to open a file to give an answer
             (INTERNAL_SERVER_ERROR) and it fails, then it should just go to the default
             FD_READER throws exception in case OPEN fails
         */
+       _error_code = INTERNAL_SERVER_ERROR;
         response = getErrorResponse(_error_code);
     }
     std::queue<std::string> queue;
@@ -599,9 +576,12 @@ void Client::resetClient(bool has_body)
 {
     if (has_body)
     {
-        saveInBodyAsFile();
+        if (_response_type != CGI_OBJ)
+        {
+            _response_type = FILE_OBJ;
+            setDefaultHttpResponse(OK);/*redirection?*/
+        }
 
-        setDefaultHttpResponse(OK);
         /* gives seg fault*/
         /*If _size_to_append == 0 it means we got the full body in the first read with HTTP*/
         if (_size_to_append == 0)
@@ -626,12 +606,12 @@ void Client::resetClient(bool has_body)
             */
             _in_container = ((const char *)&(_in_message[_size_to_append + 1]));         
         }
-        _in_body.clear();
     }
     makeChildrenToRespond();
     /* HTTP redirections por ejemplo, Location ...*/
     while (!_http_addons.empty())
         _http_addons.pop();
+    _in_body.clear();
     _pending_read = false;
     _action = WAIT;
     _content_length = 0;

@@ -13,7 +13,7 @@ class Server;
 # include <unistd.h>
 # include <Confi.hpp>
 # include <CGI.hpp>
-# include <FileReader.hpp>
+# include <FileHandler.hpp>
 # include <Parsing.hpp>
 # include "ConfigVirtualServer.hpp"
 

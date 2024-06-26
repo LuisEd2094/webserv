@@ -1,6 +1,6 @@
 #include <BaseHandler.hpp>
 #include <CGI.hpp>
-#include <FileReader.hpp>
+#include <FileHandler.hpp>
 #include <DirectResponse.hpp>
 #include <Client.hpp>
 
@@ -16,28 +16,33 @@ void    BaseHandler::setTime()
 {
     std::time(&_last_time);
     // should return error if clock fails
-
 }
 
+void    BaseHandler::setRespondeCode(ResponseCodes code)
+{
+    _defaultHttp = Response::getHttpFirtsLine(code);
+    _error_code = code;
+}
 
-
-
-const std::string dirList(const std::string& dir_str)
+const std::string dirList(const std::string& dir_str, const std::string& url)
 {
 	DIR				*dir;
 	struct dirent	*file;
 	std::string		html("<!DOCTYPE html>\n");
+    Path            new_url(url + "/");
 	//chdir(directory.c_str()); //TODO try catch
 	dir = opendir(dir_str.c_str()); //TODO try catch
+
+    /* this throws seg fault if we limit the fd*/
 	file = readdir(dir);
 
 	html = html + "<html><head></head><body>";	
 	html = html + "<h1>Directory listing for " + dir_str + "</h1><hr>";	
-	html = html + "<ul>";	
-	while (file)
+	html = html + "<ul>";
+    while (file)
 	{
 		if (!Overseer::checkIfDeleted(dir_str + (file->d_name)) && std::string(file->d_name) != "." && std::string(file->d_name) != "..")
-			html = html + "<li><a href=" + dir_str + file->d_name + ">" + file->d_name + "</a></li>";
+			html = html + "<li><a href=" + new_url.toStr() + file->d_name + ">" + file->d_name + "</a></li>";
 		file = readdir(dir);
 	}
 	html += "</ul><hr></body></html>";
@@ -48,8 +53,8 @@ const std::string dirList(const std::string& dir_str)
 
 BaseHandler* BaseHandler::createObject(BaseHandler& obj)
 {
-    /*If you are base then you are either a FileReader or a CGI, so you got here through error creation*/
-    return FileReader::createNewFileReader(obj);
+    /*If you are base then you are either a FileHandler or a CGI, so you got here through error creation*/
+    return FileHandler::createNewFileHandler(obj);
 }
 
 
@@ -61,12 +66,12 @@ BaseHandler* BaseHandler::createObject(Client& client)
         if (client.getResponseType() == valid_objs[i])
         {
             if (valid_objs[i] == FILE_OBJ)
-                return FileReader::createNewFileReader(client);
+                return FileHandler::createNewFileHandler(client);
             else if (valid_objs[i] == CGI_OBJ)
                 return CGI::createNewCGI(client);
             else if (valid_objs[i] == DIR_OBJ)
             {
-                std::string listing = dirList(client.getPathFileString());
+                std::string listing = dirList(client.getPathFileString(), client.getURL());
                 return DirectResponse::createNewDirect(setContentLenHTTP(std::string(HTTP_OK) + "Content-Type: text/html\r\n", listing), listing);
             }
             else if (valid_objs[i] == NO_FD_OBJ)
@@ -142,10 +147,14 @@ bool    BaseHandler::checkTimeOut()
 }
 
 BaseHandler* BaseHandler::getErrorResponse(ResponseCodes code)
-{
+    {
     /*Every Error we send should pass through here, if anyone that's NOT the client calls this function
     they should set _configElement to their respective configElement*/
     const ConfigLocation* location = dynamic_cast<const ConfigLocation*>(_configElement);
+    const ConfigLocation* test = dynamic_cast<const ConfigLocation*>(this->_configElement);
+    
+    (void)test;
+
     if (location == NULL)
     {
         /*If location == NULL it means we didn't go through server to get the location,
@@ -153,11 +162,16 @@ BaseHandler* BaseHandler::getErrorResponse(ResponseCodes code)
             Location is reset to NULL after sending an answer
         */
         const ConfigCgi* cgi = dynamic_cast<const ConfigCgi *>(_configElement);
+        
+        /*Everything up to here is working, but cgi->location has nothing. Setting CGI to null so it goes through default to test other logics*/
+
+
         if (cgi != NULL)
         {
-            const ConfigLocation& location  = cgi->getLocation();
-            const std::string& errr = location.getErrorPage(code);
+            //const ConfigLocation& location  = cgi->getLocation();
 
+            //const std::string& errr = //location.getErrorPage(code);
+            std::string errr ="";
             if (!errr.empty())
             {
                 _response_type = FILE_OBJ;

@@ -107,14 +107,15 @@ int Parsing::checkMethod(const std::string& strIn)
 			space = (tmp != word ? 0 : space);
 		}
 	}
+	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
+	_findNewline = end;
 	if (word > 2 or isMethods(_method.method) or isVersion(_method.version))
 	{
 		short error = (word > 2 ? ERROR_HEADER : (isMethods(_method.method)) \
 			? ERROR_METHOD : ERROR_VERSION);
 		return (_statusError = this->printStatus(_errors[error], ERROR, this->normalizeError(error)));
 	}
-	_method.requestedIsInRoot = IS_IN_ROOT(_method.requested[0]);
-	_findNewline = end;
+
 
 	return (_statusError = EXIT_SUCCESS);
 }
@@ -130,8 +131,8 @@ int	Parsing::parsingHeader(const std::string& strRead)
 {
 	size_t start = _findNewline, end = 0;
 
-	if (_statusError < 0 or _statusError > 1)
-		return (_statusError);
+/* 	if (_statusError < 0 or _statusError > 1)
+		return (_statusError); */
 	while (true)
 	{
 		std::string typeLine = getTypeLine(&strRead[start]);

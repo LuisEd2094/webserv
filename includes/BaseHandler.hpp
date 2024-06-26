@@ -17,6 +17,7 @@ class BaseHandler
         virtual int                     getFD() const = 0;
         virtual int                     Action( int ) = 0;
         virtual void                    setTime();
+        virtual void                    setRespondeCode(ResponseCodes);
         virtual bool                    checkObjTimeOut() = 0;
         virtual const ConfigElement*    getConfigElement() const;
         virtual BaseHandler *           getErrorResponse(ResponseCodes code); 
@@ -35,7 +36,7 @@ class BaseHandler
     protected:
 		const   ConfigElement			    			*_configElement;
         ObjectTypes                                     _response_type;
-        ResponseCodes                                      _error_code;
+        ResponseCodes                                   _error_code;
         std::string                                     _defaultHttp;
         std::string                                     _path_to_file_str;
         int                                             _client_fd;

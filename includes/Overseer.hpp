@@ -21,7 +21,7 @@ class Overseer
         static  void     cleanOverseer(int);
 
         static  bool    addToPfds(BaseHandler *);
-        static  bool    addCGIInPipe(BaseHandler *, int);
+        static  bool    addToPFDSJustOut(BaseHandler *, int);
         static  void    removeInCGIPipe(int fd);
 
         static  void            addToDeleted(const std::string&);

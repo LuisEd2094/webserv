@@ -1,0 +1,1 @@
+watch "ps aux | grep $(pgrep -f webserv)"

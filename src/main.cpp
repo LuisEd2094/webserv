@@ -25,10 +25,14 @@
     Structs for when we just need to save or manipulate without the need of validation
 */
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc > 2)
+    {
+        exitError("Incorrect usage, run: ./webserv [config_file] and try again");
+    }
     t_confi confi;
-    FileReader::initTypeMaps();
+    FileHandler::initTypeMaps();
     Response::initDefaultMap();
     Response::initErrorsHttp();
     Response::initErrorsMap();
@@ -46,8 +50,8 @@ int main()
     signal(SIGINT, Overseer::cleanOverseer);
     // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;
     try
-    {
-        ParsingGlobal parser = ParsingGlobal::parseFromFile("./src/Parsing/config_file.conf");
+    {        
+        ParsingGlobal parser = ParsingGlobal::parseFromFile(argc == 2 ? argv[1] : "./src/Parsing/config_file.conf");
         //parser.recursivePrint();
         ConfigElement::configure(parser);
         Overseer::mainLoop();
@@ -68,7 +72,7 @@ int main()
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        // << e.what() << '\n';
         Overseer::cleanOverseer(-1);
     }
     

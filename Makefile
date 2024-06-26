@@ -24,7 +24,7 @@ BASE_PATH	= BaseHandler/
 CLIENT_PATH =	Client/
 RESPONSE_PATH = Responses/
 CGI_PATH 	= CGI/
-FILE_READ_PATH = FileReader/
+FILE_READ_PATH = FileHandler/
 COOKIES_PATH = Cookies/
 DELETED_PATH = DeletedFiles/
 
@@ -69,7 +69,7 @@ CGI			=	CGI.cpp getters.cpp
 
 CGI_FILES		=	$(addprefix $(CGI_PATH), $(CGI))
 
-FILE_READ			=	FileReader.cpp
+FILE_READ			=	FileHandler.cpp
 
 FILE_READ_FILES		=	$(addprefix $(FILE_READ_PATH), $(FILE_READ))
 

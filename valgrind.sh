@@ -3,4 +3,4 @@ valgrind --leak-check=full \
          --track-origins=yes \
          --log-file=valgrind-out.txt \
          -s \
-         ./webserv
+         ./webserv config_file.conf 

@@ -28,6 +28,7 @@ class CGI : public BaseHandler
         int             _out_pipe[2];
         int             _in_pipe[2];
 
+        bool            _has_error;
         pid_t           _pid;
         std::string     _buffer;
         std::string     _defaultHttp;

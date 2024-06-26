@@ -69,7 +69,12 @@ void    Response::initDefaultMap()
     
     /*3xx*/
     defaults.insert(std::make_pair(MULTIPLE_REDIRECTS, Responses(MULTIPLE_REDIRECTS_HTTP, "", "")));
-    
+
+    defaults.insert(std::make_pair(MOVED_PERMANENTLY, Responses(MOVED_PERMANENTLY_HTTP, "", "")));
+    defaults.insert(std::make_pair(FOUND, Responses(FOUND_HTTP, "", "")));
+    defaults.insert(std::make_pair(SEE_OTHER, Responses(SEE_OTHER_HTTP, "", "")));
+    defaults.insert(std::make_pair(USE_PROXY, Responses(USE_PROXY_HTTP, "", "")));
+    defaults.insert(std::make_pair(TEMPORARY_REDIRECT, Responses(TEMPORARY_REDIRECT_HTTP, "", "")));
     
     /*4xx errors*/
     defaults.insert(std::make_pair(BAD_REQUEST, Responses(BAD_REQUEST_HTTP, BAD_REQUEST_TITLE, BAD_REQUEST_BODY)));
@@ -112,6 +117,11 @@ void    Response::initErrorsHttp(void)
     _vectorError.push_back(HTTP_OK);
     /*3xx Redirects*/
     _vectorError.push_back(MULTIPLE_REDIRECTS_HTTP);
+    _vectorError.push_back(MOVED_PERMANENTLY_HTTP);
+    _vectorError.push_back(FOUND_HTTP);
+    _vectorError.push_back(SEE_OTHER_HTTP);
+    _vectorError.push_back(USE_PROXY_HTTP);
+    _vectorError.push_back(TEMPORARY_REDIRECT_HTTP);
     /*4xx ERRORs*/
     _vectorError.push_back(BAD_REQUEST_HTTP);
     _vectorError.push_back(FORBIDDEN_HTTP);
@@ -145,6 +155,11 @@ void Response::initErrorsMap()
     _mapError[200] = OK;
     /*3xx Redirects*/
     _mapError[300] = MULTIPLE_REDIRECTS;
+    _mapError[301] = MOVED_PERMANENTLY;
+    _mapError[302] = FOUND;
+    _mapError[303] = SEE_OTHER;
+    _mapError[305] = USE_PROXY;
+    _mapError[307] = TEMPORARY_REDIRECT;
     /*4xx ERRORs*/
     _mapError[400] = BAD_REQUEST;
     _mapError[403] = FORBIDDEN;
@@ -171,6 +186,5 @@ void Response::initErrorsMap()
 
  const std::string& Response::getHttpFirtsLine(ResponseCodes code)
  {
-    std::cerr << _vectorError[code];
     return (_vectorError[code]);
  }

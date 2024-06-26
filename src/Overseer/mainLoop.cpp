@@ -23,7 +23,7 @@ void printHostName()
 
     gethostname(hostname, size);
 
-    std::cerr <<  "my domain: "<< hostname << std::endl;
+    // <<  "my domain: "<< hostname << std::endl;
 }
 
 
@@ -34,11 +34,11 @@ void Overseer::mainLoop()
     while(canContinue) 
     {
 
-        //std::cerr << "Poll count " << _fd_count << std::endl;
+        //// << "Poll count " << _fd_count << std::endl;
         poll_connection = poll(_pfds, _fd_count, TIME_OUT_POLL);
         if (poll_connection == -1) 
         {
-            std::cerr << "poll: " + static_cast<std::string>(strerror(errno)) << std::endl;
+            // << "poll: " + static_cast<std::string>(strerror(errno)) << std::endl;
             return ;
         }
         // Run through the existing connections loHTTP_OKing for data to read
@@ -48,7 +48,11 @@ void Overseer::mainLoop()
             {
                 // Check if someone's ready to read
                 std::map<int, BaseHandler *>::iterator it = _pending_fds.find(_pfds[_i].fd);
-                std::cerr << "Over seer has: " << _fd_count << " pending fds" << std::endl;
+                if (!it->second)
+                {
+                    // << "there is an invalid fd" << std::endl;
+                    continue;
+                }
                 if (_pfds[_i].revents & (POLLIN | POLLOUT | POLLHUP))
                 {
                     if (_pfds[_i].revents & POLLHUP)
@@ -76,7 +80,7 @@ void Overseer::mainLoop()
         }
         catch(const std::exception& e)
         {
-            std::cerr << e.what() << '\n';
+            // << e.what() << '\n';
         }
         
 

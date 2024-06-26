@@ -4,8 +4,9 @@
 # include <Response.hpp>
 
 # define    MAX_FDS 5000
-# define    TIME_OUT_POLL 500
-# define    TIME_OUT_PROCESS 1500
+# define    TIME_OUT_POLL 2000
+/* Time out process has to be a bit longer if I want to be able to send a response */
+# define    TIME_OUT_PROCESS 10000
 # define    SEND_SIZE 8000
 # define    RECV_SIZE 8000
 # define    BUFFER_SIZE RECV_SIZE * 10

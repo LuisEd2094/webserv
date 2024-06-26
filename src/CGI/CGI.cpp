@@ -36,6 +36,7 @@ class CGI::CGIException : public std::exception
 
 
 CGI::CGI(Client& client) :  BaseHandler(client),
+                            _has_error(false),
                             _defaultHttp(client.getDefaultHttpResponse()),
                             _body(client.getBody()),
                             _len(client.getContentLength()),
@@ -43,17 +44,27 @@ CGI::CGI(Client& client) :  BaseHandler(client),
 {
     if (pipe(_out_pipe))
     {
+        client.setRespondeCode(BAD_GATEWAY);
         throw CGIException(strerror(errno));
     }
     if (!_body.empty() && pipe(_in_pipe))
     {
         close(_out_pipe[0]);
         close(_out_pipe[1]);
+        client.setRespondeCode(BAD_GATEWAY);
         throw CGIException(strerror(errno));
     }
     _pid = fork();
     if (_pid == -1)
     {
+        close(_out_pipe[0]);
+        close(_out_pipe[1]);
+        if (!_body.empty())
+        {
+            close(_in_pipe[0]);
+            close(_in_pipe[1]);
+        }
+        client.setRespondeCode(BAD_GATEWAY);
         throw CGIException(strerror(errno));
     }
     if (_pid == 0)
@@ -97,7 +108,7 @@ CGI::CGI(Client& client) :  BaseHandler(client),
     if (!_body.empty())
     {
         close(_in_pipe[0]);
-        Overseer::addCGIInPipe(this, _in_pipe[1]);
+        Overseer::addToPFDSJustOut(this, _in_pipe[1]);
     }
 }
 
@@ -113,7 +124,9 @@ CGI::~CGI()
 
 BaseHandler* CGI::createNewCGI(Client& client)
 {
-    CGI *new_cgi = new CGI(client);
+    CGI * new_cgi;
+    
+    new_cgi = new CGI(client);
     Overseer::addToPfds(new_cgi);
     return new_cgi;
 }
@@ -127,7 +140,7 @@ bool    CGI::checkObjTimeOut()
         Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
         if (client)
         {
-            client->addErrorFileReaderToExistingRequest(this, getErrorResponse(GATEWAY_TIMEOUT));
+            client->addErrorFileHandlerToExistingRequest(this, this->getErrorResponse(GATEWAY_TIMEOUT));
         }        
         return true;
 
@@ -138,6 +151,13 @@ bool    CGI::checkObjTimeOut()
 
 int CGI::Action(int event)
 {
+    if (_has_error)
+    {
+        Client * client = dynamic_cast<Client*>(Overseer::getObj(_client_fd));
+        if (client)
+            client->addErrorFileHandlerToExistingRequest(this, this->getErrorResponse(INTERNAL_SERVER_ERROR));
+        return (-1);
+    }
     if (event & POLLIN || event & POLLHUP)
     {
         char buff[RECV_SIZE];
@@ -158,7 +178,11 @@ int CGI::Action(int event)
                     std::string http_response(_buffer.substr(0, _buffer.find("\n\n") + 2));
                     if (http_response.empty())
                     {
-                        client->addErrorFileReaderToExistingRequest(this, getErrorResponse(BAD_GATEWAY));
+                        http_response = _buffer.substr(0, _buffer.find("\r\n\r\n") + 4);
+                    }
+                    if (http_response.empty())
+                    {
+                        client->addErrorFileHandlerToExistingRequest(this, this->getErrorResponse(BAD_GATEWAY));
                     }
                     else
                     {
@@ -172,10 +196,9 @@ int CGI::Action(int event)
                 }
                 else
                 {
-                    client->addErrorFileReaderToExistingRequest(this, getErrorResponse(INTERNAL_SERVER_ERROR));
+                    client->addErrorFileHandlerToExistingRequest(this, this->getErrorResponse(INTERNAL_SERVER_ERROR));
                 }
                 return (0);
-
             }
             else 
             {
@@ -185,21 +208,19 @@ int CGI::Action(int event)
     }
     else if (event & POLLOUT)
     {
-        int chunk_to_send = std::min(SEND_SIZE,(int)(_len - _sent));
-        int result = write(_in_pipe[1], _body.c_str() + _sent, chunk_to_send);
+        //int chunk_to_send = std::min(SEND_SIZE,(int)(_len - _sent));
+        int result = -1;//write(_in_pipe[1], _body.c_str() + _sent, chunk_to_send);
         if (result <= 0)
         {
             Overseer::removeInCGIPipe(_in_pipe[1]);
             close(_in_pipe[1]);
-            /*Not sure what to do if the write failes*/
             if (result < 0)
             {
-                return (-1);
-            }
-            else
-            {
+                _has_error =true;
                 return (1);
             }
+            /*Not sure what to do if the write failes*/
+            return (1);
         }
         _sent += result;
     }

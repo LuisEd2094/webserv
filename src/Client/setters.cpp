@@ -69,7 +69,7 @@ void    Client::addObject(BaseHandler * obj)
     }
 }
 
-void    Client::addErrorFileReaderToExistingRequest(BaseHandler* old_requester, BaseHandler* new_requester)
+void    Client::addErrorFileHandlerToExistingRequest(BaseHandler* old_requester, BaseHandler* new_requester)
 {
     /*Need to check if it's a direct object to set the client to out mode, otherwise, replace it on the map*/
     RequestHandler* old_handler = _response_objects_map[old_requester];

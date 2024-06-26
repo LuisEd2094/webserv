@@ -38,9 +38,8 @@ Overseer::~Overseer()
 void Overseer::removeInCGIPipe(int fd)
 {
     _pfds[_i] = _pfds[_fd_count - 1];
-    _fd_count--;
     _i--;
-    (void)fd;
+    _fd_count--;
     _pending_fds.erase(fd);
 }
 
@@ -50,7 +49,6 @@ void Overseer::removeFromPFDS(BaseHandler *obj)
     _fd_count--;
     _i--;
     _pending_fds.erase(obj->getFD());
-    std::cerr << "I removed someone" << std::endl;
     delete obj;
 }
 
@@ -65,8 +63,9 @@ void Overseer::setListenAction(int fd, int action) // might need to change this 
     }
 }
 
-bool    Overseer::addCGIInPipe(BaseHandler * base, int fd)
+bool    Overseer::addToPFDSJustOut(BaseHandler * base, int fd)
 {
+    /*I am getting the FD as argument here since this is used by FileHandler when writting and CGI when sending to pipe, CGI sends its out pipe 1 and FileHandler sends _fd*/
     _pending_fds[fd] = base;
     bool status = addToPfds(fd, JUST_OUT, 0);
     base->setTime();
@@ -102,15 +101,6 @@ bool Overseer::addToPfds(int new_fd, int events, int revents)
     _fd_count++;
 
     return _fd_count >= MAX_FDS;
-/*     if (_fd_count != MAX_FDS )
-    {
-        _pfds[_fd_count].fd = new_fd;
-        _pfds[_fd_count].events = events;
-        _pfds[_fd_count].revents = revents;
-        _fd_count++;
-        return true;
-    }
-    return false; */
 }
 
 Server* Overseer::saveServer(t_confi* confi)
@@ -123,7 +113,7 @@ Server* Overseer::saveServer(t_confi* confi)
     catch(const std::exception& e)
     {
         server = NULL;
-        std::cerr << e.what() << '\n';
+        // << e.what() << '\n';
         throw e;
     }
     
@@ -137,10 +127,10 @@ bool Overseer::handleAction(BaseHandler *obj, int event)
         
     if (status == 0 || status == -1)
     {
-        if (status == 0)
-            std::cerr << obj->getFD() << " closed connection" << std::endl;
+        /* if (status == 0)
+            // << obj->getFD() << " closed connection" << std::endl;
         else
-            std::cerr << "error: " << static_cast<std::string>(strerror(errno)) << std::endl;
+            // << "error: " << static_cast<std::string>(strerror(errno)) << std::endl; */
         removeFromPFDS(obj); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
         return false; 
     }
@@ -154,14 +144,14 @@ void            Overseer::addToDeleted(const std::string& path)
 {
     if (!files.addToDelete(path))
     {
-        std::cerr << "Couldn't add to deleted files " + path + ". Path still available for use." << std::endl;
+        // << "Couldn't add to deleted files " + path + ". Path still available for use." << std::endl;
     }
 }
 void            Overseer::removeFromDeleted(const std::string& path)
 {
     if (!files.removeFromDeleted(path))
     {
-        std::cerr << "File was not removed from deleted because it was not in list: " + path << std::endl;
+        // << "File was not removed from deleted because it was not in list: " + path << std::endl;
     }
 
 }

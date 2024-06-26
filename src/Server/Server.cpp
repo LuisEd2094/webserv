@@ -42,10 +42,18 @@ Server::~Server()
 int                Server::Action(int event)
 {
     (void)event;
-    Client *newClient = new Client(this);
+    try 
+    {
+        Client *newClient = new Client(this);
 
-    if (Overseer::addToPfds(newClient))
-        newClient->addClosingErrorObject(SERVICE_UNAVAILABLE);
+        if (Overseer::addToPfds(newClient))
+            newClient->addClosingErrorObject(SERVICE_UNAVAILABLE);   
+    }
+    catch (std::exception& e)
+    {
+        // << e.what() << std::endl;
+    }
+
     return (1);
 }
 
@@ -56,7 +64,7 @@ bool Server::validateAction(Client& client)
     // GET es valido para esta URL
     // POST valido para uRL etc 
 
-    std::size_t max_body = 30777500; /*This should come from the server*/
+    std::size_t max_body = 100; /*This should come from the server*/
     bool status = this->prepareClient4ResponseGeneration(client);
     
     if (status && client.getAction() == POST)
@@ -107,7 +115,7 @@ void Server::initSocket()
     {
         if ((_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
         {
-            std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
+            // << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue ; 
             // freeaddrinfo(_servinfo);
             // throw Server::socketException("socket error: " + static_cast<std::string>(strerror(errno)));
@@ -115,7 +123,7 @@ void Server::initSocket()
         if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &yes,
                 sizeof(int)) == -1) {
             close(_fd);
-            std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
+            // << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue ;
         } 
                 
@@ -123,7 +131,7 @@ void Server::initSocket()
         if (bind(_fd, p->ai_addr, p->ai_addrlen) != 0)
         {
             close(_fd);
-            std::cerr << "bind error: " + static_cast<std::string>(strerror(errno)) << std::endl;
+            // << "bind error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue;
             // freeaddrinfo(_servinfo);
             // throw Server::socketException("bind error:  "+ static_cast<std::string>(strerror(errno)));

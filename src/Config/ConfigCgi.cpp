@@ -22,22 +22,21 @@ ConfigCgi::ConfigCgi(const ConfigCgi& obj)
 
 bool ConfigCgi::prepareClient4ResponseGeneration(Client& client, Path &requestedUrl) const
 {   
-	std::cerr << "::: ConigCgi::prepareClient4ResponseGeneration " << this->getExtension() << std::endl;
+	// << "::: ConigCgi::prepareClient4ResponseGeneration " << this->getExtension() << std::endl;
   
     if (requestedUrl.getExtension() != this->getExtension())
     {
-        std::cerr << RED << "asdf" << std::endl;
         return (false);
     }
-    std::cerr << "Appending root: " << this->getRootAsString() << std::endl;
-    std::cerr << "real root: " << this->getRoot() << std::endl;
-    std::cerr << "REAL root: " << this->root << std::endl;
+    // << "Appending root: " << this->getRootAsString() << std::endl;
+    // << "real root: " << this->getRoot() << std::endl;
+    // << "REAL root: " << this->root << std::endl;
     client.setPathFile
     (
         (this->getRootAsString()) +
         static_cast<std::string>(requestedUrl)
     );
-    std::cerr << RED << "asdf" << std::endl;
+    // << RED << "asdf" << std::endl;
     client.setResponseType(CGI_OBJ);
     client.setConfigElement(this);
     if (client.getPathFile().assertFileExists())
@@ -123,24 +122,24 @@ Path ConfigCgi::getExecute(void) const
 void ConfigCgi::recursivePrint(int recursiveLvl)
 {
 
-	std::cerr << ConfigElement::genSpace(recursiveLvl) ;
-	std::cerr << "CGI (" << this->get__elemArgument__() << ")" << std::endl;
+	// << ConfigElement::genSpace(recursiveLvl) ;
+	// << "CGI (" << this->get__elemArgument__() << ")" << std::endl;
     recursiveLvl++;
-    std::cerr << ConfigElement::genSpace(recursiveLvl) ;
-	std::cerr << "extension: " << this->getExtension() << std::endl;
+    // << ConfigElement::genSpace(recursiveLvl) ;
+	// << "extension: " << this->getExtension() << std::endl;
 
-    std::cerr << ConfigElement::genSpace(recursiveLvl) ;
-	std::cerr << "execute: " << this->getExecute() << std::endl;
-    std::cerr << ConfigElement::genSpace(recursiveLvl) ;
-    std::cerr << "metaVars:";
+    // << ConfigElement::genSpace(recursiveLvl) ;
+	// << "execute: " << this->getExecute() << std::endl;
+    // << ConfigElement::genSpace(recursiveLvl) ;
+    // << "metaVars:";
     recursiveLvl++;
     std::map<std::string, std::string>::const_iterator metaVar = this->getMetaVar().begin();
 
-    std::cerr << "len: " << this->getMetaVar().size()<< std::endl;
+    // << "len: " << this->getMetaVar().size()<< std::endl;
     for (; metaVar != this->getMetaVar().end(); metaVar++)
     {
-        std::cerr << ConfigElement::genSpace(recursiveLvl) ;
-        std::cerr << metaVar->first << ": " << metaVar->second << std::endl;
+        // << ConfigElement::genSpace(recursiveLvl) ;
+        // << metaVar->first << ": " << metaVar->second << std::endl;
     }
 }
 

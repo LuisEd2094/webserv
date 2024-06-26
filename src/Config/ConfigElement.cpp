@@ -24,8 +24,8 @@ void ConfigElement::configure(ParsingGlobal parsedData)
     confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
     confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
     confi.hints.ai_flags = AI_PASSIVE;
-    confi.backlog = 200;
-	std::cerr << BLUE << "Num of servers: " <<  END << parsedData.servers.size() << std::endl;
+    confi.backlog = MAX_FDS;
+	// << BLUE << "Num of servers: " <<  END << parsedData.servers.size() << std::endl;
  
 	for (std::list<ParsingServer>::iterator i = parsedData.servers.begin(); i != parsedData.servers.end(); i++)
 	{
@@ -34,7 +34,7 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 		confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
 		confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
 		confi.hints.ai_flags = AI_PASSIVE;
-		confi.backlog = 200;
+		confi.backlog = MAX_FDS;
 		confi.ip = (*i)["host"];		//TODO checkear un poco
 		confi.port = (*i)["port"];		//TODO checkear un poco
 		std::string phisicServerId = confi.ip + confi.port;
@@ -42,7 +42,7 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 		if (serverIterator == servers.end())
 		{
 			server = Overseer::saveServer(&confi);
-			std::cerr << &server<< std::endl;
+			// << &server<< std::endl;
 			servers.insert(std::pair<std::string,Server*>(phisicServerId, server));
 		}
 		else
@@ -56,9 +56,9 @@ void ConfigElement::configure(ParsingGlobal parsedData)
 			serv++
 			)
 		{
-			std::cerr << " -  -  -  -  -  -  -  -  -  - " << std::endl;
-			std::cerr << "server: " ; serv->recursivePrint(0) ; std::cerr << std::endl;
-			std::cerr << " -  -  -  -  -  -  -  -  -  - " << std::endl;
+			// << " -  -  -  -  -  -  -  -  -  - " << std::endl;
+			// << "server: " ; serv->recursivePrint(0) ; // << std::endl;
+			// << " -  -  -  -  -  -  -  -  -  - " << std::endl;
 		}
 	}
 }

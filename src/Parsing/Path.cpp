@@ -52,24 +52,14 @@ std::string Path::getExtension(void)
 
 void Path::popBegin(int ammount)
 {
-    std::cerr << "          POPING " << ammount << std::endl;
     while (ammount-- && this->size())
-    {
-        std::cerr << "          pop " << ammount << std::endl;
-        this->directories.erase(this->directories.begin());         
-    }
-    std::cerr << "          POPED " << ammount << std::endl;
+        this->directories.erase(this->directories.begin()); 
 }
 
 void Path::popBack(int ammount)
 {
-    std::cerr << "          POPINGB " << ammount << std::endl;
     while (ammount-- && this->size())
-    {
-        std::cerr << "          popb " << ammount << std::endl;
-        this->directories.pop_back();         
-    }
-    std::cerr << "          POPEDB " << ammount << std::endl;
+        this->directories.pop_back();   
 }
 void Path::deleteAndBack(std::list<std::string>::iterator &currFile)
 {

@@ -79,7 +79,7 @@ bool deletedFiles::addToDelete(const std::string& path)
         }
         // Move to the next level in the hierarchy
         temp = &(temp->files[word]);
-        std::cerr << word << std::endl;
+        // << word << std::endl;
     }
     (*temp).is_dir = S_ISDIR(info.st_mode);
     return (true);

@@ -38,7 +38,7 @@ class Client : public BaseHandler
 
 
         // setters
-        void                addErrorFileReaderToExistingRequest(BaseHandler* old_requester, BaseHandler* new_requester);
+        void                addErrorFileHandlerToExistingRequest(BaseHandler* old_requester, BaseHandler* new_requester);
         void                addHeader(const std::string &new_element);
         void                addHeader(const std::queue<std::string> &);
         void                addURLRedirection(const std::string&);
@@ -78,8 +78,6 @@ class Client : public BaseHandler
 
         const std::string&              getMapValue(const std::string& )const;
         const std::queue<std::string>&  getHTTPAddons() const;
-        const std::string&              getDefaultHttpResponse(void) const;
-        ResponseCodes                      getErrorCode() const; 
         const ConfigElement *           getConfigElement()  const;
         const Path&                     getExecute() const;
 
@@ -95,11 +93,10 @@ class Client : public BaseHandler
         std::map< BaseHandler *,  RequestHandler *> _response_objects_map;
         Parsing                 _parser_http;
         Actions                 _action;
-        ResponseCodes              _error_code;
         Path                    _execute;
 
-        int                         _result;
-        bool                        _was_zero;
+        int                     _result;
+        bool                    _was_zero;
         std::size_t             _size_to_append;
 
         bool                    _keep_alive;
