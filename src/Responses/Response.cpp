@@ -117,6 +117,11 @@ void    Response::initErrorsHttp(void)
     _vectorError.push_back(HTTP_OK);
     /*3xx Redirects*/
     _vectorError.push_back(MULTIPLE_REDIRECTS_HTTP);
+    _vectorError.push_back(MOVED_PERMANENTLY_HTTP);
+    _vectorError.push_back(FOUND_HTTP);
+    _vectorError.push_back(SEE_OTHER_HTTP);
+    _vectorError.push_back(USE_PROXY_HTTP);
+    _vectorError.push_back(TEMPORARY_REDIRECT_HTTP);
     /*4xx ERRORs*/
     _vectorError.push_back(BAD_REQUEST_HTTP);
     _vectorError.push_back(FORBIDDEN_HTTP);
