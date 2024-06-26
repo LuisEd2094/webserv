@@ -42,7 +42,7 @@ const std::string dirList(const std::string& dir_str, const std::string& url)
     while (file)
 	{
 		if (!Overseer::checkIfDeleted(dir_str + (file->d_name)) && std::string(file->d_name) != "." && std::string(file->d_name) != "..")
-			html = html + "<li><a href=" + new_url.toStr() + file->d_name + ">" + file->d_name + "</a></li>";
+			html = html + "<li><a href=\"" + new_url.toStr() + file->d_name + "\">" + file->d_name + "</a></li>";
 		file = readdir(dir);
 	}
 	html += "</ul><hr></body></html>";

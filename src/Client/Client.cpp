@@ -564,7 +564,7 @@ void Client::makeChildrenToRespond()
         response = getErrorResponse(_error_code);
     }
     std::queue<std::string> queue;
-    queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10; Domain: ") + getHost()  + "Path: /" + CRNL);
+    //queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10; Domain: ") + getHost()  + "Path: /" + CRNL);
 
     addHeader(queue);
     if (_keep_alive)   

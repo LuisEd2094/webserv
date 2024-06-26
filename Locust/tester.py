@@ -3,7 +3,7 @@ import logging
 import sys
 import os
 import unicodedata  # for text normalization
-
+from dirlisting import dir_list
 # pip install locust
 # locust -f tester.py --host=http://localhost:8080
 
@@ -26,6 +26,7 @@ logger.addHandler(stdout_handler)
 
 
 
+
 def read_expected_content(file_path):
     try:
         with open(file_path, 'r') as file:
@@ -39,6 +40,7 @@ def read_expected_content(file_path):
     
 error404 = read_expected_content( "/home/codespace/recovery/turnInPage/404.html" )
 index = read_expected_content( "/home/codespace/recovery/turnInPage/index.html" )
+files_dir = dir_list("/home/codespace/recovery/turnInPage/files", "files", "./turnInPage/files/")
 
 
 def check_file_body(expected, actual):
@@ -49,7 +51,7 @@ def check_file_body(expected, actual):
 
 class UserBehavior(TaskSet):
 
-    @task(1)
+    """    @task(1)
     def root(self):
         with self.client.get("", catch_response=True) as response:
             response.encoding = 'utf-8'
@@ -109,7 +111,19 @@ class UserBehavior(TaskSet):
                 response.failure()
             else:
                 response.failure(f"Expected 200 but got {response.status_code}")
-                logger.info(f"Response content for /cgi/nolen.py: {response.text}")
+                logger.info(f"Response content for /cgi/nolen.py: {response.text}")"""
+    @task(6)
+    def files_dir(self):
+        with self.client.get("/files/", catch_response=True) as response:
+            response.encoding = 'utf-8'
+            if response.status_code == 200 and response.text == files_dir:
+                response.success()
+            elif response.status_code == 504:
+                logger.info(f"Response content for /: {response.text}")
+                response.failure()
+            else:
+                response.failure(f"Expected 200 but got {response.status_code}")
+                logger.info(f"Response content for /files: {response.text} but expected {files_dir}")
     
 
 class WebsiteUser(HttpUser):
