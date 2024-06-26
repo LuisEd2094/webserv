@@ -117,12 +117,12 @@ void	printMap(const M& map, int padding)
 {
 	typename M::const_iterator i;
 	(void)map;
-/* 	for (i = map.begin(); i != map.end(); ++i)
+ 	for (i = map.begin(); i != map.end(); ++i)
 	{
 		std::cerr << ConfigElement::genSpace(padding) ;
 		std::cerr << ORANGE << "Key: " << END << i->first << ORANGE
 			<< "\tValue: " << END << i->second << std::endl;
-	} */
+	}
 }
 
 template<typename LV>

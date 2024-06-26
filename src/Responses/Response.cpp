@@ -69,7 +69,6 @@ void    Response::initDefaultMap()
     
     /*3xx*/
     defaults.insert(std::make_pair(MULTIPLE_REDIRECTS, Responses(MULTIPLE_REDIRECTS_HTTP, "", "")));
-
     defaults.insert(std::make_pair(MOVED_PERMANENTLY, Responses(MOVED_PERMANENTLY_HTTP, "", "")));
     defaults.insert(std::make_pair(FOUND, Responses(FOUND_HTTP, "", "")));
     defaults.insert(std::make_pair(SEE_OTHER, Responses(SEE_OTHER_HTTP, "", "")));
