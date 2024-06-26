@@ -9,21 +9,22 @@
             const fileName = document.getElementById('filename').value;
             const method = document.querySelector('input[name="method"]:checked').value;
             const form = document.getElementById('cgiForm');
-            
-            form.action = `/cgi/${fileName}`;
-            form.method = method;
 
-            if (method === 'POST') {
-                // Move POST data from textarea to form data
+            if (method === 'GET') {
+                // For GET request, redirect without query parameters
+                window.location.href = `/cgi/${fileName}`;
+            } else {
+                // For POST request, set the form action and method
+                form.action = `/cgi/${fileName}`;
+                form.method = method;
+
+                // Move POST data from textarea to hidden field
                 const postData = document.getElementById('postData').value;
-                const hiddenField = document.createElement('input');
-                hiddenField.type = 'hidden';
-                hiddenField.name = 'data';
+                const hiddenField = document.getElementById('hiddenPostData');
                 hiddenField.value = postData;
-                form.appendChild(hiddenField);
-            }
 
-            form.submit();
+                form.submit();
+            }
         }
     </script>
 </head>
@@ -43,6 +44,7 @@
             <label for="postData">POST Data:</label>
             <textarea id="postData" name="postData" rows="4" cols="50"></textarea>
         </div>
+        <input type="hidden" id="hiddenPostData" name="data">
         <br>
         <button type="submit">Execute</button>
     </form>
