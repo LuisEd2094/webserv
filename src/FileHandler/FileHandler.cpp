@@ -156,7 +156,8 @@ BaseHandler* FileHandler::createNewFileHandler(BaseHandler& obj)
         }
         else
         {
-            throw FileHandlerException(strerror(errno));
+            obj.setRespondeCode(INTERNAL_SERVER_ERROR);
+            return obj.getErrorResponse(obj.getErrorCode());
         }
     }
 }

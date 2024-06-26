@@ -1,5 +1,9 @@
 # TODO LIST
 
+CGI hereda INDEX pero no dirListing.
+
+
+
 1. ~~Parsear Body de entrada~~
 - ~~verificar tipo de envio de info, Content-len vs chunked~~
 

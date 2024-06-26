@@ -102,6 +102,7 @@ CGI::CGI(Client& client) :  BaseHandler(client),
 		    dup2(_in_pipe[0], STDIN_FILENO);
         }
         execve(exec.c_str(), argv, env);
+        std::cerr << "Execve error" << std::endl;
         std::exit(-1);
     }
 	close(_out_pipe[1]);
@@ -162,7 +163,6 @@ int CGI::Action(int event)
     {
         char buff[RECV_SIZE];
         int  result = read(_out_pipe[0], buff, sizeof(buff)); 
-        (void)event;
         if (result > 0)
         {
             _buffer.append(buff, result);
