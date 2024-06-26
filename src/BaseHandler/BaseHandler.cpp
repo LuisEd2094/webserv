@@ -151,9 +151,6 @@ BaseHandler* BaseHandler::getErrorResponse(ResponseCodes code)
     /*Every Error we send should pass through here, if anyone that's NOT the client calls this function
     they should set _configElement to their respective configElement*/
     const ConfigLocation* location = dynamic_cast<const ConfigLocation*>(_configElement);
-    const ConfigLocation* test = dynamic_cast<const ConfigLocation*>(this->_configElement);
-    
-    (void)test;
 
     if (location == NULL)
     {

@@ -16,15 +16,11 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 		location != parsed.locations.end(); location++)
 	{
 		this->locations.push_back(ConfigLocation(*location, *this));
-
-		// for (std::list<ConfigLocation>::iterator sdaf = locations.begin(); sdaf != locations.end(); sdaf++)
-		// {
-		// 	for (std::list<ConfigCgi>::const_iterator fasd = sdaf->getCgis().begin(); fasd != sdaf->getCgis().end(); fasd++)
-		// 	{
-		// 		const_cast<ConfigCgi*>(&*fasd)->setLocation(*sdaf);
-		// 	}
-		// }
 	}
+
+	std::cout << GREEN << "::::: AFTER COPY :::::" << END << std::endl;
+	this->recursivePrint();
+	std::cout << GREEN << "::::: ENDED :::::" << END << std::endl;
 	std::cerr <<"d";
 }
 
@@ -132,7 +128,7 @@ void ConfigVirtualServer::recursivePrint()
 
 void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 {
-	// << ConfigElement::genSpace(recursiveLvl) << "::: VirtualServer ::: " << std::endl;
+	std::cerr << ConfigElement::genSpace(recursiveLvl) << "- VirtualServer" << std::endl;
 	recursiveLvl++;
 	// << ConfigElement::genSpace(recursiveLvl) << "ServerNames: " <<  containerToString(this->getServerNames()) << std::endl;
 	// << ConfigElement::genSpace(recursiveLvl) << "maxBodySize: " << this->getMaxClientBodySize() << std::endl;
@@ -146,69 +142,25 @@ void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 
 bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 {
-	// << "::: ConfigVIrtualServer::prepareClient4ResponseGeneration" << std::endl;
-	// << "::: " << client.getHost() << std::endl;
+	// std::cerr << "::: ConfigVIrtualServer::prepareClient4ResponseGeneration" << std::endl;
+	// std::cerr << "::: " << client.getHost() << std::endl;
 	std::list<std::string>::iterator server_name;
 
-	// << RED << "client.getHost():" << END << client.getHost() << std::endl;
+	// std::cerr << RED << "client.getHost():" << END << client.getHost() << std::endl;
 	server_name = std::find(this->serverNames.begin(), this->serverNames.end(), client.getHost());
 	if (server_name == this->serverNames.end())
 	{
 		// << YELLOW << "client name should be " << END << client.getHost() << std::endl;
 		// << TUR << *this->getLocations().begin() << std::endl;
-		
 		return (false);
 	}
-
- ////
-	//return  ConfigLocation::getBestLocation(client.getURL(), client.getMethod(), 
 	Path url(client.getURL());
 	// << "len locations" << this->locations.size() << std::endl;
 	return  ConfigLocation::getBestLocation(
 		client, Path(client.getURL()),
-//		client, url,
 		this->locations.begin(),
 		this->locations.end()
 	);
-/*
-	std::list<ConfigLocation>::iterator bestLocation;
-	bestLocation = ConfigLocation::getBestLocation(client.getURL(), client.getMethod(), 
-		this->locations.begin(),
-		this->locations.end());
-	if (bestLocation == this->getLocations().end())
-		return (false);
-	Path nextURL(client.getURL());
-	nextURL.popBegin(bestLocation->size());
-	bestLocation->prepareClient4ResponseGeneration(client, nextURL);
-	return (true);
-*/
-	// return (true);
-
-	// if (false)
-	// {
-	// 	std::list<ConfigLocation>::iterator location;
-	// 	std::list<std::string>				locMethods ;
-	// 	std::list<ConfigLocation>::iterator	bestLocation = this->locations.end();
-	// 	Path								requestedURL = client.getURL();
-	// 	int									maxDirMatches = 0;
-	// 	for(location = this->locations.begin(); location != this->locations.end(); location++)
-	// 	{
-	// 		locMethods = location->getMethods();
-	// 		if (locMethods.size() == 0)
-	// 			continue;
-	// 		if (location->getPath().included(requestedURL)
-	// 			&& std::find(locMethods.begin(), locMethods.end(), client.getMethod()) != locMethods.end()
-	// 			&& location->getPath().size() > maxDirMatches) 	
-	// 		{
-	// 			maxDirMatches = location->getPath().size();
-	// 			bestLocation = location;
-	// 		}
-	// 	}
-	// 	if (bestLocation == this->locations.end())
-	// 		return (false);
-	// 	return (bestLocation->prepareClient4ResponseGeneration(client));
-	// }
-	// return (true);
 }
 
 std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj)

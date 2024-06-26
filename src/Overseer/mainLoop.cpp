@@ -80,7 +80,7 @@ void Overseer::mainLoop()
         }
         catch(const std::exception& e)
         {
-            // << e.what() << '\n';
+            std::cerr << e.what() << '\n';
         }
         
 
