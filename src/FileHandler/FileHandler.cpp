@@ -23,6 +23,7 @@ void FileHandler::initTypeMaps()
     types["empty"] = "";
     types["html"] = "text/html";
     types["htm"] = "text/html";
+    types["js"] = "text/javascript";
 
 }
 

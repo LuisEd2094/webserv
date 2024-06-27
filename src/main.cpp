@@ -37,22 +37,13 @@ int main(int argc, char *argv[])
     Response::initErrorsHttp();
     Response::initErrorsMap();
 
-    // all this info should come from the confi file
-    /*
-    std::memset(&(confi.hints), 0, sizeof(confi.hints));
-    confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
-    confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
-    confi.hints.ai_flags = AI_PASSIVE;
-    confi.port = "8080";
-    confi.ip = "";
-    confi.backlog = 200;*/
     signal(SIGPIPE, SIG_IGN);
     signal(SIGINT, Overseer::cleanOverseer);
-    // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;
+    (void)argv;
     try
     {        
-        ParsingGlobal parser = ParsingGlobal::parseFromFile(argc == 2 ? argv[1] : "./src/Parsing/config_file.conf");
-        //parser.recursivePrint();
+        //ParsingGlobal parser = ParsingGlobal::parseFromFile(argc == 2 ? argv[1] : "./src/Parsing/config_file.conf");
+        ParsingGlobal parser = ParsingGlobal::parseFromFile("config_file.conf");
         ConfigElement::configure(parser);
         std::list<Server* > sdaf = Overseer::servers;
         std::cout << GREEN << " ::::: CONFIGURED :::::" << Overseer::servers.size()  << END << std::endl;
@@ -61,6 +52,7 @@ int main(int argc, char *argv[])
     }
     catch(const std::exception& e)
     {
+
         std::cerr << e.what() << '\n';
         Overseer::cleanOverseer(-1);
     }

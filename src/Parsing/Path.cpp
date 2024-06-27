@@ -183,32 +183,20 @@ Path			Path::getDir(void) const
 
 bool Path::assertDirExists(void) const
 {
-    std::cerr << "Checking dir exists: " << *this << std::endl;
     struct stat info;
     std::string relativePathStr = std::string("./") + PATH_TO_C_STR(*this); 
-    //int result = stat(this->c_str(), &info);
-
     
     int result = stat(relativePathStr.c_str(), &info);
-
     if (result == -1)
-    {
-        std::cerr << "ERRRORRR" << std::endl;
         return (false);
-    }
-        std::cerr << "OKKKK" << std::endl;
     return (S_ISDIR(info.st_mode));
 }
 
 bool Path::assertFileExists(void) const
 {
-    std::cerr << GREEN;
-    std::cerr << "Checking file exists: " << *this << std::endl;
     std::string relativePathStr = std::string("./") + PATH_TO_C_STR(*this); 
     struct stat info;
     int result = stat(relativePathStr.c_str(), &info);
-    std::cerr << "Result: " << result << std::endl;
-    std::cerr << END;
     if (result == -1)
         return (false);
     return (S_ISREG(info.st_mode));

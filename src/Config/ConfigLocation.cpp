@@ -419,13 +419,39 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 	// TODO copy code above for cgis instead of locations
 }
 
+bool ConfigLocation::checkIndex(Client &client) const
+{
+	Path indexPath;
+
+	if (this->_index.size() == 0)
+		return (false);
+
+	for (
+			std::list<std::string>::const_iterator indexFile = this->_index.begin(); 
+			indexFile != this->_index.end();
+			indexFile++
+	)
+	{
+		indexPath  =  Path(client.getPathFile()).append(Path(*indexFile));
+		std::cout << BLUE << "TESTING: " << indexPath << " " << indexPath.assertFileExists() << END << std::endl;
+		if  (indexPath.assertFileExists())
+		{
+			client.setPathFile(indexPath);
+			return (true);
+		}
+	}
+	std::cout << BLUE << "DIDNT FIND: " << indexPath << END << std::endl;
+
+	return (false);
+}
+
 bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 	Path &requestedURL
 )
 {
 	bool inBestLocation;
 
-	// << "::: ConfigLocation::prepareClient4ResponseGeneration " << this->getPath() << std::endl;
+	// std::cerr << "::: ConfigLocation::prepareClient4ResponseGeneration " << this->getPath() << std::endl;
 	std::string url = client.getURL() ;
 
 	inBestLocation = !ConfigLocation::getBestLocation( client, requestedURL,
@@ -436,16 +462,12 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 	if (inBestLocation)
 	{
 		if (this->checkCGI(client, requestedURL))
-		{
-			std::cout << BLUE << "It's CGI" << END << std::endl;
 			return (true); 
-		}
 		client.setPathFile
 		(
 			static_cast<std::string>(this->_root) +
 			static_cast<std::string>(requestedURL)
 		);
-		// << BLUE << std::endl;
 		client.setConfigElement(this);
 		client.setDefaultHttpResponse(OK);
 		if (this->getRedirection().size() > 0)
@@ -455,70 +477,34 @@ bool ConfigLocation::prepareClient4ResponseGeneration(Client& client,
 			client.setDefaultHttpResponse(OK);
 			return true;
 		}
-		else if (client.getAction() == DELETE  )
-		{
+		else if (client.getAction() == DELETE)
 			return (true);
-		}
 		else if (client.getAction() == POST)
 		{
 			client.setResponseType(FILE_OBJ);
 			client.setDefaultHttpResponse(OK);
 			return (true);
 		}
-		else if (Path(client.getURL()).getIsFile())	
+		else if (client.getPathFile().assertFileExists())
+			client.setResponseType(FILE_OBJ);
+		else if (checkIndex(client))
 		{
-			std::cout << RED << client.getPathFile() << END << std::endl;
-			if (client.getPathFile().assertFileExists())
-			{
-				// << "return file" << std::endl;
-				client.setResponseType(FILE_OBJ);
-			}
-			else if (this->_dirListing && client.getPathFile().assertDirExists())
-			{
-				// << "should be file return file" << std::endl;
-				client.setResponseType(DIR_OBJ);
-			}
-			else
-			{
-				/*This doesn't get here if I do index and it doesnt find it?*/
-				// << "unable to serve file" << std::endl;
-				client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
-			}
-		}
-		else if (this->_index.size() > 0)
-		{
-			const Path index =  static_cast<std::string>(this->_root) + _index.front();
-
-
-			if (index.assertFileExists())
-			{
-				client.setPathFile(index);
-				client.setResponseType(FILE_OBJ);
-				client.setDefaultHttpResponse(OK);
-			}
-			else
-			{
-				client.setDefaultHttpResponse(NOT_FOUND);
-			}
+			client.setResponseType(FILE_OBJ);
+			client.setDefaultHttpResponse(OK);
 		}
 		else if (this->_dirListing && client.getPathFile().assertDirExists())	
-		{
-			// << "returning direcotry" << std::endl;
 			client.setResponseType(DIR_OBJ);
-		}
 		else 
-		{
-			// << "unable to serve directory" << std::endl;
-			client.setDefaultHttpResponse(NOT_FOUND); /// SHOULD BE AN ERROR
-		}
+			client.setDefaultHttpResponse(NOT_FOUND);
+
 		std::cerr << END << std::endl;
 		std::cerr << "      BINGO !!!" << std::endl;
+		std:: cerr << TUR << "bestlocation: " << END << this->getPath()<<  std::endl;
 		std::cerr << "      Cient  URL: " << client.getURL() << std::endl;
 		std::cerr << "      Response type: " << ObjectTypesStrings[client.getResponseType()] << std::endl;
 		std::cerr << "      Default HTTP response: " << client.getDefaultHttpResponse() << std::endl;
 		std::cerr << "      Path file: " << client.getPathFile()<< std::endl;;
 	}
-	std:: cerr << TUR << "bestlocation: " << END << this->getPath()<<  std::endl;
 	std::cerr << std::endl;
 	return true;
 }
@@ -543,35 +529,20 @@ bool	ConfigLocation::checkCGI(Client &client, Path& requestedURL)
 	return (false);
 }
 
-//std::list<ConfigLocation>::iterator ConfigLocation::getBestLocation(Path requestedURL,
-//bool ConfigLocation::getBestLocation(Path requestedURL,
-//bool getBestLocation( Client &client, Path requestedURL,
-	//std::list<ConfigLocation>::iterator beginLocation,
-	//std::list<ConfigLocation>::iterator endLocation
-//)
 bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 	std::list<ConfigLocation>::iterator beginLocation,
 	std::list<ConfigLocation>::iterator endLocation
 )
 {
-//	std::string requestedURL = client.getURL();
 	std::string requestMethod = client.getMethod();
-//	std::list<ConfigLocation>::iterator location;
 	std::list<std::string>				locMethods ;
 	std::list<ConfigLocation>::iterator	bestLocation = endLocation;
 	int									maxDirMatches = 0;
-	// << "··· getBestLocation " << requestedURL << std::endl;
+	//std::cerr << "··· getBestLocation " << requestedURL << std::endl;
 	while (beginLocation != endLocation)
 	{
-		// << "      Location " << *beginLocation ;
+		//std::cerr << "      Location " << *beginLocation ;
 		locMethods = beginLocation->getMethods();
-		/*
-		if (locMethods.size() == 0)
-		{
-			beginLocation++ ;
-			continue;
-		}
-		*/
 		Path temp = beginLocation->getPath();
 		std::cerr << temp.included(requestedURL) << ", "
 			<< (temp.size() >= maxDirMatches) << "; "
@@ -583,7 +554,6 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 			{
 				maxDirMatches = temp.size();
 				bestLocation = beginLocation;
-				// << "  MATCHED" ;
 			}
 			else
 			{
@@ -592,34 +562,28 @@ bool ConfigLocation::getBestLocation( Client &client, Path requestedURL,
 				client.setConfigElement(&(*beginLocation));
 			}
 		}
-		// << std::endl;
 		beginLocation++ ;
 	}
-	//return bestLocation;
 	if (bestLocation == endLocation)
 		return false;
 
-//	Path nextURL(client.getURL());
-	// << "      Before pop: " << bestLocation->size() << " " << requestedURL << std::endl;
 	requestedURL.popBegin(bestLocation->size());
-/* 	// << "      After pop: " << requestedURL << std::endl;
-	// << "      First nested location: " << *bestLocation->_locations.begin() << std::endl; */
 	bestLocation->prepareClient4ResponseGeneration(client, requestedURL);
 	return (true);
 }
+
 const std::string ConfigLocation::getErrorPage(ResponseCodes err) const
 {
 	Path pathy_pathon;
 	
 	std::string val = this->_errorPage;
-	// this->setErrorPages(val);
 	try
 	{
 		pathy_pathon = _errorPages.at(err);
 	}
 	catch (std::out_of_range &e)
 	{
-		(void)e;//todo esta bien joan no te asustes :v (deja de poner catch de ... /lsoto)
+		(void)e;
 		return (""); 
 	}
 	pathy_pathon.setIsFile(true);
@@ -629,7 +593,6 @@ const std::string ConfigLocation::getErrorPage(ResponseCodes err) const
 std::ostream &operator<<(std::ostream &os, const ConfigLocation &obj)
 {
 	os << "ConfigLocation (" << obj.getPath() << "): " << std::endl;
-//	os << "  errorPage: " << obj.getErrorPage() << std::endl;
 	return os;
 }
 

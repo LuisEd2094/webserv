@@ -80,6 +80,8 @@ class ConfigLocation: public ConfigElement
 		const std::list<Uri>			&getRedirections(void) const;
 		const ConfigVirtualServer		&getVirtualServer(void) const ;
 
+		bool							checkDirecotry(Client &client) const;
+		bool							checkIndex(Client &client) const;
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);
 		bool							checkCGI(Client &client, Path& requestedURL);
 		void							recursivePrint(int recursiveLvl);
