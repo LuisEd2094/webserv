@@ -77,7 +77,7 @@ class ConfigLocation: public ConfigElement
 		const std::map<ResponseCodes, Path>	&getMapErrorPages(void) const;
 		const Path						getErrorPages(ResponseCodes searchError) const;
 		ResponseCodes					getCodeRedirections(void) const;
-		const std::list<Uri>			getRedirections(void) const;
+		const std::list<Uri>			&getRedirections(void) const;
 		const ConfigVirtualServer		&getVirtualServer(void) const ;
 
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);

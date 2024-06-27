@@ -445,38 +445,6 @@ void Client::updateMethodAction()
 }
 
 
-
-
-
-
-
-/*This should also go to the server?*/
-int Client::saveInBodyAsFile()
-{
-/*     if (_pending_read && _in_body.size() >= _content_length) // check _pending_read just in case we got the first line but not the full http.
-    {
-        if (Overseer::checkIfDeleted("./files/output_file.md"))
-        {
-            Overseer::removeFromDeleted("./files/output_file.md");
-        }
-        std::ofstream outfile("./files/output_file.md", std::ios::binary);
-        if (outfile.is_open())
-        {
-            outfile.write(_in_body.data(), _in_body.size());
-            outfile.close();
-            // << "Binary data written to file.\n";
-            _response_type = NO_FD_OBJ;
-            //return sendResponse();
-        } 
-        else
-        {
-            // << "Error opening file for writing.\n";
-            return (-1);
-        }
-    }*/
-    return (1); 
-}
-
 void Client::removeFirstObj()
 {
     delete _response_objects_queue.front();

@@ -9,6 +9,7 @@ const ObjectTypes BaseHandler::valid_objs[NUM_OBJ] = {
     NO_FD_OBJ,
     CGI_OBJ,
     DIR_OBJ,
+    REDIRECT_OBJ,
  };
 
 
@@ -74,27 +75,36 @@ BaseHandler* BaseHandler::createObject(Client& client)
                 std::string listing = dirList(client.getPathFileString(), client.getURL());
                 return DirectResponse::createNewDirect(setContentLenHTTP(std::string(HTTP_OK) + "Content-Type: text/html\r\n", listing), listing);
             }
-            else if (valid_objs[i] == NO_FD_OBJ)
+            else if (valid_objs[i] == REDIRECT_OBJ)
             {
-                if (client.getErrorCode() >= MULTIPLE_REDIRECTS && client.getErrorCode() <= MULTIPLE_REDIRECTS)
+                std::string body(REDIRECT_TEMPLATE);
+
+                std::size_t body_pos(body.find("<body>"));
+
+                const ConfigLocation * config = dynamic_cast<const ConfigLocation *>(client.getConfigElement());
+                if (!config)
                 {
-                    std::string body(REDIRECT_TEMPLATE);
+                    throw ConfigElement::ParamError("No config set");
+                }
+                const std::list<Uri>&  redirections = config->getRedirections();
+                std::string http = Response::getHttpFirtsLine(config->getCodeRedirections());
 
-                    std::size_t body_pos(body.find("<body>"));
+                for (std::list<Uri>::const_iterator it = redirections.begin();it != redirections.end(); it++)
+                {
+                    std::string new_location = (std::string)*it;
+                    std::string a = "<p><a href=\"";
 
-                    while(!client.getURLempty())
-                    {
-                        std::string newUrl = client.getNextURLRedirect();
-                        std::string a = "<p><a href=\"";
+                    a.append(new_location + "\">" + new_location + "</a></p>\n");
 
-                        a.append(newUrl + "\">" + newUrl + "</a></p>\n");
-                        
-                        
-                        body.insert(body_pos + std::strlen("<body>"),a );
-                    }
-                    return DirectResponse::createNewDirect(setContentLenHTTP(client.getDefaultHttpResponse(), body), body);
+
+                    http.append("Location :" + new_location + CRNL);
+                    body.insert(body_pos + std::strlen("<body>"),a );
 
                 }
+                return DirectResponse::createNewDirect(setContentLenHTTP(http, body), body);
+            }
+            else if (valid_objs[i] == NO_FD_OBJ)
+            {
                 return DirectResponse::createNewDirect(setContentLenHTTP(client.getDefaultHttpResponse(), client.getBody() ), client.getBody());
             }
             else

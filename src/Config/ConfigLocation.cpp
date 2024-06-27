@@ -302,10 +302,9 @@ void	ConfigLocation::setErrorPages(std::string errors)
 void	ConfigLocation::setRedirections(const std::string &redirections)
 {
 	std::list<std::string> code = ft_split<std::list<std::string> >(redirections, ' ');
-	if (code.size() != 2)
-		throw ParamError(std::string("Error: invalid redirection:"));
+	if (code.size() < 2)
+		throw ParamError(std::string("Error: invalid redirection"));
 	code.front() = ::cutSpace(code.front());
-	code.back() = ::cutSpace(code.back());
 	bool isNum = true;
 	for (size_t i = 0; i < code.front().length() && isNum; i++)
 		isNum = std::isdigit(code.front()[i]);
@@ -316,11 +315,10 @@ void	ConfigLocation::setRedirections(const std::string &redirections)
 	ResponseCodes codeRedirection = Response::getErrorCodeFromInt(codeNum);
 	if (codeRedirection == INVALID_CODE)
 		throw ParamError(std::string("Error: invalid: code not available " + code.front() + "."));
-	std::list<std::string> split = ft_split<std::list<std::string> >(code.back(), ' ');
-	if (codeNum != MULTIPLE_REDIRECTS and split.size() > 2)
+	if (codeRedirection != MULTIPLE_REDIRECTS and code.size() > 2)
 		throw ParamError(std::string("Error: invalid Error: no is Multiple redirects " + code.front() + "."));
 	this->_codeRedirections = codeRedirection;
-	for (std::list<std::string>::iterator iter = split.begin(); iter != split.end(); iter++)
+	for (std::list<std::string>::iterator iter = (++code.begin()); iter != code.end(); iter++)
 		this->_redirections.push_back(Uri::Parse(*iter));
 }
 
@@ -344,7 +342,7 @@ ResponseCodes ConfigLocation::getCodeRedirections(void) const
 	return (this->_codeRedirections);
 }
 
-const std::list<Uri> ConfigLocation::getRedirections(void) const
+const std::list<Uri> &ConfigLocation::getRedirections(void) const
 {
 	return (this->_redirections);
 }

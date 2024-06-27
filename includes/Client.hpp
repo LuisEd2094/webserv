@@ -132,7 +132,6 @@ class Client : public BaseHandler
 
 
         /*POST methods*/
-        int                     saveInBodyAsFile();
         bool                    checkPostHeaderInfo();
 
         void                    checkFirstQueue(RequestHandler *);
