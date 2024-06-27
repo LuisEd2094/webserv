@@ -16,7 +16,6 @@
 #include <signal.h>
 #include <ParsingGlobal.hpp>
 #include <Overseer.hpp>
-// #include <Server.hpp>
 
 
 /*
@@ -38,14 +37,6 @@ int main(int argc, char *argv[])
     Response::initErrorsMap();
 
     // all this info should come from the confi file
-    /*
-    std::memset(&(confi.hints), 0, sizeof(confi.hints));
-    confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
-    confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
-    confi.hints.ai_flags = AI_PASSIVE;
-    confi.port = "8080";
-    confi.ip = "";
-    confi.backlog = 200;*/
     signal(SIGPIPE, SIG_IGN);
     signal(SIGINT, Overseer::cleanOverseer);
     // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;

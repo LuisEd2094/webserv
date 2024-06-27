@@ -1,0 +1,1 @@
+prlimit --nofile=64 ./webserv config_file.conf

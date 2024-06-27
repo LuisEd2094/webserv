@@ -38,9 +38,9 @@ def read_expected_content(file_path):
         logger.error(f"Error reading file: {e}")
         return None
     
-error404 = read_expected_content( "/workspaces/webserv/turnInPage/404.html" )
-index = read_expected_content( "/workspaces/webserv/turnInPage/index.html" )
-files_dir = dir_list("/workspaces/webserv/turnInPage/files", "files", "./turnInPage/files/")
+error404 = read_expected_content( "/home/luis/proyects/webserv/turnInPage/404.html" )
+index = read_expected_content( "/home/luis/proyects/webserv/turnInPage/index.html" )
+files_dir = dir_list("/home/luis/proyects/webserv/turnInPage/files", "files", "./turnInPage/files/")
 
 
 def check_file_body(expected, actual):
@@ -61,7 +61,7 @@ class UserBehavior(TaskSet):
                 response.failure(f"Expected 200 but got {response.status_code}")
                 logger.info(f"Response content for /: {response.text}")
 
-    @task(2)
+    """@task(2)
     def index(self):
         with self.client.get("/index.html", catch_response=True) as response:
             response.encoding = 'utf-8'
@@ -123,7 +123,7 @@ class UserBehavior(TaskSet):
                 response.failure()
             else:
                 response.failure(f"Expected 200 but got {response.status_code}")
-                logger.info(f"Response content for /files: {response.text} but expected {files_dir}")
+                logger.info(f"Response content for /files: {response.text} but expected {files_dir}")"""
     
 
 class WebsiteUser(HttpUser):

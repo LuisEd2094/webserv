@@ -15,7 +15,7 @@ class Overseer::pollException: public std::exception
         }
 };
 
-void printHostName()
+/*void printHostName()
 {
     char hostname[100];
     size_t size = sizeof(hostname); 
@@ -25,12 +25,12 @@ void printHostName()
 
     // <<  "my domain: "<< hostname << std::endl;
 }
-
+*/
 
 void Overseer::mainLoop()
 {
     int poll_connection;
-    printHostName(); //REMOVE , IT USES INVALID FUNTIONS
+   // printHostName(); //REMOVE , IT USES INVALID FUNTIONS
     while(canContinue) 
     {
         poll_connection = poll(_pfds, _fd_count, TIME_OUT_POLL);
