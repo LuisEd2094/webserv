@@ -69,6 +69,32 @@ CGI::CGI(Client& client) :  BaseHandler(client),
     }
     const ConfigCgi * confi = dynamic_cast<const ConfigCgi *>(_configElement);
     (void) confi;
+
+        std::map<std::string, std::string> env_map;
+
+        if (client.getMapValue("Content-Length") != PARSING_NOT_FOUND)
+            env_map["CONTENT_LENGTH="] = client.getMapValue("Content-Length");
+
+        if (client.getMapValue("Content-Type") != PARSING_NOT_FOUND)
+            env_map["CONTENT_TYPE="] = client.getMapValue("Content-Type");
+        env_map["GATEWAY_INTERFACE="]  =  "CGI/1.1";
+        env_map["PATH_TRANSLATED="] = confi->getRoot();
+        if (client.getMapValue("__Query__") != PARSING_NOT_FOUND)
+            env_map["QUERY_STRING="] = client.getMapValue("__Query__");
+        else
+            env_map["QUERY_STRING="] = "";
+        /*this two can be set to the same value*/
+        env_map["REMOTE_ADDR="] = _client_ip;
+        env_map["REMOTE_HOST="] = _client_ip;
+        env_map["REQUEST_METHOD="] = client.getMethod();
+        env_map["SERVER_NAME="] = client.getHost();
+        
+        if (client.getMapValue("Port") != PARSING_NOT_FOUND)
+            env_map["SERVER_PORT="] = client.getMapValue("Port");
+        else
+            env_map["SERVER_PORT="] = "80";
+        env_map["SERVER_PROTOCOL="] = "HTTP/1.1";
+        
     if (_pid == 0)
     {
     
@@ -80,6 +106,7 @@ CGI::CGI(Client& client) :  BaseHandler(client),
         argv[0] = const_cast<char*>(exec.c_str());
         argv[1] = const_cast<char*>(file.c_str());
         argv[2] = NULL;
+
 
 
 
@@ -234,7 +261,6 @@ int CGI::Action(int event)
                 _has_error =true;
                 return (1);
             }
-            /*Not sure what to do if the write failes*/
             return (1);
         }
         _sent += result;

@@ -48,6 +48,7 @@
 # include <Uri.hpp>
 # include <Path.hpp>
 # include <ConfigElement.hpp>
+# include <ProgramConfigs.hpp>
 
 /******************************************************************************/
 /*                            MACROS                                          */

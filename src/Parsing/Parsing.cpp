@@ -27,7 +27,7 @@ Parsing::Parsing( void )
 	_findNewline = 0;
 	_endRead = false;
 	_statusError = 0;
-	_not_found = "not found";
+	_not_found = PARSING_NOT_FOUND;
 }
 
 Parsing::~Parsing( void )

@@ -42,7 +42,7 @@ Client::Client(Server *server) : BaseHandler()
               << static_cast<int>(bytes[1]) << "."
               << static_cast<int>(bytes[0]);
 
-    std::string _ip_str = ip_stream.str();
+    _client_ip = ip_stream.str();
     // << "Connected IP: " << ip_str << std::endl;
 
     _server = server;
@@ -537,6 +537,9 @@ void Client::makeChildrenToRespond()
     addHeader(queue);
     if (_keep_alive)   
         addHeader(std::string("Connection: keep-alive") + CRNL); 
+    else
+        addHeader(std::string("Connection: close") + CRNL); 
+
     addObject(response);
     /*
         Check here to add Redirect headers and other HTTPS?

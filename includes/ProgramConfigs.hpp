@@ -18,6 +18,7 @@
 # define    MAX_URL_SIZE 500
 # define    MAX_BODY_SIZE 100000
 # define    MAX_METAVAR 100
+# define    PARSING_NOT_FOUND "not found"
 
 
 # define NUM_OBJ 6
