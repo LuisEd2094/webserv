@@ -363,6 +363,11 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
+        if (_action == POST)
+        {
+            if (!checkPostHeaderInfo())
+                return;
+        }
         if (!_server->validateAction(*this))
         {            
             // << "server told me it was a bad action" << std::endl;
@@ -370,14 +375,9 @@ void Client::parseForHttp()
             resetClient(false);
             return ;
         }
-        if (_action == POST)
+        if (_parser_http.getMapValue("Expect") == "100-continue")
         {
-            if (!checkPostHeaderInfo())
-                return;
-            if (_parser_http.getMapValue("Expect") == "100-continue")
-            {
-                addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
-            }
+            addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
         }
         // << _result << ": read " << std::endl;
         // << _in_container << std::endl;

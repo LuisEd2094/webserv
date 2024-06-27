@@ -4,6 +4,9 @@ CGI hereda INDEX pero no dirListing.
 
 Test page with CGI.html is appending ?query to the request. How to handle?
 
+Cuando subes un archivo desde el file_handler.html, no da respuesta?
+
+
 
 
 1. ~~Parsear Body de entrada~~

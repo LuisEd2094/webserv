@@ -64,14 +64,13 @@ bool Server::validateAction(Client& client)
     // GET es valido para esta URL
     // POST valido para uRL etc 
 
-    std::size_t max_body = 100; /*This should come from the server*/
     bool status = this->prepareClient4ResponseGeneration(client);
     
     if (status && client.getAction() == POST)
     {
         if (!client.getIsChunked())
         {
-            if (client.getContentLength() > max_body)
+            if (client.getContentLength() > std::size_t(MAX_BODY_SIZE))
             {
                 client.addClosingErrorObject(PAYLOAD);
                 return (false);
