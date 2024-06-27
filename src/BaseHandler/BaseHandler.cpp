@@ -37,14 +37,12 @@ const std::string dirList(const std::string& dir_str, const std::string& url)
         throw std::exception();
     /* this throws seg fault if we limit the fd*/
     errno = 0;
-	file = NULL;//readdir(dir);
-    errno = EBADF;
+	file = readdir(dir);
     if (!file && errno == EBADF)
     {
     	closedir(dir);
         throw std::exception();
     }
-
 	html = html + "<html><head></head><body>";	
 	html = html + "<h1>Directory listing for " + dir_str + "</h1><hr>";	
 	html = html + "<ul>";
@@ -61,7 +59,6 @@ const std::string dirList(const std::string& dir_str, const std::string& url)
         }
 	}
 	html += "</ul><hr></body></html>";
-
 	closedir(dir);
 	return html;
 }
