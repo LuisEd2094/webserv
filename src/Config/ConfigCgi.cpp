@@ -85,6 +85,10 @@ void ConfigCgi::setMetaVar(std::string &metaVar)
         std::list<std::string> tmp = ft_split<std::list<std::string> >(*line, '=');
         this->metaVar[tmp.front()] = tmp.back();
     }
+    if (this->metaVar.size() > MAX_METAVAR)
+        throw ParamError(std::string("Error: max MetaVars: " + toString(MAX_METAVAR)));
+
+
 }
 
 void ConfigCgi::setLocation(const ConfigLocation &location)

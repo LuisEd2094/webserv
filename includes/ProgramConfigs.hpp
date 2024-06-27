@@ -17,6 +17,7 @@
 # define    MAX_URI_OFFSET 100
 # define    MAX_URL_SIZE 500
 # define    MAX_BODY_SIZE 100000
+# define    MAX_METAVAR 100
 
 
 # define NUM_OBJ 6

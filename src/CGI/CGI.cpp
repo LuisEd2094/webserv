@@ -67,8 +67,11 @@ CGI::CGI(Client& client) :  BaseHandler(client),
         client.setRespondeCode(BAD_GATEWAY);
         throw CGIException(strerror(errno));
     }
+    const ConfigCgi * confi = dynamic_cast<const ConfigCgi *>(_configElement);
+    (void) confi;
     if (_pid == 0)
     {
+    
         std::string file = client.getPathFile().getFile();
         std::string exec = client.getExecute();
         std::string dir  = client.getPathFile().getDir();
@@ -81,7 +84,13 @@ CGI::CGI(Client& client) :  BaseHandler(client),
 
 
         std::string query = "QUERY_STRING=" + client.getMapValue("__Query__");
-        char *env[3];
+        /* 
+            son 17 elementos basicos + size de metavar
+            verificar en HTTP si el metaVar fue enviado, sino usar el defecto y listerine
+        */
+        char *env[MAX_METAVAR];
+
+
         env[0] = const_cast<char*>(query.c_str());
         std::string len;
         if (!_body.empty())
