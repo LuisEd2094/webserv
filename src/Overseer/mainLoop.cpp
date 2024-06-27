@@ -33,8 +33,6 @@ void Overseer::mainLoop()
     printHostName(); //REMOVE , IT USES INVALID FUNTIONS
     while(canContinue) 
     {
-
-        //// << "Poll count " << _fd_count << std::endl;
         poll_connection = poll(_pfds, _fd_count, TIME_OUT_POLL);
         if (poll_connection == -1) 
         {
@@ -82,9 +80,14 @@ void Overseer::mainLoop()
         {
             std::cerr << e.what() << '\n';
         }
-        
-
-        
+                
     }
+    std::cerr << " IAM CLEANING " << std::endl;
+    std::map<int, BaseHandler *>::iterator it = _pending_fds.begin();
+    for (; it != _pending_fds.end(); it++)
+    {
+        delete it->second;
+    }
+    _pending_fds.clear();
     return ;
 }

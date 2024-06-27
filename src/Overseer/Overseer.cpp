@@ -16,12 +16,6 @@ std::list<Server*> Overseer::servers = std::list<Server*>();
 void Overseer::cleanOverseer(int sig)
 {
     (void)sig;
-    std::map<int, BaseHandler *>::iterator it = _pending_fds.begin();
-    for (; it != _pending_fds.end(); it++)
-    {
-        delete it->second;
-    }
-    _pending_fds.clear();
     canContinue = false;
 }
 

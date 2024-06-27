@@ -33,9 +33,17 @@ const std::string dirList(const std::string& dir_str, const std::string& url)
     Path            new_url(url + "/");
 	//chdir(directory.c_str()); //TODO try catch
 	dir = opendir(dir_str.c_str()); //TODO try catch
-
+    if (!dir)
+        throw std::exception();
     /* this throws seg fault if we limit the fd*/
-	file = readdir(dir);
+    errno = 0;
+	file = NULL;//readdir(dir);
+    errno = EBADF;
+    if (!file && errno == EBADF)
+    {
+    	closedir(dir);
+        throw std::exception();
+    }
 
 	html = html + "<html><head></head><body>";	
 	html = html + "<h1>Directory listing for " + dir_str + "</h1><hr>";	
@@ -44,7 +52,13 @@ const std::string dirList(const std::string& dir_str, const std::string& url)
 	{
 		if (!Overseer::checkIfDeleted(dir_str + (file->d_name)) && std::string(file->d_name) != "." && std::string(file->d_name) != "..")
 			html = html + "<li><a href=\"" + new_url.toStr() + file->d_name + "\">" + file->d_name + "</a></li>";
-		file = readdir(dir);
+        errno = 0;
+        file = readdir(dir);
+        if (!file && errno == EBADF)
+        {
+        	closedir(dir);
+            throw std::exception();
+        }
 	}
 	html += "</ul><hr></body></html>";
 

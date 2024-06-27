@@ -5,9 +5,13 @@ CGI hereda INDEX pero no dirListing.
 Test page with CGI.html is appending ?query to the request. How to handle?
 
 Cuando subes un archivo desde el file_handler.html, no da respuesta?
+\
+Revisar CGI/locations error pages si la ruta es heredada o no
 
 
 
+
+curl -X POST  localhost:8080/nolen.py -H 'Content-Type: application/json' -d '{"login"' -v    no funciona bien          
 
 1. ~~Parsear Body de entrada~~
 - ~~verificar tipo de envio de info, Content-len vs chunked~~

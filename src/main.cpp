@@ -58,20 +58,6 @@ int main(int argc, char *argv[])
         std::cout << GREEN << " ::::: CONFIGURED :::::" << Overseer::servers.size()  << END << std::endl;
         Overseer::printConfig();
         Overseer::mainLoop();
-        //overseer.file(argv[1]);
-        // Should read from file or default info, internally call saveServer for each server
-        // throws exception when server fails
-        // Overseer::saveServer(&confi);
-        
-/*         std::memset(&(confi.hints), 0, sizeof(confi.hints));
-        confi.hints.ai_family = AF_UNSPEC; //takes ipv4 and ipv6
-        confi.hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
-        confi.hints.ai_flags = AI_PASSIVE;
-        confi.port = "81";
-        confi.backlog = 10;
-        overseer.saveServer(&confi); */
-
-        // Overseer::mainLoop();
     }
     catch(const std::exception& e)
     {
