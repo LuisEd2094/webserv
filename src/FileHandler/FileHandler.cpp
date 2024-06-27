@@ -256,7 +256,23 @@ int FileHandler::writeToFIle()
                     else
                         _error_code = CREATED;
                     
-                    client->setHTTPResponse(Response::getHttpFirtsLine(_error_code) + "Content-Length: 0" + CRNL "Location: " + confi->get__elemArg__() + _file_name.getFile().toStr().erase(0,1)  + CRNL + CRNL, this); 
+                    std::string file_location = confi->get__elemArg__() + _file_name.getFile().toStr().erase(0,1);
+
+
+                    std::string		html("<!DOCTYPE html>\n");
+                    html = html + "<html><head></head><body>";	
+                    html = html + "<h1>You can see you file clicking here</h1><hr>";	
+                    html = html + "<ul>";
+                    html = html + "<li><a href=\"" + file_location + "\">" + file_location + "</a></li>";
+                    html += "</ul><hr></body></html>";
+
+                    std::string http = Response::getHttpFirtsLine(_error_code) + "Location: " + file_location + CRNL;
+                    _file_type = getMimeType("html");
+                    http = setContentType(http);
+                    http = setContentLenHTTP(http, html);
+                    client->setHTTPResponse(http, this); 
+                    client->setBodyResponse(html, this);
+                    
                 }
                 return (0);
 

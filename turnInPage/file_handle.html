@@ -9,7 +9,7 @@
     <h1>File Upload, Download, and Delete</h1>
 
     <h2>Upload File</h2>
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <form action="/files" method="post" enctype="multipart/form-data">
         <input type="file" name="file">
         <button type="submit">Upload</button>
     </form>
@@ -41,7 +41,7 @@
 
         // Function to delete a file
         async function deleteFile(filename) {
-            await fetch(`/delete/${filename}`, { method: 'DELETE' });
+            await fetch(`/files/${filename}`, { method: 'DELETE' });
             fetchFiles();
         }
 
