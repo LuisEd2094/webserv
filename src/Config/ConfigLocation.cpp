@@ -286,7 +286,7 @@ void	ConfigLocation::setErrorPages(std::string errors)
 
 void	ConfigLocation::setRedirections(const std::string &redirections)
 {
-	std::list<std::string> code = ft_split<std::list<std::string> >(redirections, '-');
+	std::list<std::string> code = ft_split<std::list<std::string> >(redirections, ' ');
 	if (code.size() != 2)
 		throw ParamError(std::string("Error: invalid redirection:"));
 	code.front() = ::cutSpace(code.front());
@@ -301,11 +301,12 @@ void	ConfigLocation::setRedirections(const std::string &redirections)
 	ResponseCodes codeRedirection = Response::getErrorCodeFromInt(codeNum);
 	if (codeRedirection == INVALID_CODE)
 		throw ParamError(std::string("Error: invalid: code not available " + code.front() + "."));
-	std::list<Path> split = ft_split<std::list<Path> >(code.back(), ' ');
+	std::list<std::string> split = ft_split<std::list<std::string> >(code.back(), ' ');
 	if (codeNum != MULTIPLE_REDIRECTS and split.size() > 2)
 		throw ParamError(std::string("Error: invalid Error: no is Multiple redirects " + code.front() + "."));
 	this->_codeRedirections = codeRedirection;
-	this->_redirections = split;
+	for (std::list<std::string>::iterator iter = split.begin(); iter != split.end(); iter++)
+		this->_redirections.push_back(Uri::Parse(*iter));
 }
 
 const std::map<ResponseCodes, Path> &ConfigLocation::getMapErrorPages(void) const
@@ -328,7 +329,7 @@ ResponseCodes ConfigLocation::getCodeRedirections(void) const
 	return (this->_codeRedirections);
 }
 
-const std::list<Path> ConfigLocation::getRedirections(void) const
+const std::list<Uri> ConfigLocation::getRedirections(void) const
 {
 	return (this->_redirections);
 }

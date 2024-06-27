@@ -13,10 +13,16 @@ struct Uri
 		std::string Protocol;
 		std::string Host;
 		std::string Port;
+		std::string	UrlOring;
+	operator std::string() const
+	{
+		return (this->UrlOring);
+	}
 	static Uri Parse(const std::string &uri)
 	{
 	    Uri result;
 
+		result.UrlOring = uri;
 	    typedef std::string::const_iterator iterator_t;
 	    if (uri.length() == 0)
 	        return result;
