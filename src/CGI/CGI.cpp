@@ -34,6 +34,76 @@ class CGI::CGIException : public std::exception
 };
 
 
+void CGI::fill_arrays(std::vector<std::string>& env_strings,
+            const Client& client)
+{
+
+    const ConfigCgi * confi = dynamic_cast<const ConfigCgi *>(_configElement);
+    std::map<std::string, std::string> env_map;
+
+    if (client.getMapValue("Content-Length") != PARSING_NOT_FOUND)
+        env_map["CONTENT_LENGTH="] = client.getMapValue("Content-Length");
+
+    if (client.getMapValue("Content-Type") != PARSING_NOT_FOUND)
+        env_map["CONTENT_TYPE="] = client.getMapValue("Content-Type");
+    env_map["GATEWAY_INTERFACE="]  =  "CGI/1.1";
+    env_map["PATH_TRANSLATED="] = confi->getRoot();
+    if (client.getMapValue("__Query__") != PARSING_NOT_FOUND)
+        env_map["QUERY_STRING="] = client.getMapValue("__Query__");
+    else
+        env_map["QUERY_STRING="] = "";
+    /*this two can be set to the same value*/
+    env_map["REMOTE_ADDR="] = _client_ip;
+    env_map["REMOTE_HOST="] = _client_ip;
+    env_map["REQUEST_METHOD="] = client.getMethod();
+    env_map["SERVER_NAME="] = client.getHost();
+    
+    if (client.getMapValue("Port") != PARSING_NOT_FOUND)
+        env_map["SERVER_PORT="] = client.getMapValue("Port");
+    else
+        env_map["SERVER_PORT="] = "80";
+    env_map["SERVER_PROTOCOL="] = "HTTP/1.1";
+    
+    const std::map<std::string, std::string>& metaVars = confi->getMetaVar();
+    
+
+    /*metaVars can be set to a default value in consfig file
+        if it's not sent then we can check if key/vals inside the map are equal
+        If they are then that means it was not set in the config
+    */
+    for (std::map<std::string, std::string>::const_iterator it = metaVars.begin();
+        it != metaVars.end(); it++
+    )
+    {
+        if (client.getMapValue(it->first) != PARSING_NOT_FOUND)
+        {
+
+            if (it->first.find("HTTP_") != 0)
+                env_map["HTTP_" + it->first + "="] = client.getMapValue(it->first);
+            else
+                env_map[it->first + "="] = client.getMapValue(it->first);
+        }
+        else if (it->first != it->second)
+        {
+            if (it->first.find("HTTP_") != 0)
+                env_map["HTTP_" + it->first + "="] = it->second;
+            else
+                env_map[it->first + "="] = it->second; 
+        }
+    }
+    int i = 0;
+    std::map<std::string, std::string>::const_iterator it = env_map.begin();
+    for (; i < MAX_METAVAR - 1 && it != env_map.end(); ++i, it++)
+    {
+        env_strings.push_back(it->first + it->second);
+    }
+    /* 
+        son 17 elementos basicos + size de metavar
+        verificar en HTTP si el metaVar fue enviado, sino usar el defecto y listerine
+    */
+
+}
+
 
 CGI::CGI(Client& client) :  BaseHandler(client),
                             _has_error(false),
@@ -67,68 +137,33 @@ CGI::CGI(Client& client) :  BaseHandler(client),
         client.setRespondeCode(BAD_GATEWAY);
         throw CGIException(strerror(errno));
     }
-    const ConfigCgi * confi = dynamic_cast<const ConfigCgi *>(_configElement);
-    (void) confi;
-
-        std::map<std::string, std::string> env_map;
-
-        if (client.getMapValue("Content-Length") != PARSING_NOT_FOUND)
-            env_map["CONTENT_LENGTH="] = client.getMapValue("Content-Length");
-
-        if (client.getMapValue("Content-Type") != PARSING_NOT_FOUND)
-            env_map["CONTENT_TYPE="] = client.getMapValue("Content-Type");
-        env_map["GATEWAY_INTERFACE="]  =  "CGI/1.1";
-        env_map["PATH_TRANSLATED="] = confi->getRoot();
-        if (client.getMapValue("__Query__") != PARSING_NOT_FOUND)
-            env_map["QUERY_STRING="] = client.getMapValue("__Query__");
-        else
-            env_map["QUERY_STRING="] = "";
-        /*this two can be set to the same value*/
-        env_map["REMOTE_ADDR="] = _client_ip;
-        env_map["REMOTE_HOST="] = _client_ip;
-        env_map["REQUEST_METHOD="] = client.getMethod();
-        env_map["SERVER_NAME="] = client.getHost();
-        
-        if (client.getMapValue("Port") != PARSING_NOT_FOUND)
-            env_map["SERVER_PORT="] = client.getMapValue("Port");
-        else
-            env_map["SERVER_PORT="] = "80";
-        env_map["SERVER_PROTOCOL="] = "HTTP/1.1";
-        
     if (_pid == 0)
     {
     
+        char *argv[3];
+        std::memset(argv, 0, sizeof(argv));
         std::string file = client.getPathFile().getFile();
         std::string exec = client.getExecute();
         std::string dir  = client.getPathFile().getDir();
         chdir(dir.c_str());
-        char* argv[3];
         argv[0] = const_cast<char*>(exec.c_str());
         argv[1] = const_cast<char*>(file.c_str());
         argv[2] = NULL;
-
-
-
-
-        std::string query = "QUERY_STRING=" + client.getMapValue("__Query__");
+        std::vector<std::string> env_strings;
+        fill_arrays(env_strings, client);
+        char *env[MAX_METAVAR];
+        int i = 0;
+        std::vector<std::string>::iterator it = env_strings.begin();
+        
+        for (; i < MAX_METAVAR - 1 && it != env_strings.end(); ++i, it++)
+        {
+            env[i] = const_cast<char*>(it->c_str());
+        }
+        env[i] = NULL;
         /* 
             son 17 elementos basicos + size de metavar
             verificar en HTTP si el metaVar fue enviado, sino usar el defecto y listerine
         */
-        char *env[MAX_METAVAR];
-
-
-        env[0] = const_cast<char*>(query.c_str());
-        std::string len;
-        if (!_body.empty())
-        {
-            /*I don't understand why I can't do this in a single line*/
-            len = std::string("CONTENT_LENGTH=" + toString(client.getContentLength())).c_str();
-            env[1] = const_cast<char*>(len.c_str());
-        }
-        else
-            env[1] = NULL;
-        env[2] = NULL;
 
 		close(_out_pipe[0]);
 		dup2(_out_pipe[1], STDOUT_FILENO);

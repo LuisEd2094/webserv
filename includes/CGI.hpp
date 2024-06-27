@@ -35,6 +35,9 @@ class CGI : public BaseHandler
         std::string     _body;
         std::size_t     _len;
         std::size_t     _sent;
+
+        void fill_arrays(std::vector<std::string>& env_strings,
+            const Client& client);
         void            changeDir(const std::string& fileUrl);
 
 
