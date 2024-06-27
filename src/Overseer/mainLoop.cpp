@@ -36,8 +36,8 @@ void Overseer::mainLoop()
         poll_connection = poll(_pfds, _fd_count, TIME_OUT_POLL);
         if (poll_connection == -1) 
         {
-            // << "poll: " + static_cast<std::string>(strerror(errno)) << std::endl;
-            return ;
+            std::cerr << "poll: " + static_cast<std::string>(strerror(errno)) << std::endl;
+            break ;
         }
         // Run through the existing connections loHTTP_OKing for data to read
         try
