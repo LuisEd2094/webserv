@@ -78,11 +78,11 @@ void Overseer::mainLoop()
         }
         catch(const std::exception& e)
         {
+            canContinue = false;
             std::cerr << e.what() << '\n';
         }
                 
     }
-    std::cerr << " IAM CLEANING " << std::endl;
     std::map<int, BaseHandler *>::iterator it = _pending_fds.begin();
     for (; it != _pending_fds.end(); it++)
     {
