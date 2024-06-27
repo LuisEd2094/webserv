@@ -39,6 +39,7 @@ class FileHandler : public BaseHandler
         std::size_t     _bytes_written;
         std::size_t     _file_len;
         bool            _is_writting;
+        bool            _file_exists;
 
 
         void            openFile(const std::string&, int, mode_t);

@@ -14,6 +14,7 @@ enum ResponseCodes
     CONTINUE,
     /*2xx*/
     OK,
+    CREATED,
     /*3xx*/
     MULTIPLE_REDIRECTS,
     MOVED_PERMANENTLY,
@@ -56,6 +57,7 @@ enum ResponseCodes
 /* 2xx OK*/
 
 # define HTTP_OK               "HTTP/1.1 200 OK\r\n"
+# define HTTP_CREATED          "HTTP/1.1 201 CREATED\r\n"
 
 /* 3xx ERRORS*/
 

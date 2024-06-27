@@ -66,7 +66,8 @@ void    Response::initDefaultMap()
 
     /*2xx*/
     defaults.insert(std::make_pair(OK, Responses(HTTP_OK, "", "")));
-    
+    defaults.insert(std::make_pair(CREATED, Responses(HTTP_CREATED, "", "")));
+
     /*3xx*/
     defaults.insert(std::make_pair(MULTIPLE_REDIRECTS, Responses(MULTIPLE_REDIRECTS_HTTP, "", "")));
     defaults.insert(std::make_pair(MOVED_PERMANENTLY, Responses(MOVED_PERMANENTLY_HTTP, "", "")));
@@ -114,6 +115,7 @@ void    Response::initErrorsHttp(void)
     _vectorError.push_back(CONTINUE_HTTP);
     /*2xx OK*/
     _vectorError.push_back(HTTP_OK);
+    _vectorError.push_back(HTTP_CREATED);
     /*3xx Redirects*/
     _vectorError.push_back(MULTIPLE_REDIRECTS_HTTP);
     _vectorError.push_back(MOVED_PERMANENTLY_HTTP);
@@ -152,6 +154,7 @@ void Response::initErrorsMap()
     _mapError[100] = CONTINUE;
     /*2xx OK*/
     _mapError[200] = OK;
+    _mapError[201] = CREATED;
     /*3xx Redirects*/
     _mapError[300] = MULTIPLE_REDIRECTS;
     _mapError[301] = MOVED_PERMANENTLY;

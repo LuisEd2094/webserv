@@ -54,6 +54,12 @@ bool FileHandler::getIsWritting() const
     return _is_writting;
 }
 
+static bool fileExists(const std::string& path) 
+{
+    struct stat buffer;
+    return (stat(path.c_str(), &buffer) == 0);
+}
+
 FileHandler::FileHandler(BaseHandler& obj) : BaseHandler(obj),
         _refered("not found"),
         _body(""),
@@ -61,7 +67,8 @@ FileHandler::FileHandler(BaseHandler& obj) : BaseHandler(obj),
         _boundary(""),
         _bytes_written(0),
         _file_len(0),
-        _is_writting(false)
+        _is_writting(false),
+        _file_exists(false)
 {
     try
     {
@@ -110,6 +117,7 @@ FileHandler::FileHandler(BaseHandler& obj) : BaseHandler(obj),
                 }
             }
             _file_len = _body.length();
+            _file_exists = fileExists(_file_name.toStr());
             openFile(_file_name.toStr(), O_WRONLY | O_CREAT , S_IRUSR | S_IWUSR);
             _is_writting = true;
         }
@@ -241,7 +249,14 @@ int FileHandler::writeToFIle()
                 }
                 if (client)
                 {
-                    client->setHTTPResponse(_defaultHttp, this); 
+                    const ConfigLocation *confi = dynamic_cast<const ConfigLocation*>(_configElement);
+                    (void) confi;
+                    if (_file_exists)
+                        _error_code = OK;
+                    else
+                        _error_code = CREATED;
+                    
+                    client->setHTTPResponse(Response::getHttpFirtsLine(_error_code) + "Content-Length: 0" + CRNL "Location: " + confi->get__elemArg__() + _file_name.getFile().toStr().erase(0,1)  + CRNL + CRNL, this); 
                 }
                 return (0);
 

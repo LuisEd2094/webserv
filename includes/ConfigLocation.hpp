@@ -63,6 +63,7 @@ class ConfigLocation: public ConfigElement
 		void							setVirtualServer(const ConfigVirtualServer &server);
 
 		int								size() { return this->_path.size(); };
+		const std::string&				get__elemArg__() const { return this->__elemArgument__;};
 		const std::string				getErrorPage(ResponseCodes err) const;
 		const Path& 					getPath(void) const { return this->_path;};
 		const Path& 					getFullUrl(void) const { return this->_fullUrl;};
