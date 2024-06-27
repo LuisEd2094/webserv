@@ -32,7 +32,7 @@ class ConfigLocation: public ConfigElement
 		std::map<ResponseCodes, Path>	_errorPages;
 		ConfigVirtualServer const	*_virtualServer;
 		ResponseCodes						_codeRedirections;
-		std::list<Path>						_redirections;
+		std::list<Uri>						_redirections;
 		//Add list configureLocation 
 
 	public:
@@ -77,7 +77,7 @@ class ConfigLocation: public ConfigElement
 		const std::map<ResponseCodes, Path>	&getMapErrorPages(void) const;
 		const Path						getErrorPages(ResponseCodes searchError) const;
 		ResponseCodes					getCodeRedirections(void) const;
-		const std::list<Path>			getRedirections(void) const;
+		const std::list<Uri>			getRedirections(void) const;
 		const ConfigVirtualServer		&getVirtualServer(void) const ;
 
 		bool 							prepareClient4ResponseGeneration(Client& client, Path& trequestedURL);

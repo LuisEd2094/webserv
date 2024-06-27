@@ -86,9 +86,9 @@ void	printList(const L& list)
 {
 	typename L::const_iterator i;
 	(void)list;
-/* 	for (i = list.begin(); i != list.end(); i++)
-		// << ORANGE << "*" << END << *i 
-		<< ORANGE << "*" << END << std::endl; */
+ 	for (i = list.begin(); i != list.end(); i++)
+		std::cerr << ORANGE << "*" << END << *i 
+		<< ORANGE << "*" << END << std::endl;
 }
 
 template<typename S>
@@ -100,7 +100,8 @@ std::string	cutSpace(const S& str)
 	typename S::const_iterator end = str.end();
 	while (::isblank(*start) && start != end)
 		start++;
-	end--;
+	if (*end != '\0')
+		end--;
 	while (::isblank(*end) && start != start)
 		end--;
 	return (std::string(start, end));
