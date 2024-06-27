@@ -51,7 +51,7 @@ int                Server::Action(int event)
     }
     catch (std::exception& e)
     {
-        // << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
 
     return (1);

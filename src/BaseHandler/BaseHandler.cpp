@@ -220,10 +220,10 @@ BaseHandler::BaseHandler():
     _response_type(NOT_SET),
     _error_code(INVALID_CODE),
     _defaultHttp(),
+    _client_ip(""),
     _path_to_file_str(),
     _client_fd(0),
     _fd(0)
-
 {
     setTime();
 }
@@ -234,6 +234,7 @@ BaseHandler::BaseHandler(const BaseHandler& obj) :
     _response_type(obj._response_type),
     _error_code(obj._error_code),
     _defaultHttp(obj._defaultHttp),
+    _client_ip(obj._client_ip),
     _path_to_file_str(obj._path_to_file_str),
     _client_fd(obj.getClientFD()),
     _fd(0)
