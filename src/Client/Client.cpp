@@ -42,7 +42,7 @@ Client::Client(Server *server) : BaseHandler()
               << static_cast<int>(bytes[1]) << "."
               << static_cast<int>(bytes[0]);
 
-    std::string ip_str = ip_stream.str();
+    std::string _ip_str = ip_stream.str();
     // << "Connected IP: " << ip_str << std::endl;
 
     _server = server;

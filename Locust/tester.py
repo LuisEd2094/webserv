@@ -38,9 +38,9 @@ def read_expected_content(file_path):
         logger.error(f"Error reading file: {e}")
         return None
     
-error404 = read_expected_content( "/home/codespace/recovery/turnInPage/404.html" )
-index = read_expected_content( "/home/codespace/recovery/turnInPage/index.html" )
-files_dir = dir_list("/home/codespace/recovery/turnInPage/files", "files", "./turnInPage/files/")
+error404 = read_expected_content( "/workspaces/webserv/turnInPage/404.html" )
+index = read_expected_content( "/workspaces/webserv/turnInPage/index.html" )
+files_dir = dir_list("/workspaces/webserv/turnInPage/files", "files", "./turnInPage/files/")
 
 
 def check_file_body(expected, actual):

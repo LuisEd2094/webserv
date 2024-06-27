@@ -38,6 +38,7 @@ class BaseHandler
         ObjectTypes                                     _response_type;
         ResponseCodes                                   _error_code;
         std::string                                     _defaultHttp;
+        std::string                                     _client_ip;
         std::string                                     _path_to_file_str;
         int                                             _client_fd;
         int                                             _fd;
