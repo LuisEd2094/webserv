@@ -12,22 +12,15 @@ void	ParsingServer::createNestedElement(std::string param0, std::string param1)
 {
 	if (param0 == "location")
 	{
-		try
-		{
-			ParsingLocation element(this->statementBegin, this->eof, this->statementEnd);
-			element.parse();
-			element.insert(std::make_pair("__elemType__", param0));
-			element.insert(std::make_pair("__elemArgument__", param1));
-			this->locations.push_back(element);
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}
+		ParsingLocation element(this->statementBegin, this->eof, this->statementEnd);
+		element.parse();
+		element.insert(std::make_pair("__elemType__", param0));
+		element.insert(std::make_pair("__elemArgument__", param1));
+		this->locations.push_back(element);
 	}
 	else
 	{
-		std::cout << RED << "user is stupid" << END << std::endl;
+		std::cout << RED << "Invalid configuration element" << param0 << END << std::endl;
 		throw std::exception();
 	}
 }

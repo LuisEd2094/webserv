@@ -36,10 +36,9 @@ int main(int argc, char *argv[])
     Response::initErrorsHttp();
     Response::initErrorsMap();
 
-    // all this info should come from the confi file
     signal(SIGPIPE, SIG_IGN);
     signal(SIGINT, Overseer::cleanOverseer);
-    // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;
+    (void)argv;
     try
     {        
         ParsingGlobal parser = ParsingGlobal::parseFromFile(argc == 2 ? argv[1] : "./configFile/ok/file.config");
@@ -52,6 +51,7 @@ int main(int argc, char *argv[])
     }
     catch(const std::exception& e)
     {
+
         std::cerr << e.what() << '\n';
         Overseer::cleanOverseer(-1);
     }

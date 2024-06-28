@@ -26,7 +26,9 @@ void FileHandler::initTypeMaps()
     types["md"] = "text/markdown";
     types["jpg"] = "image/jpeg";
     types["jpeg"] = "image/jpeg";
-    types["mp3"] = "audio/mpeg";
+    types["mp3"] = "audio/mpeg";    
+    types["js"] = "text/javascript";
+
 }
 
 const std::string& FileHandler::getMimeType(const std::string& to_find)

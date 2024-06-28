@@ -99,7 +99,7 @@ void ParsingElement::parse()
 			return ;
 		if (*statementBegin == '{')
 		{
-			std::cout << "user is stupidd" << std::endl;
+			std::cout << "Invalid Config Elementtttttt" << std::endl;
 			return ;
 		}
 		if (*statementBegin == '}')
@@ -123,7 +123,7 @@ void ParsingElement::parse()
 			insertReturn = std::map<std::string, std::string>::insert(std::pair<std::string,std::string>(key, value));
 			if (!insertReturn.second)
 			{
-				std::cout << "user is stupid repited key parameter" << std::endl;
+				std::cout << "Repited key parameter" << std::endl;
 				throw std::exception();
 			}
 		}

@@ -28,7 +28,7 @@ void	ParsingLocation::createNestedElement(std::string param0, std::string param1
 	}
 	else
 	{
-		std::cout << "user is stupid" << std::endl;
+		std::cout << RED << "Invalid config element: " << END << param0 << "  " << param1 << std::endl;
 		throw std::exception();
 	}
 }

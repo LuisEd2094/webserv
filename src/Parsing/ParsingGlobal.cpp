@@ -11,10 +11,10 @@ ParsingGlobal	ParsingGlobal::parseFromFile(std::string fileName)
 	std::string::iterator end;
 	std::string::iterator aux;
 
-	std::cout << fileName <<std::endl;
+	std::cerr << "sssssssssssss" << fileName <<std::endl;
 	if (!file.is_open())
 	{
-		std::cout << "file not found" << std::endl;
+		std::cout << "file not found 66666699999" << std::endl;
 		throw std::exception();
 	}
 	while (true)
@@ -56,7 +56,7 @@ void	ParsingGlobal::createNestedElement(std::string param0, std::string param1)
 	}
 	else
 	{
-		std::cout << "user is stupid" << std::endl;
+		std::cout << "Invalid configElement: " << param0 << std::endl;
 		throw std::exception();
 	}
 }
