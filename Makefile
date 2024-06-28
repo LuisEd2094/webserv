@@ -3,15 +3,15 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+         #
+#    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 10:55:00 by lsoto-do          #+#    #+#              #
-#    Updated: 2024/05/23 11:20:47 by dacortes         ###   ########.fr        #
+#    Updated: 2024/06/11 09:57:05 by codespace        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME        = webserv
-CFLAGS      = -std=c++98 -pedantic -g  #-fsanitize=address #-Wall -Wextra  -Werror 
+CFLAGS      = -std=c++98 -pedantic -g -Wall -Wextra -Werror #-fsanitize=address
 CC			= c++
 RM          = rm -f
 SRCS_PATH	= src/
@@ -22,11 +22,24 @@ OVERSEER_PATH = Overseer/
 PARSING_PATH =	Parsing/
 BASE_PATH	= BaseHandler/
 CLIENT_PATH =	Client/
+RESPONSE_PATH = Responses/
 CGI_PATH 	= CGI/
-FILE_READ_PATH = FileReader/
+FILE_READ_PATH = FileHandler/
+COOKIES_PATH = Cookies/
+DELETED_PATH = DeletedFiles/
+
 OBJS_PATH	= obj/
-MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH) $(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH) $(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)) 
 DEPS_PATH	= deps/
+
+MAKE_OBJ_DIR	=	$(OBJS_PATH) $(addprefix $(OBJS_PATH), $(AUX_PATH) $(SERVER_PATH)\
+								$(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH)\
+								$(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)\
+								$(RESPONSE_PATH) $(COOKIES_PATH) $(DELETED_PATH) )  \
+								\
+					$(addprefix $(DEPS_PATH), $(AUX_PATH) $(SERVER_PATH)\
+								$(OVERSEER_PATH) $(FILE_READ_PATH) $(CLIENT_PATH)\
+								$(PARSING_PATH) $(CGI_PATH) $(BASE_PATH) $(CONF_PATH)\
+								$(RESPONSE_PATH) $(COOKIES_PATH) $(DELETED_PATH))  
 INCS        = -I./includes
 
 
@@ -56,7 +69,7 @@ CGI			=	CGI.cpp getters.cpp
 
 CGI_FILES		=	$(addprefix $(CGI_PATH), $(CGI))
 
-FILE_READ			=	FileReader.cpp
+FILE_READ			=	FileHandler.cpp
 
 FILE_READ_FILES		=	$(addprefix $(FILE_READ_PATH), $(FILE_READ))
 
@@ -64,7 +77,7 @@ BASE			=	BaseHandler.cpp
 
 BASE_FILES		=	$(addprefix $(BASE_PATH), $(BASE))
 
-PARSING			=	ParsingCgi.cpp      ParsingGlobal.cpp   ParsingLocation.cpp ParsingElement.cpp    ParsingServer.cpp    Parsing.cpp parseListen.cpp
+PARSING			=	ParsingCgi.cpp      ParsingGlobal.cpp   ParsingLocation.cpp ParsingElement.cpp    ParsingServer.cpp    Parsing.cpp 	Path.cpp
 
 PARSING_FILES		=	$(addprefix $(PARSING_PATH), $(PARSING))
 
@@ -76,20 +89,36 @@ OVERSEER			=	Overseer.cpp mainLoop.cpp
 
 OVERSEER_FILES		=	$(addprefix $(OVERSEER_PATH), $(OVERSEER))
 
-CLIENT			=	Client.cpp getters.cpp setters.cpp ClientHandler.cpp DirectResponse.cpp Response.cpp
+CLIENT			=	Client.cpp getters.cpp setters.cpp RequestHandler.cpp DirectResponse.cpp 
 
 CLIENT_FILES		=	$(addprefix $(CLIENT_PATH), $(CLIENT))
 
-CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp
+CONF			=	ConfigVirtualServer.cpp ConfigElement.cpp ConfigLocation.cpp ConfigCgi.cpp
 
 CONF_FILES		=	$(addprefix $(CONF_PATH), $(CONF))
 
+RESPONSE			=	Response.cpp
 
-DEPS			= 	$(addprefix $(DEPS_PATH), $(FILE:.cpp=.d) $(SRC:.cpp=.d) $(SERVER:.cpp=.d) $(AUX:.cpp=.d) $(OVERSEER:.cpp=.d) $(CLIENT:.cpp=.d) $(PARSING:.cpp=.d) $(CGI:.cpp=.d) $(BASE:.cpp=.d) $(CONF:.cpp=.d))
+RESPONSE_FILES		=	$(addprefix $(RESPONSE_PATH), $(RESPONSE))
 
-SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) $(PARSING_FILES) $(CGI_FILES) $(BASE_FILES) $(FILE_READ_FILES) $(CONF_FILES)
+COOKIES			=	Cookies.cpp
+
+COOKIES_FILES		=	$(addprefix $(COOKIES_PATH), $(COOKIES))
+
+
+DELETED			=	DeletedFiles.cpp
+
+DELETED_FILES		=	$(addprefix $(DELETED_PATH), $(DELETED))
+
+
+SRC				+=	$(AUX_FILES) $(SERVER_FILES) $(OVERSEER_FILES) $(CLIENT_FILES) \
+					$(PARSING_FILES) $(CGI_FILES) $(BASE_FILES) $(FILE_READ_FILES) \
+					$(CONF_FILES) $(RESPONSE_FILES) $(COOKIES_FILES) $(DELETED_FILES)
 				
+DEPS			= 	$(addprefix $(DEPS_PATH), $(SRC:.cpp=.d))
+
 OBJS 			=	$(addprefix $(OBJS_PATH), $(SRC:.cpp=.o))
+
 all: $(NAME)
 
 
@@ -100,7 +129,8 @@ $(NAME): $(OBJS)
 $(OBJS_PATH)%.o: $(SRCS_PATH)%.cpp | $(MAKE_OBJ_DIR) $(DEPS_PATH)
 			@echo "$(CYAN)Compiling $< $(DEF_COLOR)"
 			@$(CC) $(CFLAGS) $(INCS) -MMD -MP -c $< -o $@
-			@mv $(basename $@).d $(DEPS_PATH)
+			@mv $(basename $@).d $(patsubst $(SRCS_PATH)%,$(DEPS_PATH)%,$(dir $<))
+
 
 $(MAKE_OBJ_DIR):
 	@echo "$(GREEN)Creating $(NAME) Obj Dir $(DEF_COLOR)"

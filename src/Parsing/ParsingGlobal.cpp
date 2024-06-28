@@ -4,17 +4,15 @@
 
 ParsingGlobal	ParsingGlobal::parseFromFile(std::string fileName)
 {
-	std::fstream	file(fileName); //TODO"config_file.conf"
+	std::fstream	file(fileName.c_str());
 	std::string		fileStr;										  
 	std::string		tmp;
 	std::string::iterator begin;
 	std::string::iterator end;
 	std::string::iterator aux;
 
-	std::cout << fileName <<std::endl;
 	if (!file.is_open())
 	{
-		std::cout << "file not found" << std::endl;
 		throw std::exception();
 	}
 	while (true)
@@ -28,14 +26,8 @@ ParsingGlobal	ParsingGlobal::parseFromFile(std::string fileName)
 	end = fileStr.end();
 	aux = fileStr.begin();
 	ParsingGlobal 	parser(begin, end, aux);
-	try
-	{
-		parser.parse();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+
+	parser.parse();
 	return (parser);
 }
 
@@ -43,12 +35,11 @@ ParsingGlobal::ParsingGlobal(std::string::iterator &begin,
 				std::string::iterator &eof,
 				std::string::iterator &statementEnd) : ParsingElement(begin, eof, statementEnd)
 {
-	std::cout << "::::: ParsingGlobal constructor called :::::" << ">" << std::endl;
 }
 
 void	ParsingGlobal::createNestedElement(std::string param0, std::string param1)
 {
-	std::cout << "global nested: " << param0 << "  " << param1 << std::endl;
+	(void)param1;
 	if (param0 == "server")
 	{
 		ParsingServer element(this->statementBegin, this->eof, this->statementEnd);	
@@ -57,14 +48,14 @@ void	ParsingGlobal::createNestedElement(std::string param0, std::string param1)
 	}
 	else
 	{
-		std::cout << "user is stupid" << std::endl;
+		std::cout << "Invalid configElement: " << param0 << std::endl;
 		throw std::exception();
 	}
 }
 
 void	ParsingGlobal::recursivePrint(void)
 {
-	std::cout << TUR << "Call ParsingGlobal" << END << std::endl;
+	std::cout << TUR << "Call ParsingGlobal " << servers.size() << END << std::endl;
 	std::list<ParsingServer>::iterator it;
 	for (it = this->servers.begin(); it != this->servers.end(); ++it)
 		it->recursivePrint();

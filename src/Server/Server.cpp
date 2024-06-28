@@ -1,6 +1,6 @@
 #include <Server.hpp>
 #include <Client.hpp>
-#include <ClientHandler.hpp>
+#include <RequestHandler.hpp>
 #include <DirectResponse.hpp>
 
 //Exceptions
@@ -23,7 +23,7 @@ class Server::socketException: public std::exception
 Server::Server(t_confi* confi) : 
     BaseHandler(),
     _backlog(confi->backlog),
-    _ip(confi->ip),
+    _ip(confi->ip == "localhost" ? "" : confi->ip), //If config file host:locahost then IP == ""
     _port(confi->port)
 {
     std::memset(&(_hints), 0, sizeof(_hints));
@@ -39,69 +39,47 @@ Server::~Server()
     close(_fd);
 }
 
-
 int                Server::Action(int event)
 {
     (void)event;
-    Client *newClient = new Client(this);
-    Overseer::addToPfds(newClient);
-    return (1);
+    try 
+    {
+        Client *newClient = new Client(this);
 
+        if (Overseer::addToPfds(newClient))
+            newClient->addClosingErrorObject(SERVICE_UNAVAILABLE);   
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
+    return (1);
 }
 
 
 bool Server::validateAction(Client& client)
 {
-    // check method and url against config.
-    const std::string url = client.getURL();
-    if (url == "/" or url == "/nolen.py" or url == "/index.html")
-        return true;
-    else
-    {
-        BaseHandler* response = BaseHandler::createObject(NOT_FOUND, BODY_NOT_FOUND);
-        client.addObject(response);
-        return (false);
-    }
+    bool status = this->prepareClient4ResponseGeneration(client);
+    return status;
 }
 
-void Server::getResponse(Client & client)
+bool Server::prepareClient4ResponseGeneration(Client& client)
 {
-    //CGI?
-    // We assume we called validateAction before reaching this point.
-    const std::string & url = client.getURL();
-    BaseHandler * response;
+    std::list<ConfigVirtualServer>::iterator server;
+    client.setDefaultHttpResponse(NOT_FOUND);
+    client.setResponseType(FILE_OBJ);
+    for (server = this->virtualServers.begin(); server != this->virtualServers.end(); server++)
+    {
+        if (server->prepareClient4ResponseGeneration(client))
+            break ;
+    }
+    return (server != this->virtualServers.end());
 
-    if (url == "/")
-    {
-        response = BaseHandler::createObject(OK, "HOLA" );
-    }
-    else if (url == "/index.html")
-    {
-        try
-        {
-            response = BaseHandler::createObject(FILE_OBJ, client);
-        }
-        catch(const std::exception& e)
-        {
-            response = BaseHandler::createObject(INTERNAL_ERROR, "");
-        }  
-    }
-    else if (url == "/nolen.py")
-    {
-        try
-        {
-            response = BaseHandler::createObject(CGI_OBJ, client);
-         }
-        catch(const std::exception& e)
-        {
-            response = BaseHandler::createObject(INTERNAL_ERROR, "");
-        }
-        
-    }
-    client.addObject(response);
 }
 
-bool Server::checkTimeOut()
+
+bool Server::checkObjTimeOut()
 {
     return false;
 }
@@ -119,27 +97,17 @@ void Server::initSocket()
     for (p = _servinfo; p != NULL; p = p->ai_next)
     {
         if ((_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
-        {
-            std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
-            continue ; 
-            // freeaddrinfo(_servinfo);
-            // throw Server::socketException("socket error: " + static_cast<std::string>(strerror(errno)));
-        };
-        if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &yes,
-                sizeof(int)) == -1) {
-            close(_fd);
-            std::cerr << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue ;
-        } 
-                
+        if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+        {
+            close(_fd);
+            continue ;
+        }  
         // bind it to the port we passed in to getaddrinfo():
         if (bind(_fd, p->ai_addr, p->ai_addrlen) != 0)
         {
             close(_fd);
-            std::cerr << "bind error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue;
-            // freeaddrinfo(_servinfo);
-            // throw Server::socketException("bind error:  "+ static_cast<std::string>(strerror(errno)));
         }
         break;
     }
@@ -154,6 +122,7 @@ void Server::initSocket()
 
 std::ostream &operator<<(std::ostream &os,  Server &obj)
 {
+    (void)obj;
 	os << "Server: " << std::endl;
     return os;
 }
@@ -161,5 +130,3 @@ std::ostream &operator<<(std::ostream &os,  Server &obj)
 //Private Methods
 
 Server::Server(){}      
-Server::Server(const Server& rhs ) { *this = rhs; }
-Server& Server::operator=(const Server& rhs) {(void)rhs; return *this;}

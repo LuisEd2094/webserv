@@ -16,19 +16,30 @@ class CGI : public BaseHandler
         ~CGI();
         int                 Action(int event);
 
-        bool                checkTimeOut();
+        bool                checkObjTimeOut();
 
-        static CGI *        createNewCGI(Client& client);
-        const int           getFD() const;
-        int                 readPipe();
+        static BaseHandler *    createNewCGI(Client& client);
+        int                     getFD() const;
+        int                     readPipe();
 
         class CGIException;
 
     private:
-        int             _pipe[2];
-        int             _client_fd;
+        int             _out_pipe[2];
+        int             _in_pipe[2];
+
+        bool            _has_error;
         pid_t           _pid;
         std::string     _buffer;
+        std::string     _defaultHttp;
+        std::string     _body;
+        std::size_t     _len;
+        std::size_t     _sent;
+
+        void fill_arrays(std::vector<std::string>& env_strings,
+            const Client& client);
+        void            changeDir(const std::string& fileUrl);
+
 
 };
 

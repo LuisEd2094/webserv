@@ -21,8 +21,8 @@ class DirectResponse : public BaseHandler
 
     private:
         int Action(int event);
-        bool checkTimeOut();
-        const int getFD() const;
+        bool checkObjTimeOut();
+        int getFD() const;
 
         std::string _http_response;
         std::string _body_response;

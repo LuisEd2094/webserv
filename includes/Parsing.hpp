@@ -1,16 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Parsing.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: dacortes <dacortes@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/05/23 10:59:47 by dacortes         ###   ########.fr       */
-/*   Updated: 2024/05/04 15:53:21 by dacortes         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef PARSING_HPP
 #define PARSING_HPP
 
@@ -41,33 +28,108 @@
 # include <fcntl.h>
 # include <list>
 # include <algorithm>
-# include <dirent.h> //readdir
-# include <map> //map
+# include <dirent.h>
+# include <map>
+# include <sstream>
+# include <vector>
+# include <Response.hpp>
+# include <Uri.hpp>
+# include <Path.hpp>
+# include <ConfigElement.hpp>
+# include <ProgramConfigs.hpp>
 
 /******************************************************************************/
 /*                            MACROS                                          */
 /******************************************************************************/
 
-# define BUFFER_READ	3000
+# define BUFFER_READ	1
 # define ERROR			-1
 # define WARNING 		1
+# define ERROR_FORMAT	2
+# define ERROR_HEADER	3
+# define ERROR_METHOD	4
+# define ERROR_VERSION	5
 # define ERROR_STATUS "\033[1m\033[1;31m[ Error ]\033[m"
 # define WARNING_StATUS "\033[1m\033[1;33m[ Warning ]\033[m"
+# define VERSION_HTTP "HTTP/1.1"
 # define IS_IN_ROOT(c) ((c) == '/')
 
 /******************************************************************************/
 /*                            CLASS                                           */
 /******************************************************************************/
 
+template<typename Container>
+Container ft_split(const std::string& str, char delimiter)
+{
+    Container list;
+    std::istringstream input(str);
+    std::string word;
+    
+    while (std::getline(input, word, delimiter))
+        list.push_back(word);
+    return list;
+}
+
+template<typename L>
+void	printList(const L& list)
+{
+	typename L::const_iterator i;
+	(void)list;
+ 	for (i = list.begin(); i != list.end(); i++)
+		std::cerr << ORANGE << "*" << END << *i 
+		<< ORANGE << "*" << END << std::endl;
+}
+
+template<typename S>
+std::string	cutSpace(const S& str)
+{
+	if (!str[0])
+		return ("");
+	typename S::const_iterator start = str.begin();
+	typename S::const_iterator end = str.end();
+	while (::isblank(*start) && start != end)
+		start++;
+	if (*end != '\0')
+		end--;
+	while (::isblank(*end) && start != start)
+		end--;
+	return (std::string(start, end));
+}
+
 template<typename M>
 void	printMap(const M& map)
 {
+	printMap(map, 0);
+}
+
+template<typename M>
+void	printMap(const M& map, int padding)
+{
 	typename M::const_iterator i;
-	for (i = map.begin(); i != map.end(); ++i)
+	(void)map;
+ 	for (i = map.begin(); i != map.end(); ++i)
 	{
-		std::cout << ORANGE << "Key: " << END << i->first << ORANGE
+		std::cerr << ConfigElement::genSpace(padding) ;
+		std::cerr << ORANGE << "Key: " << END << i->first << ORANGE
 			<< "\tValue: " << END << i->second << std::endl;
 	}
+}
+
+template<typename LV>
+std::string	containerToString(const LV& obj)
+{
+	typename LV::const_iterator i;
+	std::string resul;
+	bool	noBegin = false;
+	for (i = obj.begin(); i != obj.end(); ++i)
+	{
+		if (noBegin)
+			resul += "; ";
+		else
+			noBegin = true;
+		resul += *i;
+	}
+	return (resul);
 }
 
 template<typename K>
@@ -122,6 +184,7 @@ bool checkSpace(const S& str, const N num)
 	}
 	return (EXIT_SUCCESS);
 }
+
 template<typename S>
 size_t wordCounter(const S& str)
 {
@@ -135,58 +198,58 @@ size_t wordCounter(const S& str)
 	}
 	return (word);
 }
-//agregar atributo que indique si es de tipo RN o solo ON(only line)
+
 typedef struct s_request
 {
 	std::string	method;
 	std::string requested;
 	std::string version;
-	short		typeMethod;
-	short		typeNewLine;
 	bool		requestedIsInRoot;
 	std::map<std::string, std::string> content;
+	s_request() : method(""), requested(""), version("") {}
 } t_request;
 
 class Parsing
 {
 	private:
-		std::list<std::string> _methods;
+		std::list<std::string>		_methods;
+		std::vector<std::string>	_errors;
 		std::string	_read;
-		t_request	_method;
 		std::string	_typeLine;
+		t_request	_method;
 		size_t		_findNewline;
 		size_t		_begin;
 		bool		_endRead;
+		int			_statusError;
+
+		std::string _not_found;
 	public:
 		Parsing(void);
 		~Parsing(void);
 	/*
-	 * Get Methods
-	*/
-	/*
 	 * Membert Funtions
 	*/
-	//utils
-	std::string readSocket(int fd);
-	const std::string& getMethod(void);
-	const std::string& getRequested(void);
-
-	bool isEmptyLine(const std::string& line) const;
-	bool isMethods(const std::string& keyword) const;
-	bool isVersion(const std::string& version) const;
-	int  printStatus(const std::string& messages, short flag, int exitCode);
-	int	 checkMethod(const std::string& strRead);
-	int  parsingHeader(const std::string& strRead);
-	//getMethods
-	std::string		getTypeLine(const std::string& strFind);
-	size_t		getPos(void);
-	std::string getMapValue(const std::string& key);
-	std::map<std::string, std::string> getMap(void);
-	// const t_request	*getRequest(void) const;
-	void resetParsing(void);
-	bool getEndRead() const;
+		//utils
+		bool	isEmptyLine(const std::string& line) const;
+		int		isMethods(const std::string& keyword) const;
+		int		isVersion(const std::string& version) const;
+		int		printStatus(const std::string& messages, short flag, int exitCode);
+		int		checkMethod(const std::string& strRead);
+		int 	parsingHeader(const std::string& strRead);
+		int		normalizeError(int	error);
+		void	resetParsing(void);
 	/*
-	 * Exception Classes
+	 * Get Methods
 	*/
+		size_t								getPos(void);
+		size_t								getEndSize(void);
+		const std::string&					getVersion(void) const;
+		const std::string& 					getMethod(void) const;
+		const std::string& 					getRequested(void) const;
+		const std::string&					getMapValue(const std::string& key) const;
+		const std::string					getTypeLine(const std::string& strFind) const;
+		std::map<std::string, std::string>	getMap(void);
+		bool 								getEndRead() const;
 };
+
 #endif

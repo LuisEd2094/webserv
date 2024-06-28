@@ -1,33 +1,56 @@
 
-# ifndef CONFIG_VIRTUAL_ELEMENT_HPP
-# define CONFIG_VIRTUAL_ELEMENT_HPP
+#ifndef CONFIG_VIRTUAL_SERVER_HPP
+# define CONFIG_VIRTUAL_SERVER_HPP
+
+class ConfigVirtualServer;
 
 # include "ConfigElement.hpp"
+# include "ConfigLocation.hpp"
 # include "ParsingServer.hpp"
 # include "Parsing.hpp"
 # include <string>
+
+# include "Client.hpp"
 
 class ConfigVirtualServer: public ConfigElement
 {
 	private:
 		std::string	errorPage;
-		int			maxClientBodySize;
+		unsigned int			maxClientBodySize;
+		std::string	host;
+		std::string port;
+		std::list<std::string> serverNames;
+		std::list<ConfigLocation> locations;
 
 	public:
 		//set
 		void setErrorPage(std::string error);
+		void setPort(const std::string &port);
+		void setHost(const std::string &host);
 		void setMaxClientBodySize(int bodySize);
 		void setMaxClientBodySize(std::string bodySize);
+		void setServerNames(std::string &serverName);
+		void setLocations(std::list<ConfigLocation> inpLocations) {this->locations = inpLocations;};
 		//get
-		std::string getErrorPage(void) ;
-		int getMaxClientBodySize(void) ;
+		std::string	getPort(void) const;
+		std::string	getHost(void) const;
+		std::string getErrorPage(void) const;
+		int getMaxClientBodySize(void) const;
+		std::list<std::string> getServerNames(void);
+		std::list<ConfigLocation> getLocations(void) {return this->locations;};
+
+		void recursivePrint(void);
+		void recursivePrint(int recursiveLvl);
+
+		bool prepareClient4ResponseGeneration(Client& client);
 
 		void parseKeyVal(std::string key, std::string val);
 		ConfigVirtualServer(void): errorPage(""), maxClientBodySize(30000){};
+		ConfigVirtualServer(const ConfigVirtualServer& obj) {*this = obj;};
 		ConfigVirtualServer(ParsingServer& obj);
-		ConfigVirtualServer &operator=( ConfigVirtualServer& obj);
+		ConfigVirtualServer &operator=(const ConfigVirtualServer& obj);
 		~ConfigVirtualServer(){};
 };
 std::ostream &operator<<(std::ostream &os, const ConfigVirtualServer &obj);
 
-# endif
+#endif

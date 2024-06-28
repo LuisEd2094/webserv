@@ -1,5 +1,5 @@
-#ifndef CONFIG_CGI_HPP
-# define CONFIG_CGI_HPP
+#ifndef PARSING_CGI_HPP
+# define PARSING_CGI_HPP
 # include "ParsingElement.hpp"
 class ParsingCgi: public ParsingElement
 {
@@ -8,10 +8,6 @@ class ParsingCgi: public ParsingElement
 		ParsingCgi(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
 		~ParsingCgi(){};
 		void recursivePrint(void);
-		//parsing
-		//check key value
-		//check valid nested
-		//initObj
 	private:
 
 };

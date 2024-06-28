@@ -1,24 +1,24 @@
 GET / HTTP/1.1
-Host: localhost
-User-Agent: curl/7.64.1
-Accept: */*
-Connection: keep-alive
-Content-Length: 2
+Host: localhost:8080
 
-1
-GET / HTTP/1.1
-Host: localhost
-User-Agent: curl/7.64.1
-Accept: */*
-Connection: keep-alive
+GET /noExiste HTTP/1.1
+Host: localhost:8080
 
 GET / HTTP/1.1
-Host: localhost
-User-Agent: curl/7.64.1
-Accept: */*
-Connection: keep-alive
-Content-Length: 2
+Host: localhost:8080
 
-1
+GET / HTTP/1.1
+Host: localhost:8080
 
+GET / HTTP/1.1
+Host: localhost:8080
+
+GET / HTTP/1.1
+Host: lolcito:8080
+
+DELETE /files/wallpaper_cat.jpg HTTP/1.1
+Host: localhost:8080
+
+GET /files/wallpaper_cat.jpg HTTP/1.1
+Host: lolcito:8080
 

@@ -1,5 +1,8 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
+
+class Server;
+
 # include <BaseHandler.hpp>
 # include <iostream>
 # include <sys/types.h>
@@ -10,7 +13,7 @@
 # include <unistd.h>
 # include <Confi.hpp>
 # include <CGI.hpp>
-# include <FileReader.hpp>
+# include <FileHandler.hpp>
 # include <Parsing.hpp>
 # include "ConfigVirtualServer.hpp"
 
@@ -28,11 +31,12 @@ class Server : public BaseHandler
 
 
         //Getters
-        const int getFD() const;
+        int getFD() const;
 
         bool validateAction(Client& client);
-        void getResponse(Client& client);
-        bool checkTimeOut();
+        bool prepareClient4ResponseGeneration(Client& client);
+        bool checkObjTimeOut();
+        const defaultResponse& getErrorResponseObject(ResponseCodes);
         std::list<ConfigVirtualServer>         virtualServers; // TODO wolud be nice if it was private
 
     private:
@@ -46,9 +50,7 @@ class Server : public BaseHandler
         */
         
         Server();      
-        Server(const Server& rhs );
-        Server& operator=(const Server& rhs);
-
+        
         void    initSocket();
 
 

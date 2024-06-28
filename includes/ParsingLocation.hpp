@@ -1,5 +1,5 @@
-#ifndef CONFIG_LOCATION_HPP
-# define CONFIG_LOCATION_HPP
+#ifndef PARSING_LOCATION_HPP
+# define PARSING_LOCATION_HPP
 # include "ParsingElement.hpp"
 # include "ParsingCgi.hpp"
 
@@ -10,14 +10,11 @@ class ParsingLocation: public ParsingElement
 		ParsingLocation(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
 		~ParsingLocation(){};
 		void	recursivePrint(void);
-		//parsing
-		//check key value
-		//check valid nested
-		//initObj
+		std::list<ParsingLocation>	getLocations() {return this->locations;};
+		std::list<ParsingCgi>	getCgis() {return this->cgis;};
+
 	private:
 		std::list<ParsingLocation>	locations;
 		std::list<ParsingCgi>		cgis;
-
-
 };
 #endif

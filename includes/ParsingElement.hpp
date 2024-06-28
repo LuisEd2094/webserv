@@ -1,5 +1,5 @@
-#ifndef CONFIG_PARSE_HPP
-# define CONFIG_PARSE_HPP
+#ifndef PARSING_PARSE_HPP
+# define PARSING_PARSE_HPP
 # include <map>
 # include <list>
 # include <string>
@@ -13,17 +13,12 @@ class ParsingElement : public std::map<std::string, std::string>
 			std::map<std::string, std::string>::map(),
 			statementBegin(begin), statementEnd(statementEnd), eof(eof)
 		{
-//				this->fileContent = std::string(fileContent);	
-//				this->statementBegin = begin;
-//				this->eof =  end;
 				this->endStatementChars.push_back(';');
 				this->endStatementChars.push_back('{');
 				this->endStatementChars.push_back('}');
 		};
 		virtual ~ParsingElement(){};
 		virtual void	recursivePrint(void) = 0;
-
-//		std::string _getFileContent() const { return fileContent; };
 
 		void parse();
 		std::string::iterator		findEndOfStatement();
@@ -43,15 +38,12 @@ class ParsingElement : public std::map<std::string, std::string>
 		};
 
 	protected:
-//		std::string				fileContent;
 		std::string::iterator	&statementBegin;
 		std::string::iterator	&statementEnd;
 		std::string::iterator	&eof;
 
 	private:
 		static std::list<char> endStatementChars;
-		
-		// Needed to avoid ParsingElement() compilation errors
 		const static std::string			empty;
 		static std::string::iterator		ebgn;
 		static std::string::iterator		eend;
