@@ -1,5 +1,17 @@
-
 # TODO LIST
+
+CGI hereda INDEX pero no dirListing.
+
+Test page with CGI.html is appending ?query to the request. How to handle?
+
+Cuando subes un archivo desde el file_handler.html, no da respuesta?
+\
+Revisar CGI/locations error pages si la ruta es heredada o no
+
+
+
+
+curl -X POST  localhost:8080/nolen.py -H 'Content-Type: application/json' -d '{"login"' -v    no funciona bien          
 
 1. ~~Parsear Body de entrada~~
 - ~~verificar tipo de envio de info, Content-len vs chunked~~
@@ -58,21 +70,21 @@
 | CGI ENV | Description | Required | Comentarios | Status |
 | ------- | ----------- | -------- | ----------- | ------ |
 |AUTH_TYPE  | Identifica mecanismo usado para ID client |  ❌ | No hacemos Auth  | ✅ |
-| CONTENT_LENGTH | Content len solo cuando tiene body, de otra forma NULL o UNSET|  ✅  | Tomar del body size if post, de otra forma, Null  |  ❌ |
-| CONTENT_TYPE | Si body, set to MIME type,  si no UNSET| ✅  | Si el HTTP del cliente lo inlcuye, usamos ese  | ❌  |
-|GATEWAY_INTERFACE  | CGI version | ✅  | el RFC que estamos usando identifica CGI 1.1, usamos tal   | ❌  |
+| CONTENT_LENGTH | Content len solo cuando tiene body, de otra forma NULL o UNSET|  ✅  | Tomar del body size if post, de otra forma, Null  |  ✅ |
+| CONTENT_TYPE | Si body, set to MIME type,  si no UNSET| ✅  | Si el HTTP del cliente lo inlcuye, usamos ese  | ✅    |
+|GATEWAY_INTERFACE  | CGI version | ✅  | el RFC que estamos usando identifica CGI 1.1, usamos tal   | ✅    |
 | PATH_INFO |  "specifies a path to be interpreted by the CGI script" "is derived from the portion of the URI path hierarchy following the part that identifies the script itself" **CASE SENSITIVE**| ✅  | No estoy claro en como se consigue  | ❌  |
-| PATH_TRANSLATED | "variable is derived by taking the PATH_INFO value, parsing it as a local URI in its own right, and performing any virtual-to-physical translation appropriate to map it onto the server's document repository structure", Path en nuestro sistema, por Locations  | ✅ |   | ❌  |
+| PATH_TRANSLATED | "variable is derived by taking the PATH_INFO value, parsing it as a local URI in its own right, and performing any virtual-to-physical translation appropriate to map it onto the server's document repository structure", Path en nuestro sistema, por Locations  | ✅ |   | ✅  |
 |  EJEMPLO: |<scheme> "://" <server-name> ":" <server-port> <extra-path> http://somehost.com/cgi-bin/somescript/this%2eis%2epath%3binfo.  would result in a PATH_INFO value of "/this.is.the.path;info" (traducimos % a sus valores ASCII desde hexa). This would then be translated to a location in the server's document repository, perhaps a filesystem path something like this: */usr/local/www/htdocs/this.is.the.path;info* The value of PATH_TRANSLATED is the result of the translation. | ✅ and ❌  | The server SHOULD set this meta-variable if the request URI includes a path-info component.  If PATH_INFO is NULL, then the PATH_TRANSLATED variable MUST be set to NULL (or unset).  | ❌  |
-| QUERY_STRING  | Luego del ? todo lo que vanga es QUERY. URL-encoded (no decodificamos %?)| ✅ |  Si no existe, pasamos vacio. | ❌  |
+| QUERY_STRING  | Luego del ? todo lo que vanga es QUERY. URL-encoded (no decodificamos %?)| ✅ |  Si no existe, pasamos vacio. | ✅  |
 | REMOTE_ADDR |    The REMOTE_ADDR variable MUST be set to the network address of the  client sending the request to the server. |  ✅| Client.cpp tiene hardcoded como conseguir el IP, solo no lo guarda  | ❌  |
-| REMOTE_HOST  |  Domaian y port del client, si no lo tenemos podemos usar el REMOTE_ADDR  | ✅  |  | ❌  |
+| REMOTE_HOST  |  Domaian y port del client, si no lo tenemos podemos usar el REMOTE_ADDR  | ✅  |  |  ✅   |
 | REMOTE_IDENT | provide identity information reported about the connection |  ❌ |  | ✅ |
 | REMOTE_USER |provides a user identification string supplied by client as part of user authentication.  | ❌ | si requiere auth, the AUTH_TYPE meta-variable is set to "Basic" or "Digest",  debemos de enviar el USER-ID|  ✅ |
-| REQUEST_METHOD | method which should be used by the script to process the request | ✅  | Dany tiene esta info en su parseer  |  ❌ |
+| REQUEST_METHOD | method which should be used by the script to process the request | ✅  | Dany tiene esta info en su parseer  |  ✅  |
 | SCRIPT_NAME  | be set to a URI path (not URL-encoded) which could identify the CGI script  |  ✅ | puede estar vacia. No PATH_INFO segment (see section 4.1.5) is included in the SCRIPT_NAME value. | ❌ |
-| SERVER_NAME | the name of the server host to which the client request is directed | ✅ | Http, Host: value si es un virtual server, si no la IP address conectada | ❌  |
-| SERVER_PORT | MUST be set even if the port is the default port for the scheme and could otherwise be omitted from a URI | ✅ | el server obj tiene su puerto, se debe de agregar que si en el config  |  ❌ |
+| SERVER_NAME | the name of the server host to which the client request is directed | ✅ | Http, Host: value si es un virtual server, si no la IP address conectada | ✅   |
+| SERVER_PORT | MUST be set even if the port is the default port for the scheme and could otherwise be omitted from a URI | ✅ | el server obj tiene su puerto, se debe de agregar que si en el config  |  ✅ |
 | SERVER_PROTOCOL  | MUST be set to the name and version ofthe application protocol used for this CGI request.  This MAY differ from the protocol version used by the server in its communication with the client. | ✅| HTTP 1.1? | ❌  |
 | SERVER_SOFTWARE | MUST be set to the name and version  of the information server software making the CGI request | ✅ |  | ❌ |
 | Protocol-Specific Meta-Variables   | SHOULD set meta-variables specific to the protocol and scheme for the request. "HTTP_" contain values read from the client request header fields, if the protocol used is HTTP.The HTTP header field name is converted to upper case, has all occurrences of "-" replaced with "_" and has "HTTP_" prepended to give the meta-variable name|  ✅ | This is our Joker. Lo usaremos para cookies | ❌  |

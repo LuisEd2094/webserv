@@ -215,6 +215,11 @@ BaseHandler* BaseHandler::getErrorResponse(ResponseCodes code)
     }  
 }
 
+const Path&  BaseHandler::getPathFile() const
+{
+    return _path_to_file;
+}
+
 BaseHandler::BaseHandler():
     _configElement(NULL),
     _response_type(NOT_SET),

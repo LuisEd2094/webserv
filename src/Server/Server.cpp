@@ -66,7 +66,7 @@ bool Server::validateAction(Client& client)
 
     bool status = this->prepareClient4ResponseGeneration(client);
     
-    if (status && client.getAction() == POST)
+    /*if (status && client.getAction() == POST)
     {
         if (!client.getIsChunked())
         {
@@ -76,7 +76,7 @@ bool Server::validateAction(Client& client)
                 return (false);
             }
         }
-    }
+    }*/
     return status;
 }
 

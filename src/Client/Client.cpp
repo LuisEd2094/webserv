@@ -123,9 +123,11 @@ void    Client::addClosingError(ResponseCodes error)
         _server->prepareClient4ResponseGeneration(*this);
     }
     addObject(getErrorResponse(error));
+    _action = GET;
     _error = true;
     _can_read = false;
-    _pending_read = false; _keep_alive = false;
+    _pending_read = false; 
+    _keep_alive = false;
     Overseer::setListenAction(_fd, JUST_OUT);
 }
 
@@ -363,11 +365,7 @@ void Client::parseForHttp()
 {
     if (_parser_http.getEndRead())
     {
-        if (_action == POST)
-        {
-            if (!checkPostHeaderInfo())
-                return;
-        }
+
         if (!_server->validateAction(*this))
         {            
             // << "server told me it was a bad action" << std::endl;
@@ -375,6 +373,23 @@ void Client::parseForHttp()
             resetClient(false);
             return ;
         }
+        if (_action == POST)
+        {
+            if (!checkPostHeaderInfo())
+                return;
+        }
+        if (_action == POST)
+        {
+            if (!_is_chunked)
+            {
+                if (_content_length > std::size_t(MAX_BODY_SIZE))
+                {
+                    addClosingErrorObject(PAYLOAD);
+                    return;
+                }
+            }
+        }
+
         if (_parser_http.getMapValue("Expect") == "100-continue")
         {
             addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
@@ -474,7 +489,6 @@ int Client::sendResponse()
     RequestHandler * request = _response_objects_queue.front();
     if (request && request->pendingSend())
     {
-        //// << request->getToSend() << std::endl;
         if ((_result = send(_fd, request->getToSend(), request->getChunkSize(), 0) ) == -1)
             return (-1);
         request->updateBytesSent(_result);

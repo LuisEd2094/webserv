@@ -44,10 +44,6 @@ const std::string&  Client::getPathFileString() const
     return _path_to_file_str;
 }
 
-const Path&  Client::getPathFile() const
-{
-    return _path_to_file;
-}
 
 
 const std::string&  Client::getMapValue(const std::string& value) const

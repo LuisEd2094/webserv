@@ -73,7 +73,6 @@ class Client : public BaseHandler
         ObjectTypes                     getResponseType() const;
         const std::string&              getBody() const;
 
-        const Path&                     getPathFile() const;
         const std::string&              getPathFileString() const; 
 
         const std::string&              getMapValue(const std::string& )const;
@@ -139,7 +138,6 @@ class Client : public BaseHandler
         void                    removeFirstObj();
 
 
-        Path                    _path_to_file;
         std::string             _httpAnswerDirectory;
 
 

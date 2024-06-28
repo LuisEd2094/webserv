@@ -23,7 +23,10 @@ void FileHandler::initTypeMaps()
     types["empty"] = "";
     types["html"] = "text/html";
     types["htm"] = "text/html";
-
+    types["md"] = "text/markdown";
+    types["jpg"] = "image/jpeg";
+    types["jpeg"] = "image/jpeg";
+    types["mp3"] = "audio/mpeg";
 }
 
 const std::string& FileHandler::getMimeType(const std::string& to_find)
@@ -75,7 +78,8 @@ FileHandler::FileHandler(BaseHandler& obj) : BaseHandler(obj),
         const Client& client = dynamic_cast<const Client&>(obj);
         if (client.getAction() == GET)
         {
-            openFile(obj.getPathFileString(), O_RDONLY, 0);
+            openFile(client.getPathFileString(), O_RDONLY, 0);
+            _file_name = client.getPathFile();
         }
         else if (client.getAction() == POST)
         {
@@ -124,6 +128,7 @@ FileHandler::FileHandler(BaseHandler& obj) : BaseHandler(obj),
     }
     catch (const std::bad_cast & err)
     {
+        _file_name = obj.getPathFile();
         openFile(obj.getPathFileString(), O_RDONLY, 0);
     }
     if (_fd == -1)
@@ -208,7 +213,11 @@ int FileHandler::readFromFile()
             if (result ==  0)
             {
                 /*I should be setting this with setdefaultResponse*/
+                const ConfigLocation * confi = dynamic_cast<const ConfigLocation *>(_configElement);
+                (void )confi;
+                //std::string file_name = ->
                 _defaultHttp = setContentType(_defaultHttp);
+                _defaultHttp.append("Content-Disposition: inline; filename=\"" + _file_name.getFile().toStr() + "\"\r\n");
                 client->setHTTPResponse(setContentLenHTTP(_defaultHttp, _buffer) , this); 
                 client->setBodyResponse(_buffer, this);
                 return (0);

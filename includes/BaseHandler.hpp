@@ -5,6 +5,7 @@
 # include <ctime>
 # include <ProgramConfigs.hpp>
 # include <ConfigElement.hpp>
+# include <Path.hpp>
 
 
 class Client;
@@ -23,9 +24,10 @@ class BaseHandler
         virtual BaseHandler *           getErrorResponse(ResponseCodes code); 
 
         virtual int                     getClientFD() const;
-        virtual ResponseCodes              getErrorCode() const;
+        virtual ResponseCodes           getErrorCode() const;
         virtual const std::string&      getPathFileString() const;
         virtual const std::string&      getDefaultHttpResponse() const;
+        const Path&                     getPathFile() const;
 
         
         static BaseHandler*             createObject(BaseHandler&);
@@ -42,6 +44,9 @@ class BaseHandler
         std::string                                     _path_to_file_str;
         int                                             _client_fd;
         int                                             _fd;
+        Path                                            _path_to_file;
+
+
 
         bool    checkTimeOut();
         static const ObjectTypes valid_objs[NUM_OBJ] ;

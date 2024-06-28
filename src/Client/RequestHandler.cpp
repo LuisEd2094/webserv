@@ -18,7 +18,7 @@ void RequestHandler::setBodyResponse(const std::string &message)
 {
     _out_body.append(message);
     _C_type_body = _out_body.c_str();
-    _body_response_len = std::strlen(_C_type_body);
+    _body_response_len = _out_body.length();
     _body_bytes_sent = 0;
 }
 
