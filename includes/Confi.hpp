@@ -16,10 +16,10 @@ typedef struct s_confi
         Todas las clases, listas, ect, para este servidor real. 
     */
 
-    int             socket; // hard code 
-    int             backlog; // hard code
-    struct addrinfo hints; // hard code 
-    struct addrinfo *servinfo; // hard code
+    int             socket;
+    int             backlog;
+    struct addrinfo hints;
+    struct addrinfo *servinfo;
 } t_confi;
 
 

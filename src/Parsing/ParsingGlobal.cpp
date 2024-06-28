@@ -4,17 +4,15 @@
 
 ParsingGlobal	ParsingGlobal::parseFromFile(std::string fileName)
 {
-	std::fstream	file(fileName.c_str()); //TODO"config_file.conf"
+	std::fstream	file(fileName.c_str());
 	std::string		fileStr;										  
 	std::string		tmp;
 	std::string::iterator begin;
 	std::string::iterator end;
 	std::string::iterator aux;
 
-	std::cerr << "sssssssssssss" << fileName <<std::endl;
 	if (!file.is_open())
 	{
-		std::cout << "file not found 66666699999" << std::endl;
 		throw std::exception();
 	}
 	while (true)
@@ -28,14 +26,8 @@ ParsingGlobal	ParsingGlobal::parseFromFile(std::string fileName)
 	end = fileStr.end();
 	aux = fileStr.begin();
 	ParsingGlobal 	parser(begin, end, aux);
-	// try
-	// {
-		parser.parse();
-	// }
-	// catch(const std::exception& e)
-	// {
-	// 	std::cerr << e.what() << '\n';
-	// }
+
+	parser.parse();
 	return (parser);
 }
 

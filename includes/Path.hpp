@@ -16,8 +16,6 @@ class Path
 		void deleteAndBack(std::list<std::string>::iterator &curFile);
 		bool isRelative;
 		bool isFile;
-//		void normalize2dot(std::list<std::string>::iterator &curFile);
-
 		std::list<std::string> directories;
 
 	public:
@@ -52,8 +50,7 @@ class Path
 
 	class InvalidPathException: public std::exception
 	{
-		 public: 
-			//virtual const char* what() const throw() {
+		 public:
 			virtual const char* what() const throw() {
 				return "ERROR on file path"; 
 			}

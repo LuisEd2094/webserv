@@ -6,21 +6,16 @@ Path::~Path()
 
 Path::Path()
 {
-        //std::cerr << "Path defaul constructor called" << std::endl;
-        //this->directories = std::list<std::string>();
-        this->isRelative = false;
-        this->isFile = false;
-        //std::cerr << "Path defaul constructor finished" << std::endl;
+    this->isRelative = false;
+    this->isFile = false;
 }
 
 Path::Path(std::string pathStr)
 {
-    //std::cerr << "Path string constructor called" << std::endl;
     this->isRelative = pathStr[0] != '/';
     this->isFile = pathStr[pathStr.length()-1] != '/';
     this->directories = ft_split<std::list<std::string> >(pathStr, '/');
     while (this->normalize());
-    //std::cerr << "Path string constructor finished" << std::endl;
 }
 
 Path::Path(const Path &orig)
@@ -42,7 +37,7 @@ std::string Path::getExtension(void)
         return ("");
     std::string last = this->directories.back();
     std::list<std::string>   splited = ft_split<std::list<std::string> >(last, '.');
-    if (splited.size() == 1)  // sdaf/fasd
+    if (splited.size() == 1)
         return ("");
     if (splited.size() == 2 && splited.front() == "") 
         return ("");
@@ -93,12 +88,6 @@ Path::operator std::string() const
 
 Path &Path::append(Path tail)
 {
-    // if (this->isFile)
-    //     {
-    //     std::cerr << RED << "HEEEYY MDFK appending to file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << END;
-    //     return ;
-
-    //     }
     for (std::list<std::string>::iterator te = tail.directories.begin(); te != tail.directories.end(); te++)
             this->directories.push_back(*te);
     this->setIsFile(tail.getIsFile());
@@ -122,11 +111,6 @@ int Path::normalize(void)
 
             this->deleteAndBack(currFile);
             modified = true;
-            // if (this->size() > 1)
-            // {
-            //     this->deleteAndBack(currFile);
-            //     modified = true;
-            // }
         }
         else if (*currFile == "..")
         {

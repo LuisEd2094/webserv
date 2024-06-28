@@ -17,13 +17,6 @@
 #include <ParsingGlobal.hpp>
 #include <Overseer.hpp>
 
-
-/*
-    Classes for when we need to validate data before setting or getting. 
-
-    Structs for when we just need to save or manipulate without the need of validation
-*/
-
 int main(int argc, char *argv[])
 {
     if (argc > 2)
@@ -42,7 +35,6 @@ int main(int argc, char *argv[])
     try
     {        
         ParsingGlobal parser = ParsingGlobal::parseFromFile(argc == 2 ? argv[1] : "./configFile/ok/file.config");
-        //parser.recursivePrint();
         ConfigElement::configure(parser);
         std::list<Server* > sdaf = Overseer::servers;
         std::cout << GREEN << " ::::: CONFIGURED :::::" << Overseer::servers.size()  << END << std::endl;

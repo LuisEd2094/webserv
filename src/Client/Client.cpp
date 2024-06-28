@@ -97,7 +97,6 @@ int Client::Action(int event)
     }
     if (event & POLLHUP)
     {
-        // << "POLL HUP" << std::endl;
         return 0;
     }
     return _result;
@@ -178,9 +177,6 @@ void Client::readFromFD()
     handlerRecv();
     if (_result > 0)
     {
-        //recv > 0
-        // Http todavia _parse_http me indica si no termina.
-        // post/get/delete > _in_container, hasta que terminas
         // post > in_body, parseeer URl, METHod, Client dame el body
         if (!_parser_http.getEndRead()) // and nott MAX HEADER SIZE?
         {
@@ -368,7 +364,6 @@ void Client::parseForHttp()
 
         if (!_server->validateAction(*this))
         {            
-            // << "server told me it was a bad action" << std::endl;
             _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
             resetClient(false);
             return ;
@@ -394,8 +389,6 @@ void Client::parseForHttp()
         {
             addObject(BaseHandler::createObject(Response::getDefault(CONTINUE)));
         }
-        // << _result << ": read " << std::endl;
-        // << _in_container << std::endl;
         _in_container.erase(0, _parser_http.getPos() + _parser_http.getEndSize());
         if (_parser_http.getMapValue("Connection") == "keep-alive")
         {
@@ -546,7 +539,6 @@ void Client::makeChildrenToRespond()
         response = getErrorResponse(_error_code);
     }
     std::queue<std::string> queue;
-    //queue.push(std::string("Set-Cookie: SID=1234; Max-Age=10; Domain: ") + getHost()  + "Path: /" + CRNL);
 
     addHeader(queue);
     if (_keep_alive)   
@@ -555,10 +547,6 @@ void Client::makeChildrenToRespond()
         addHeader(std::string("Connection: close") + CRNL); 
 
     addObject(response);
-    /*
-        Check here to add Redirect headers and other HTTPS?
-    */
-
 }
 
 void Client::resetClient(bool has_body)
@@ -568,7 +556,7 @@ void Client::resetClient(bool has_body)
         if (_response_type != CGI_OBJ)
         {
             _response_type = FILE_OBJ;
-            setDefaultHttpResponse(OK);/*redirection?*/
+            setDefaultHttpResponse(OK);
         }
 
         /* gives seg fault*/

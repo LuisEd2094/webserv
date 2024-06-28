@@ -26,7 +26,6 @@ const defaultResponse& Response::getDefault(ResponseCodes code)
 
 defaultResponse::defaultResponse(const Responses& obj) : _http(obj._http), _body(obj._title.empty() ? "" : TEMPLATE)
 {
-        //defaultResponse*res = new defaultResponse();
         if (!obj._title.empty())
         {
             _body.insert(_body.find("<title>") + std::strlen("<title>"), obj._title);

@@ -109,7 +109,6 @@ Server* Overseer::saveServer(t_confi* confi)
     catch(const std::exception& e)
     {
         server = NULL;
-        // << e.what() << '\n';
         throw e;
     }
     
@@ -141,10 +140,6 @@ bool Overseer::handleAction(BaseHandler *obj, int event)
         
     if (status == 0 || status == -1)
     {
-        /* if (status == 0)
-            // << obj->getFD() << " closed connection" << std::endl;
-        else
-            // << "error: " << static_cast<std::string>(strerror(errno)) << std::endl; */
         removeFromPFDS(obj); // I need a better way to handle PFDS closing, since they might close on the first loop, before the _i had time to increase
         return false; 
     }

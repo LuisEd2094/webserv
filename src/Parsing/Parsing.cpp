@@ -1,17 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Parsing.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/07 09:22:27 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/15 11:14:24 by codespace        ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <Parsing.hpp>
-// # include "../../includes/Parsing.hpp"
 
 Parsing::Parsing( void )
 {
@@ -131,8 +118,6 @@ int	Parsing::parsingHeader(const std::string& strRead)
 {
 	size_t start = _findNewline, end = 0;
 
-/* 	if (_statusError < 0 or _statusError > 1)
-		return (_statusError); */
 	while (true)
 	{
 		std::string typeLine = getTypeLine(&strRead[start]);

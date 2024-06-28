@@ -36,7 +36,6 @@ bool ConfigCgi::prepareClient4ResponseGeneration(Client& client, Path &requested
         (this->getRootAsString()) +
         static_cast<std::string>(requestedUrl)
     );
-    // << RED << "asdf" << std::endl;
     client.setResponseType(CGI_OBJ);
     client.setConfigElement(this);
     if (client.getPathFile().assertFileExists())

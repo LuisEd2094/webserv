@@ -60,23 +60,7 @@ int                Server::Action(int event)
 
 bool Server::validateAction(Client& client)
 {
-    // check method and url against config.
-    // GET es valido para esta URL
-    // POST valido para uRL etc 
-
     bool status = this->prepareClient4ResponseGeneration(client);
-    
-    /*if (status && client.getAction() == POST)
-    {
-        if (!client.getIsChunked())
-        {
-            if (client.getContentLength() > std::size_t(MAX_BODY_SIZE))
-            {
-                client.addClosingErrorObject(PAYLOAD);
-                return (false);
-            }
-        }
-    }*/
     return status;
 }
 
@@ -113,27 +97,17 @@ void Server::initSocket()
     for (p = _servinfo; p != NULL; p = p->ai_next)
     {
         if ((_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
-        {
-            // << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
-            continue ; 
-            // freeaddrinfo(_servinfo);
-            // throw Server::socketException("socket error: " + static_cast<std::string>(strerror(errno)));
-        };
-        if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &yes,
-                sizeof(int)) == -1) {
-            close(_fd);
-            // << "socket error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue ;
-        } 
-                
+        if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+        {
+            close(_fd);
+            continue ;
+        }  
         // bind it to the port we passed in to getaddrinfo():
         if (bind(_fd, p->ai_addr, p->ai_addrlen) != 0)
         {
             close(_fd);
-            // << "bind error: " + static_cast<std::string>(strerror(errno)) << std::endl;
             continue;
-            // freeaddrinfo(_servinfo);
-            // throw Server::socketException("bind error:  "+ static_cast<std::string>(strerror(errno)));
         }
         break;
     }

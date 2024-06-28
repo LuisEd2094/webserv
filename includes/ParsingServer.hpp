@@ -11,10 +11,6 @@ class ParsingServer: public ParsingElement
 		ParsingServer(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
 		~ParsingServer(){};
 		void	recursivePrint(void);
-		//parsing
-		//check key value
-		//check valid nested
-		//initObj
-		std::list<ParsingLocation>	locations; //TODO woluld be nice to encapsulate it 
+		std::list<ParsingLocation>	locations;
 };
 #endif

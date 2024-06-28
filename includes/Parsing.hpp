@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Parsing.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/06 12:01:39 by dacortes          #+#    #+#             */
-/*   Updated: 2024/06/15 10:27:27 by codespace        ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef PARSING_HPP
 #define PARSING_HPP
 
@@ -40,8 +28,8 @@
 # include <fcntl.h>
 # include <list>
 # include <algorithm>
-# include <dirent.h> //readdir
-# include <map> //map
+# include <dirent.h>
+# include <map>
 # include <sstream>
 # include <vector>
 # include <Response.hpp>
@@ -57,7 +45,7 @@
 # define BUFFER_READ	1
 # define ERROR			-1
 # define WARNING 		1
-# define ERROR_FORMAT	2 //si no es htttp numero punto numero HTTP 1.0 es valido 2.0
+# define ERROR_FORMAT	2
 # define ERROR_HEADER	3
 # define ERROR_METHOD	4
 # define ERROR_VERSION	5
@@ -196,6 +184,7 @@ bool checkSpace(const S& str, const N num)
 	}
 	return (EXIT_SUCCESS);
 }
+
 template<typename S>
 size_t wordCounter(const S& str)
 {

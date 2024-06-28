@@ -74,12 +74,9 @@ bool deletedFiles::addToDelete(const std::string& path)
         if (word.empty())
             continue;
         if (temp->files.find(word) == temp->files.end()) {
-            // Create a new entry if it doesn't exist
             temp->files[word] = deletedFiles();
         }
-        // Move to the next level in the hierarchy
         temp = &(temp->files[word]);
-        // << word << std::endl;
     }
     (*temp).is_dir = S_ISDIR(info.st_mode);
     return (true);

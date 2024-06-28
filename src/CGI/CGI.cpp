@@ -97,11 +97,6 @@ void CGI::fill_arrays(std::vector<std::string>& env_strings,
     {
         env_strings.push_back(it->first + it->second);
     }
-    /* 
-        son 17 elementos basicos + size de metavar
-        verificar en HTTP si el metaVar fue enviado, sino usar el defecto y listerine
-    */
-
 }
 
 
@@ -160,11 +155,6 @@ CGI::CGI(Client& client) :  BaseHandler(client),
             env[i] = const_cast<char*>(it->c_str());
         }
         env[i] = NULL;
-        /* 
-            son 17 elementos basicos + size de metavar
-            verificar en HTTP si el metaVar fue enviado, sino usar el defecto y listerine
-        */
-
 		close(_out_pipe[0]);
 		dup2(_out_pipe[1], STDOUT_FILENO);
         if (!_body.empty())

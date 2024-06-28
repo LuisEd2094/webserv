@@ -7,7 +7,7 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 {
 	this->nestedPrint = 0;
 	this->errorPage = "";
-	this->maxClientBodySize = 30000;//
+	this->maxClientBodySize = 30000;
 	for (std::map<std::string, std::string>::iterator i = parsed.begin(); i != parsed.end(); i++)
 	{
 		this->parseKeyVal(i->first, i->second);
@@ -119,7 +119,6 @@ std::string ConfigVirtualServer::getHost(void) const
 	return (this->host);
 }
 
-//std::ostream &operator<<(std::ostream &os, ConfigVirtualServer &obj)
 void ConfigVirtualServer::recursivePrint()
 {
 	ConfigVirtualServer::recursivePrint(0);
@@ -129,10 +128,6 @@ void ConfigVirtualServer::recursivePrint(int recursiveLvl)
 {
 	std::cerr << ConfigElement::genSpace(recursiveLvl) << "- VirtualServer" << std::endl;
 	recursiveLvl++;
-	// << ConfigElement::genSpace(recursiveLvl) << "ServerNames: " <<  containerToString(this->getServerNames()) << std::endl;
-	// << ConfigElement::genSpace(recursiveLvl) << "maxBodySize: " << this->getMaxClientBodySize() << std::endl;
-	// << ConfigElement::genSpace(recursiveLvl) << "errorPage: " << this->getErrorPage() << std::endl;
-	// << ConfigElement::genSpace(recursiveLvl) << "Locations(" << this->locations.size() << "):" << std::endl;
 	for (std::list<ConfigLocation>::iterator loc = this->locations.begin(); loc != this->locations.end();loc++)
 	{
 		loc->recursivePrint(recursiveLvl);
@@ -144,17 +139,12 @@ bool ConfigVirtualServer::prepareClient4ResponseGeneration(Client& client)
 	// std::cerr << "::: ConfigVIrtualServer::prepareClient4ResponseGeneration" << std::endl;
 	// std::cerr << "::: " << client.getHost() << std::endl;
 	std::list<std::string>::iterator server_name;
-
-	// std::cerr << RED << "client.getHost():" << END << client.getHost() << std::endl;
 	server_name = std::find(this->serverNames.begin(), this->serverNames.end(), client.getHost());
 	if (server_name == this->serverNames.end())
 	{
-		// << YELLOW << "client name should be " << END << client.getHost() << std::endl;
-		// << TUR << *this->getLocations().begin() << std::endl;
 		return (false);
 	}
 	Path url(client.getURL());
-	// << "len locations" << this->locations.size() << std::endl;
 	return  ConfigLocation::getBestLocation(
 		client, Path(client.getURL()),
 		this->locations.begin(),

@@ -12,16 +12,9 @@ class ParsingLocation: public ParsingElement
 		void	recursivePrint(void);
 		std::list<ParsingLocation>	getLocations() {return this->locations;};
 		std::list<ParsingCgi>	getCgis() {return this->cgis;};
-		//parsing
-		//check key value
-		//check valid nested
-		//initObj
 
 	private:
 		std::list<ParsingLocation>	locations;
 		std::list<ParsingCgi>		cgis;
-	//ADD  value protedtec
-
-
 };
 #endif

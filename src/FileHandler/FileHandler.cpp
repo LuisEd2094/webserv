@@ -137,9 +137,7 @@ FileHandler::FileHandler(BaseHandler& obj) : BaseHandler(obj),
     {
         throw FileHandlerException(strerror(errno));
     }
-
 }
-
 
 FileHandler::~FileHandler()
 {
@@ -177,7 +175,6 @@ BaseHandler* FileHandler::createNewFileHandler(BaseHandler& obj)
     }
 }
 
-
 int FileHandler::getFD() const
 {
     return _fd;
@@ -196,7 +193,6 @@ std::string  FileHandler::setContentType(std::string http)
     }
     return (http);
 }
-
 
 int FileHandler::readFromFile()
 {
@@ -236,7 +232,6 @@ int FileHandler::readFromFile()
     }
     return (0);
 }
-
 
 int FileHandler::writeToFIle()
 {
@@ -292,7 +287,6 @@ int FileHandler::writeToFIle()
         return (1);
     return (0);
 }
-
 
 int FileHandler::Action(int event)
 {

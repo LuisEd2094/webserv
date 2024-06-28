@@ -8,10 +8,6 @@ class ParsingCgi: public ParsingElement
 		ParsingCgi(std::string::iterator &begin, std::string::iterator &eof, std::string::iterator &statementEnd);
 		~ParsingCgi(){};
 		void recursivePrint(void);
-		//parsing
-		//check key value
-		//check valid nested
-		//initObj
 	private:
 
 };

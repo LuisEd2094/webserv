@@ -53,7 +53,6 @@ class Overseer
         static  bool    addToPfds(int new_fd, int events, int revents);
 
         static  std::map<int, BaseHandler *> _pending_fds;
-        //clients map
         static  std::size_t             _i;
         static  std::size_t             _fd_count;
         static  struct pollfd           _pfds[MAX_FDS];

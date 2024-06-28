@@ -94,7 +94,6 @@ ConfigLocation::ConfigLocation(ParsingLocation& obj, const ConfigVirtualServer &
 		location++)
 	{
 		this->_locations.push_back(ConfigLocation(*location, *this));
-		// this->_locations
 	}
 	std::list<ParsingCgi> cgis = obj.getCgis(); 
 	for (std::list<ParsingCgi>::iterator cgi = cgis.begin();
@@ -136,7 +135,7 @@ void ConfigLocation::parseKeyVal(std::string key, std::string val)
 		this->setRedirection(val);
 		this->setRedirections(val);
 	}
-	else if (key == "root") // if father root = /tmp/sdaf/; then for child root = wololo -> /tmp/sdaf, else for child root = /var -> /var
+	else if (key == "root")
 		;	
 	else if (key == "dirListing")
 		this->setDirListing(val);	
@@ -205,7 +204,6 @@ void ConfigLocation::initializeRoot(Path root)
 	else	
 		_root = root;
 	_root.setIsFile(false);
-	// TODO the file is correct
 }
 
 Path ConfigLocation::getRoot(void) const
@@ -416,7 +414,6 @@ void ConfigLocation::recursivePrint(int recursiveLvl)
 	{
 		cgi->recursivePrint(recursiveLvl);
 	}
-	// TODO copy code above for cgis instead of locations
 }
 
 bool ConfigLocation::checkIndex(Client &client) const

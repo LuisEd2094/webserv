@@ -23,7 +23,7 @@ class ConfigCgi: public ConfigElement
 
 	public:
 
-		ConfigCgi(void); // TODO
+		ConfigCgi(void);
 		ConfigCgi(ParsingCgi& obj, const ConfigLocation &parent);
 		ConfigCgi(const ConfigCgi& obj);
 		ConfigCgi &operator=( const ConfigCgi& obj);

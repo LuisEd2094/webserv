@@ -22,9 +22,6 @@
 
 
 # define NUM_OBJ 6
-/* # define FILE_OBJ "file"
-# define NO_FD_OBJ "direct"
-# define CGI_OBJ "cgi" */
 
 enum ObjectTypes
 {
@@ -45,22 +42,4 @@ static std::string ObjectTypesStrings[6] = {
     "REDIRECT_OBJ"
 };
 
-/*
-std::ostream& operator<<(std::ostream &os, ObjectTypes obj)
-{
-    os << sdafString[obj];
-    return (os);
-}
-*/
 #endif
-/* 
-GET /nolen.py HTTP/1.1
-Host: localhost
-
-GET /nolen.py HTTP/1.1
-Host: localhost
-
-GET /index.html HTTP/1.1
-Host: localhost
-
- */

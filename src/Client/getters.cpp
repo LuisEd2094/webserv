@@ -83,9 +83,6 @@ bool Client::getIsChunked() const
     return _is_chunked;
 }
 
-
-
-//std::map<int, Path> * CLient::getErrorPages(void) const
 const ConfigElement *           Client::getConfigElement(void) const
 {
     return this->_configElement;

@@ -19,7 +19,7 @@ class ConfigLocation: public ConfigElement
 		std::string					__elemType__;
 		std::string					__elemArgument__;
 		std::list<std::string>		_methods;
-		Path						_root; // would be nice to change it to an oject
+		Path						_root;
 		std::list<std::string>		_index;
 		std::string					_redirection;
 		std::string					_errorPage;
