@@ -217,7 +217,6 @@ int FileHandler::readFromFile()
                 (void )confi;
                 //std::string file_name = ->
                 _defaultHttp = setContentType(_defaultHttp);
-                _defaultHttp.append("Content-Disposition: inline; filename=\"" + _file_name.getFile().toStr() + "\"\r\n");
                 client->setHTTPResponse(setContentLenHTTP(_defaultHttp, _buffer) , this); 
                 client->setBodyResponse(_buffer, this);
                 return (0);
