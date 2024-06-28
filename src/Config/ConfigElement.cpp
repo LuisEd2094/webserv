@@ -26,7 +26,8 @@ void ConfigElement::configure(ParsingGlobal parsedData)
     confi.hints.ai_flags = AI_PASSIVE;
     confi.backlog = MAX_FDS;
 	// << BLUE << "Num of servers: " <<  END << parsedData.servers.size() << std::endl;
- 
+	if (parsedData.servers.empty())
+		throw ParamError("Error: File empty");
 	for (std::list<ParsingServer>::iterator i = parsedData.servers.begin(); i != parsedData.servers.end(); i++)
 	{
 	    std::memset(&(confi.hints), 0, sizeof(confi.hints));

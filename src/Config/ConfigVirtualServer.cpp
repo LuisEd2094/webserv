@@ -21,7 +21,6 @@ ConfigVirtualServer::ConfigVirtualServer( ParsingServer& parsed) :
 	std::cout << GREEN << "::::: AFTER COPY :::::" << END << std::endl;
 	this->recursivePrint();
 	std::cout << GREEN << "::::: ENDED :::::" << END << std::endl;
-	std::cerr <<"d";
 }
 
 void ConfigVirtualServer::parseKeyVal(std::string key, std::string val)

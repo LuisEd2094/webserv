@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload, Download, and Delete</title>
+</head>
+<body>
+    <h1>File Upload, Download, and Delete</h1>
+
+    <h2>Upload File</h2>
+    <form action="/files" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Files</h2>
+    <ul id="fileList"></ul>
+
+    <script>
+        // Function to fetch and display the list of files
+        async function fetchFiles() {
+            const response = await fetch('/files');
+            const html = await response.text();
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = html;
+            
+            // Add delete buttons to each file list item
+            const listItems = fileList.querySelectorAll('li');
+            listItems.forEach(item => {
+                const fileName = item.querySelector('a').textContent;
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.setAttribute('data-filename', fileName);
+                deleteButton.addEventListener('click', async function() {
+                    await deleteFile(fileName);
+                });
+                item.appendChild(deleteButton);
+            });
+        }
+
+        // Function to delete a file
+        async function deleteFile(filename) {
+            await fetch(`/files/${filename}`, { method: 'DELETE' });
+            fetchFiles();
+        }
+
+        // Fetch files on page load
+        fetchFiles();
+    </script>
+</body>
+</html>

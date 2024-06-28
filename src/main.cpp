@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     // Read https://github.com/LuisEd2094/webservfrom file, create server, save server to overseer;
     try
     {        
-        ParsingGlobal parser = ParsingGlobal::parseFromFile(argc == 2 ? argv[1] : "./src/Parsing/config_file.conf");
+        ParsingGlobal parser = ParsingGlobal::parseFromFile(argc == 2 ? argv[1] : "./configFile/ok/file.config");
         //parser.recursivePrint();
         ConfigElement::configure(parser);
         std::list<Server* > sdaf = Overseer::servers;
